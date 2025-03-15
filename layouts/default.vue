@@ -6,7 +6,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
-          <h1 class="text-2xl font-display font-bold tracking-wide">Einkaufsliste</h1>
+          <h1 class="text-2xl font-black tracking-tight">Einkaufsliste</h1>
         </div>
         <DarkModeToggle />
       </div>
@@ -20,7 +20,7 @@
     </main>
     <footer class="py-6 bg-warmgray-100 dark:bg-warmgray-900 text-warmgray-600 dark:text-warmgray-400 text-sm text-center theme-transition">
       <div class="max-w-5xl mx-auto px-4">
-        <p>Mit ♥ erstellt · {{ new Date().getFullYear() }}</p>
+        <p class="font-medium">Mit ♥ erstellt · {{ new Date().getFullYear() }}</p>
       </div>
     </footer>
   </div>
