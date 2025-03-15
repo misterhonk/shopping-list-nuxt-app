@@ -76,8 +76,16 @@ export function useShoppingLists() {
           id: list.id,
           name: list.name,
           items: Array.isArray(list.items) ? list.items : [],
-          templateId: list.templateId || 'supermarket' // Fallback wenn keine Template-ID vorhanden ist
+          templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
+          isFavorite: list.isFavorite || false // Fallback für ältere Listendaten
         }));
+        
+        // Sortiere Listen - Favoriten zuerst
+        lists.value.sort((a, b) => {
+          if (a.isFavorite && !b.isFavorite) return -1;
+          if (!a.isFavorite && b.isFavorite) return 1;
+          return 0;
+        });
         
         const currentId = loadFromStorage('currentListId');
         if (currentId && lists.value.some(list => list.id === currentId)) {
@@ -104,27 +112,31 @@ export function useShoppingLists() {
    * @param {string} name - Der Name der Liste
    * @return {object} - Die erstellte Liste
    */
-  const createList = (name) => {
+  const createList = (name, options = {}) => {
     if (!name || name.trim() === '') return null;
     
     // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
-    let templateId = 'supermarket';
+    let templateId = options.templateId || 'supermarket';
     const lowerName = name.toLowerCase();
     
-    // Versuche, aus dem Namen auf den Geschäftstyp zu schließen
-    if (lowerName.includes('drogerie') || lowerName.includes('apotheke') || lowerName.includes('kosmetik')) {
-      templateId = 'drugstore';
-    } else if (lowerName.includes('baumarkt') || lowerName.includes('werkzeug') || lowerName.includes('bau')) {
-      templateId = 'hardware';
-    } else if (lowerName.includes('elektronik') || lowerName.includes('technik') || lowerName.includes('computer')) {
-      templateId = 'electronics';
+    // Nur automatisch aus dem Namen schließen, wenn keine templateId gesetzt wurde
+    if (!options.templateId) {
+      // Versuche, aus dem Namen auf den Geschäftstyp zu schließen
+      if (lowerName.includes('drogerie') || lowerName.includes('apotheke') || lowerName.includes('kosmetik')) {
+        templateId = 'drugstore';
+      } else if (lowerName.includes('baumarkt') || lowerName.includes('werkzeug') || lowerName.includes('bau')) {
+        templateId = 'hardware';
+      } else if (lowerName.includes('elektronik') || lowerName.includes('technik') || lowerName.includes('computer')) {
+        templateId = 'electronics';
+      }
     }
     
     const newList = {
       id: Date.now().toString(),
       name: name.trim(),
       items: [],
-      templateId: templateId
+      templateId: templateId,
+      isFavorite: options.isFavorite || false
     };
     
     lists.value = [...lists.value, newList];
@@ -154,7 +166,8 @@ export function useShoppingLists() {
       id: Date.now().toString(),
       name: 'Wocheneinkauf',
       items: [],
-      templateId: 'supermarket' // Standardvorlage für neue Listen
+      templateId: 'supermarket', // Standardvorlage für neue Listen
+      isFavorite: false
     };
     
     lists.value = [defaultList];
@@ -234,6 +247,47 @@ export function useShoppingLists() {
     
     saveToStorage('shoppingLists', lists.value);
   };
+  
+  /**
+   * Aktualisiert den Namen einer Liste
+   * @param {string} newName - Der neue Name der Liste
+   */
+  const updateListName = (newName) => {
+    if (!newName || newName.trim() === '') return;
+    
+    const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
+    if (listIndex === -1) return;
+    
+    // Tiefe Kopie der Listen erstellen
+    const newLists = JSON.parse(JSON.stringify(lists.value));
+    newLists[listIndex].name = newName.trim();
+    lists.value = newLists;
+    
+    saveToStorage('shoppingLists', lists.value);
+  };
+  
+  /**
+   * Aktualisiert den Favoriten-Status einer Liste
+   * @param {boolean} isFavorite - Der neue Favoriten-Status
+   */
+  const updateListFavorite = (isFavorite) => {
+    const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
+    if (listIndex === -1) return;
+    
+    // Tiefe Kopie der Listen erstellen
+    const newLists = JSON.parse(JSON.stringify(lists.value));
+    newLists[listIndex].isFavorite = isFavorite;
+    
+    // Sortiere Listen - Favoriten zuerst
+    newLists.sort((a, b) => {
+      if (a.isFavorite && !b.isFavorite) return -1;
+      if (!a.isFavorite && b.isFavorite) return 1;
+      return 0;
+    });
+    
+    lists.value = newLists;
+    saveToStorage('shoppingLists', lists.value);
+  };
 
   /**
    * Speichert den aktuellen Zustand der Listen im localStorage
@@ -265,6 +319,8 @@ export function useShoppingLists() {
     selectList,
     deleteList,
     updateListTemplate,
+    updateListName,
+    updateListFavorite,
     saveLists,
     getItemsCount,
     getCheckedItemsCount,

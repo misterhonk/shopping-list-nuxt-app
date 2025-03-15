@@ -4,6 +4,17 @@
       {{ listName }}
     </h2>
     <div class="flex space-x-2">
+      <!-- Einstellungen Button -->
+      <ListSettingsModal 
+        :list-name="listName"
+        :template-id="templateId"
+        :templates="templates"
+        :is-favorite="isFavorite"
+        @update:template-id="$emit('update:template-id', $event)"
+        @update:name="$emit('update:name', $event)"
+        @update:favorite="$emit('update:favorite', $event)"
+      />
+      
       <button
         v-if="hasCheckedItems"
         @click="$emit('clear-checked')"
@@ -16,6 +27,7 @@
           Erledigte löschen
         </span>
       </button>
+      
       <button
         @click="$emit('add-item')"
         class="btn btn-primary"
@@ -32,16 +44,36 @@
 </template>
 
 <script setup>
+import ListSettingsModal from '~/components/settings/ListSettingsModal.vue';
+
 defineProps({
   listName: {
     type: String,
     required: true
   },
+  templateId: {
+    type: String,
+    required: true
+  },
+  templates: {
+    type: Array,
+    required: true
+  },
   hasCheckedItems: {
+    type: Boolean,
+    default: false
+  },
+  isFavorite: {
     type: Boolean,
     default: false
   }
 });
 
-defineEmits(['add-item', 'clear-checked']);
+defineEmits([
+  'add-item', 
+  'clear-checked', 
+  'update:template-id', 
+  'update:name', 
+  'update:favorite'
+]);
 </script>

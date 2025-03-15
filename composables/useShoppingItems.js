@@ -71,19 +71,26 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
   
   /**
    * Fügt einen neuen Artikel zur aktuellen Liste hinzu
+   * @param {object} itemData - Daten des neuen Artikels (optional)
    * @return {object|null} Das hinzugefügte Item oder null bei Fehler
    */
-  const addItem = () => {
-    if (!isFormValid.value) return null;
+  const addItem = (itemData = null) => {
+    // Wenn itemData übergeben wurde, verwenden wir das, ansonsten das newItem
+    const itemToAdd = itemData || newItem;
+    
+    // Prüfen, ob die Daten gültig sind
+    if (!itemToAdd.name || itemToAdd.name.trim() === '' || !(itemToAdd.quantity > 0)) {
+      return null;
+    }
     
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
     if (listIndex === -1) return null;
     
     const newItemObj = {
       id: Date.now().toString(),
-      name: newItem.name,
-      quantity: newItem.quantity,
-      category: newItem.category,
+      name: itemToAdd.name,
+      quantity: itemToAdd.quantity,
+      category: itemToAdd.category,
       checked: false
     };
     
@@ -102,8 +109,10 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     shoppingListsRef.value = newLists;
     saveToStorage('shoppingLists', newLists);
     
-    // Formular zurücksetzen
-    resetItemForm();
+    // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
+    if (!itemData) {
+      resetItemForm();
+    }
     
     return newItemObj;
   };
