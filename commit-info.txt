@@ -1,0 +1,24 @@
+Commit-Informationen:
+
+Die folgenden Änderungen wurden durchgeführt:
+
+1. Datei: app.vue
+   - Entfernung der manuellen Pinia-Initialisierung
+   - Vereinfachung des Templates
+
+2. Datei: pages/index.vue
+   - Korrektur der doppelten Auswahlbereiche für Vorlagen
+   - Bereinigung fragmentierter Code-Stücke
+   - Sicherstellung der korrekten Template-ID-Zuweisung beim Laden und Wechseln von Listen
+
+Um die Änderungen zu committen, führen Sie bitte folgende Befehle aus:
+
+```bash
+cd /Users/martinmelcher/Dev/shopping-list-app
+git add app.vue pages/index.vue
+git commit -m "Fix Pinia-Initialisierung und Struktur der index.vue-Datei
+
+- Entfernung der manuellen Pinia-Initialisierung in app.vue
+- Korrektur der index.vue-Datei für eine saubere Struktur
+- Sicherstellung korrekter Template-ID-Zuweisung bei Listenauswahl"
+```

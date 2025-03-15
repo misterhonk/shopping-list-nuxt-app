@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-warmgray-50 dark:bg-dark-background theme-transition">
-    <header class="bg-gradient-to-r from-brand-400 to-brand-600 dark:from-brand-700 dark:to-brand-500 text-white shadow-warmmd theme-transition">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+    <header class="bg-gradient-to-r from-orange-400 to-orange-600 dark:from-orange-700 dark:to-orange-500 text-white shadow-md theme-transition">
       <div class="max-w-5xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div class="flex items-center space-x-3">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -18,7 +18,7 @@
         </div>
       </div>
     </main>
-    <footer class="py-6 bg-warmgray-100 dark:bg-warmgray-900 text-warmgray-600 dark:text-warmgray-400 text-sm text-center theme-transition">
+    <footer class="py-6 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm text-center theme-transition">
       <div class="max-w-5xl mx-auto px-4">
         <p class="font-medium">Mit ♥ erstellt · {{ new Date().getFullYear() }}</p>
       </div>

@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-
   css: ['~/assets/css/main.css'],
 
   postcss: {
@@ -10,6 +9,11 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+
+  // Modules
+  modules: [
+    '@pinia/nuxt',
+  ],
 
   // CSP-freundliche Konfiguration
   vite: {
@@ -54,5 +58,7 @@ export default defineNuxtConfig({
   },
 
   // Wir verwenden client-seitiges Rendering, da wir LocalStorage benötigen
-  ssr: false
+  ssr: false,
+
+  compatibilityDate: '2025-03-15'
 })

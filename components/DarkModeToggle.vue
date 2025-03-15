@@ -2,7 +2,7 @@
   <button 
     @click="toggleDarkMode" 
     class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 hover-lift"
-    :class="isDark ? 'bg-warmgray-800 text-brand-400' : 'bg-warmgray-100 text-warmgray-800'"
+    :class="isDark ? 'bg-gray-800 text-orange-400' : 'bg-gray-100 text-gray-800'"
     aria-label="Dark Mode umschalten"
   >
     <transition name="theme-switch" mode="out-in">
