@@ -8,8 +8,22 @@ module.exports = {
     "./app.vue",
     "./error.vue"
   ],
+  darkMode: 'class', // oder 'media' für automatische Erkennung der Systemeinstellung
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        dark: {
+          primary: '#3B82F6', // blau
+          surface: '#1F2937', // dunkelgrau für Karten
+          background: '#111827', // noch dunklerer Hintergrund
+          text: {
+            primary: '#F9FAFB', // helles weiß für Haupttext
+            secondary: '#9CA3AF', // grau für Sekundärtext
+          },
+          border: '#374151' // dunkelgrau für Ränder
+        }
+      }
+    },
   },
   plugins: [],
 }
