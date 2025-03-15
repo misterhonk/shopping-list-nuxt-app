@@ -1,23 +1,76 @@
+/* Import der Schriftarten */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Anpassen des Scroll-Verhaltens */
-html {
-  scroll-behavior: smooth;
+/* Basis-Stil-Anpassungen */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans text-warmgray-800 dark:text-warmgray-50 transition-colors duration-300 ease-in-out bg-warmgray-50 dark:bg-dark-background;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold;
+  }
 }
 
-/* Dark Mode Transition für den gesamten Body */
-body {
-  @apply transition-colors duration-300 ease-in-out;
+/* Benutzerdefinierte Komponenten */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-xl transition-all duration-200 font-medium;
+  }
+  
+  .btn-primary {
+    @apply bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 shadow-md hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-warmgray-200 text-warmgray-800 hover:bg-warmgray-300 dark:bg-warmgray-700 dark:text-warmgray-100 dark:hover:bg-warmgray-600;
+  }
+  
+  .btn-small {
+    @apply px-3 py-1 rounded-lg text-sm;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-dark-surface rounded-2xl shadow-warm dark:shadow-none p-5 transition-all duration-200;
+  }
+  
+  .input-field {
+    @apply mt-1 block w-full px-4 py-3 border border-warmgray-300 dark:border-warmgray-700 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400 dark:bg-warmgray-800 dark:text-warmgray-50 transition-all duration-200;
+  }
 }
 
-/* Anpassungen für Checkboxen im Dark Mode */
+/* Anpassungen für Checkboxen */
+input[type="checkbox"] {
+  @apply w-5 h-5 rounded-md text-brand-500 focus:ring-brand-400 border-warmgray-300 dark:border-warmgray-600 transition-colors duration-200;
+}
+
 .dark input[type="checkbox"] {
-  @apply bg-gray-700 border-gray-600;
+  @apply bg-warmgray-700 border-warmgray-600;
 }
 
 /* Fokus-Stile für bessere Zugänglichkeit */
 *:focus-visible {
-  @apply outline-none ring-2 ring-blue-500;
+  @apply outline-none ring-2 ring-brand-400;
+}
+
+/* Angepasste Animation für Hover und Focus */
+.hover-lift {
+  @apply transition-transform duration-200 ease-out;
+}
+
+.hover-lift:hover {
+  @apply transform -translate-y-1;
+}
+
+/* Bessere Animation für Dark/Light Wechsel */
+.theme-transition {
+  @apply transition-all duration-300 ease-in-out;
 }
