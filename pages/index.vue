@@ -1,14 +1,14 @@
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 
-// Status-Verwaltung
+// Entfernen der nicht mehr benötigten Debug-Variablen
 const initialized = ref(false)
 const shoppingLists = ref([])
 const currentListId = ref(null)
 const isCreatingList = ref(false)
 const newListName = ref('')
 const isAddingItem = ref(false)
-const showingItems = ref(true)
+const itemNameInput = ref(null)
 const newItem = reactive({
   name: '',
   quantity: 1,
@@ -46,33 +46,40 @@ const getTotalItemsCount = () => {
   return Array.isArray(current.items) ? current.items.length : 0
 }
 
-// WICHTIG: Hier ist die funktionierende Version von getItemsGrouped
+// Kategoriebasierte Gruppierung von Elementen
 const getItemsGrouped = computed(() => {
-  const current = getCurrentList()
-  const grouped = {}
+  console.log('getItemsGrouped wird berechnet');
+  const current = getCurrentList();
+  console.log('getCurrentList()', current);
   
+  const grouped = {};
+  
+  // Prüfen, ob items ein gültiges Array ist
   if (!Array.isArray(current.items)) {
-    console.warn('items ist kein Array:', current)
-    return {}
+    console.log('items ist kein Array!');
+    return categories.reduce((obj, cat) => { obj[cat] = []; return obj }, {});
   }
+  
+  console.log('Anzahl der Items:', current.items.length);
   
   // Für jede Kategorie ein Array erstellen (auch wenn leer)
   categories.forEach(category => {
-    grouped[category] = []
-  })
+    grouped[category] = [];
+  });
   
   // Dann Elemente in die entsprechenden Kategorien einsortieren
   current.items.forEach(item => {
-    const category = item.category || 'Sonstiges'
+    console.log('Verarbeite Item:', item);
+    const category = item.category || 'Sonstiges';
     if (grouped[category]) {
-      grouped[category].push(item)
+      grouped[category].push(item);
     } else {
-      grouped['Sonstiges'].push(item)
+      grouped['Sonstiges'].push(item);
     }
-  })
+  });
   
-  console.log('Gruppierte Items:', grouped)
-  return grouped
+  console.log('Kategorien mit Items:', Object.keys(grouped).filter(cat => grouped[cat].length > 0));
+  return grouped;
 })
 
 // Alle Items in der aktuellen Liste für einfache Anzeige
@@ -269,10 +276,27 @@ const saveToLocalStorage = () => {
   }
 }
 
+// Fokus-Behandlung
+const focusItemNameInput = () => {
+  // Warten bis das DOM aktualisiert ist
+  setTimeout(() => {
+    if (itemNameInput.value) {
+      itemNameInput.value.focus()
+    }
+  }, 100)
+}
+
 // App-Initialisierung
 onMounted(() => {
   loadFromLocalStorage()
   initialized.value = true
+})
+
+// Watch für isAddingItem, um den Fokus zu setzen
+watch(isAddingItem, (newVal) => {
+  if (newVal) {
+    focusItemNameInput()
+  }
 })
 </script>
 
@@ -413,77 +437,87 @@ onMounted(() => {
           </div>
         </div>
 
-        <div v-if="isAddingItem" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-8">
+        <div v-if="isAddingItem" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-8" @keyup.esc="isAddingItem = false">
           <h3 class="text-xl font-bold mb-5 text-gray-800 dark:text-white">Neuer Artikel</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Artikelname</label>
-              <input 
-                v-model="newItem.name" 
-                type="text" 
-                placeholder="z.B. Äpfel"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
-              />
+          <form @submit.prevent="isFormValid && addNewItem()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Artikelname</label>
+                <input 
+                  v-model="newItem.name" 
+                  type="text" 
+                  placeholder="z.B. Äpfel"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+                  ref="itemNameInput"
+                  autofocus
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Menge</label>
+                <input 
+                  v-model.number="newItem.quantity" 
+                  type="number" 
+                  min="1"
+                  placeholder="1"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategorie</label>
+                <select 
+                  v-model="newItem.category"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+                >
+                  <option v-for="category in categories" :key="category" :value="category">
+                    {{ category }}
+                  </option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Menge</label>
-              <input 
-                v-model.number="newItem.quantity" 
-                type="number" 
-                min="1"
-                placeholder="1"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategorie</label>
-              <select 
-                v-model="newItem.category"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+            <div class="mt-6 flex justify-end space-x-3">
+              <button 
+                type="button"
+                @click="isAddingItem = false" 
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
               >
-                <option v-for="category in categories" :key="category" :value="category">
-                  {{ category }}
-                </option>
-              </select>
+                Abbrechen
+              </button>
+              <button 
+                type="submit"
+                class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                :disabled="!isFormValid"
+                :class="{'opacity-50 cursor-not-allowed': !isFormValid}"
+              >
+                Artikel hinzufügen
+              </button>
             </div>
-          </div>
-          <div class="mt-6 flex justify-end space-x-3">
-            <button 
-              @click="isAddingItem = false" 
-              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
-            >
-              Abbrechen
-            </button>
-            <button 
-              @click="addNewItem" 
-              class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
-              :disabled="!isFormValid"
-              :class="{'opacity-50 cursor-not-allowed': !isFormValid}"
-            >
-              Artikel hinzufügen
-            </button>
-          </div>
+          </form>
         </div>
         
-        <!-- VEREINFACHTE ANSICHT NUR FÜR DEBUGGING -->
-        <div v-if="showingItems" class="mb-8">
+        <!-- OPTIMIERTE ARTIKELANSICHT MIT KATEGORIEKENNZEICHNUNG -->
+        <div class="mb-8">
           <h3 class="font-bold text-xl text-orange-500 mb-3">Alle Artikel:</h3>
-          <ul class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-            <li v-for="item in allItems" :key="item.id" class="p-3 border-b border-gray-100 dark:border-gray-700 last:border-0 flex justify-between items-center">
-              <div class="flex items-center">
+          <ul class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden divide-y divide-gray-100 dark:divide-gray-700">
+            <li v-for="item in allItems" :key="item.id" class="p-4 flex justify-between items-center">
+              <div class="flex items-center flex-1">
                 <input 
                   type="checkbox" 
                   :checked="item.checked" 
                   @change="toggleItemChecked(item.id)" 
                   class="mr-3 h-5 w-5 text-orange-500 rounded focus:ring-orange-500"
                 />
-                <span :class="{'line-through text-gray-400': item.checked}" class="font-medium">
-                  {{ item.name }} ({{ item.quantity }}) - {{ item.category }}
-                </span>
+                <div class="flex flex-col sm:flex-row sm:items-center flex-1">
+                  <span :class="{'line-through text-gray-400 dark:text-gray-500': item.checked}" class="font-medium mr-2">
+                    {{ item.name }} ({{ item.quantity }})
+                  </span>
+                  <span class="text-sm text-orange-500 dark:text-orange-400 sm:ml-auto">
+                    {{ item.category }}
+                  </span>
+                </div>
               </div>
               <button 
                 @click="removeItem(item.id)" 
-                class="p-1 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                class="p-1 ml-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -493,52 +527,7 @@ onMounted(() => {
           </ul>
         </div>
 
-        <!-- Kategoriebasierte Gruppierung (JETZT DEAKTIVIERT) -->
-        <!-- <div class="space-y-8">
-          <div v-for="(items, category) in getItemsGrouped" :key="category" v-if="items && items.length > 0">
-            <div class="flex items-center mb-4">
-              <h3 class="font-bold text-xl text-orange-500">{{ category }}</h3>
-              <div class="ml-3 h-px flex-grow bg-gray-200 dark:bg-gray-700"></div>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-              <ul class="divide-y divide-gray-100 dark:divide-gray-700">
-                <li v-for="item in items" :key="item.id" class="py-3 first:pt-0 last:pb-0">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <input 
-                        type="checkbox" 
-                        :id="item.id" 
-                        :checked="item.checked" 
-                        @change="toggleItemChecked(item.id)" 
-                        class="mr-3 h-5 w-5 text-orange-500 rounded focus:ring-orange-500"
-                      />
-                      <div class="block">
-                        <span :class="{
-                          'line-through text-gray-400 dark:text-gray-600': item.checked, 
-                          'text-gray-800 dark:text-gray-100': !item.checked
-                        }" class="font-medium">
-                          {{ item.name }}
-                        </span>
-                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                          ({{ item.quantity }})
-                        </span>
-                      </div>
-                    </div>
-                    <button 
-                      @click="removeItem(item.id)" 
-                      class="p-1 rounded-full text-gray-500 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div> -->
+        <!-- Kategoriebasierte Gruppierung wurde durch verbesserte einheitliche Listenansicht ersetzt -->
         
         <div v-if="getTotalItemsCount() === 0" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center">
           <div class="inline-flex justify-center items-center w-16 h-16 bg-gray-100 dark:bg-gray-700 text-orange-500 rounded-full mb-4">
