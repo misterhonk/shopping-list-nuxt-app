@@ -6,20 +6,20 @@ export const categoryTemplates = {
     name: 'Supermarkt',
     description: 'Standardkategorien für einen typischen Supermarkt',
     categories: [
-      'Obst & Gemüse',
-      'Fleisch & Fisch',
-      'Backwaren',
-      'Milchprodukte',
-      'Getränke',
-      'Tiefkühlwaren',
-      'Konserven',
-      'Grundnahrungsmittel',
-      'Snacks & Süßigkeiten',
-      'Gewürze & Backen',
-      'Fertiggerichte',
-      'Internationale Küche',
-      'Bio-Produkte',
-      'Sonstiges',
+      { id: 'obst_gemuese', name: 'Obst & Gemüse' },
+      { id: 'fleisch_fisch', name: 'Fleisch & Fisch' },
+      { id: 'backwaren', name: 'Backwaren' },
+      { id: 'milchprodukte', name: 'Milchprodukte' },
+      { id: 'getraenke', name: 'Getränke' },
+      { id: 'tiefkuehlwaren', name: 'Tiefkühlwaren' },
+      { id: 'konserven', name: 'Konserven' },
+      { id: 'grundnahrungsmittel', name: 'Grundnahrungsmittel' },
+      { id: 'snacks_suessigkeiten', name: 'Snacks & Süßigkeiten' },
+      { id: 'gewuerze_backen', name: 'Gewürze & Backen' },
+      { id: 'fertiggerichte', name: 'Fertiggerichte' },
+      { id: 'internationale_kueche', name: 'Internationale Küche' },
+      { id: 'bio_produkte', name: 'Bio-Produkte' },
+      { id: 'sonstiges', name: 'Sonstiges' },
     ],
   },
 
@@ -29,18 +29,18 @@ export const categoryTemplates = {
     name: 'Drogeriemarkt',
     description: 'Kategorien für einen typischen Drogeriemarkt',
     categories: [
-      'Körperpflege',
-      'Gesicht & Make-up',
-      'Haarpflege',
-      'Mundpflege',
-      'Hygieneartikel',
-      'Baby & Kind',
-      'Waschmittel',
-      'Reinigungsmittel',
-      'Gesundheit',
-      'Nahrungsergänzung',
-      'Haushaltswaren',
-      'Sonstiges',
+      { id: 'koerperpflege', name: 'Körperpflege' },
+      { id: 'gesicht_makeup', name: 'Gesicht & Make-up' },
+      { id: 'haarpflege', name: 'Haarpflege' },
+      { id: 'mundpflege', name: 'Mundpflege' },
+      { id: 'hygieneartikel', name: 'Hygieneartikel' },
+      { id: 'baby_kind', name: 'Baby & Kind' },
+      { id: 'waschmittel', name: 'Waschmittel' },
+      { id: 'reinigungsmittel', name: 'Reinigungsmittel' },
+      { id: 'gesundheit', name: 'Gesundheit' },
+      { id: 'nahrungsergaenzung', name: 'Nahrungsergänzung' },
+      { id: 'haushaltswaren', name: 'Haushaltswaren' },
+      { id: 'sonstiges', name: 'Sonstiges' },
     ],
   },
 
@@ -50,20 +50,20 @@ export const categoryTemplates = {
     name: 'Baumarkt',
     description: 'Kategorien für einen typischen Baumarkt',
     categories: [
-      'Werkzeuge',
-      'Elektro',
-      'Holz',
-      'Farben & Lacke',
-      'Bauen',
-      'Sanitär',
-      'Eisenwaren',
-      'Garten',
-      'Heimwerken',
-      'Maschinen',
-      'Bodenbeläge',
-      'Auto & Fahrrad',
-      'Beleuchtung',
-      'Sonstiges',
+      { id: 'werkzeuge', name: 'Werkzeuge' },
+      { id: 'elektro', name: 'Elektro' },
+      { id: 'holz', name: 'Holz' },
+      { id: 'farben_lacke', name: 'Farben & Lacke' },
+      { id: 'bauen', name: 'Bauen' },
+      { id: 'sanitaer', name: 'Sanitär' },
+      { id: 'eisenwaren', name: 'Eisenwaren' },
+      { id: 'garten', name: 'Garten' },
+      { id: 'heimwerken', name: 'Heimwerken' },
+      { id: 'maschinen', name: 'Maschinen' },
+      { id: 'bodenbelaege', name: 'Bodenbeläge' },
+      { id: 'auto_fahrrad', name: 'Auto & Fahrrad' },
+      { id: 'beleuchtung', name: 'Beleuchtung' },
+      { id: 'sonstiges', name: 'Sonstiges' },
     ],
   },
 
@@ -73,18 +73,18 @@ export const categoryTemplates = {
     name: 'Elektronikmarkt',
     description: 'Kategorien für einen typischen Elektronikmarkt',
     categories: [
-      'Computer & Zubehör',
-      'Smartphones & Tablets',
-      'TV & Audio',
-      'Foto & Video',
-      'Haushaltselektronik',
-      'Kabel & Adapter',
-      'Gaming',
-      'Smart Home',
-      'Speichermedien',
-      'Software',
-      'Netzwerk',
-      'Sonstiges',
+      { id: 'computer_zubehoer', name: 'Computer & Zubehör' },
+      { id: 'smartphones_tablets', name: 'Smartphones & Tablets' },
+      { id: 'tv_audio', name: 'TV & Audio' },
+      { id: 'foto_video', name: 'Foto & Video' },
+      { id: 'haushaltselektronik', name: 'Haushaltselektronik' },
+      { id: 'kabel_adapter', name: 'Kabel & Adapter' },
+      { id: 'gaming', name: 'Gaming' },
+      { id: 'smart_home', name: 'Smart Home' },
+      { id: 'speichermedien', name: 'Speichermedien' },
+      { id: 'software', name: 'Software' },
+      { id: 'netzwerk', name: 'Netzwerk' },
+      { id: 'sonstiges', name: 'Sonstiges' },
     ],
   },
 };
@@ -103,4 +103,21 @@ export const getTemplate = (templateId) => {
     categoryTemplates[templateId] ||
     categoryTemplates[defaultTemplateId]
   );
+};
+
+// Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID
+export const generateCategoryId = (name) => {
+  return name.toLowerCase()
+    .replace(/[äöüß]/g, (match) => {
+      switch (match) {
+        case 'ä': return 'ae';
+        case 'ö': return 'oe';
+        case 'ü': return 'ue';
+        case 'ß': return 'ss';
+        default: return match;
+      }
+    })
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '')
+    + '_' + Date.now().toString().slice(-6);
 };

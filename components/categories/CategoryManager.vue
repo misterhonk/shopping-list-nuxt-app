@@ -56,31 +56,6 @@
         </h3>
         <div class="flex space-x-2">
           <button
-            v-if="!isEditMode"
-            @click="toggleEditMode"
-            class="btn btn-secondary"
-          >
-            <span class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Bearbeiten
-            </span>
-          </button>
-          <button
-            v-else
-            @click="toggleEditMode"
-            class="btn btn-secondary"
-          >
-            <span class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Abbrechen
-            </span>
-          </button>
-          <button
-            v-if="isEditMode"
             @click="showNewCategoryModal = true"
             class="btn btn-primary"
           >
@@ -97,14 +72,14 @@
       <!-- Kategorienliste -->
       <ul class="bg-gray-50 dark:bg-gray-900 rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
         <li
-          v-for="(category, index) in currentCategories"
-          :key="category"
-          class="p-4 hover:bg-gray-100 dark:hover:bg-gray-800 flex justify-between items-center"
+          v-for="category in currentCategoriesArray"
+          :key="category.id + '_' + componentKey"
+          class="p-4 hover:bg-gray-100 dark:hover:bg-gray-800 flex justify-between items-center group relative"
         >
           <span class="font-medium text-gray-800 dark:text-gray-200">
-            {{ category }}
+            {{ category.name }}
           </span>
-          <div v-if="isEditMode" class="flex space-x-2">
+          <div class="flex space-x-2 opacity-0 group-hover:opacity-100 md:group-hover:opacity-100 transition-opacity duration-200 absolute right-4 bg-gray-100 dark:bg-gray-800 py-1 px-2 rounded">
             <button
               @click="editCategory(category)"
               class="p-1 rounded-full text-gray-500 hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -387,8 +362,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useCategoryStore } from '../../stores/categoryStore';
+import { generateCategoryId, defaultTemplateId } from '../../stores/templates/categoryTemplates';
 
 // Wrapper für den Pinia-Store mit Fehlerbehandlung
 let categoryStore = null;
@@ -401,7 +377,18 @@ try {
 // Daten aus dem Store
 const templatesList = computed(() => categoryStore?.templatesList || []);
 const currentTemplate = computed(() => categoryStore?.currentTemplate || { name: 'Standard', categories: [] });
-const currentCategories = computed(() => categoryStore?.currentCategories || []);
+
+// Explizites Template mit direktem Zugriff auf den Store
+const currentCategories = computed(() => {
+  // Immer die aktuellste Version direkt aus dem Store nehmen
+  if (categoryStore) {
+    const cats = categoryStore.currentCategories;
+    console.log('currentCategories computed neu ausgeführt:', cats);
+    return cats;
+  }
+  return [];
+});
+
 const activeTemplateId = computed(() => categoryStore?.activeTemplateId || '');
 const isTemplateCustom = computed(() => {
   return categoryStore?.customTemplates && categoryStore.customTemplates[activeTemplateId.value] !== undefined;
@@ -419,6 +406,37 @@ const showDeleteTemplateModal = ref(false);
 const newCategoryName = ref('');
 const editCategoryName = ref('');
 const currentEditingCategory = ref('');
+
+// Komponenten-Key für Neurendering
+const componentKey = ref(0);
+
+// Array für Kategorien mit zusätzlicher Reaktivität und Kompatibilität
+const currentCategoriesArray = computed(() => {
+  // Explizit ein neues Array zurückgeben, damit Vue die Änderungen erkennt
+  const categories = [...currentCategories.value];
+  
+  // Kompatibilitätsprüfung: Konvertiere String-Kategorien zu Objekten für die Anzeige
+  return categories.map(category => {
+    if (typeof category === 'string') {
+      // Altformat: String-Kategorie in kompatibles Objekt konvertieren
+      return { id: generateCategoryId(category), name: category };
+    } else if (typeof category === 'object' && category !== null) {
+      // Neues Format: Kategorie-Objekt mit ID und Name
+      return category;
+    } else {
+      // Fallback für unbekannte Formate
+      console.warn('Unbekanntes Kategorieformat:', category);
+      return { id: 'unknown_' + Date.now(), name: 'Unbekannt' };
+    }
+  });
+});
+
+// Debug-Watcher für Kategorieänderungen
+watch(currentCategories, (newVal) => {
+  console.log('Aktuelle Kategorien geändert:', newVal);
+  // Force Component Re-render
+  componentKey.value += 1;
+});
 const newTemplate = ref({
   name: '',
   description: '',
@@ -434,6 +452,14 @@ onMounted(() => {
   if (categoryStore) {
     try {
       categoryStore.loadFromLocalStorage();
+      
+      // Aktiviere das aktuelle Template, falls die Komponente in einen leeren Zustand geladen wird
+      if (!categoryStore.activeTemplateId) {
+        categoryStore.activateTemplate(defaultTemplateId);
+      }
+      
+      // Komponente explizit neu rendern, sobald sie geladen ist
+      componentKey.value = 1;
     } catch (e) {
       console.error('Fehler beim Laden aus localStorage:', e);
     }
@@ -456,29 +482,84 @@ const addNewCategory = () => {
     categoryStore.addCategory(newCategoryName.value.trim());
     newCategoryName.value = '';
     showNewCategoryModal.value = false;
+    
+    // Komponente explizit neu rendern
+    componentKey.value += 1;
+    
+    // Sicherstellen, dass die Änderungen auch sichtbar sind
+    setTimeout(() => {
+      componentKey.value += 1;
+    }, 100);
   }
 };
 
 const editCategory = (category) => {
   currentEditingCategory.value = category;
-  editCategoryName.value = category;
+  editCategoryName.value = category.name;
   showEditCategoryModal.value = true;
 };
 
 const saveEditedCategory = () => {
   if (!categoryStore) return;
   if (editCategoryName.value.trim() && currentEditingCategory.value) {
-    categoryStore.editCategory(currentEditingCategory.value, editCategoryName.value.trim());
+    console.log('saveEditedCategory aufgerufen mit:', { 
+      category: currentEditingCategory.value, 
+      neuName: editCategoryName.value.trim() 
+    });
+    
+    // Wir brauchen eine Referenz zur Kategorie, bevor wir das Modal schließen
+    const categoryToEdit = currentEditingCategory.value;
+    const newName = editCategoryName.value.trim();
+    
+    // Modal schließen und Felder zurücksetzen
     showEditCategoryModal.value = false;
-    currentEditingCategory.value = '';
+    currentEditingCategory.value = null;
     editCategoryName.value = '';
+    
+    // Jetzt erst die Kategorie bearbeiten
+    try {
+      // Direkter Test mit dem Store
+      console.log('Bearbeite Kategorie', categoryToEdit.id, 'von', categoryToEdit.name, 'zu', newName);
+      categoryStore.editCategory(categoryToEdit, newName);
+      
+      // Komponente explizit neu rendern
+      componentKey.value += 1;
+      
+      // Einen weiteren Versuch starten, falls das erste Update nicht funktioniert hat
+      setTimeout(() => {
+        try {
+          // Sicherstellen, dass die Bearbeitung angewendet wurde
+          categoryStore.loadFromLocalStorage();
+          
+          // Nochmals Komponente neu rendern
+          componentKey.value += 1;
+          console.log('Kategorien nach erneutem Laden:', categoryStore.currentCategories);
+        } catch (e) {
+          console.error('Fehler beim Neuladen:', e);
+        }
+      }, 200);
+    } catch (error) {
+      console.error('Fehler bei saveEditedCategory:', error);
+      alert('Es gab ein Problem beim Speichern der Änderung.');
+    }
   }
 };
 
 const deleteCategory = (category) => {
   if (!categoryStore) return;
-  if (confirm(`Möchten Sie die Kategorie "${category}" wirklich löschen?`)) {
+  
+  const confirmText = `Möchten Sie die Kategorie "${category.name}" wirklich löschen?`;
+  
+  if (confirm(confirmText)) {
     categoryStore.deleteCategory(category);
+    
+    // Komponente explizit neu rendern
+    componentKey.value += 1;
+    
+    // Sicherstellen, dass die Änderungen auch sichtbar sind
+    setTimeout(() => {
+      componentKey.value += 1;
+    }, 100);
   }
 };
 
@@ -533,6 +614,13 @@ const resetToDefaults = () => {
 </script>
 
 <style scoped>
+/* CSS für Touch-Geräte */
+@media (hover: none) {
+  .group:active .group-hover\:opacity-100 {
+    opacity: 1;
+  }
+}
+
 .btn-danger {
   @apply px-4 py-2 rounded-md font-medium transition-all bg-red-500 text-white hover:bg-red-600;
 }

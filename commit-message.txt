@@ -1,8 +1,7 @@
-feat: Responsive Design für mobile Ansicht
+fix: Kategorie-Objekte in Artikelverwaltung unterstützen
 
-- Buttons auf kleinen Bildschirmen nur mit Icons anzeigen
-- Text auf Desktop-Ansicht beibehalten
-- Tailwind xs-Breakpoint bei 480px hinzugefügt
-- Grid Layout für Listenauswahl auf mobilen Geräten
-- Platzsparende Layout-Anpassungen für kleine Displays
-- Verbesserte Darstellung langer Texte mit truncate
+- ItemCreationForm für Kategorie-Objekte angepasst
+- Kompatibilitätsschicht für die Anzeige der Kategoriennamen
+- Robuste Extraktion von Kategorienamen aus beiden Formaten
+- Verbesserte Behandlung von Fallback-Werten
+- Debugging-Output für Artikel-Erstellung

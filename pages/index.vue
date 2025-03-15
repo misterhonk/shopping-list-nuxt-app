@@ -160,12 +160,35 @@ const createNewList = (name, options) => {
 
 // Neuen Artikel hinzufügen
 const addNewItem = (item) => {
+  // Kategorie aus dem Item extrahieren
+  let categoryValue;
+  
+  if (typeof item.category === 'object' && item.category !== null) {
+    if (item.category.id && item.category.name) {
+      // Neues Format: Kategorie als Objekt mit id und name
+      categoryValue = item.category;
+    } else {
+      // Objekt, aber keine id/name - Fallback
+      categoryValue = { 
+        id: 'sonstiges_' + Date.now(), 
+        name: String(item.category) || 'Sonstiges' 
+      };
+    }
+  } else {
+    // Altes Format: Kategorie als String
+    categoryValue = { 
+      id: (item.category || '').toString().toLowerCase().replace(/\s+/g, '_') || 'sonstiges', 
+      name: String(item.category) || 'Sonstiges' 
+    };
+  }
+  
   const newItem = {
     name: item.name,
     quantity: item.quantity,
-    category: item.category
+    category: categoryValue
   };
   
+  console.log('Füge neuen Artikel hinzu:', newItem);
   addItem(newItem);
   isAddingItem.value = false;
 };

@@ -30,8 +30,8 @@
             v-model="item.category"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
           >
-            <option v-for="category in categories" :key="category" :value="category">
-              {{ category }}
+            <option v-for="category in normalizedCategories" :key="category.id" :value="category">
+              {{ category.name }}
             </option>
           </select>
         </div>
@@ -69,10 +69,31 @@ const props = defineProps({
 
 const emit = defineEmits(['add', 'cancel']);
 
+const normalizedCategories = computed(() => {
+  return props.categories.map(category => {
+    // Wenn es bereits ein Objekt mit id und name ist
+    if (typeof category === 'object' && category !== null && category.id && category.name) {
+      return category;
+    }
+    // Wenn es ein String ist, konvertiere es zu einem Objekt
+    if (typeof category === 'string') {
+      return {
+        id: category.toLowerCase().replace(/[\s&]/g, '_'),
+        name: category
+      };
+    }
+    // Fallback
+    return {
+      id: 'unknown_' + Math.random().toString(36).substr(2, 9),
+      name: String(category || 'Sonstiges')
+    };
+  });
+});
+
 const item = reactive({
   name: '',
   quantity: 1,
-  category: props.categories.length > 0 ? props.categories[0] : 'Sonstiges'
+  category: computed(() => normalizedCategories.value.length > 0 ? normalizedCategories.value[0] : { id: 'sonstiges', name: 'Sonstiges' })
 });
 
 const nameInput = ref(null);
@@ -84,7 +105,16 @@ const isValid = computed(() => {
 const onSubmit = () => {
   if (!isValid.value) return;
   
-  emit('add', { ...item });
+  const itemToAdd = {
+    name: item.name,
+    quantity: item.quantity,
+    category: typeof item.category === 'object' ? item.category : {
+      id: 'sonstiges',
+      name: String(item.category || 'Sonstiges')
+    }
+  };
+  
+  emit('add', itemToAdd);
   
   // Zurücksetzen nach dem Hinzufügen
   item.name = '';
@@ -97,6 +127,7 @@ const onSubmit = () => {
 const onCancel = () => {
   item.name = '';
   item.quantity = 1;
+  // Kategorie nicht zurücksetzen, da es computed ist
   emit('cancel');
 };
 

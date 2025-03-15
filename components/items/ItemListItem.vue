@@ -12,7 +12,7 @@
           {{ item.name }} ({{ item.quantity }})
         </span>
         <span class="text-sm text-orange-500 dark:text-orange-400 sm:ml-auto">
-          {{ item.category }}
+          {{ getCategoryName(item.category) }}
         </span>
       </div>
     </div>
@@ -34,6 +34,16 @@ defineProps({
     required: true
   }
 });
+
+const getCategoryName = (category) => {
+  if (typeof category === 'object' && category !== null && category.name) {
+    return category.name;
+  }
+  if (typeof category === 'string') {
+    return category;
+  }
+  return 'Sonstiges';
+};
 
 defineEmits(['toggle', 'remove']);
 </script>
