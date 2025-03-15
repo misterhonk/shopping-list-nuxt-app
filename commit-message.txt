@@ -1,0 +1,8 @@
+feat: Responsive Design für mobile Ansicht
+
+- Buttons auf kleinen Bildschirmen nur mit Icons anzeigen
+- Text auf Desktop-Ansicht beibehalten
+- Tailwind xs-Breakpoint bei 480px hinzugefügt
+- Grid Layout für Listenauswahl auf mobilen Geräten
+- Platzsparende Layout-Anpassungen für kleine Displays
+- Verbesserte Darstellung langer Texte mit truncate
