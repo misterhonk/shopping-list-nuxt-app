@@ -1,5 +1,5 @@
 /* Import der Schriftarten */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -16,14 +16,14 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-semibold;
+    @apply font-display font-medium tracking-tight;
   }
 }
 
 /* Benutzerdefinierte Komponenten */
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-xl transition-all duration-200 font-medium;
+    @apply px-4 py-2 rounded-xl transition-all duration-200 font-medium tracking-wide;
   }
   
   .btn-primary {
@@ -73,4 +73,26 @@ input[type="checkbox"] {
 /* Bessere Animation für Dark/Light Wechsel */
 .theme-transition {
   @apply transition-all duration-300 ease-in-out;
+}
+
+/* Besondere Überschriften-Stile */
+.heading-accent {
+  @apply font-display text-warmgray-900 dark:text-warmgray-50 font-bold;
+}
+
+/* Akzentuierte Schriftgewichte für verschiedene Elemente */
+.font-display {
+  @apply tracking-tight;
+}
+
+h1 {
+  @apply font-display font-black text-3xl md:text-4xl;
+}
+
+h2 {
+  @apply font-display font-extrabold text-2xl md:text-3xl;
+}
+
+.category-heading {
+  @apply font-display font-bold italic text-lg text-brand-700 dark:text-brand-300;
 }
