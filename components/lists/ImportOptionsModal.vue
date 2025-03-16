@@ -18,7 +18,7 @@
               type="radio" 
               id="option-new" 
               name="import-option" 
-              value="new"
+              value="create"
               v-model="selectedOption"
               class="mt-1 mr-2"
             />
@@ -60,7 +60,7 @@
                     :key="list.id" 
                     :value="list.id"
                   >
-                    {{ list.name }} ({{ list.itemCount }} Artikel)
+                    {{ list.name }} ({{ list.items?.length || 0 }} Artikel)
                   </option>
                 </select>
                 
@@ -71,7 +71,7 @@
                       type="radio" 
                       id="mode-append" 
                       name="update-mode" 
-                      value="append"
+                      value="merge"
                       v-model="updateMode"
                       class="mr-2"
                     />
@@ -120,7 +120,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
   isOpen: Boolean,
@@ -137,9 +137,16 @@ const props = defineProps({
 const emit = defineEmits(['confirm', 'cancel']);
 
 // Import-Option (neue Liste oder bestehende aktualisieren)
-const selectedOption = ref('new');
+const selectedOption = ref('create');
 const selectedListId = ref('');
-const updateMode = ref('append'); // 'append' oder 'replace'
+const updateMode = ref('merge'); // 'merge' oder 'replace'
+
+// Wenn sich die Optionen ändern, aktualisiere Sichtbarkeit
+watch(() => props.isOpen, (isOpen) => {
+  if (isOpen) {
+    findMatchingList();
+  }
+});
 
 // Vorselektieren der Liste, falls Name identisch
 const findMatchingList = () => {
@@ -155,14 +162,9 @@ const findMatchingList = () => {
   }
 };
 
-// Beim Öffnen des Modals prüfen, ob eine passende Liste existiert
-if (props.isOpen) {
-  findMatchingList();
-}
-
 // Prüfen, ob alle notwendigen Optionen ausgewählt sind
 const isValid = computed(() => {
-  if (selectedOption.value === 'new') {
+  if (selectedOption.value === 'create') {
     return true;
   }
   
@@ -175,10 +177,13 @@ const isValid = computed(() => {
 
 // Import bestätigen
 const confirmImport = () => {
-  emit('confirm', {
-    option: selectedOption.value,
-    listId: selectedOption.value === 'update' ? selectedListId.value : null,
-    updateMode: updateMode.value
-  });
+  const options = {
+    mode: selectedOption.value === 'create' ? 'create' : updateMode.value,
+    targetListId: selectedOption.value === 'update' ? selectedListId.value : undefined,
+    keepExistingItems: updateMode.value === 'merge'
+  };
+  
+  console.log('Import-Optionen:', options);
+  emit('confirm', options);
 };
 </script>

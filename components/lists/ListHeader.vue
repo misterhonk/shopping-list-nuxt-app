@@ -60,7 +60,7 @@
         >
           <div class="py-1" role="menu" aria-orientation="vertical">
             <button 
-              @click="exportList(props)"
+              @click="exportList"
               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 w-full text-left"
               role="menuitem"
             >
@@ -158,29 +158,13 @@ onUnmounted(() => {
   document.removeEventListener('click', closeOnOutsideClick);
 });
 
-// Export-Funktion direkt implementieren, anstatt das Composable zu verwenden
-const exportList = (props) => {
+// Export-Funktion - nur noch ein Event an die Elternkomponente emittieren
+const exportList = () => {
   console.log('Export-Funktion aufgerufen für:', props.listName);
   
-  try {
-    // Daten aus den Props sammeln
-    const exportData = {
-      name: props.listName,
-      templateId: props.templateId,
-      exportDate: new Date().toISOString(),
-      // Items müssen von außen bereitgestellt werden
-      items: [],
-      exportVersion: '1.0.0'
-    };
-    
-    // Von der Elternkomponente die aktuelle Liste anfordern
-    emit('export-list', exportData);
-    showExportMenu.value = false;
-    return true;
-  } catch (error) {
-    console.error('Fehler beim Vorbereiten des Exports:', error);
-    return false;
-  }
+  // Wir emittieren das Event ohne Daten, die Elternkomponente hat den aktuellen Zustand
+  emit('export-list');
+  showExportMenu.value = false;
 };
 
 // Import-Funktion

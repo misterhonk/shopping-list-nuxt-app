@@ -1,215 +1,128 @@
-import { ShoppingList, ShoppingItem, Category } from '../types';
+import { ShoppingItem, ShoppingList, Category } from '../types';
 
 /**
- * Hilfsmodul für die Migration alter Datenstrukturen
- * Bietet Funktionen zur Konvertierung von Daten zwischen verschiedenen Versionen der App
+ * Migriert alte Kategorien-Strings zu Kategorie-Objekten
+ * @param items - Die zu migrierenden Artikel
+ * @param categoriesMap - Eine Map von Kategorienamen zu Kategorien-Objekten
+ * @returns Die migrierten Artikel
  */
+export const migrateCategoriesToObjects = (
+  items: ShoppingItem[],
+  categoriesMap: Record<string, Category>
+): ShoppingItem[] => {
+  return items.map(item => {
+    // Wenn die Kategorie bereits ein Objekt ist, behalten wir sie bei
+    if (typeof item.category === 'object') {
+      return item;
+    }
 
-/**
- * Migrationsoption für die Liste
- */
-interface MigrationOptions {
-  addTimestamps?: boolean;
-  normalizeCategories?: boolean;
-  sanitizeItems?: boolean;
-  itemDefaults?: Partial<ShoppingItem>;
-}
-
-/**
- * Migriert eine alte Listenstruktur in das aktuelle Format
- * @param oldList - Die zu migrierende Liste
- * @param options - Migrationsoptionen
- * @returns Die migrierte Liste
- */
-export function migrateList(oldList: any, options: MigrationOptions = {}): ShoppingList {
-  // Basislistenstruktur erstellen
-  const now = Date.now();
-  const migratedList: ShoppingList = {
-    id: oldList.id || now.toString(),
-    name: typeof oldList.name === 'string' ? oldList.name : 'Migrierte Liste',
-    items: [],
-    templateId: oldList.templateId || 'supermarket',
-    isFavorite: !!oldList.isFavorite,
-    createdAt: oldList.createdAt || now,
-    modifiedAt: oldList.modifiedAt || now
-  };
-
-  // Artikel migrieren, wenn vorhanden
-  if (Array.isArray(oldList.items)) {
-    migratedList.items = oldList.items.map((item: any) => migrateItem(item, options));
-  }
-
-  return migratedList;
-}
-
-/**
- * Migriert einen alten Artikel in das aktuelle Format
- * @param oldItem - Der zu migrierende Artikel
- * @param options - Migrationsoptionen
- * @returns Der migrierte Artikel
- */
-export function migrateItem(oldItem: any, options: MigrationOptions = {}): ShoppingItem {
-  // Standardwerte für Items
-  const defaultItem = {
-    id: '',
-    name: '',
-    quantity: 1,
-    category: 'Sonstiges',
-    checked: false,
-    price: 0,
-    ...options.itemDefaults
-  };
-  
-  // Basisstruktur erstellen
-  const now = Date.now();
-  const migratedItem: ShoppingItem = {
-    id: oldItem.id || now.toString(),
-    name: typeof oldItem.name === 'string' ? oldItem.name : 'Unbenannter Artikel',
-    quantity: typeof oldItem.quantity === 'number' && oldItem.quantity > 0 ? oldItem.quantity : 1,
-    category: migrateCategory(oldItem.category, options),
-    checked: !!oldItem.checked,
-    price: typeof oldItem.price === 'number' && oldItem.price >= 0 ? oldItem.price : 0,
-    addedAt: oldItem.addedAt || now,
-    modifiedAt: oldItem.modifiedAt || now
-  };
-  
-  // Notiz hinzufügen, wenn vorhanden
-  if (typeof oldItem.note === 'string' && oldItem.note.trim() !== '') {
-    migratedItem.note = oldItem.note;
-  }
-  
-  return migratedItem;
-}
-
-/**
- * Migriert eine alte Kategorie in das aktuelle Format
- * @param oldCategory - Die zu migrierende Kategorie
- * @param options - Migrationsoptionen
- * @returns Die migrierte Kategorie
- */
-export function migrateCategory(oldCategory: any, options: MigrationOptions = {}): Category | string {
-  // Fallback für leere Kategorie
-  if (!oldCategory) {
-    return 'Sonstiges';
-  }
-  
-  // Wenn bereits im richtigen Format, zurückgeben
-  if (typeof oldCategory === 'object' && oldCategory !== null && oldCategory.id && oldCategory.name) {
-    return oldCategory as Category;
-  }
-  
-  // String-Kategorien in Objekte umwandeln, wenn gewünscht
-  if (options.normalizeCategories && typeof oldCategory === 'string') {
-    const categoryName = oldCategory.trim() || 'Sonstiges';
-    return {
-      id: categoryName.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+    // Ansonsten konvertieren wir den String in ein Objekt
+    const categoryName = item.category as string;
+    const category = categoriesMap[categoryName] || {
+      id: `category_${categoryName.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`,
       name: categoryName
     };
-  }
-  
-  // Bei String-Eingabe und ohne Normalisierung direkt zurückgeben
-  if (typeof oldCategory === 'string') {
-    return oldCategory || 'Sonstiges';
-  }
-  
-  // Fallback für unbekannte Formate
-  return 'Sonstiges';
-}
+
+    return {
+      ...item,
+      category
+    };
+  });
+};
 
 /**
- * Validiert eine Liste und korrigiert Fehler
- * @param list - Die zu validierende Liste
- * @returns Die validierte Liste
- */
-export function validateList(list: ShoppingList): ShoppingList {
-  const now = Date.now();
-  const validatedList = { ...list };
-  
-  // Basis-Eigenschaften prüfen und ggf. korrigieren
-  if (!validatedList.id) {
-    validatedList.id = now.toString();
-  }
-  
-  if (!validatedList.name || typeof validatedList.name !== 'string') {
-    validatedList.name = 'Unbenannte Liste';
-  }
-  
-  // Prüfen, ob items ein Array ist
-  if (!Array.isArray(validatedList.items)) {
-    validatedList.items = [];
-  } else {
-    // Alle Items validieren
-    validatedList.items = validatedList.items.map(item => validateItem(item));
-  }
-  
-  // Zeitstempel hinzufügen, falls fehlend
-  if (!validatedList.createdAt) {
-    validatedList.createdAt = now;
-  }
-  
-  if (!validatedList.modifiedAt) {
-    validatedList.modifiedAt = now;
-  }
-  
-  return validatedList;
-}
-
-/**
- * Validiert einen Artikel und korrigiert Fehler
- * @param item - Der zu validierende Artikel
- * @returns Der validierte Artikel
- */
-export function validateItem(item: ShoppingItem): ShoppingItem {
-  const now = Date.now();
-  const validatedItem = { ...item };
-  
-  // Basis-Eigenschaften prüfen und ggf. korrigieren
-  if (!validatedItem.id) {
-    validatedItem.id = now.toString();
-  }
-  
-  if (!validatedItem.name || typeof validatedItem.name !== 'string') {
-    validatedItem.name = 'Unbenannter Artikel';
-  }
-  
-  // Numerische Eigenschaften prüfen
-  if (typeof validatedItem.quantity !== 'number' || validatedItem.quantity <= 0) {
-    validatedItem.quantity = 1;
-  }
-  
-  if (typeof validatedItem.price !== 'number' || validatedItem.price < 0) {
-    validatedItem.price = 0;
-  }
-  
-  // Kategorie prüfen
-  if (!validatedItem.category) {
-    validatedItem.category = 'Sonstiges';
-  } else if (typeof validatedItem.category === 'object' && (!validatedItem.category.id || !validatedItem.category.name)) {
-    // Korrigieren ungültiger Kategorie-Objekte
-    validatedItem.category = 'Sonstiges';
-  }
-  
-  // Zeitstempel hinzufügen, falls fehlend
-  if (!validatedItem.addedAt) {
-    validatedItem.addedAt = now;
-  }
-  
-  if (!validatedItem.modifiedAt) {
-    validatedItem.modifiedAt = now;
-  }
-  
-  return validatedItem;
-}
-
-/**
- * Hilfsfunktion zum Migrieren aller Listen
+ * Migriert alte ShoppingList-Objekte zu neuen
  * @param lists - Die zu migrierenden Listen
  * @returns Die migrierten Listen
  */
-export function migrateLists(lists: any[]): ShoppingList[] {
+export const migrateShoppingLists = (lists: any[]): ShoppingList[] => {
+  return lists.map(list => ({
+    id: list.id || `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    name: list.name || 'Unbenannte Liste',
+    items: Array.isArray(list.items) ? list.items : [],
+    templateId: list.templateId || 'supermarket',
+    isFavorite: !!list.isFavorite,
+    createdAt: list.createdAt || Date.now(),
+    modifiedAt: list.modifiedAt || Date.now()
+  }));
+};
+
+/**
+ * Prüft, ob ein String ein gültiges JSON enthält
+ * @param str - Der zu prüfende String
+ * @returns true, wenn der String ein gültiges JSON enthält, sonst false
+ */
+export const isValidJSON = (str: string): boolean => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Migriert alte Listen-Formate zu neuen
+ * @param lists - Die zu migrierenden Listen
+ * @returns Die migrierten Listen
+ */
+export const migrateLists = (lists: any[]): ShoppingList[] => {
   if (!Array.isArray(lists)) {
     return [];
   }
-  
-  return lists.map(list => migrateList(list, { normalizeCategories: true }));
-}
+
+  return lists.map(list => {
+    // Stelle sicher, dass die Liste die notwendigen Eigenschaften hat
+    const migratedList: ShoppingList = {
+      id: list.id || `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      name: list.name || 'Unbenannte Liste',
+      items: [],
+      templateId: list.templateId || 'supermarket',
+      isFavorite: !!list.isFavorite,
+      createdAt: list.createdAt || Date.now(),
+      modifiedAt: list.modifiedAt || Date.now()
+    };
+
+    // Migriere die Items, falls vorhanden
+    if (Array.isArray(list.items)) {
+      migratedList.items = list.items.map((item: any) => ({
+        id: item.id || `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        name: item.name || 'Unbenannter Artikel',
+        quantity: typeof item.quantity === 'number' ? item.quantity : 1,
+        category: item.category || 'Sonstiges',
+        checked: !!item.checked,
+        price: typeof item.price === 'number' ? item.price : 0,
+        note: item.note || '',
+        addedAt: item.addedAt || Date.now(),
+        modifiedAt: item.modifiedAt || Date.now()
+      }));
+    }
+
+    return migratedList;
+  });
+};
+
+/**
+ * Überprüft, ob eine Liste dem erwarteten Format entspricht
+ * @param list - Die zu prüfende Liste
+ * @returns true, wenn die Liste gültig ist, sonst false
+ */
+export const validateList = (list: any): boolean => {
+  if (!list || typeof list !== 'object') {
+    return false;
+  }
+
+  // Prüfe, ob die Liste die notwendigen Eigenschaften hat
+  if (!list.id || typeof list.name !== 'string' || !Array.isArray(list.items)) {
+    return false;
+  }
+
+  // Prüfe die Items
+  for (const item of list.items) {
+    if (!item.id || typeof item.name !== 'string' || typeof item.quantity !== 'number') {
+      return false;
+    }
+  }
+
+  return true;
+};

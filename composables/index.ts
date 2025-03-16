@@ -7,16 +7,13 @@
 export { useLocalStorage } from './core/useLocalStorage';
 
 // Einkaufslisten
-export { useShoppingLists } from './shoppingList';
+export { useShoppingLists } from './useShoppingLists';
 
 // Einkaufsartikel
-export { useShoppingItems } from './shoppingItems';
+export { useShoppingItems } from './useShoppingItems';
 
 // Import/Export
 export { useListImportExport } from './importExport';
-
-// Utils
-export * from './utils/dataMigration';
 
 // Types
 export * from './types';

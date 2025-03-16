@@ -363,8 +363,9 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useCategoryStore } from '../../stores/categoryStore';
-import { generateCategoryId, defaultTemplateId } from '../../stores/templates/categoryTemplates';
+import { useCategoryStore } from '../../stores';
+import { generateCategoryId } from '../../stores/category/utils';
+import { defaultTemplateId } from '../../stores/category/templates';
 import { diagnoseCategories } from './testing-helper';
 
 // Wrapper für den Pinia-Store mit Fehlerbehandlung

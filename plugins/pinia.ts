@@ -1,17 +1,15 @@
 import { defineNuxtPlugin } from '#app';
 
 /**
- * Hinweis: Dieser Plugin ist überflüssig, da wir Pinia bereits über das Nuxt-Modul einbinden
- * Wir belassen ihn hier als Referenz, aber er wird nicht geladen
- * 
- * Nuxt 3 verwendet automatisch Pinia, wenn das @pinia/nuxt-Modul installiert ist
+ * Plugin zur Initialisierung von Pinia
+ * Ist nur ein Platzhalter, da Nuxt das automatisch macht, wenn @pinia/nuxt installiert ist
  */
-
-/*
-import { createPinia } from 'pinia'
-
-export default defineNuxtPlugin(nuxtApp => {
-  const pinia = createPinia()
-  nuxtApp.vueApp.use(pinia)
-})
-*/
+export default defineNuxtPlugin((nuxtApp) => {
+  console.log('[Pinia] Plugin wurde geladen (Hinweis: Nuxt initialisiert Pinia bereits automatisch)');
+  
+  return {
+    provide: {
+      piniaInitialized: true
+    }
+  };
+});

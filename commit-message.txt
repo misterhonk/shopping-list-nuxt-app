@@ -1,33 +1,19 @@
-refactor: Komplette Migration zu TypeScript für bessere Code-Qualität
+Fix: Import/Export-Funktionalität für Einkaufslisten
 
-- Migriere 100% des Codes (Composables, Plugins, Stores, Config) zu TypeScript für umfassende Typ-Sicherheit
-- Verbessere Immutabilität und Performance durch effizientere Kopier-Strategien
-- Führe robustes Datenmigrationssystem für Abwärtskompatibilität ein
-- Erweitere die Modularisierung für bessere Testbarkeit und Wartbarkeit
-- Verbessere die Fehlerbehandlung in allen kritischen Funktionen
-- Zentralisiere Typdefinitionen in einer gemeinsamen types.ts Datei
-- Behebe Plugin-Konflikte durch Entfernen doppelter JavaScript-Dateien
+Diese Änderungen beheben Probleme mit dem Import und Export von Einkaufslisten:
 
-Typisierte Module:
-- Core: useLocalStorage und zentrale Typendefinitionen
-- Einkaufslisten: useShoppingLists und Untermodule
-- Artikel: useShoppingItems und Untermodule
-- Import/Export: useListImportExport und Untermodule
-- Plugins: Dark Mode, Category-Sync, Debug und Data-Migration
-- Stores: CategoryStore und CategorySyncPlugin
-- Templates: categoryTemplates mit Kategorie-Definitionen
-- Konfigurationen: tailwind.config.ts für bessere Editor-Unterstützung
+1. Problem: Beim Export wurden leere Listen ohne Artikel generiert
+   - Ursache: ListHeader.vue generierte ein leeres Objekt mit items: []
+   - Lösung: Vereinfachung des Exports durch direkte Verwendung der aktuellen Liste
 
-Neue Dateien:
-- composables/types.ts: Zentrale Typdefinitionen für die gesamte App
-- composables/utils/dataMigration.ts: Migrations-Hilfsfunktionen
-- composables/utils/testMigration.js: Testskript für die Migration
-- plugins/data-migration.ts: Plugin für automatische Migration
-- refactoring-zusammenfassung.md: Dokumentation der Änderungen
-- migration-anleitung.md: Anleitung zur Komponentenmigration
+2. Import-Modus-Korrektur:
+   - Anpassung der Modal-Komponente zur korrekten Verwendung von 'create', 'merge' und 'replace' Modi
+   - Verbesserung der Import-Optionen-Schnittstelle
 
-Fehlerbehebung:
-- Behebung von Plugin-Konflikten durch Umbenennen alter JS-Dateien (.js.bak)
-- Konsistente Typen zwischen Stores und Composables durch zentrale Definitionen
-- Komplette Eliminierung von JavaScript-Dateien zugunsten von TypeScript
-- Verbesserung der Build-Toolchain durch typisierte Konfigurationsdateien
+3. Fehlerbehebung in Plugins:
+   - Auflösung von Konflikten zwischen doppelten Plugins (category-sync.ts und category-update.ts)
+   - Aktualisierung der Plugin-Pfade für kompatibilität mit der neuen Store-Struktur
+
+4. Weitere Verbesserungen:
+   - Vollständige TypeScript-Unterstützung für Import/Export-Funktionen
+   - Verbesserte Fehlerbehandlung und Debugging

@@ -63,7 +63,7 @@
         @update:template-id="updateCurrentListTemplate"
         @update:name="updateCurrentListName"
         @update:favorite="updateCurrentListFavorite"
-        @export-list="handleExportList"
+        @export-list="exportCurrentList"
         @import-list="startImport"
       />
 
@@ -97,8 +97,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue';
-import { useCategoryStore } from '../stores/categoryStore';
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { useCategoryStore } from '../stores';
 import { useShoppingLists, useShoppingItems, useListImportExport } from '../composables';
 
 // Layout-Komponenten
@@ -182,6 +182,15 @@ const {
 const createNewList = (name, options) => {
   createList(name, options);
   isCreatingList.value = false;
+};
+
+/**
+ * Exportiert die aktuelle Liste
+ * Nimmt die aktuelle Liste und leitet sie an handleExportList weiter
+ */
+const exportCurrentList = () => {
+  console.log('Exportiere aktuelle Liste:', currentList.value.name);
+  handleExportList(currentList.value);
 };
 
 /**

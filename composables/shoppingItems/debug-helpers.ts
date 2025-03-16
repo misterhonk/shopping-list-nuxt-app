@@ -7,8 +7,6 @@ import { ShoppingList, ShoppingItem } from '../types';
 
 /**
  * Protokolliert den Zustand der aktuellen Listen und die ID der aktuellen Liste
- * @param lists - Die Listen
- * @param currentListId - Die ID der aktuellen Liste
  */
 export function logListsState(lists: ShoppingList[], currentListId: string | null): void {
   console.log('=== DEBUG: Listen-Status ===');
@@ -23,29 +21,14 @@ export function logListsState(lists: ShoppingList[], currentListId: string | nul
 }
 
 /**
- * Typ-Definition für die removeItem-Funktion
- */
-type RemoveItemFunction = (item: ShoppingItem | string) => boolean;
-
-/**
- * Typ-Definition für die saveToStorage-Funktion
- */
-type SaveToStorageFunction = (key: string, data: any) => boolean;
-
-/**
  * Erweiterte Version der removeItem-Funktion mit Debug-Logging
- * @param originalRemoveItem - Die ursprüngliche Funktion
- * @param shoppingListsRef - Referenz auf die Einkaufslisten
- * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
- * @param saveToStorage - Funktion zum Speichern in den Storage
- * @returns Die erweiterte Funktion
  */
 export function createDebuggedRemoveItem(
-  originalRemoveItem: RemoveItemFunction,
+  originalRemoveItem: (item: ShoppingItem | string) => boolean,
   shoppingListsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>,
-  saveToStorage: SaveToStorageFunction
-): RemoveItemFunction {
+  saveToStorage: (key: string, value: any) => void
+): (item: ShoppingItem | string) => boolean {
   return function debuggedRemoveItem(item: ShoppingItem | string): boolean {
     // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
     const itemId = typeof item === 'object' ? item.id : item;
@@ -91,17 +74,26 @@ export function createDebuggedRemoveItem(
       return false;
     }
     
-    // Direkt die originale Funktion aufrufen
-    const result = originalRemoveItem(item);
+    // Tiefe Kopie und Entfernen des Items
+    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
+    const newItems = newLists[listIndex].items.filter((item: ShoppingItem) => item.id !== itemId);
     
-    console.log('Listen nach Update:', shoppingListsRef.value.map(l => ({ 
+    console.log('Items vorher:', newLists[listIndex].items.length);
+    console.log('Items nachher:', newItems.length);
+    
+    newLists[listIndex].items = newItems;
+    
+    // Update und Speichern
+    shoppingListsRef.value = newLists;
+    saveToStorage('shoppingLists', newLists);
+    
+    console.log('Listen nach Update:', newLists.map((l: ShoppingList) => ({ 
       id: l.id, 
       name: l.name, 
       itemCount: l.items?.length || 0 
     })));
     console.log('=== DEBUG: removeItem Ende ===');
-    console.log('Ergebnis:', result);
     
-    return result;
+    return true;
   };
 }
