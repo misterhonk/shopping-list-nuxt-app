@@ -35,6 +35,17 @@
             </option>
           </select>
         </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preis (€)</label>
+          <input 
+            v-model.number="item.price" 
+            type="number" 
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+          />
+        </div>
       </div>
       <div class="mt-6 flex justify-end space-x-3">
         <button 
@@ -93,7 +104,8 @@ const normalizedCategories = computed(() => {
 const item = reactive({
   name: '',
   quantity: 1,
-  category: computed(() => normalizedCategories.value.length > 0 ? normalizedCategories.value[0] : { id: 'sonstiges', name: 'Sonstiges' })
+  category: computed(() => normalizedCategories.value.length > 0 ? normalizedCategories.value[0] : { id: 'sonstiges', name: 'Sonstiges' }),
+  price: 0
 });
 
 const nameInput = ref(null);
@@ -111,7 +123,8 @@ const onSubmit = () => {
     category: typeof item.category === 'object' ? item.category : {
       id: 'sonstiges',
       name: String(item.category || 'Sonstiges')
-    }
+    },
+    price: parseFloat(item.price) || 0
   };
   
   emit('add', itemToAdd);
@@ -119,6 +132,7 @@ const onSubmit = () => {
   // Zurücksetzen nach dem Hinzufügen
   item.name = '';
   item.quantity = 1;
+  item.price = 0;
   
   // Fokus setzen
   focusInput();
@@ -127,6 +141,7 @@ const onSubmit = () => {
 const onCancel = () => {
   item.name = '';
   item.quantity = 1;
+  item.price = 0;
   // Kategorie nicht zurücksetzen, da es computed ist
   emit('cancel');
 };

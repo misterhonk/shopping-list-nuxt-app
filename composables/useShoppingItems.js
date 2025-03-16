@@ -16,7 +16,8 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
   const newItem = reactive({
     name: '',
     quantity: 1,
-    category: 'Sonstiges'
+    category: 'Sonstiges',
+    price: 0
   });
   
   // Berechnete Eigenschaften
@@ -55,8 +56,11 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     // Dann Elemente in die entsprechenden Kategorien einsortieren
     currentList.items.forEach(item => {
       const category = item.category || 'Sonstiges';
-      if (grouped[category]) {
-        grouped[category].push(item);
+      const categoryId = typeof category === 'object' ? category.id : 'sonstiges';
+      const categoryName = typeof category === 'object' ? category.name : category;
+      
+      if (grouped[categoryName]) {
+        grouped[categoryName].push(item);
       } else {
         // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
         if (!grouped['Sonstiges']) {
@@ -91,7 +95,8 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
       name: itemToAdd.name,
       quantity: itemToAdd.quantity,
       category: itemToAdd.category,
-      checked: false
+      checked: false,
+      price: itemToAdd.price || 0
     };
     
     // Tiefe Kopie der Liste erstellen
@@ -203,6 +208,7 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;
+    newItem.price = 0;
     isAddingItem.value = false;
   };
   
@@ -218,6 +224,48 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     }, 100);
   };
   
+  /**
+   * Berechnet den Gesamtpreis aller Artikel in der aktuellen Liste
+   * @return {number} Der Gesamtpreis
+   */
+  const getTotalPrice = () => {
+    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    
+    if (!currentList || !Array.isArray(currentList.items)) {
+      return 0;
+    }
+    
+    return currentList.items.reduce((total, item) => {
+      const itemPrice = item.price || 0;
+      const itemQuantity = item.quantity || 1;
+      return total + (itemPrice * itemQuantity);
+    }, 0);
+  };
+
+  /**
+   * Berechnet den Preis pro Kategorie
+   * @param {string} categoryId - Die ID der Kategorie
+   * @return {number} Der Preis für diese Kategorie
+   */
+  const getCategoryPrice = (categoryId) => {
+    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    
+    if (!currentList || !Array.isArray(currentList.items)) {
+      return 0;
+    }
+    
+    return currentList.items
+      .filter(item => {
+        const itemCategoryId = typeof item.category === 'object' ? item.category.id : 'sonstiges';
+        return itemCategoryId === categoryId;
+      })
+      .reduce((total, item) => {
+        const itemPrice = item.price || 0;
+        const itemQuantity = item.quantity || 1;
+        return total + (itemPrice * itemQuantity);
+      }, 0);
+  };
+
   return {
     // Status und Daten
     isAddingItem,
@@ -228,6 +276,8 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     
     // Berechnete Eigenschaften
     getItemsGrouped,
+    getTotalPrice,
+    getCategoryPrice,
     
     // Aktionen
     addItem,

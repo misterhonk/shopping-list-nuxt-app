@@ -3,6 +3,9 @@
     <PageHeader title="Einkaufslisten">
       <template #actions>
         <div class="flex space-x-2">
+          <div class="hidden md:block mr-4 text-sm text-orange-500 font-medium self-center p-1 rounded-md">
+            Neu: Preisverfolgung 🏷️
+          </div>
           <NuxtLink
             to="/categories"
             class="btn btn-secondary"
@@ -185,7 +188,8 @@ const addNewItem = (item) => {
   const newItem = {
     name: item.name,
     quantity: item.quantity,
-    category: categoryValue
+    category: categoryValue,
+    price: item.price || 0
   };
   
   console.log('Füge neuen Artikel hinzu:', newItem);

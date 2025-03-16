@@ -11,6 +11,9 @@
         <span :class="{'line-through text-gray-400 dark:text-gray-500': item.checked}" class="font-medium mr-2">
           {{ item.name }} ({{ item.quantity }})
         </span>
+        <span v-if="item.price" class="text-sm text-gray-600 dark:text-gray-400">
+          {{ formatPrice(item.price * item.quantity) }}
+        </span>
         <span class="text-sm text-orange-500 dark:text-orange-400 sm:ml-auto">
           {{ getCategoryName(item.category) }}
         </span>
@@ -46,4 +49,8 @@ const getCategoryName = (category) => {
 };
 
 defineEmits(['toggle', 'remove']);
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
+};
 </script>
