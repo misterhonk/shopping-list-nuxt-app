@@ -132,6 +132,14 @@ import ListSelector from '../components/lists/ListSelector.vue';
 import { useShoppingLists, useShoppingItems, useListImportExport } from '../composables';
 import { useCategoryStore } from '../stores';
 
+// Einfacher lokaler Logger - unabhängig von externen Systemen
+const log = {
+  debug: (...args) => console.debug('[ShoppingListPage]', ...args),
+  info: (...args) => console.info('[ShoppingListPage]', ...args),
+  warn: (...args) => console.warn('[ShoppingListPage]', ...args),
+  error: (...args) => console.error('[ShoppingListPage]', ...args),
+};
+
 // UI-Zustand
 const isCreatingList = ref(false);
 
@@ -224,7 +232,7 @@ const createNewList = (name, options) => {
  * Nimmt die aktuelle Liste und leitet sie an handleExportList weiter
  */
 const exportCurrentList = () => {
-  console.log('Exportiere aktuelle Liste:', currentList.value.name);
+  log.info('Exportiere aktuelle Liste:', currentList.value.name);
   handleExportList(currentList.value);
 };
 
@@ -240,7 +248,7 @@ const startImport = () => {
  * Handler für die Bestätigung des Imports durch den Benutzer
  */
 const handleImportConfirm = options => {
-  console.log('Import-Optionen bestätigt:', options);
+  log.info('Import-Optionen bestätigt:', options);
 
   // Import mit den gewählten Optionen durchführen
   handleImportListWithOptions(importData.value, options);
@@ -253,7 +261,7 @@ const handleImportConfirm = options => {
  * Callback-Funktion für geladene Import-Daten
  */
 const onImportOptionsLoaded = (data, availableLists) => {
-  console.log('Import-Daten geladen, zeige Optionen:', {
+  log.info('Import-Daten geladen, zeige Optionen:', {
     listName: data.name,
     itemCount: data.items?.length || 0,
     availableListsCount: availableLists.length,
@@ -276,12 +284,12 @@ let unsubscribeCategoryUpdate = null;
 // App-Initialisierung
 onMounted(() => {
   // Debug: Aktuellen Listenstand protokollieren
-  console.log('App gestartet, Listenstand beim Start:');
+  log.debug('App gestartet, Listenstand beim Start:');
   const listenImStorage = localStorage.getItem('shoppingLists');
   if (listenImStorage) {
     try {
       const parsedLists = JSON.parse(listenImStorage);
-      console.log(
+      log.debug(
         'Listen im Storage:',
         parsedLists.map(l => ({
           id: l.id,
@@ -290,7 +298,7 @@ onMounted(() => {
         }))
       );
     } catch (e) {
-      console.error('Fehler beim Parsen der Listen aus dem Storage:', e);
+      log.error('Fehler beim Parsen der Listen aus dem Storage:', e);
     }
   }
 
@@ -309,14 +317,12 @@ onMounted(() => {
       // Event-Listener für Kategorieänderungen registrieren
       if (onCategoryUpdate) {
         unsubscribeCategoryUpdate = onCategoryUpdate((categoryId, newName) => {
-          console.log(
-            `[App] Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`
-          );
+          log.debug(`Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
           updateCategoryInItems(categoryId, newName);
         });
       }
     } catch (e) {
-      console.error('Fehler beim Laden der Kategorien:', e);
+      log.error('Fehler beim Laden der Kategorien:', e);
     }
   }
 });

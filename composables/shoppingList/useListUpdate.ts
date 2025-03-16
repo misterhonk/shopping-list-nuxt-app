@@ -1,7 +1,11 @@
 import { Ref } from 'vue';
 
+import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, ShoppingItem } from '../types';
+
+// Logger initialisieren
+const logger = createLogger('useListUpdate');
 
 /**
  * Composable für das Aktualisieren von Einkaufslisten
@@ -65,7 +69,7 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Aktualisieren der Liste:', error);
+      logger.error('Fehler beim Aktualisieren der Liste:', error);
       return false;
     }
   };
@@ -97,7 +101,7 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Leeren der Liste:', error);
+      logger.error('Fehler beim Leeren der Liste:', error);
       return false;
     }
   };
@@ -150,7 +154,7 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
+      logger.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
       return false;
     }
   };

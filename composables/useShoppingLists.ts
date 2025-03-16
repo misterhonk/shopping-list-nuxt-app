@@ -1,8 +1,12 @@
 import { ref, computed, ComputedRef, Ref } from 'vue';
 
+import { createLogger } from '../utils/logger';
 import { useLocalStorage } from './core/useLocalStorage';
 import { ShoppingList, CreateListOptions } from './types';
 import { useCategoryStore } from '../stores/category';
+
+// Logger initialisieren
+const logger = createLogger('useShoppingLists');
 
 /**
  * Composable für die Verwaltung von Einkaufslisten
@@ -16,7 +20,7 @@ export function useShoppingLists() {
   try {
     categoryStore = useCategoryStore();
   } catch (e) {
-    console.error('Fehler beim Initialisieren des CategoryStore:', e);
+    logger.error('Fehler beim Initialisieren des CategoryStore:', e);
   }
 
   // Reaktive Daten
@@ -108,7 +112,7 @@ export function useShoppingLists() {
         return false;
       }
     } catch (error) {
-      console.error('Fehler beim Laden der Listen:', error);
+      logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
       return false;
     }
@@ -172,7 +176,7 @@ export function useShoppingLists() {
       try {
         categoryStore.activateTemplate(templateId);
       } catch (e) {
-        console.error('Fehler beim Aktivieren der Template:', e);
+        logger.error('Fehler beim Aktivieren der Template:', e);
       }
     }
 
@@ -220,7 +224,7 @@ export function useShoppingLists() {
       try {
         categoryStore.activateTemplate(selectedList.templateId);
       } catch (e) {
-        console.error('Fehler beim Aktivieren der Template:', e);
+        logger.error('Fehler beim Aktivieren der Template:', e);
       }
     }
   };
@@ -271,7 +275,7 @@ export function useShoppingLists() {
       try {
         categoryStore.activateTemplate(templateId);
       } catch (e) {
-        console.error('Fehler beim Aktivieren der Template:', e);
+        logger.error('Fehler beim Aktivieren der Template:', e);
       }
     }
 

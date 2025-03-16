@@ -1,5 +1,9 @@
 import { deepCopy, sanitizeTemplate } from './utils';
 import { TemplateCollection } from '../../composables/types';
+import { createLogger } from '../../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('storage');
 
 /**
  * Interface für die gespeicherten Kategoriedaten
@@ -36,10 +40,10 @@ export const saveCategoryData = (
     // Tiefe Kopie erstellen, um Referenzprobleme zu vermeiden
     const cleanDataToSave = deepCopy(dataToSave);
 
-    console.log('Speichere in localStorage:', cleanDataToSave);
+    logger.info('Speichere in localStorage:', cleanDataToSave);
     localStorage.setItem('categoryTemplates', JSON.stringify(cleanDataToSave));
   } catch (error) {
-    console.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
+    logger.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
   }
 };
 
@@ -49,7 +53,7 @@ export const saveCategoryData = (
  */
 export const loadCategoryData = (): StoredCategoryData | null => {
   try {
-    console.log('Lade aus localStorage');
+    logger.info('Lade aus localStorage');
     const data = localStorage.getItem('categoryTemplates');
 
     if (!data) {
@@ -57,14 +61,14 @@ export const loadCategoryData = (): StoredCategoryData | null => {
     }
 
     const parsedData = JSON.parse(data) as StoredCategoryData;
-    console.log('Geladene Daten:', parsedData);
+    logger.info('Geladene Daten:', parsedData);
 
     return {
       activeTemplateId: parsedData.activeTemplateId || '',
       customTemplates: parsedData.customTemplates || {},
     };
   } catch (error) {
-    console.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
+    logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
     return null;
   }
 };

@@ -1,4 +1,9 @@
+import { createLogger } from '../utils/logger';
+
 import { defineNuxtPlugin } from '#app';
+
+// Logger initialisieren
+const logger = createLogger('debug-plugin');
 
 /**
  * Debug-Plugin für die Anwendung
@@ -10,13 +15,13 @@ export default defineNuxtPlugin(nuxtApp => {
     const onCategoryUpdate = nuxtApp.$onCategoryUpdate;
     if (onCategoryUpdate) {
       const unsubscribe = onCategoryUpdate((categoryId: string, newName: string) => {
-        console.log(`[Debug] Kategorie-Update erkannt: ID=${categoryId}, Name=${newName}`);
+        logger.info(`[Debug] Kategorie-Update erkannt: ID=${categoryId}, Name=${newName}`);
       });
 
       // Debug-Meldung ausgeben
-      console.log('[Debug] Kategorie-Debug-Listener registriert');
+      logger.info('[Debug] Kategorie-Debug-Listener registriert');
     } else {
-      console.warn(
+      logger.warn(
         '[Debug] onCategoryUpdate nicht verfügbar - Debug-Listener konnte nicht registriert werden'
       );
     }
@@ -33,7 +38,7 @@ export default defineNuxtPlugin(nuxtApp => {
         isDevelopment,
         logEvent: (category: string, action: string, label?: string, value?: number) => {
           if (isDevelopment) {
-            console.log(
+            logger.info(
               `[Debug] Event: ${category} / ${action}${label ? ` / ${label}` : ''}${value !== undefined ? ` = ${value}` : ''}`
             );
           }

@@ -1,5 +1,10 @@
 import { ref, computed, watch } from 'vue';
 
+import { createLogger } from '../../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('useItemSuggestions');
+
 interface ItemHistoryEntry {
   count: number;
   lastUsed: string | null;
@@ -25,7 +30,7 @@ export function useItemSuggestions(listRef: any) {
     try {
       return localStorage.getItem(key);
     } catch (error) {
-      console.error(`Fehler beim Lesen von ${key}:`, error);
+      logger.error(`Fehler beim Lesen von ${key}:`, error);
       return null;
     }
   };
@@ -34,7 +39,7 @@ export function useItemSuggestions(listRef: any) {
     try {
       localStorage.setItem(key, value);
     } catch (error) {
-      console.error(`Fehler beim Speichern von ${key}:`, error);
+      logger.error(`Fehler beim Speichern von ${key}:`, error);
     }
   };
 
@@ -44,7 +49,7 @@ export function useItemSuggestions(listRef: any) {
       const storedHistory = getItem('itemHistory');
       return storedHistory ? JSON.parse(storedHistory) : {};
     } catch (error) {
-      console.error('Fehler beim Laden der Artikelhistorie:', error);
+      logger.error('Fehler beim Laden der Artikelhistorie:', error);
       return {};
     }
   };
@@ -54,7 +59,7 @@ export function useItemSuggestions(listRef: any) {
     try {
       setItem('itemHistory', JSON.stringify(history));
     } catch (error) {
-      console.error('Fehler beim Speichern der Artikelhistorie:', error);
+      logger.error('Fehler beim Speichern der Artikelhistorie:', error);
     }
   };
 

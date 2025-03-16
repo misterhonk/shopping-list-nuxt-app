@@ -1,6 +1,10 @@
 import { categoryTemplates, defaultTemplateId } from './templates';
 import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
 import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
+import { createLogger } from '../../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('operations');
 
 /**
  * Fügt eine neue Kategorie zu einem Template hinzu
@@ -32,7 +36,7 @@ export const addCategory = (
 
   // Prüfe, ob die Kategorie bereits existiert
   if (categoryExists(currentTemplate, newCategory.name)) {
-    console.warn('Kategorie existiert bereits:', newCategory.name);
+    logger.warn('Kategorie existiert bereits:', newCategory.name);
     return customTemplates;
   }
 
@@ -90,7 +94,7 @@ export const editCategory = (
   // Prüfen, ob die Kategorie existiert
   const existingCategory = findCategoryById(currentTemplate, categoryId);
   if (!existingCategory) {
-    console.error('Kategorie nicht gefunden:', categoryId);
+    logger.error('Kategorie nicht gefunden:', categoryId);
     return customTemplates;
   }
 
@@ -145,7 +149,7 @@ export const deleteCategory = (
   // Prüfen, ob die Kategorie existiert
   const existingCategory = findCategoryById(currentTemplate, categoryId);
   if (!existingCategory) {
-    console.error('Kategorie zum Löschen nicht gefunden:', categoryId);
+    logger.error('Kategorie zum Löschen nicht gefunden:', categoryId);
     return customTemplates;
   }
 

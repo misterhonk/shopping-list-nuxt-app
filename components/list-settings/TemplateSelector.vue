@@ -22,9 +22,13 @@
 </template>
 
 <script setup>
+// Logger initialisieren
 import { ref, computed, watch } from 'vue';
 
 import { useCategoryStore } from '../../stores/categoryStore';
+
+const nuxtApp = useNuxtApp();
+const logger = nuxtApp.$getLogger('TemplateSelector');
 
 // Props
 const props = defineProps({
@@ -46,7 +50,7 @@ const templatesList = computed(() => categoryStore?.templatesList || []);
 try {
   categoryStore = useCategoryStore();
 } catch (e) {
-  console.error('Fehler beim Initialisieren des Kategorie-Stores:', e);
+  logger.error('Fehler beim Initialisieren des Kategorie-Stores:', e);
 }
 
 // Aktualisiere Kategorie-Template
@@ -59,7 +63,7 @@ const updateTemplate = () => {
     try {
       categoryStore.activateTemplate(currentTemplateId.value);
     } catch (e) {
-      console.error('Fehler beim Aktivieren des Templates:', e);
+      logger.error('Fehler beim Aktivieren des Templates:', e);
     }
   }
 };

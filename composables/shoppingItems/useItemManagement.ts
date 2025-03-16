@@ -1,7 +1,11 @@
 import { computed, Ref } from 'vue';
 
+import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, ShoppingItem, Category } from '../types';
+
+// Logger initialisieren
+const logger = createLogger('useItemManagement');
 
 /**
  * Composable für die Verwaltung von Artikeln
@@ -156,7 +160,7 @@ export function useItemManagement(
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Entfernen des Items:', error);
+      logger.error('Fehler beim Entfernen des Items:', error);
       return false;
     }
   };
@@ -212,7 +216,7 @@ export function useItemManagement(
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Ändern des Artikel-Status:', error);
+      logger.error('Fehler beim Ändern des Artikel-Status:', error);
       return false;
     }
   };
@@ -247,7 +251,7 @@ export function useItemManagement(
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Löschen der erledigten Artikel:', error);
+      logger.error('Fehler beim Löschen der erledigten Artikel:', error);
       return false;
     }
   };
@@ -325,7 +329,7 @@ export function useItemManagement(
 
       return updatedAnyItem;
     } catch (error) {
-      console.error('Fehler beim Aktualisieren der Kategorienamen:', error);
+      logger.error('Fehler beim Aktualisieren der Kategorienamen:', error);
       return false;
     }
   };

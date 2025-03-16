@@ -1,7 +1,11 @@
 import { ref, computed, Ref } from 'vue';
 
+import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, CreateListOptions } from '../types';
+
+// Logger initialisieren
+const logger = createLogger('useListManagement');
 
 // Typendefinition für den CategoryStore-Service
 interface CategoryStoreService {
@@ -82,7 +86,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         return false;
       }
     } catch (error) {
-      console.error('Fehler beim Laden der Listen:', error);
+      logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
       return false;
     }
@@ -165,13 +169,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         try {
           categoryStore.activateTemplate(templateId);
         } catch (e) {
-          console.error('Fehler beim Aktivieren der Template:', e);
+          logger.error('Fehler beim Aktivieren der Template:', e);
         }
       }
 
       return newList;
     } catch (error) {
-      console.error('Fehler beim Erstellen einer neuen Liste:', error);
+      logger.error('Fehler beim Erstellen einer neuen Liste:', error);
       return null;
     }
   };
@@ -222,13 +226,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         try {
           categoryStore.activateTemplate(selectedList.templateId);
         } catch (e) {
-          console.error('Fehler beim Aktivieren der Template:', e);
+          logger.error('Fehler beim Aktivieren der Template:', e);
         }
       }
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Auswählen einer Liste:', error);
+      logger.error('Fehler beim Auswählen einer Liste:', error);
       return false;
     }
   };
@@ -261,7 +265,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Löschen einer Liste:', error);
+      logger.error('Fehler beim Löschen einer Liste:', error);
       return false;
     }
   };
@@ -290,14 +294,14 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         try {
           categoryStore.activateTemplate(templateId);
         } catch (e) {
-          console.error('Fehler beim Aktivieren der Template:', e);
+          logger.error('Fehler beim Aktivieren der Template:', e);
         }
       }
 
       saveToStorage('shoppingLists', lists.value);
       return true;
     } catch (error) {
-      console.error('Fehler beim Aktualisieren der Template-ID:', error);
+      logger.error('Fehler beim Aktualisieren der Template-ID:', error);
       return false;
     }
   };
@@ -312,7 +316,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       saveToStorage('currentListId', currentListId.value);
       return true;
     } catch (error) {
-      console.error('Fehler beim Speichern der Listen:', error);
+      logger.error('Fehler beim Speichern der Listen:', error);
       return false;
     }
   };

@@ -1,3 +1,8 @@
+import { createLogger } from '../../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('useLocalStorage');
+
 /**
  * Ein Composable für die Verwaltung des localStorage
  * Bietet Funktionen zum Speichern, Laden und Löschen von Daten
@@ -12,7 +17,7 @@ export function useLocalStorage() {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.error(`Fehler beim Speichern von ${key}:`, error);
+      logger.error(`Fehler beim Speichern von ${key}:`, error);
     }
   };
 
@@ -30,7 +35,7 @@ export function useLocalStorage() {
       }
       return JSON.parse(storedValue) as T;
     } catch (error) {
-      console.error(`Fehler beim Laden von ${key}:`, error);
+      logger.error(`Fehler beim Laden von ${key}:`, error);
       return defaultValue;
     }
   };
@@ -43,7 +48,7 @@ export function useLocalStorage() {
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      console.error(`Fehler beim Löschen von ${key}:`, error);
+      logger.error(`Fehler beim Löschen von ${key}:`, error);
     }
   };
 
@@ -54,7 +59,7 @@ export function useLocalStorage() {
     try {
       localStorage.clear();
     } catch (error) {
-      console.error('Fehler beim Leeren des Speichers:', error);
+      logger.error('Fehler beim Leeren des Speichers:', error);
     }
   };
 

@@ -1,3 +1,8 @@
+import { createLogger } from '../../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('testMigration');
+
 /**
  * Testskript für die Datenmigration
  *
@@ -39,13 +44,13 @@ const oldList = {
 // const { migrateList, validateList } = require('./dataMigration');
 
 // Importfunktion für Browserkonsole
-async function testMigration() {
+function testMigration() {
   // Pfad zum Modul
   const modulePath =
     '/Users/martinmelcher/Dev/shopping-list-app/composables/utils/dataMigration.ts';
 
   // In einer echten Anwendung würde hier der Import des Moduls stehen
-  console.log('Simuliere Migration der alten Liste:', oldList);
+  logger.info('Simuliere Migration der alten Liste:', oldList);
 
   // Migration mit Validierung simulieren
   const migratedList = {
@@ -72,12 +77,12 @@ async function testMigration() {
     })),
   };
 
-  console.log('Migrierte Liste:', migratedList);
+  logger.info('Migrierte Liste:', migratedList);
 
   // Speichern in localStorage simulieren
   const serializedList = JSON.stringify(migratedList);
-  console.log('Serialisierte Liste:', serializedList);
-  console.log('Größe der serialisierten Liste:', serializedList.length, 'Bytes');
+  logger.info('Serialisierte Liste:', serializedList);
+  logger.info('Größe der serialisierten Liste:', serializedList.length, 'Bytes');
 
   return migratedList;
 }
@@ -85,6 +90,6 @@ async function testMigration() {
 // Funktion für manuelle Ausführung in der Konsole
 window.testMigration = testMigration;
 
-console.log(
+logger.info(
   'Migration-Testskript geladen. Führen Sie testMigration() aus, um die Migration zu testen.'
 );

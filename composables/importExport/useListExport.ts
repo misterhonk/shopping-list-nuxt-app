@@ -1,4 +1,8 @@
+import { createLogger } from '../../utils/logger';
 import { ShoppingItem } from '../types';
+
+// Logger initialisieren
+const logger = createLogger('useListExport');
 
 /**
  * Interface für die Export-Daten
@@ -26,7 +30,7 @@ export function useListExport() {
     items: ShoppingItem[]
   ): boolean => {
     try {
-      console.log('Starte Export für Liste:', exportData.name);
+      logger.info('Starte Export für Liste:', exportData.name);
 
       // Bereite die Daten für den Export vor
       const fullExportData: ExportData = {
@@ -37,7 +41,7 @@ export function useListExport() {
         exportVersion: '1.0.0',
       };
 
-      console.log('Export-Daten vorbereitet:', fullExportData);
+      logger.info('Export-Daten vorbereitet:', fullExportData);
 
       // Konvertiere zu JSON
       const jsonData = JSON.stringify(fullExportData, null, 2);
@@ -49,7 +53,7 @@ export function useListExport() {
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
 
-      console.log('Blob erstellt, URL:', url);
+      logger.info('Blob erstellt, URL:', url);
 
       // Erstelle einen unsichtbaren Link zum Herunterladen
       const link = document.createElement('a');
@@ -60,19 +64,19 @@ export function useListExport() {
       // Füge den Link zum DOM hinzu, klicke ihn und entferne ihn wieder
       document.body.appendChild(link);
 
-      console.log('Link erstellt, starte Download:', fileName);
+      logger.info('Link erstellt, starte Download:', fileName);
       link.click();
 
       // Kurze Verzögerung vor dem Entfernen des Links
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        console.log('Download-Link entfernt, URL freigegeben');
+        logger.info('Download-Link entfernt, URL freigegeben');
       }, 100);
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Exportieren der Liste:', error);
+      logger.error('Fehler beim Exportieren der Liste:', error);
       return false;
     }
   };

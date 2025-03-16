@@ -1,7 +1,11 @@
 import { Ref } from 'vue';
 
+import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, ShoppingItem } from '../types';
+
+// Logger initialisieren
+const logger = createLogger('useListProperties');
 
 /**
  * Composable für die Verwaltung von Listeneigenschaften
@@ -67,7 +71,7 @@ export function useListProperties(
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Aktualisieren des Listennamens:', error);
+      logger.error('Fehler beim Aktualisieren des Listennamens:', error);
       return false;
     }
   };
@@ -105,7 +109,7 @@ export function useListProperties(
 
       return true;
     } catch (error) {
-      console.error('Fehler beim Aktualisieren des Favoriten-Status:', error);
+      logger.error('Fehler beim Aktualisieren des Favoriten-Status:', error);
       return false;
     }
   };

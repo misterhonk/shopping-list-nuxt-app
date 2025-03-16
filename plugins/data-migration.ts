@@ -1,6 +1,10 @@
 import { migrateLists, validateList } from '../composables/utils/dataMigration';
+import { createLogger } from '../utils/logger';
 
 import { defineNuxtPlugin } from '#app';
+
+// Logger initialisieren
+const logger = createLogger('data-migration');
 
 /**
  * Plugin zur Migration älterer Datenstrukturen
@@ -8,14 +12,14 @@ import { defineNuxtPlugin } from '#app';
  */
 export default defineNuxtPlugin(nuxtApp => {
   // Bei App-Start ausführen
-  console.log('[Data Migration] Plugin gestartet');
+  logger.info('[Data Migration] Plugin gestartet');
 
   // Migration nur durchführen, wenn localStorage gefüllt ist
   try {
     const storedLists = localStorage.getItem('shoppingLists');
 
     if (storedLists) {
-      console.log('[Data Migration] Vorhandene Daten gefunden, prüfe auf Migrationsnotwendigkeit');
+      logger.info('[Data Migration] Vorhandene Daten gefunden, prüfe auf Migrationsnotwendigkeit');
 
       // Daten parsen
       const lists = JSON.parse(storedLists);
@@ -26,16 +30,18 @@ export default defineNuxtPlugin(nuxtApp => {
         lists.some(
           list =>
             // Kriterien für Migrationsbedarf
-            !list.hasOwnProperty('createdAt') ||
-            !list.hasOwnProperty('modifiedAt') ||
+            !Object.prototype.hasOwnProperty.call(list, 'createdAt') ||
+            !Object.prototype.hasOwnProperty.call(list, 'modifiedAt') ||
             (Array.isArray(list.items) &&
               list.items.some(
-                item => typeof item.category === 'string' || !item.hasOwnProperty('addedAt')
+                item =>
+                  typeof item.category === 'string' ||
+                  !Object.prototype.hasOwnProperty.call(item, 'addedAt')
               ))
         );
 
       if (needsMigration) {
-        console.log('[Data Migration] Migration wird durchgeführt');
+        logger.info('[Data Migration] Migration wird durchgeführt');
 
         // Migration durchführen
         const migratedLists = migrateLists(lists);
@@ -43,17 +49,17 @@ export default defineNuxtPlugin(nuxtApp => {
         // Zurück in localStorage speichern
         localStorage.setItem('shoppingLists', JSON.stringify(migratedLists));
 
-        console.log('[Data Migration] Migration abgeschlossen');
+        logger.info('[Data Migration] Migration abgeschlossen');
       } else {
-        console.log(
+        logger.info(
           '[Data Migration] Keine Migration notwendig, Daten bereits im aktuellen Format'
         );
       }
     } else {
-      console.log('[Data Migration] Keine Daten gefunden, keine Migration notwendig');
+      logger.info('[Data Migration] Keine Daten gefunden, keine Migration notwendig');
     }
   } catch (error) {
-    console.error('[Data Migration] Fehler bei der Datenmigration:', error);
+    logger.error('[Data Migration] Fehler bei der Datenmigration:', error);
   }
 
   return {
@@ -72,7 +78,7 @@ export default defineNuxtPlugin(nuxtApp => {
 
           return { success: false, message: 'Keine Daten gefunden' };
         } catch (error) {
-          console.error('[Data Migration] Fehler bei manueller Migration:', error);
+          logger.error('[Data Migration] Fehler bei manueller Migration:', error);
           return { success: false, error };
         }
       },

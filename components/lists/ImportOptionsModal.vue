@@ -119,7 +119,11 @@
 </template>
 
 <script setup>
+// Logger initialisieren
 import { ref, computed, watch } from 'vue';
+
+const nuxtApp = useNuxtApp();
+const logger = nuxtApp.$getLogger('ImportOptionsModal');
 
 const props = defineProps({
   isOpen: Boolean,
@@ -185,7 +189,7 @@ const confirmImport = () => {
     keepExistingItems: updateMode.value === 'merge',
   };
 
-  console.log('Import-Optionen:', options);
+  logger.info('Import-Optionen:', options);
   emit('confirm', options);
 };
 </script>

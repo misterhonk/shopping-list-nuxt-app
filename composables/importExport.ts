@@ -1,6 +1,10 @@
 import { ref, Ref, computed, ComputedRef } from 'vue';
 
 import { ShoppingList, ShoppingItem, ImportOptions, ExportedList } from './types';
+import { createLogger } from '../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('importExport');
 
 /**
  * Composable für den Import und Export von Einkaufslisten
@@ -62,7 +66,7 @@ export function useListImportExport(
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Fehler beim Exportieren der Liste:', error);
+      logger.error('Fehler beim Exportieren der Liste:', error);
       alert('Beim Exportieren der Liste ist ein Fehler aufgetreten.');
     }
   };
@@ -146,7 +150,7 @@ export function useListImportExport(
             }
           }
         } catch (error) {
-          console.error('Fehler beim Lesen der Datei:', error);
+          logger.error('Fehler beim Lesen der Datei:', error);
           alert('Beim Lesen der Datei ist ein Fehler aufgetreten.');
         }
       };
@@ -154,7 +158,7 @@ export function useListImportExport(
       // Klicke auf den Input
       input.click();
     } catch (error) {
-      console.error('Fehler beim Öffnen des Import-Dialogs:', error);
+      logger.error('Fehler beim Öffnen des Import-Dialogs:', error);
       alert('Beim Öffnen des Import-Dialogs ist ein Fehler aufgetreten.');
     }
   };
@@ -344,7 +348,7 @@ export function useListImportExport(
         }
       }
     } catch (error) {
-      console.error('Fehler beim Importieren der Liste:', error);
+      logger.error('Fehler beim Importieren der Liste:', error);
       alert('Beim Importieren der Liste ist ein Fehler aufgetreten.');
     }
   };
@@ -389,7 +393,7 @@ export function useListImportExport(
         }
       }
     } catch (error) {
-      console.error('Fehler beim Importieren der Liste:', error);
+      logger.error('Fehler beim Importieren der Liste:', error);
       alert('Beim Importieren der Liste ist ein Fehler aufgetreten.');
     }
   };

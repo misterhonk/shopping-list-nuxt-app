@@ -14,6 +14,10 @@ import {
 import { saveCategoryData, loadCategoryData } from './storage';
 import { categoryTemplates, defaultTemplateId } from './templates';
 import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
+import { createLogger } from '../../utils/logger';
+
+// Logger initialisieren
+const logger = createLogger('index');
 
 /**
  * Interface für den CategoryStore State
@@ -246,7 +250,7 @@ export const useCategoryStore = defineStore('categoryStore', {
           if (data.customTemplates) {
             // Prüfen, ob Migration notwendig ist
             if (needsMigration(data.customTemplates)) {
-              console.log('Migration der Kategorien notwendig - alte Strings zu Objekten');
+              logger.info('Migration der Kategorien notwendig - alte Strings zu Objekten');
               this.customTemplates = migrateCategories(data.customTemplates);
             } else {
               this.customTemplates = data.customTemplates;
@@ -261,7 +265,7 @@ export const useCategoryStore = defineStore('categoryStore', {
           }
         }
       } catch (error) {
-        console.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
+        logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
       }
     },
 

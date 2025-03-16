@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint --ext .js,.ts,.vue --ignore-path .eslintignore .",
-    "lint:fix": "eslint --ext .js,.ts,.vue --fix --ignore-path .eslintignore ."
+    "lint:fix": "eslint --ext .js,.ts,.vue --fix --ignore-path .eslintignore .",
+    "add-logger": "node scripts/add-logger-init.js"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",

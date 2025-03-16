@@ -442,6 +442,7 @@
 </template>
 
 <script setup>
+// Logger initialisieren
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 
 import { diagnoseCategories } from './testing-helper';
@@ -449,12 +450,15 @@ import { useCategoryStore } from '../../stores';
 import { defaultTemplateId } from '../../stores/category/templates';
 import { generateCategoryId } from '../../stores/category/utils';
 
+const nuxtApp = useNuxtApp();
+const logger = nuxtApp.$getLogger('CategoryManager');
+
 // Wrapper für den Pinia-Store mit Fehlerbehandlung
 let categoryStore = null;
 try {
   categoryStore = useCategoryStore();
 } catch (e) {
-  console.error('Fehler beim Initialisieren des CategoryStore:', e);
+  logger.error('Fehler beim Initialisieren des CategoryStore:', e);
 }
 
 // Daten aus dem Store
@@ -468,7 +472,7 @@ const currentCategories = computed(() => {
   // Immer die aktuellste Version direkt aus dem Store nehmen
   if (categoryStore) {
     const cats = categoryStore.currentCategories;
-    console.log('currentCategories computed neu ausgeführt:', cats);
+    logger.info('currentCategories computed neu ausgeführt:', cats);
     return cats;
   }
   return [];
@@ -512,7 +516,7 @@ const currentCategoriesArray = computed(() => {
       return category;
     } else {
       // Fallback für unbekannte Formate
-      console.warn('Unbekanntes Kategorieformat:', category);
+      logger.warn('Unbekanntes Kategorieformat:', category);
       return { id: `unknown_${Date.now()}`, name: 'Unbekannt' };
     }
   });
@@ -520,7 +524,7 @@ const currentCategoriesArray = computed(() => {
 
 // Debug-Watcher für Kategorieänderungen
 watch(currentCategories, newVal => {
-  console.log('Aktuelle Kategorien geändert:', newVal);
+  logger.info('Aktuelle Kategorien geändert:', newVal);
   // Force Component Re-render
   componentKey.value += 1;
 });
@@ -548,7 +552,7 @@ onMounted(() => {
       // Komponente explizit neu rendern, sobald sie geladen ist
       componentKey.value = 1;
     } catch (e) {
-      console.error('Fehler beim Laden aus localStorage:', e);
+      logger.error('Fehler beim Laden aus localStorage:', e);
     }
   }
 });
@@ -595,7 +599,7 @@ const saveEditedCategory = () => {
     return;
   }
   if (editCategoryName.value.trim() && currentEditingCategory.value) {
-    console.log('saveEditedCategory aufgerufen mit:', {
+    logger.info('saveEditedCategory aufgerufen mit:', {
       category: currentEditingCategory.value,
       neuName: editCategoryName.value.trim(),
     });
@@ -612,7 +616,7 @@ const saveEditedCategory = () => {
     // Jetzt erst die Kategorie bearbeiten
     try {
       // Direkter Test mit dem Store
-      console.log(
+      logger.info(
         'Bearbeite Kategorie',
         categoryToEdit.id,
         'von',
@@ -640,13 +644,13 @@ const saveEditedCategory = () => {
 
           // Nochmals Komponente neu rendern
           componentKey.value += 1;
-          console.log('Kategorien nach erneutem Laden:', categoryStore.currentCategories);
+          logger.info('Kategorien nach erneutem Laden:', categoryStore.currentCategories);
         } catch (e) {
-          console.error('Fehler beim Neuladen:', e);
+          logger.error('Fehler beim Neuladen:', e);
         }
       }, 200);
     } catch (error) {
-      console.error('Fehler bei saveEditedCategory:', error);
+      logger.error('Fehler bei saveEditedCategory:', error);
       alert('Es gab ein Problem beim Speichern der Änderung.');
     }
   }

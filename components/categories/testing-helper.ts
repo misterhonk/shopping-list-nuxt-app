@@ -1,9 +1,13 @@
+import { ShoppingList, Category } from '../../composables/types';
+import { createLogger } from '../../utils/logger';
+
 /**
  * Diese Hilfsfunktion ermöglicht einen direkten Zugriff auf den Kategorie-Store
  * sowie der Listendaten im LocalStorage zur Diagnose und Behebung von Kategorienamen-Synchronisationsproblemen
  */
 
-import { ShoppingList, Category } from '../../composables/types';
+// Logger initialisieren
+const logger = createLogger('testing-helper');
 
 interface CategoryData {
   activeTemplateId: string;
@@ -32,15 +36,15 @@ export function diagnoseCategories():
     const listData = localStorage.getItem('shoppingLists');
 
     if (!categoryData || !listData) {
-      console.error('[Diagnose] Keine Daten gefunden');
+      logger.error('[Diagnose] Keine Daten gefunden');
       return undefined;
     }
 
     const parsedCategories = JSON.parse(categoryData) as CategoryData;
     const parsedLists = JSON.parse(listData) as ShoppingList[];
 
-    console.log('[Diagnose] Kategorie-Daten:', parsedCategories);
-    console.log('[Diagnose] Listen-Daten:', parsedLists);
+    logger.info('[Diagnose] Kategorie-Daten:', parsedCategories);
+    logger.info('[Diagnose] Listen-Daten:', parsedLists);
 
     // Aktuelle Kategorien abrufen
     let activeTemplate = null;
@@ -53,7 +57,7 @@ export function diagnoseCategories():
       }
     }
 
-    console.log('[Diagnose] Aktives Template:', activeTemplate);
+    logger.info('[Diagnose] Aktives Template:', activeTemplate);
 
     // Artikel und deren Kategorien auflisten
     const categoriesInUse: Record<string, CategoryUsage> = {};
@@ -78,7 +82,7 @@ export function diagnoseCategories():
       }
     });
 
-    console.log('[Diagnose] Kategorien in Verwendung:', categoriesInUse);
+    logger.info('[Diagnose] Kategorien in Verwendung:', categoriesInUse);
 
     // Direktes Update der Kategorien in allen Artikeln durch manuelles Setzen
     return function forceUpdateCategory(categoryId: string, newName: string): boolean {
@@ -108,17 +112,17 @@ export function diagnoseCategories():
 
       if (updatedCount > 0) {
         localStorage.setItem('shoppingLists', JSON.stringify(newLists));
-        console.log(
+        logger.info(
           `[Diagnose] ${updatedCount} Artikel aktualisiert mit neuer Kategorie "${newName}"`
         );
         return true;
       } else {
-        console.log(`[Diagnose] Keine Artikel mit Kategorie-ID "${categoryId}" gefunden`);
+        logger.info(`[Diagnose] Keine Artikel mit Kategorie-ID "${categoryId}" gefunden`);
         return false;
       }
     };
   } catch (error) {
-    console.error('[Diagnose] Fehler:', error);
+    logger.error('[Diagnose] Fehler:', error);
     return undefined;
   }
 }

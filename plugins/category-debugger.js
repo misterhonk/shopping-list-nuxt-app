@@ -1,5 +1,10 @@
+import { createLogger } from '../utils/logger';
+
 // Dieses Plugin protokolliert Kategorieänderungen im Store
 import { useCategoryStore } from '~/stores/categoryStore';
+
+// Logger initialisieren
+const logger = createLogger('category-debugger');
 
 export default defineNuxtPlugin(nuxtApp => {
   // Hook in die Store-Aktionen
@@ -11,14 +16,14 @@ export default defineNuxtPlugin(nuxtApp => {
       }
 
       // Aktuellen Zustand protokollieren
-      console.log('[DEBUG] Aktuelle Kategorien im Store:', categoryStore.currentCategories);
+      logger.info('[DEBUG] Aktuelle Kategorien im Store:', categoryStore.currentCategories);
 
       // Listen auf Änderungen
       categoryStore.$onAction(({ name, args, after }) => {
         if (name === 'editCategory') {
           const [categoryToEdit, newName] = args;
 
-          console.log('[DEBUG] editCategory aufgerufen:', {
+          logger.info('[DEBUG] editCategory aufgerufen:', {
             categoryToEdit,
             newName,
             type: typeof categoryToEdit,
@@ -26,12 +31,12 @@ export default defineNuxtPlugin(nuxtApp => {
           });
 
           after(() => {
-            console.log('[DEBUG] Nach editCategory:', categoryStore.currentCategories);
+            logger.info('[DEBUG] Nach editCategory:', categoryStore.currentCategories);
           });
         }
       });
     } catch (error) {
-      console.error('[DEBUG] Fehler im Debug-Plugin:', error);
+      logger.error('[DEBUG] Fehler im Debug-Plugin:', error);
     }
   });
 });

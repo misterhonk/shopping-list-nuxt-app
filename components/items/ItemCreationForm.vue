@@ -77,7 +77,11 @@
 </template>
 
 <script setup>
+// Logger initialisieren
 import { reactive, computed, ref, onMounted } from 'vue';
+
+const nuxtApp = useNuxtApp();
+const logger = nuxtApp.$getLogger('ItemCreationForm');
 
 const props = defineProps({
   categories: {
@@ -189,7 +193,7 @@ const onSubmit = () => {
     itemHistory[normalizedName] = existingItem;
     localStorage.setItem('itemHistory', JSON.stringify(itemHistory));
   } catch (e) {
-    console.error('Fehler beim Speichern des Artikelverlaufs:', e);
+    logger.error('Fehler beim Speichern des Artikelverlaufs:', e);
   }
 
   emit('add', itemToAdd);

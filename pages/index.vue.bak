@@ -119,12 +119,12 @@ try {
     try {
       return categoryStore?.currentCategories || ['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges'];
     } catch (e) {
-      console.error('Fehler beim Abrufen der Kategorien:', e);
+      logger.error('Fehler beim Abrufen der Kategorien:', e);
       return ['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges'];
     }
   });
 } catch (e) {
-  console.error('Pinia konnte nicht initialisiert werden:', e);
+  logger.error('Pinia konnte nicht initialisiert werden:', e);
 }
 
 // Templates aus dem CategoryStore
@@ -194,14 +194,14 @@ const addNewItem = (item) => {
     price: item.price || 0
   };
   
-  console.log('Füge neuen Artikel hinzu:', newItem);
+  logger.info('Füge neuen Artikel hinzu:', newItem);
   addItem(newItem);
   isAddingItem.value = false;
 };
 
 // Export-Import-Funktionen
 const handleExportList = (exportData) => {
-  console.log('Exportiere Liste:', exportData.name);
+  logger.info('Exportiere Liste:', exportData.name);
   
   // Liste mit Einträgen befüllen
   const itemsToExport = allItems.value.map(item => ({
@@ -239,11 +239,11 @@ const handleExportList = (exportData) => {
 };
 
 const handleImportList = (importData) => {
-  console.log('Importiere Liste:', importData);
+  logger.info('Importiere Liste:', importData);
   
   // Sicherstellen, dass wir eine gültige Liste haben
   if (!importData || !importData.name) {
-    console.error('Ungültiges Import-Format');
+    logger.error('Ungültiges Import-Format');
     return;
   }
   
@@ -255,7 +255,7 @@ const handleImportList = (importData) => {
   
   // Items hinzufügen, falls vorhanden
   if (newList && Array.isArray(importData.items) && importData.items.length > 0) {
-    console.log(`Füge ${importData.items.length} Artikel hinzu`);
+    logger.info(`Füge ${importData.items.length} Artikel hinzu`);
     
     // Zeitstempel für eindeutige IDs
     const timestamp = Date.now();
@@ -276,11 +276,11 @@ const handleImportList = (importData) => {
       try {
         addItem(itemData);
       } catch (itemError) {
-        console.error('Fehler beim Hinzufügen eines Elements:', itemError);
+        logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
       }
     }
     
-    console.log('Import abgeschlossen');
+    logger.info('Import abgeschlossen');
   }
 };
 
@@ -298,7 +298,7 @@ onMounted(() => {
         categoryStore.activateTemplate(currentList.value.templateId);
       }
     } catch (e) {
-      console.error('Fehler beim Laden der Kategorien:', e);
+      logger.error('Fehler beim Laden der Kategorien:', e);
     }
   }
 });
