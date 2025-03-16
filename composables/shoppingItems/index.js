@@ -73,6 +73,7 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     toggleItemChecked: itemManagement.toggleItemChecked,
     clearCheckedItems: itemManagement.clearCheckedItems,
     getItemsGrouped: itemManagement.getItemsGrouped,
+    updateCategoryInItems: itemManagement.updateCategoryInItems,
     
     // Artikel-Analyse
     getTotalPrice: itemAnalytics.getTotalPrice,

@@ -1,5 +1,6 @@
 import { useListManagement } from './useListManagement';
 import { useListProperties } from './useListProperties';
+import { useListUpdate } from './useListUpdate';
 
 /**
  * Hauptcomposable für die Verwaltung von Einkaufslisten
@@ -11,6 +12,12 @@ export function useShoppingLists() {
   
   // Eigenschaften und Statistiken zu Listen
   const listProperties = useListProperties(
+    listManagement.lists,
+    listManagement.currentListId
+  );
+
+  // Aktualisierung bestehender Listen
+  const listUpdate = useListUpdate(
     listManagement.lists,
     listManagement.currentListId
   );
@@ -37,6 +44,10 @@ export function useShoppingLists() {
     getCheckedItemsCount: listProperties.getCheckedItemsCount, 
     getTotalItemsCount: listProperties.getTotalItemsCount,
     updateListName: listProperties.updateListName,
-    updateListFavorite: listProperties.updateListFavorite
+    updateListFavorite: listProperties.updateListFavorite,
+
+    // Funktionen zum Aktualisieren von Listen
+    updateList: listUpdate.updateList,
+    clearList: listUpdate.clearList
   };
 }

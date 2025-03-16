@@ -365,6 +365,7 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useCategoryStore } from '../../stores/categoryStore';
 import { generateCategoryId, defaultTemplateId } from '../../stores/templates/categoryTemplates';
+import { diagnoseCategories } from './testing-helper';
 
 // Wrapper für den Pinia-Store mit Fehlerbehandlung
 let categoryStore = null;
@@ -521,6 +522,13 @@ const saveEditedCategory = () => {
       // Direkter Test mit dem Store
       console.log('Bearbeite Kategorie', categoryToEdit.id, 'von', categoryToEdit.name, 'zu', newName);
       categoryStore.editCategory(categoryToEdit, newName);
+      
+      // Diagnose und direktes Update der Einkaufslisten
+      const updateFn = diagnoseCategories();
+      if (typeof updateFn === 'function') {
+        // Direkte Aktualisierung aller Artikel mit dieser Kategorie
+        updateFn(categoryToEdit.id, newName);
+      }
       
       // Komponente explizit neu rendern
       componentKey.value += 1;

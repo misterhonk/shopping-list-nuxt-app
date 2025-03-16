@@ -1,5 +1,6 @@
 import { computed } from 'vue';
 import { useLocalStorage } from '../core/useLocalStorage';
+import { createDebuggedRemoveItem, logListsState } from './debug-helpers';
 
 /**
  * Composable für die Verwaltung von Artikeln
@@ -102,7 +103,7 @@ export function useItemManagement(shoppingListsRef, currentListIdRef) {
    * @param {object|string} item - Das Item oder die ID des zu entfernenden Artikels
    * @return {boolean} true bei Erfolg, false bei Fehler
    */
-  const removeItem = (item) => {
+  const originalRemoveItem = (item) => {
     // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
     const itemId = typeof item === 'object' ? item.id : item;
     
@@ -127,6 +128,9 @@ export function useItemManagement(shoppingListsRef, currentListIdRef) {
     
     return true;
   };
+  
+  // Verwende die Debug-Version für removeItem
+  const removeItem = createDebuggedRemoveItem(originalRemoveItem, shoppingListsRef, currentListIdRef, saveToStorage);
   
   /**
    * Ändert den Markierungsstatus eines Artikels
@@ -181,6 +185,96 @@ export function useItemManagement(shoppingListsRef, currentListIdRef) {
     return true;
   };
 
+  /**
+   * Hilfsfunktion zur Protokollierung aller Artikel-IDs in einer Liste
+   * @param {string} message - Nachricht zur Identifikation des Protokolls
+   */
+  const logAllItemIDs = (message = '') => {
+    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    if (!currentList || !Array.isArray(currentList.items)) return;
+    
+    console.log(`DEBUG [${message}]: Alle Artikel-IDs in der aktuellen Liste (${currentList.name}):`); 
+    console.log(currentList.items.map(item => ({ 
+      id: item.id,
+      name: item.name
+    })));
+  };
+
+  /**
+   * Aktualisiert den Kategorienamen in allen Artikeln
+   * @param {string} categoryId - Die ID der zu aktualisierenden Kategorie
+   * @param {string} newName - Der neue Name der Kategorie
+   * @return {boolean} - true bei Erfolg, false bei Fehler
+   */
+  const updateCategoryInItems = (categoryId, newName) => {
+    if (!categoryId || !newName) return false;
+    
+    console.log(`updateCategoryInItems aufgerufen mit ID=${categoryId}, newName=${newName}`);
+    
+    let updatedAnyItem = false;
+    
+    // Alle Listen durchgehen
+    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
+    
+    newLists.forEach((list, listIndex) => {
+      if (!Array.isArray(list.items)) return;
+      
+      let listUpdated = false;
+      
+      // Alle Items in der Liste durchgehen
+      list.items.forEach((item, itemIndex) => {
+        // Protokollieren der aktuellen Kategorie für Debugging
+        console.log(`Prüfe Item: ${item.name}, Kategorie:`, item.category);
+        
+        // Normalisierte Prüfung für Kategorie-ID
+        let matchFound = false;
+        let categoryIdFromItem = '';
+        
+        if (item.category) {
+          if (typeof item.category === 'object') {
+            categoryIdFromItem = item.category.id;
+            if (item.category.id === categoryId) {
+              matchFound = true;
+            }
+          } else if (typeof item.category === 'string') {
+            // Fallback für alte Kategorieformate
+            const normalizedCategoryId = item.category.toLowerCase().replace(/[\s&]/g, '_');
+            categoryIdFromItem = normalizedCategoryId;
+            if (normalizedCategoryId === categoryId) {
+              matchFound = true;
+            }
+          }
+        }
+        
+        // Wenn Match gefunden, Kategorie aktualisieren
+        if (matchFound) {
+          console.log(`  ✓ Match gefunden! Aktualisiere von "${typeof item.category === 'object' ? item.category.name : item.category}" zu "${newName}"`);
+          console.log(`  ID verglichen: Item=${categoryIdFromItem}, Parameter=${categoryId}`);
+          
+          // Kategoriename aktualisieren, ID beibehalten
+          newLists[listIndex].items[itemIndex].category = {
+            id: categoryId,
+            name: newName
+          };
+          
+          listUpdated = true;
+          updatedAnyItem = true;
+        }
+      });
+    });
+    
+    // Nur speichern, wenn Änderungen vorgenommen wurden
+    if (updatedAnyItem) {
+      console.log(`Kategorie '${categoryId}' in ${newLists.length} Listen aktualisiert`);
+      shoppingListsRef.value = newLists;
+      saveToStorage('shoppingLists', newLists);
+    } else {
+      console.log(`Keine Artikel mit Kategorie-ID '${categoryId}' gefunden`);
+    }
+    
+    return updatedAnyItem;
+  };
+
   return {
     // Berechnete Eigenschaften
     allItems,
@@ -190,6 +284,7 @@ export function useItemManagement(shoppingListsRef, currentListIdRef) {
     addItem,
     removeItem,
     toggleItemChecked,
-    clearCheckedItems
+    clearCheckedItems,
+    updateCategoryInItems
   };
 }

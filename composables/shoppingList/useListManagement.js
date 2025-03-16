@@ -87,6 +87,8 @@ export function useListManagement() {
   const createList = (name, options = {}) => {
     if (!name || name.trim() === '') return null;
     
+    console.log('createList aufgerufen:', { name, options });
+    
     // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
     let templateId = options.templateId || 'supermarket';
     const lowerName = name.toLowerCase();
@@ -103,13 +105,22 @@ export function useListManagement() {
       }
     }
     
+    // Eindeutige ID erstellen mit aktuellem Zeitstempel
+    const uniqueId = `list_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+    
     const newList = {
-      id: Date.now().toString(),
+      id: uniqueId,
       name: name.trim(),
       items: [],
       templateId: templateId,
       isFavorite: options.isFavorite || false
     };
+    
+    console.log('Neue Liste erstellt:', {
+      id: newList.id,
+      name: newList.name,
+      templateId: newList.templateId
+    });
     
     lists.value = [...lists.value, newList];
     currentListId.value = newList.id;

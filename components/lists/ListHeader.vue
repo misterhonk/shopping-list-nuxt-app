@@ -69,7 +69,8 @@
               </svg>
               Liste exportieren
             </button>
-            <label 
+            <button 
+              @click="importList"
               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 w-full text-left cursor-pointer"
               role="menuitem"
             >
@@ -77,13 +78,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
               </svg>
               Liste importieren
-              <input 
-                type="file" 
-                accept="application/json"
-                class="hidden" 
-                @change="importListFromFile"
-              />
-            </label>
+            </button>
             <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
             <NuxtLink
               to="/statistics"
@@ -189,34 +184,8 @@ const exportList = (props) => {
 };
 
 // Import-Funktion
-const importListFromFile = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  try {
-    // Dateileselogik hier implementieren
-    const reader = new FileReader();
-    
-    reader.onload = (event) => {
-      try {
-        const importData = JSON.parse(event.target.result);
-        emit('import-list', importData);
-        showExportMenu.value = false;
-      } catch (error) {
-        alert('Fehler beim Importieren der Liste: ' + error.message);
-      }
-    };
-    
-    reader.onerror = () => {
-      alert('Fehler beim Lesen der Datei');
-    };
-    
-    reader.readAsText(file);
-  } catch (error) {
-    alert('Fehler beim Importieren der Liste: ' + error.message);
-  }
-  
-  // Zurücksetzen des File-Inputs
-  event.target.value = null;
+const importList = () => {
+  emit('import-list');
+  showExportMenu.value = false;
 };
 </script>

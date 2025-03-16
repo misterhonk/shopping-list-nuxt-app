@@ -15,6 +15,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vite-pwa/nuxt'
   ],
+  
+  // Pinia Konfiguration
+  pinia: {
+    autoImports: ['defineStore', 'acceptHMRUpdate'],
+  },
 
   // PWA-Konfiguration
   pwa: {

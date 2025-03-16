@@ -64,7 +64,7 @@
         @update:name="updateCurrentListName"
         @update:favorite="updateCurrentListFavorite"
         @export-list="handleExportList"
-        @import-list="openImportDialog"
+        @import-list="startImport"
       />
 
       <!-- Artikel-Hinzufügen-Formular -->
@@ -83,6 +83,16 @@
         @add-new="isAddingItem = true"
       />
     </div>
+
+    <!-- Import-Optionen-Dialog -->
+    <ImportOptionsModal
+      v-if="showImportOptions && importData"
+      :is-open="showImportOptions"
+      :import-data="importData"
+      :available-lists="lists"
+      @confirm="handleImportConfirm"
+      @cancel="showImportOptions = false"
+    />
   </div>
 </template>
 
@@ -98,6 +108,7 @@ import PageHeader from '../components/layout/PageHeader.vue';
 import ListCreationForm from '../components/lists/ListCreationForm.vue';
 import ListSelector from '../components/lists/ListSelector.vue';
 import ListHeader from '../components/lists/ListHeader.vue';
+import ImportOptionsModal from '../components/lists/ImportOptionsModal.vue';
 
 // Artikel-Komponenten
 import ItemCreationForm from '../components/items/ItemCreationForm.vue';
@@ -143,7 +154,8 @@ const {
   updateListName: updateCurrentListName,
   updateListFavorite: updateCurrentListFavorite,
   getCheckedItemsCount,
-  getTotalItemsCount
+  getTotalItemsCount,
+  updateList
 } = useShoppingLists();
 
 // Artikel verwalten
@@ -160,8 +172,11 @@ const {
 const {
   handleExportList,
   handleImportList,
-  openImportDialog
-} = useListImportExport(createList, addItem, allItems);
+  handleImportListWithOptions,
+  openImportDialog,
+  showImportOptions,
+  importData
+} = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
 
 // Neue Liste erstellen
 const createNewList = (name, options) => {
@@ -169,8 +184,69 @@ const createNewList = (name, options) => {
   isCreatingList.value = false;
 };
 
+/**
+ * Starter-Funktion für den Importprozess
+ * Öffnet die Dateiauswahl und zeigt dann den Optionsdialog
+ */
+const startImport = () => {
+  openImportDialog(onImportOptionsLoaded);
+};
+
+/**
+ * Handler für die Bestätigung des Imports durch den Benutzer
+ */
+const handleImportConfirm = (options) => {
+  console.log('Import-Optionen bestätigt:', options);
+  
+  // Import mit den gewählten Optionen durchführen
+  handleImportListWithOptions(importData.value, options);
+  
+  // Dialog schließen
+  showImportOptions.value = false;
+};
+
+/**
+ * Callback-Funktion für geladene Import-Daten
+ */
+const onImportOptionsLoaded = (data, availableLists) => {
+  console.log('Import-Daten geladen, zeige Optionen:', { 
+    listName: data.name, 
+    itemCount: data.items?.length || 0,
+    availableListsCount: availableLists.length 
+  });
+  
+  // Daten aus dem Import übernehmen
+  importData.value = data;
+  
+  // Dialog anzeigen
+  showImportOptions.value = true;
+};
+
+// Kategorieänderungen überwachen und synchronisieren
+const { updateCategoryInItems } = useShoppingItems(lists, currentListId);
+
+// Kategoriesynchronisierungs-Funktion aus dem Nuxt-Plugin holen
+const onCategoryUpdate = useNuxtApp().$onCategoryUpdate;
+let unsubscribeCategoryUpdate = null;
+
 // App-Initialisierung
 onMounted(() => {
+  // Debug: Aktuellen Listenstand protokollieren
+  console.log('App gestartet, Listenstand beim Start:');
+  const listenImStorage = localStorage.getItem('shoppingLists');
+  if (listenImStorage) {
+    try {
+      const parsedLists = JSON.parse(listenImStorage);
+      console.log('Listen im Storage:', parsedLists.map(l => ({
+        id: l.id,
+        name: l.name,
+        itemCount: l.items?.length || 0
+      })));
+    } catch (e) {
+      console.error('Fehler beim Parsen der Listen aus dem Storage:', e);
+    }
+  }
+  
   loadLists();
   
   // Kategorie-Store initialisieren, falls verfügbar
@@ -182,9 +258,24 @@ onMounted(() => {
       if (currentList.value && currentList.value.templateId) {
         categoryStore.activateTemplate(currentList.value.templateId);
       }
+      
+      // Event-Listener für Kategorieänderungen registrieren
+      if (onCategoryUpdate) {
+        unsubscribeCategoryUpdate = onCategoryUpdate((categoryId, newName) => {
+          console.log(`[App] Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
+          updateCategoryInItems(categoryId, newName);
+        });
+      }
     } catch (e) {
       console.error('Fehler beim Laden der Kategorien:', e);
     }
+  }
+});
+
+// Ressourcen freigeben beim Unmounten
+onUnmounted(() => {
+  if (unsubscribeCategoryUpdate) {
+    unsubscribeCategoryUpdate();
   }
 });
 
