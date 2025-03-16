@@ -204,7 +204,16 @@ const handleExportList = (exportData) => {
   console.log('Exportiere Liste:', exportData.name);
   
   // Liste mit Einträgen befüllen
-  exportData.items = allItems.value;
+  const itemsToExport = allItems.value.map(item => ({
+    id: item.id,
+    name: item.name,
+    quantity: item.quantity,
+    category: item.category,
+    price: item.price,
+    checked: item.checked
+  }));
+  
+  exportData.items = itemsToExport;
   
   // JSON erstellen
   const jsonData = JSON.stringify(exportData, null, 2);
@@ -232,6 +241,12 @@ const handleExportList = (exportData) => {
 const handleImportList = (importData) => {
   console.log('Importiere Liste:', importData);
   
+  // Sicherstellen, dass wir eine gültige Liste haben
+  if (!importData || !importData.name) {
+    console.error('Ungültiges Import-Format');
+    return;
+  }
+  
   // Neue Liste erstellen
   const newList = createList(importData.name, {
     templateId: importData.templateId || 'supermarket',
@@ -240,13 +255,22 @@ const handleImportList = (importData) => {
   
   // Items hinzufügen, falls vorhanden
   if (newList && Array.isArray(importData.items) && importData.items.length > 0) {
-    for (const item of importData.items) {
+    console.log(`Füge ${importData.items.length} Artikel hinzu`);
+    
+    // Zeitstempel für eindeutige IDs
+    const timestamp = Date.now();
+    
+    for (let i = 0; i < importData.items.length; i++) {
+      const item = importData.items[i];
+      
       // Sicherstellen, dass alle erforderlichen Felder vorhanden sind
       const itemData = {
+        id: `${timestamp}_${i}_${Math.random().toString(36).substr(2, 5)}`, // Wirklich eindeutige ID generieren
         name: item.name,
         quantity: item.quantity || 1,
         category: item.category || { id: 'sonstiges', name: 'Sonstiges' },
-        price: item.price || 0
+        price: item.price || 0,
+        checked: item.checked || false
       };
       
       try {
@@ -255,6 +279,8 @@ const handleImportList = (importData) => {
         console.error('Fehler beim Hinzufügen eines Elements:', itemError);
       }
     }
+    
+    console.log('Import abgeschlossen');
   }
 };
 

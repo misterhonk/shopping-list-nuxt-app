@@ -91,11 +91,11 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
     if (listIndex === -1) return null;
     
     const newItemObj = {
-      id: Date.now().toString(),
+      id: itemToAdd.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
       name: itemToAdd.name,
       quantity: itemToAdd.quantity,
       category: itemToAdd.category,
-      checked: false,
+      checked: itemToAdd.checked || false,
       price: itemToAdd.price || 0
     };
     
