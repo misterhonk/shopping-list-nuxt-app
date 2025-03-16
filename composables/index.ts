@@ -12,6 +12,9 @@ export { useShoppingLists } from './useShoppingLists';
 // Einkaufsartikel
 export { useShoppingItems } from './useShoppingItems';
 
+// Artikel-Vorschläge
+export { useItemSuggestions } from './shoppingItems/useItemSuggestions';
+
 // Import/Export
 export { useListImportExport } from './importExport';
 

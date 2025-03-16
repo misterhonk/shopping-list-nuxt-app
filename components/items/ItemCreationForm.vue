@@ -75,6 +75,10 @@ const props = defineProps({
   categories: {
     type: Array,
     default: () => ['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges']
+  },
+  allLists: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -104,8 +108,15 @@ const normalizedCategories = computed(() => {
 const item = reactive({
   name: '',
   quantity: 1,
-  category: computed(() => normalizedCategories.value.length > 0 ? normalizedCategories.value[0] : { id: 'sonstiges', name: 'Sonstiges' }),
+  category: null,
   price: 0
+});
+
+// Kategorie initialisieren, wenn normalizedCategories verfügbar ist
+onMounted(() => {
+  if (normalizedCategories.value.length > 0) {
+    item.category = normalizedCategories.value[0];
+  }
 });
 
 const nameInput = ref(null);
@@ -127,6 +138,42 @@ const onSubmit = () => {
     price: parseFloat(item.price) || 0
   };
   
+  // Zum Verlauf hinzufügen - vereinfachte Version ohne Speichern
+  try {
+    const itemHistory = JSON.parse(localStorage.getItem('itemHistory') || '{}');
+    const normalizedName = item.name.toLowerCase().trim();
+    const now = new Date().toISOString();
+    
+    const existingItem = itemHistory[normalizedName] || {
+      count: 0,
+      lastUsed: null,
+      categories: {},
+      prices: []
+    };
+    
+    existingItem.count += 1;
+    existingItem.lastUsed = now;
+    
+    const categoryId = item.category?.id || 'sonstiges';
+    existingItem.categories[categoryId] = (existingItem.categories[categoryId] || 0) + 1;
+    
+    if (item.price && item.price > 0) {
+      existingItem.prices.push({
+        price: item.price,
+        date: now
+      });
+      
+      if (existingItem.prices.length > 10) {
+        existingItem.prices = existingItem.prices.slice(-10);
+      }
+    }
+    
+    itemHistory[normalizedName] = existingItem;
+    localStorage.setItem('itemHistory', JSON.stringify(itemHistory));
+  } catch (e) {
+    console.error('Fehler beim Speichern des Artikelverlaufs:', e);
+  }
+  
   emit('add', itemToAdd);
   
   // Zurücksetzen nach dem Hinzufügen
@@ -142,7 +189,6 @@ const onCancel = () => {
   item.name = '';
   item.quantity = 1;
   item.price = 0;
-  // Kategorie nicht zurücksetzen, da es computed ist
   emit('cancel');
 };
 

@@ -71,6 +71,7 @@
       <ItemCreationForm 
         v-if="isAddingItem" 
         :categories="categories"
+        :all-lists="lists"
         @add="addNewItem" 
         @cancel="isAddingItem = false" 
       />

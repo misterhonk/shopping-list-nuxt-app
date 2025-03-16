@@ -1,50 +1,60 @@
-# Shopping-List-App: Update des Import-Systems
+# Auto-Vervollständigung für Artikelnamen
 
-## Implementierte Funktionen
+Diese neue Funktion verbessert die Benutzererfahrung beim Hinzufügen neuer Artikel, indem sie basierend auf dem bisherigen Einkaufsverhalten intelligente Vorschläge macht.
 
-1. **Erweiterte Import-Optionen**
-   - Neue Importfunktion mit der Möglichkeit zu wählen:
-     - Neue Liste erstellen
-     - Bestehende Liste aktualisieren
-   - Bei der Aktualisierung einer bestehenden Liste:
-     - Artikel hinzufügen (vorhandene behalten)
-     - Alle Artikel ersetzen
+## Implementierte Komponenten
 
-2. **Verbesserte Benutzeroberfläche**
-   - Neuer Optionen-Dialog für den Import
-   - Automatische Vorauswahl einer passenden Liste, falls der Name übereinstimmt
-   - Anzeige der Artikelanzahl in den Listen zur besseren Übersicht
+### 1. `AutocompleteInput.vue`
 
-3. **Robustere ID-Generierung**
-   - Listen und Artikel haben jetzt eindeutige, präfixbasierte IDs
-   - Listenelemente nutzen ein anderes ID-Format als Listen selbst
-   - Dies verhindert das vorherige Problem mit dem Löschen von Listen
+Eine wiederverwendbare Komponente für Eingabefelder mit Vorschlägen:
 
-## Verwendung
+- Zeigt Vorschläge während der Eingabe an
+- Hebt übereinstimmende Textstellen hervor
+- Vollständige Tastaturunterstützung (Pfeiltasten, Enter, Escape)
+- Unterstützt optionale Zusatzinformationen in den Vorschlägen
 
-1. Klicken Sie auf "Liste importieren" im Menü
-2. Wählen Sie die zu importierende JSON-Datei
-3. Im erscheinenden Dialog wählen Sie:
-   - "Neue Liste erstellen" oder
-   - "Bestehende Liste aktualisieren" mit zusätzlicher Auswahl der Liste und des Update-Modus
+### 2. `useItemSuggestions.ts`
 
-## Implementierungsdetails
+Ein Composable, das Artikel-Vorschläge basierend auf der Nutzungshistorie bereitstellt:
 
-### Im Backend
+- Speichert und verwaltet die Artikelhistorie im LocalStorage
+- Verfolgt häufig gekaufte Artikel
+- Erfasst typische Kategorien und Preise für jeden Artikel
+- Bietet Vorschläge basierend auf Häufigkeit und letzter Verwendung
 
-- Neue Composables für das Update bestehender Listen
-- Verbesserte ID-Generierung mit Präfixen und Zufallskomponenten
-- Zwei Update-Modi: "append" (hinzufügen) und "replace" (ersetzen)
+## Funktionsweise
 
-### In der Benutzeroberfläche
+1. **Datenerfassung**: Jeder hinzugefügte Artikel wird anonymisiert in einer lokalen Datenbank gespeichert
+2. **Intelligente Analyse**: Die App analysiert Einkaufsmuster und lernt typische Artikel, Kategorien und Preise kennen
+3. **Vorschläge bei Eingabe**: Bei der Eingabe eines Artikelnamens werden passende Vorschläge angezeigt
+4. **Automatische Übernahme**: Bei Auswahl eines Vorschlags werden typische Kategorie und Preis automatisch vorausgefüllt
 
-- Neuer modaler Dialog: `ImportOptionsModal.vue`
-- Verbesserte Auswahl für den Import
-- Automatische Vorauswahl bei Namensübereinstimmung
+## Vorteile für den Benutzer
+
+- Schnellere Eingabe: Reduziert Tippaufwand durch Vervollständigung
+- Weniger Fehler: Konsistente Artikelnamen durch Vorschläge
+- Zeitersparnis: Automatisches Ausfüllen von Kategorie und Preis
+- Personalisierte Erfahrung: Vorschläge passen sich dem individuellen Einkaufsverhalten an
+
+## Integration in bestehende Funktionen
+
+Die Auto-Vervollständigung ist nahtlos in das bestehende Formular für neue Artikel integriert:
+
+- Bei Fokus auf dem Eingabefeld werden beliebte Artikel angezeigt
+- Bei Eingabe von mindestens 2 Zeichen werden passende Vorschläge gefiltert
+- Übereinstimmende Teile im Text werden farblich hervorgehoben
+- Die Anzahl der Vorschläge ist auf 6 begrenzt, um die Übersichtlichkeit zu wahren
+
+## Technische Details
+
+- Artikelhistorie wird im LocalStorage unter dem Schlüssel `itemHistory` gespeichert
+- Pro Artikel werden maximal 10 Preispunkte gespeichert
+- Die am häufigsten verwendete Kategorie wird für Vorschläge genutzt
+- Vorschläge werden primär nach Häufigkeit und sekundär nach letzter Verwendung sortiert
 
 ## Nächste Schritte
 
-- Integration von Drag & Drop für Datei-Import
-- Import aus anderen Formaten (CSV, etc.)
-- Export-Optionen erweitern
-- Automatisches Zusammenführen von doppelten Einträgen
+- Erweiterung um Produktbilder
+- Integration mit dem geplanten Preisvergleich-Feature
+- Optimierung der Speichernutzung für große Datenmengen
+- Möglichkeit zum manuellen Löschen von Einträgen aus dem Vorschlagsverlauf

@@ -101,5 +101,5 @@ export default defineNuxtConfig({
   // Wir verwenden client-seitiges Rendering, da wir LocalStorage benötigen
   ssr: false,
 
-  compatibilityDate: '2025-03-15'
+  compatibilityDate: '2025-03-16'
 })

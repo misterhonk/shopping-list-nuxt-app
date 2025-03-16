@@ -1,19 +1,10 @@
-Fix: Import/Export-Funktionalität für Einkaufslisten
+fix: Wiederherstellung der App-Funktionalität und Layout
 
-Diese Änderungen beheben Probleme mit dem Import und Export von Einkaufslisten:
+- Layout-Dateien für Header und Footer hinzugefügt
+- Vereinfachte Version des ItemCreationForm implementiert
+- Fehlerhafte Watch-Ausdrücke behoben
+- ListHeader-Komponente für Menüfunktionen wiederhergestellt
+- Integration der Auto-Vervollständigungsfunktion zurückgesetzt für Stabilität
 
-1. Problem: Beim Export wurden leere Listen ohne Artikel generiert
-   - Ursache: ListHeader.vue generierte ein leeres Objekt mit items: []
-   - Lösung: Vereinfachung des Exports durch direkte Verwendung der aktuellen Liste
-
-2. Import-Modus-Korrektur:
-   - Anpassung der Modal-Komponente zur korrekten Verwendung von 'create', 'merge' und 'replace' Modi
-   - Verbesserung der Import-Optionen-Schnittstelle
-
-3. Fehlerbehebung in Plugins:
-   - Auflösung von Konflikten zwischen doppelten Plugins (category-sync.ts und category-update.ts)
-   - Aktualisierung der Plugin-Pfade für kompatibilität mit der neuen Store-Struktur
-
-4. Weitere Verbesserungen:
-   - Vollständige TypeScript-Unterstützung für Import/Export-Funktionen
-   - Verbesserte Fehlerbehandlung und Debugging
+Diese Änderungen stellen die Kernfunktionalität der App wieder her und
+beheben kritische Fehler, die die Navigation und Benutzbarkeit beeinträchtigt haben.
