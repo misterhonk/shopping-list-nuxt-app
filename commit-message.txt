@@ -1,16 +1,29 @@
-refactor: Code-Qualität verbessern & TypeScript einführen
+refactor: Code-Qualität verbessern & vollständig zu TypeScript migrieren
 
-- Migriere Composables zu TypeScript für bessere Typ-Sicherheit
+- Migriere alle Composables, Plugins und Stores zu TypeScript für bessere Typ-Sicherheit
 - Verbessere Immutabilität und Performance durch effizientere Kopier-Strategien
 - Führe robustes Datenmigrationssystem für Abwärtskompatibilität ein
 - Erweitere die Modularisierung für bessere Testbarkeit und Wartbarkeit
 - Verbessere die Fehlerbehandlung in allen kritischen Funktionen
-- Füge ausführliche Dokumentation für die Migration hinzu
+- Zentralisiere Typdefinitionen in einer gemeinsamen types.ts Datei
+- Behebe Plugin-Konflikte durch Entfernen doppelter JavaScript-Dateien
+
+Typisierte Module:
+- Core: useLocalStorage und zentrale Typendefinitionen
+- Einkaufslisten: useShoppingLists und Untermodule
+- Artikel: useShoppingItems und Untermodule
+- Import/Export: useListImportExport und Untermodule
+- Plugins: Dark Mode, Category-Sync, Debug und Data-Migration
+- Stores: CategoryStore und CategorySyncPlugin
 
 Neue Dateien:
-- composables/types.ts: Typdefinitionen für alle Datenstrukturen
+- composables/types.ts: Zentrale Typdefinitionen für die gesamte App
 - composables/utils/dataMigration.ts: Migrations-Hilfsfunktionen
 - composables/utils/testMigration.js: Testskript für die Migration
 - plugins/data-migration.ts: Plugin für automatische Migration
 - refactoring-zusammenfassung.md: Dokumentation der Änderungen
 - migration-anleitung.md: Anleitung zur Komponentenmigration
+
+Fehlerbehebung:
+- Behebung von Plugin-Konflikten durch Umbenennen alter JS-Dateien (.js.bak)
+- Konsistente Typen zwischen Stores und Composables durch zentrale Definitionen

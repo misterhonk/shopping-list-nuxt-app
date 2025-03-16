@@ -14,6 +14,24 @@ export interface Category {
 }
 
 /**
+ * Interface für eine Kategorie-Vorlage
+ */
+export interface CategoryTemplate {
+  id: string;
+  name: string;
+  description: string;
+  categories: Category[];
+  isCustom?: boolean;
+}
+
+/**
+ * Interface für die Template-Listen
+ */
+export interface TemplateCollection {
+  [key: string]: CategoryTemplate;
+}
+
+/**
  * Repräsentiert einen einzelnen Einkaufsartikel
  */
 export interface ShoppingItem {
@@ -68,4 +86,12 @@ export interface ExportedList {
   format: string;
   version: string;
   exportedAt: number;
+}
+
+/**
+ * Interface für den Eventbus
+ */
+export interface CategoryEventBus {
+  on: (callback: (categoryId: string, newName: string) => void) => () => void;
+  emit: (categoryId: string, newName: string) => void;
 }
