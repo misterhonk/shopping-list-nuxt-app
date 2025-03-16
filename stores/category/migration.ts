@@ -8,10 +8,10 @@ import { generateCategoryId, deepCopy } from './utils';
  */
 export const migrateCategories = (customTemplates: TemplateCollection): TemplateCollection => {
   console.log('Starte Migration von String-Kategorien zu Objekten');
-  
+
   // Tiefe Kopie erstellen
   const migratedTemplates = deepCopy(customTemplates);
-  
+
   // Für jedes Template die Kategorien migrieren
   for (const templateId in migratedTemplates) {
     const template = migratedTemplates[templateId];
@@ -21,7 +21,7 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
         if (typeof category === 'string') {
           return {
             id: generateCategoryId(category),
-            name: category
+            name: category,
           };
         }
         return category; // Falls es bereits ein Objekt ist
@@ -29,7 +29,7 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
       template.categories = newCategories;
     }
   }
-  
+
   console.log('Migration abgeschlossen, neue customTemplates:', migratedTemplates);
   return migratedTemplates;
 };

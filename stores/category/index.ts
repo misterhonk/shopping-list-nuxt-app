@@ -11,7 +11,7 @@ import {
   createTemplate as createTemplateOperation,
   deleteTemplate as deleteTemplateOperation,
   updateTemplate as updateTemplateOperation,
-  updateCategoryOrder as updateCategoryOrderOperation
+  updateCategoryOrder as updateCategoryOrderOperation,
 } from './operations';
 
 /**
@@ -47,10 +47,7 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Das aktuell ausgewählte Template
      */
     currentTemplate(): CategoryTemplate {
-      return (
-        this.allTemplates[this.activeTemplateId] ||
-        this.templates[defaultTemplateId]
-      );
+      return this.allTemplates[this.activeTemplateId] || this.templates[defaultTemplateId];
     },
 
     /**
@@ -69,7 +66,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       description: string;
       isCustom: boolean;
     }> {
-      return Object.values(this.allTemplates).map((template) => ({
+      return Object.values(this.allTemplates).map(template => ({
         id: template.id,
         name: template.name,
         description: template.description,
@@ -111,8 +108,8 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     editCategory(categoryToEdit: Category | string, newName: string): void {
       // Sicherstellen, dass wir eine Kategorie-ID haben
-      const categoryId = (typeof categoryToEdit === 'object') ? categoryToEdit.id : categoryToEdit;
-      
+      const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
+
       this.customTemplates = editCategoryOperation(
         this.activeTemplateId,
         categoryId,
@@ -120,9 +117,9 @@ export const useCategoryStore = defineStore('categoryStore', {
         this.templates,
         this.customTemplates
       );
-      
+
       this.saveToLocalStorage();
-      
+
       // Explizites Neuladen zur Sicherheit
       setTimeout(() => {
         this.loadFromLocalStorage();
@@ -135,17 +132,18 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     deleteCategory(categoryToDelete: Category | string): void {
       // Sicherstellen, dass wir eine Kategorie-ID haben
-      const categoryId = (typeof categoryToDelete === 'object') ? categoryToDelete.id : categoryToDelete;
-      
+      const categoryId =
+        typeof categoryToDelete === 'object' ? categoryToDelete.id : categoryToDelete;
+
       this.customTemplates = deleteCategoryOperation(
         this.activeTemplateId,
         categoryId,
         this.templates,
         this.customTemplates
       );
-      
+
       this.saveToLocalStorage();
-      
+
       // Explizites Neuladen zur Sicherheit
       setTimeout(() => {
         this.loadFromLocalStorage();
@@ -160,8 +158,8 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @returns Die ID des neuen Templates oder null bei Fehler
      */
     createTemplate(
-      name: string, 
-      description: string = '', 
+      name: string,
+      description: string = '',
       baseTemplateId: string | null = null
     ): string | null {
       const result = createTemplateOperation(
@@ -171,14 +169,14 @@ export const useCategoryStore = defineStore('categoryStore', {
         this.templates,
         this.customTemplates
       );
-      
+
       if (result.newTemplateId) {
         this.customTemplates = result.customTemplates;
         this.activeTemplateId = result.newTemplateId;
         this.saveToLocalStorage();
         return result.newTemplateId;
       }
-      
+
       return null;
     },
 
@@ -187,10 +185,7 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param templateId - Die ID des zu löschenden Templates
      */
     deleteTemplate(templateId: string): void {
-      this.customTemplates = deleteTemplateOperation(
-        templateId,
-        this.customTemplates
-      );
+      this.customTemplates = deleteTemplateOperation(templateId, this.customTemplates);
 
       // Falls das aktive Template gelöscht wurde, zurück zum Standard
       if (this.activeTemplateId === templateId) {
@@ -228,7 +223,7 @@ export const useCategoryStore = defineStore('categoryStore', {
         this.templates,
         this.customTemplates
       );
-      
+
       this.saveToLocalStorage();
     },
 
@@ -245,7 +240,7 @@ export const useCategoryStore = defineStore('categoryStore', {
     loadFromLocalStorage(): void {
       try {
         const data = loadCategoryData();
-        
+
         if (data) {
           if (data.customTemplates) {
             // Prüfen, ob Migration notwendig ist
@@ -259,17 +254,13 @@ export const useCategoryStore = defineStore('categoryStore', {
 
           if (
             data.activeTemplateId &&
-            (this.templates[data.activeTemplateId] ||
-              this.customTemplates[data.activeTemplateId])
+            (this.templates[data.activeTemplateId] || this.customTemplates[data.activeTemplateId])
           ) {
             this.activeTemplateId = data.activeTemplateId;
           }
         }
       } catch (error) {
-        console.error(
-          'Fehler beim Laden der Kategorie-Vorlagen:',
-          error
-        );
+        console.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
       }
     },
 

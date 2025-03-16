@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
-    <input 
+    <input
       v-model="inputValue"
-      type="text" 
+      type="text"
       :placeholder="placeholder"
       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
       @input="onInput"
@@ -15,14 +15,14 @@
       ref="inputElement"
       v-bind="$attrs"
     />
-    
-    <div 
-      v-if="showSuggestions && filteredSuggestions.length > 0" 
+
+    <div
+      v-if="showSuggestions && filteredSuggestions.length > 0"
       class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto"
     >
       <ul>
-        <li 
-          v-for="(suggestion, index) in filteredSuggestions" 
+        <li
+          v-for="(suggestion, index) in filteredSuggestions"
           :key="index"
           class="px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200"
           :class="{ 'bg-gray-100 dark:bg-gray-700': index === highlightedIndex }"
@@ -45,24 +45,24 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 const props = defineProps({
   modelValue: {
     type: String,
-    default: ''
+    default: '',
   },
   suggestions: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   minChars: {
     type: Number,
-    default: 1
+    default: 1,
   },
   placeholder: {
     type: String,
-    default: ''
+    default: '',
   },
   maxSuggestions: {
     type: Number,
-    default: 6
-  }
+    default: 6,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'select']);
@@ -85,10 +85,9 @@ const filteredSuggestions = computed(() => {
   const filtered = props.suggestions
     .filter(suggestion => {
       // Wenn das Objekt ein 'text'-Feld hat, prüfe dieses
-      const searchText = typeof suggestion === 'object' && suggestion.text 
-        ? suggestion.text 
-        : String(suggestion);
-      
+      const searchText =
+        typeof suggestion === 'object' && suggestion.text ? suggestion.text : String(suggestion);
+
       return searchText.toLowerCase().includes(inputValue.value.toLowerCase());
     })
     .map(suggestion => {
@@ -104,11 +103,11 @@ const filteredSuggestions = computed(() => {
 });
 
 // Markiere die übereinstimmenden Teile im Text
-const highlightMatch = (text) => {
+const highlightMatch = text => {
   if (!inputValue.value || inputValue.value.length < props.minChars) {
     return text;
   }
-  
+
   const regex = new RegExp(`(${inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
   return text.replace(regex, '<strong class="text-orange-500">$1</strong>');
 };
@@ -121,13 +120,13 @@ const onInput = () => {
 };
 
 // Vorschläge mit Tasten navigieren
-const navigateSuggestions = (direction) => {
+const navigateSuggestions = direction => {
   if (!showSuggestions.value || filteredSuggestions.value.length === 0) {
     return;
   }
-  
+
   const newIndex = highlightedIndex.value + direction;
-  
+
   if (newIndex >= filteredSuggestions.value.length) {
     highlightedIndex.value = 0;
   } else if (newIndex < 0) {
@@ -138,19 +137,19 @@ const navigateSuggestions = (direction) => {
 };
 
 // Vorschlag auswählen
-const selectSuggestion = (index) => {
+const selectSuggestion = index => {
   if (index < 0 || index >= filteredSuggestions.value.length) {
     return;
   }
-  
+
   const selected = filteredSuggestions.value[index];
   inputValue.value = selected.text;
   emit('update:modelValue', selected.text);
   emit('select', selected);
-  
+
   showSuggestions.value = false;
   highlightedIndex.value = -1;
-  
+
   // Fokus auf dem Input behalten
   nextTick(() => {
     if (inputElement.value) {
@@ -168,9 +167,12 @@ const handleBlur = () => {
 };
 
 // Wenn sich der externe Wert ändert, Input aktualisieren
-watch(() => props.modelValue, (newValue) => {
-  inputValue.value = newValue;
-});
+watch(
+  () => props.modelValue,
+  newValue => {
+    inputValue.value = newValue;
+  }
+);
 
 // Bei der Initialisierung
 onMounted(() => {

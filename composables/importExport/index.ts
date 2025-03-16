@@ -26,11 +26,11 @@ export function useListImportExport(
 ) {
   const listExport = useListExport();
   const listImport = useListImport();
-  
+
   // Status der Import-Dialog-Anzeige
   const showImportOptions: Ref<boolean> = ref(false);
   const importData: Ref<any> = ref(null);
-  
+
   /**
    * Exportiert eine Liste
    * @param exportData - Die Exportdaten
@@ -39,7 +39,7 @@ export function useListImportExport(
   const handleExportList = (exportData: { name: string; templateId?: string }): boolean => {
     return listExport.exportList(exportData, allItems.value);
   };
-  
+
   /**
    * Importiert eine Liste aus Daten
    * @param data - Die Importdaten
@@ -47,18 +47,14 @@ export function useListImportExport(
    * @returns Das Importergebnis
    */
   const handleImportListWithOptions = (data: any, options: ImportOptions) => {
-    return listImport.importListWithOptions(
-      data, 
-      options, 
-      {
-        createList,
-        addItem,
-        selectList,
-        updateList
-      }
-    );
+    return listImport.importListWithOptions(data, options, {
+      createList,
+      addItem,
+      selectList,
+      updateList,
+    });
   };
-  
+
   /**
    * Importiert eine Liste (alte Methode)
    * @param importData - Die Importdaten
@@ -67,7 +63,7 @@ export function useListImportExport(
   const handleImportList = (importData: any) => {
     return listImport.importList(importData, createList, addItem);
   };
-  
+
   /**
    * Öffnet einen Dateidialog zum Importieren einer Liste und zeigt Optionen
    * @param onImportOptionsLoaded - Callback für geladene Import-Optionen
@@ -79,20 +75,20 @@ export function useListImportExport(
     const availableLists = lists.value.map(list => ({
       id: list.id,
       name: list.name,
-      itemCount: list.items?.length || 0
+      itemCount: list.items?.length || 0,
     }));
-    
+
     // Datei laden und dann Optionen anzeigen
-    listImport.loadFileAndShowOptions((data) => {
+    listImport.loadFileAndShowOptions(data => {
       importData.value = data;
-      
+
       // Liste formatiert bereitstellen und Dialog anzeigen
       if (typeof onImportOptionsLoaded === 'function') {
         onImportOptionsLoaded(data, availableLists);
       }
     });
   };
-  
+
   // Globale Funktion zurückgeben
   return {
     handleExportList,
@@ -100,6 +96,6 @@ export function useListImportExport(
     handleImportListWithOptions,
     openImportDialog,
     showImportOptions,
-    importData
+    importData,
   };
 }

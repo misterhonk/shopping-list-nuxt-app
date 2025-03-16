@@ -23,14 +23,12 @@ export const addCategory = (
   // Erstelle ein neues Kategorie-Objekt
   const newCategory: Category = {
     id: generateCategoryId(categoryName),
-    name: categoryName.trim()
+    name: categoryName.trim(),
   };
 
   // Wähle das aktuelle Template
   const isStandardTemplate = templates[templateId] !== undefined;
-  const currentTemplate = isStandardTemplate 
-    ? templates[templateId] 
-    : customTemplates[templateId];
+  const currentTemplate = isStandardTemplate ? templates[templateId] : customTemplates[templateId];
 
   // Prüfe, ob die Kategorie bereits existiert
   if (categoryExists(currentTemplate, newCategory.name)) {
@@ -44,26 +42,23 @@ export const addCategory = (
     const newTemplate = deepCopy({
       ...templates[templateId],
       id: templateId,
-      categories: [
-        ...templates[templateId].categories,
-        newCategory,
-      ],
+      categories: [...templates[templateId].categories, newCategory],
     });
-    
+
     return {
       ...customTemplates,
-      [templateId]: newTemplate
+      [templateId]: newTemplate,
     };
   } else {
     // Bei benutzerdefinierten Vorlagen fügen wir der bestehenden Liste hinzu
     const updatedTemplate = deepCopy({
       ...customTemplates[templateId],
-      categories: [...customTemplates[templateId].categories, newCategory]
+      categories: [...customTemplates[templateId].categories, newCategory],
     });
-    
+
     return {
       ...customTemplates,
-      [templateId]: updatedTemplate
+      [templateId]: updatedTemplate,
     };
   }
 };
@@ -87,12 +82,10 @@ export const editCategory = (
   if (!newName || newName.trim() === '') {
     return customTemplates;
   }
-  
+
   // Wähle das aktuelle Template
   const isStandardTemplate = templates[templateId] !== undefined;
-  const currentTemplate = isStandardTemplate 
-    ? templates[templateId] 
-    : customTemplates[templateId];
+  const currentTemplate = isStandardTemplate ? templates[templateId] : customTemplates[templateId];
 
   // Prüfen, ob die Kategorie existiert
   const existingCategory = findCategoryById(currentTemplate, categoryId);
@@ -116,8 +109,8 @@ export const editCategory = (
       [templateId]: {
         ...templates[templateId],
         id: templateId,
-        categories: updatedCategories
-      }
+        categories: updatedCategories,
+      },
     };
   } else {
     // Aktualisiere das bestehende benutzerdefinierte Template
@@ -125,8 +118,8 @@ export const editCategory = (
       ...customTemplates,
       [templateId]: {
         ...customTemplates[templateId],
-        categories: updatedCategories
-      }
+        categories: updatedCategories,
+      },
     };
   }
 };
@@ -147,9 +140,7 @@ export const deleteCategory = (
 ): TemplateCollection => {
   // Wähle das aktuelle Template
   const isStandardTemplate = templates[templateId] !== undefined;
-  const currentTemplate = isStandardTemplate 
-    ? templates[templateId] 
-    : customTemplates[templateId];
+  const currentTemplate = isStandardTemplate ? templates[templateId] : customTemplates[templateId];
 
   // Prüfen, ob die Kategorie existiert
   const existingCategory = findCategoryById(currentTemplate, categoryId);
@@ -168,8 +159,8 @@ export const deleteCategory = (
       [templateId]: {
         ...templates[templateId],
         id: templateId,
-        categories: updatedCategories
-      }
+        categories: updatedCategories,
+      },
     };
   } else {
     // Bei benutzerdefinierten Vorlagen aktualisieren wir die bestehende
@@ -177,8 +168,8 @@ export const deleteCategory = (
       ...customTemplates,
       [templateId]: {
         ...customTemplates[templateId],
-        categories: updatedCategories
-      }
+        categories: updatedCategories,
+      },
     };
   }
 };
@@ -227,9 +218,9 @@ export const createTemplate = (
   return {
     customTemplates: {
       ...customTemplates,
-      [id]: newTemplate
+      [id]: newTemplate,
     },
-    newTemplateId: id
+    newTemplateId: id,
   };
 };
 
@@ -249,7 +240,7 @@ export const deleteTemplate = (
 
   const newCustomTemplates = { ...customTemplates };
   delete newCustomTemplates[templateId];
-  
+
   return newCustomTemplates;
 };
 
@@ -277,7 +268,7 @@ export const updateTemplate = (
       ...customTemplates[templateId],
       name: name || customTemplates[templateId].name,
       description: description || customTemplates[templateId].description,
-    }
+    },
   };
 };
 
@@ -310,7 +301,7 @@ export const updateCategoryOrder = (
         ...templates[templateId],
         id: templateId,
         categories: newOrder,
-      }
+      },
     };
   } else {
     // Verwende das bestehende benutzerdefinierte Template
@@ -318,8 +309,8 @@ export const updateCategoryOrder = (
       ...customTemplates,
       [templateId]: {
         ...customTemplates[templateId],
-        categories: newOrder
-      }
+        categories: newOrder,
+      },
     };
   }
 };

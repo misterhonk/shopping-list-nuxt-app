@@ -3,6 +3,7 @@
 ## Neue Features
 
 ### Preisverfolgung erweitern
+
 - [ ] Preiseingabe bei Artikelerfassung implementieren
 - [ ] Preishistorie pro Artikel speichern
 - [ ] Funktion zur Anzeige des günstigsten Preises eines Artikels
@@ -12,6 +13,7 @@
 - [ ] Exportfunktion für Preisdaten als CSV
 
 ### Statistik-Dashboard
+
 - [ ] Basisstatistiken implementieren (Gesamtausgaben, Durchschnittskosten)
 - [ ] Statistik nach Kategorien (Ausgaben pro Kategorie)
 - [ ] Zeitreihenanalyse (Ausgaben über Zeit)
@@ -21,6 +23,7 @@
 - [ ] Speichern und Exportieren von Statistikberichten
 
 ### Einkaufsplanung
+
 - [ ] Einkaufsrouten für verschiedene Märkte definieren
 - [ ] Sortierung der Artikel nach optimaler Einkaufsroute
 - [ ] Automatische Empfehlung basierend auf bisherigen Einkäufen
@@ -30,6 +33,7 @@
 - [ ] Feature "Jetzt einkaufen" mit aktiver Liste und Navigation
 
 ### Artikelmanagement erweitern
+
 - [ ] Barcodes scannen und speichern
 - [ ] Bilderkennung für Artikel
 - [ ] Detaillierte Artikelbeschreibungen (Größe, Marke, etc.)
@@ -39,6 +43,7 @@
 - [ ] Allergene und Ernährungsinformationen
 
 ### Rezepteintegration
+
 - [ ] Rezeptverwaltung implementieren
 - [ ] Automatische Einkaufsliste aus Rezept generieren
 - [ ] Rezeptsuche und -vorschläge
@@ -48,6 +53,7 @@
 - [ ] Favoriten-Rezepte speichern
 
 ### Sharing & Kollaboration
+
 - [ ] Listen teilen via Link oder QR-Code
 - [ ] Echtzeit-Kollaboration für gemeinsame Listen
 - [ ] Kommentarfunktion für Artikel
@@ -57,6 +63,7 @@
 - [ ] Push-Benachrichtigungen bei Listenänderungen
 
 ### Backend-Integration
+
 - [ ] Cloud-Speicherung implementieren
 - [ ] Benutzerkonten einrichten
 - [ ] Authentifizierung einbauen (Email, Google, Apple)
@@ -68,6 +75,7 @@
 ## UI/UX Verbesserungen
 
 ### Benutzeroberfläche modernisieren
+
 - [ ] Design-Audit durchführen
 - [ ] Konsistentes Farbschema optimieren
 - [ ] Typenraster überarbeiten (Schriftgrößen, Zeilenabstände)
@@ -77,6 +85,7 @@
 - [ ] Visuelles Feedback für Aktionen verbessern
 
 ### Mobile Experience
+
 - [ ] Touchgesten optimieren (Swipe, Drag & Drop)
 - [ ] Bottom-Navigation für mobile Geräte
 - [ ] Verbesserte Darstellung auf kleinen Bildschirmen
@@ -86,6 +95,7 @@
 - [ ] PWA-Installation prominenter platzieren
 
 ### Barrierefreiheit
+
 - [ ] Vollständiger Audit zur Barrierefreiheit (WCAG 2.1)
 - [ ] Kontrastverhältnisse verbessern
 - [ ] Tastaturbedienung optimieren
@@ -95,6 +105,7 @@
 - [ ] Testläufe mit Nutzern mit Einschränkungen
 
 ### Nutzererfahrung
+
 - [ ] Onboarding für Neulinge implementieren
 - [ ] Tooltips und Hilfetexte hinzufügen
 - [ ] Drag & Drop für Listenpositionen
@@ -104,6 +115,7 @@
 - [ ] Tastenkürzel für Poweruser
 
 ### Responsives Design
+
 - [ ] Tablet-Layout optimieren
 - [ ] Desktop-Ansicht mit Mehrspaltenlayout
 - [ ] Druckfreundliche Ansicht für Listen
@@ -113,6 +125,7 @@
 - [ ] TV/große Displays-Unterstützung
 
 ### Nutzerinteraktionen
+
 - [ ] Inline-Editierung für schnellere Anpassungen
 - [ ] Undo/Redo-Funktionalität implementieren
 - [ ] Batch-Aktionen für mehrere Elemente
@@ -124,6 +137,7 @@
 ## Code-Sicherheit
 
 ### Datenschutz
+
 - [ ] Audit aller gespeicherten Daten
 - [ ] Sensible Daten identifizieren und schützen
 - [ ] End-to-End-Verschlüsselung für geteilte Listen
@@ -133,6 +147,7 @@
 - [ ] Opt-in für Datenerfassung
 
 ### Code-Qualität
+
 - [ ] Vollständiger Security-Audit
 - [ ] Abhängigkeiten auf Sicherheitslücken prüfen
 - [ ] Content Security Policy implementieren
@@ -142,6 +157,7 @@
 - [ ] Security-Headers konfigurieren
 
 ### Datensicherung
+
 - [ ] Automatische Backups implementieren
 - [ ] Wiederherstellungsfunktion verbessern
 - [ ] Datenexport in verschiedene Formate
@@ -153,6 +169,7 @@
 ## Code-Robustheit
 
 ### Architektur
+
 - [ ] Code-Organisation überprüfen
 - [ ] Zuständigkeiten klarer trennen (SRP)
 - [ ] Dependency Injection verwenden wo sinnvoll
@@ -162,6 +179,7 @@
 - [ ] Domain-Driven Design anwenden
 
 ### Refactoring
+
 - [ ] Duplizierte Logik eliminieren
 - [ ] Komplexe Funktionen vereinfachen
 - [ ] Codekommentare verbessern
@@ -171,6 +189,7 @@
 - [ ] Veraltete Patterns modernisieren
 
 ### Performance
+
 - [ ] Rendering-Performance optimieren
 - [ ] Lazy Loading implementieren
 - [ ] Bundle-Größe reduzieren
@@ -180,6 +199,7 @@
 - [ ] Netzwerkanfragen minimieren
 
 ### Fehlerbehandlung
+
 - [ ] Globale Fehlerbehandlung verbessern
 - [ ] Strukturierte Fehlerprotokollierung
 - [ ] Nutzerfreundliche Fehlermeldungen
@@ -189,6 +209,7 @@
 - [ ] Boundary testing für alle Inputs
 
 ### Typ-Sicherheit
+
 - [ ] TypeScript strenger konfigurieren
 - [ ] Interfaces für alle Datenstrukturen definieren
 - [ ] Generics für wiederverwendbare Funktionen
@@ -200,8 +221,9 @@
 ## Entwicklungsumgebung
 
 ### Tooling
+
 - [ ] ESLint-Regeln optimieren
-- [ ] Prettier für Formatierung einrichten
+- [x] Prettier für Formatierung einrichten
 - [ ] Husky für Pre-Commit-Hooks konfigurieren
 - [ ] TypeScript-Prüfung in CI einbauen
 - [ ] Automatisierte Code-Review-Tools
@@ -209,6 +231,7 @@
 - [ ] VSCode-Extensions empfehlen
 
 ### CI/CD
+
 - [ ] CI/CD-Pipeline einrichten
 - [ ] Automatisierte Tests in Pipeline
 - [ ] Deployment-Prozess automatisieren
@@ -218,6 +241,7 @@
 - [ ] Versionsverwaltung verbessern
 
 ### Dokumentation
+
 - [ ] API-Dokumentation aktualisieren
 - [ ] Architektur-Dokumentation erstellen
 - [ ] Komponenten-Dokumentation erstellen
@@ -227,6 +251,7 @@
 - [ ] Visuelle Komponenten-Bibliothek (Storybook)
 
 ### Testing
+
 - [ ] Unit-Tests für kritische Funktionen schreiben
 - [ ] End-to-End-Tests implementieren
 - [ ] Snapshot-Tests für UI-Komponenten
@@ -236,6 +261,7 @@
 - [ ] Mobile-Tests auf verschiedenen Geräten
 
 ### Monitoring
+
 - [ ] Error-Logging-Service einbinden
 - [ ] Performance-Monitoring einrichten
 - [ ] Nutzerverhalten analysieren
@@ -247,6 +273,7 @@
 ## Fehlerbehebung
 
 ### Bekannte Bugs
+
 - [ ] PWA-Installation auf iOS zuverlässiger machen
 - [ ] Dark-Mode-Übergänge glätten
 - [ ] Formulare für mobile Geräte optimieren
@@ -256,6 +283,7 @@
 - [ ] Offline-Modus robuster machen
 
 ### Technische Schulden
+
 - [ ] Veraltete Komponenten modernisieren
 - [ ] Legacy-Code-Teile identifizieren und ersetzen
 - [ ] API-Konsistenz verbessern
@@ -265,6 +293,7 @@
 - [ ] Redundante CSS-Stile bereinigen
 
 ### Edge Cases
+
 - [ ] Umgang mit sehr großen Listen verbessern
 - [ ] Langsame Netzwerkverbindungen testen
 - [ ] Internationalisierung verbessern
@@ -274,6 +303,7 @@
 - [ ] Grenzwerte für Eingabefelder überprüfen
 
 ### Browser-Kompatibilität
+
 - [ ] Support für ältere Browser definieren
 - [ ] iOS Safari-Kompatibilität verbessern
 - [ ] Firefox-spezifische Probleme beheben

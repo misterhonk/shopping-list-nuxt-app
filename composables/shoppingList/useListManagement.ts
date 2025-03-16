@@ -13,21 +13,27 @@ interface CategoryStoreService {
  */
 export function useListManagement(categoryStore?: CategoryStoreService) {
   const { saveToStorage, loadFromStorage, createImmutableCopy } = useLocalStorage();
-  
+
   // Reaktive Daten
   const lists: Ref<ShoppingList[]> = ref([]);
   const currentListId: Ref<string | null> = ref(null);
   const initialized = ref(false);
-  
+
   // Berechnete Werte
-  const currentList = computed<ShoppingList>(() => 
-    lists.value.find(list => list.id === currentListId.value) || 
-    { id: '', name: '', items: [], templateId: 'supermarket', isFavorite: false }
+  const currentList = computed<ShoppingList>(
+    () =>
+      lists.value.find(list => list.id === currentListId.value) || {
+        id: '',
+        name: '',
+        items: [],
+        templateId: 'supermarket',
+        isFavorite: false,
+      }
   );
 
   const currentListTemplateId = computed({
     get: () => currentList.value.templateId || 'supermarket',
-    set: (value: string) => updateListTemplate(value)
+    set: (value: string) => updateListTemplate(value),
   });
 
   /**
@@ -37,7 +43,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   const loadLists = (): boolean => {
     try {
       const storedLists = loadFromStorage<ShoppingList[]>('shoppingLists');
-      
+
       if (storedLists && Array.isArray(storedLists)) {
         // Explizite Aufbereitung der Daten
         lists.value = storedLists.map(list => ({
@@ -47,23 +53,23 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
           isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
           createdAt: list.createdAt || 0,
-          modifiedAt: list.modifiedAt || Date.now()
+          modifiedAt: list.modifiedAt || Date.now(),
         }));
-        
+
         // Sortiere Listen - Favoriten zuerst
         lists.value.sort((a, b) => {
           if (a.isFavorite && !b.isFavorite) return -1;
           if (!a.isFavorite && b.isFavorite) return 1;
           return 0;
         });
-        
+
         const currentId = loadFromStorage<string>('currentListId');
         if (currentId && lists.value.some(list => list.id === currentId)) {
           currentListId.value = currentId;
         } else if (lists.value.length > 0) {
           currentListId.value = lists.value[0].id;
         }
-        
+
         initialized.value = true;
         return true;
       } else {
@@ -85,24 +91,36 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
     if (!name || name.trim() === '') return null;
-    
+
     try {
       // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
       let templateId = options.templateId || 'supermarket';
       const lowerName = name.toLowerCase();
-      
+
       // Nur automatisch aus dem Namen schließen, wenn keine templateId gesetzt wurde
       if (!options.templateId) {
         // Versuche, aus dem Namen auf den Geschäftstyp zu schließen
-        if (lowerName.includes('drogerie') || lowerName.includes('apotheke') || lowerName.includes('kosmetik')) {
+        if (
+          lowerName.includes('drogerie') ||
+          lowerName.includes('apotheke') ||
+          lowerName.includes('kosmetik')
+        ) {
           templateId = 'drugstore';
-        } else if (lowerName.includes('baumarkt') || lowerName.includes('werkzeug') || lowerName.includes('bau')) {
+        } else if (
+          lowerName.includes('baumarkt') ||
+          lowerName.includes('werkzeug') ||
+          lowerName.includes('bau')
+        ) {
           templateId = 'hardware';
-        } else if (lowerName.includes('elektronik') || lowerName.includes('technik') || lowerName.includes('computer')) {
+        } else if (
+          lowerName.includes('elektronik') ||
+          lowerName.includes('technik') ||
+          lowerName.includes('computer')
+        ) {
           templateId = 'electronics';
         }
       }
-      
+
       const timestamp = Date.now();
       const newList: ShoppingList = {
         id: timestamp.toString(),
@@ -111,11 +129,11 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         templateId: templateId,
         isFavorite: options.isFavorite || false,
         createdAt: timestamp,
-        modifiedAt: timestamp
+        modifiedAt: timestamp,
       };
-      
+
       const updatedLists = [...lists.value, newList];
-      
+
       // Bei Favoriten Liste neu sortieren
       if (newList.isFavorite) {
         updatedLists.sort((a, b) => {
@@ -124,13 +142,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           return 0;
         });
       }
-      
+
       lists.value = updatedLists;
       currentListId.value = newList.id;
-      
+
       saveToStorage('shoppingLists', lists.value);
       saveToStorage('currentListId', currentListId.value);
-      
+
       // Aktiviere die passende Template im Store
       if (categoryStore) {
         try {
@@ -139,11 +157,11 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           console.error('Fehler beim Aktivieren der Template:', e);
         }
       }
-      
+
       return newList;
     } catch (error) {
       console.error('Fehler beim Erstellen einer neuen Liste:', error);
-      return null; 
+      return null;
     }
   };
 
@@ -160,16 +178,16 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       templateId: 'supermarket', // Standardvorlage für neue Listen
       isFavorite: false,
       createdAt: timestamp,
-      modifiedAt: timestamp
+      modifiedAt: timestamp,
     };
-    
+
     lists.value = [defaultList];
     currentListId.value = defaultList.id;
     initialized.value = true;
-    
+
     saveToStorage('shoppingLists', lists.value);
     saveToStorage('currentListId', currentListId.value);
-    
+
     return defaultList;
   };
 
@@ -181,10 +199,10 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   const selectList = (listId: string): boolean => {
     try {
       if (!lists.value.some(list => list.id === listId)) return false;
-      
+
       currentListId.value = listId;
       saveToStorage('currentListId', currentListId.value);
-      
+
       // Aktiviere die passende Kategorie-Vorlage für diese Liste
       const selectedList = lists.value.find(list => list.id === listId);
       if (selectedList && categoryStore && selectedList.templateId) {
@@ -194,7 +212,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           console.error('Fehler beim Aktivieren der Template:', e);
         }
       }
-      
+
       return true;
     } catch (error) {
       console.error('Fehler beim Auswählen einer Liste:', error);
@@ -210,20 +228,20 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   const deleteList = (listId: string): boolean => {
     try {
       if (lists.value.length <= 1) return false;
-      
+
       if (!lists.value.some(list => list.id === listId)) return false;
-      
+
       // Immutable Update
       const updatedLists = lists.value.filter(list => list.id !== listId);
       lists.value = updatedLists;
-      
+
       if (listId === currentListId.value) {
         currentListId.value = lists.value[0].id;
       }
-      
+
       saveToStorage('shoppingLists', lists.value);
       saveToStorage('currentListId', currentListId.value);
-      
+
       return true;
     } catch (error) {
       console.error('Fehler beim Löschen einer Liste:', error);
@@ -240,14 +258,14 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     try {
       const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
       if (listIndex === -1) return false;
-      
+
       // Immutable Update
       const updatedLists = createImmutableCopy(lists.value);
       updatedLists[listIndex].templateId = templateId;
       updatedLists[listIndex].modifiedAt = Date.now();
-      
+
       lists.value = updatedLists;
-      
+
       // Aktiviere das Template im Store
       if (categoryStore) {
         try {
@@ -256,7 +274,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           console.error('Fehler beim Aktivieren der Template:', e);
         }
       }
-      
+
       saveToStorage('shoppingLists', lists.value);
       return true;
     } catch (error) {
@@ -287,7 +305,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     currentList,
     initialized,
     currentListTemplateId,
-    
+
     // Funktionen
     loadLists,
     createList,
@@ -295,6 +313,6 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     selectList,
     deleteList,
     updateListTemplate,
-    saveLists
+    saveLists,
   };
 }

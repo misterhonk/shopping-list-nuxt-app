@@ -72,6 +72,6 @@ export function useLocalStorage() {
     loadFromStorage,
     removeFromStorage,
     clearStorage,
-    keyExists
+    keyExists,
   };
 }

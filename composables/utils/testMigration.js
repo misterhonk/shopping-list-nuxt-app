@@ -1,6 +1,6 @@
 /**
  * Testskript für die Datenmigration
- * 
+ *
  * Dieses Skript demonstriert die Migration alter Datenstrukturen in das neue Format.
  * Es kann in der Browser-Konsole ausgeführt werden, um die Migration zu testen.
  */
@@ -13,10 +13,10 @@ const oldList = {
     {
       id: 'item1',
       name: 'Äpfel',
-      quantity: 2, 
+      quantity: 2,
       category: 'Obst & Gemüse',
       checked: false,
-      price: 2.99
+      price: 2.99,
     },
     {
       id: 'item2',
@@ -24,14 +24,14 @@ const oldList = {
       quantity: 1,
       category: 'Milchprodukte',
       checked: true,
-      price: 1.19
+      price: 1.19,
     },
     {
       // Fehlerhafter Eintrag (fehlende Eigenschaften)
       id: 'item3',
-      name: 'Fehlerhafter Eintrag'
-    }
-  ]
+      name: 'Fehlerhafter Eintrag',
+    },
+  ],
 };
 
 // Import der Migrationsfunktionen
@@ -41,11 +41,12 @@ const oldList = {
 // Importfunktion für Browserkonsole
 async function testMigration() {
   // Pfad zum Modul
-  const modulePath = '/Users/martinmelcher/Dev/shopping-list-app/composables/utils/dataMigration.ts';
-  
+  const modulePath =
+    '/Users/martinmelcher/Dev/shopping-list-app/composables/utils/dataMigration.ts';
+
   // In einer echten Anwendung würde hier der Import des Moduls stehen
   console.log('Simuliere Migration der alten Liste:', oldList);
-  
+
   // Migration mit Validierung simulieren
   const migratedList = {
     ...oldList,
@@ -56,29 +57,34 @@ async function testMigration() {
     // Kategorien in Objektform konvertieren
     items: oldList.items.map(item => ({
       ...item,
-      category: item.category ? { 
-        id: (item.category || '').toString().toLowerCase().replace(/[\s&]/g, '_') || 'sonstiges',
-        name: item.category || 'Sonstiges'
-      } : { id: 'sonstiges', name: 'Sonstiges' },
+      category: item.category
+        ? {
+            id:
+              (item.category || '').toString().toLowerCase().replace(/[\s&]/g, '_') || 'sonstiges',
+            name: item.category || 'Sonstiges',
+          }
+        : { id: 'sonstiges', name: 'Sonstiges' },
       quantity: item.quantity || 1,
       checked: !!item.checked,
       price: item.price || 0,
       addedAt: Date.now(),
-      modifiedAt: Date.now()
-    }))
+      modifiedAt: Date.now(),
+    })),
   };
-  
+
   console.log('Migrierte Liste:', migratedList);
-  
+
   // Speichern in localStorage simulieren
   const serializedList = JSON.stringify(migratedList);
   console.log('Serialisierte Liste:', serializedList);
   console.log('Größe der serialisierten Liste:', serializedList.length, 'Bytes');
-  
+
   return migratedList;
 }
 
 // Funktion für manuelle Ausführung in der Konsole
 window.testMigration = testMigration;
 
-console.log('Migration-Testskript geladen. Führen Sie testMigration() aus, um die Migration zu testen.');
+console.log(
+  'Migration-Testskript geladen. Führen Sie testMigration() aus, um die Migration zu testen.'
+);

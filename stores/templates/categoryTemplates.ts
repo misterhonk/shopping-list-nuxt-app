@@ -108,10 +108,7 @@ export const getAllTemplates = (): CategoryTemplate[] => {
  * @returns Das angeforderte Template oder das Standard-Template
  */
 export const getTemplate = (templateId: string): CategoryTemplate => {
-  return (
-    categoryTemplates[templateId] ||
-    categoryTemplates[defaultTemplateId]
-  );
+  return categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];
 };
 
 /**
@@ -120,17 +117,26 @@ export const getTemplate = (templateId: string): CategoryTemplate => {
  * @returns Eine eindeutige ID für die Kategorie
  */
 export const generateCategoryId = (name: string): string => {
-  return name.toLowerCase()
-    .replace(/[äöüß]/g, (match) => {
-      switch (match) {
-        case 'ä': return 'ae';
-        case 'ö': return 'oe';
-        case 'ü': return 'ue';
-        case 'ß': return 'ss';
-        default: return match;
-      }
-    })
-    .replace(/\s+/g, '_')
-    .replace(/[^a-z0-9_]/g, '')
-    + '_' + Date.now().toString().slice(-6);
+  return (
+    name
+      .toLowerCase()
+      .replace(/[äöüß]/g, match => {
+        switch (match) {
+          case 'ä':
+            return 'ae';
+          case 'ö':
+            return 'oe';
+          case 'ü':
+            return 'ue';
+          case 'ß':
+            return 'ss';
+          default:
+            return match;
+        }
+      })
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_]/g, '') +
+    '_' +
+    Date.now().toString().slice(-6)
+  );
 };

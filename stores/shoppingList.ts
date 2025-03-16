@@ -17,10 +17,17 @@ export const useShoppingListStore = defineStore('shoppingList', {
     return {
       // Dieser Store wurde durch direkte localStorage-Verwaltung in der Komponente ersetzt
       items: [] as ShoppingItem[],
-      categories: ['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges']
+      categories: [
+        'Obst & Gemüse',
+        'Fleisch & Fisch',
+        'Backwaren',
+        'Milchprodukte',
+        'Getränke',
+        'Sonstiges',
+      ],
     };
   },
-  
+
   actions: {
     // Diese Aktionen werden nicht mehr verwendet
     addItem() {},
@@ -30,13 +37,13 @@ export const useShoppingListStore = defineStore('shoppingList', {
     clearCheckedItems() {},
     clearAllItems() {},
     loadFromLocalStorage() {},
-    saveToLocalStorage() {}
+    saveToLocalStorage() {},
   },
-  
+
   getters: {
     // Diese Getter werden nicht mehr verwendet
     itemsByCategory: () => ({}),
     checkedItemsCount: () => 0,
-    totalItemsCount: () => 0
-  }
+    totalItemsCount: () => 0,
+  },
 });

@@ -3,28 +3,45 @@
     <PageHeader title="Einkaufslisten">
       <template #actions>
         <div class="flex space-x-2">
-          <div class="hidden md:block mr-4 text-sm text-orange-500 font-medium self-center p-1 rounded-md">
+          <div
+            class="hidden md:block mr-4 text-sm text-orange-500 font-medium self-center p-1 rounded-md"
+          >
             Neu: Preisverfolgung & Statistiken 🏐
           </div>
-          <NuxtLink
-            to="/categories"
-            class="btn btn-secondary"
-          >
+          <NuxtLink to="/categories" class="btn btn-secondary">
             <span class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 sm:mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
               </svg>
               <span class="hidden sm:inline">Kategorien</span>
             </span>
           </NuxtLink>
-          <button
-            v-if="!isCreatingList"
-            @click="isCreatingList = true"
-            class="btn btn-primary"
-          >
+          <button v-if="!isCreatingList" @click="isCreatingList = true" class="btn btn-primary">
             <span class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 sm:mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
               <span class="hidden sm:inline">Neue Liste</span>
             </span>
@@ -34,29 +51,29 @@
     </PageHeader>
 
     <!-- Form zum Erstellen einer neuen Liste -->
-    <ListCreationForm 
-      v-if="isCreatingList" 
+    <ListCreationForm
+      v-if="isCreatingList"
       :templates="templatesList"
-      @create="createNewList" 
-      @cancel="isCreatingList = false" 
+      @create="createNewList"
+      @cancel="isCreatingList = false"
     />
 
     <!-- Listenauswahl -->
-    <ListSelector 
-      v-if="lists.length > 0" 
-      :lists="lists" 
-      :current-list-id="currentListId" 
-      @select="selectList" 
-      @delete="deleteList" 
+    <ListSelector
+      v-if="lists.length > 0"
+      :lists="lists"
+      :current-list-id="currentListId"
+      @select="selectList"
+      @delete="deleteList"
     />
 
     <div v-if="currentListId && initialized">
       <!-- Listenname und Aktionsbuttons -->
-      <ListHeader 
-        :list-name="currentList.name" 
-        :template-id="currentListTemplateId" 
+      <ListHeader
+        :list-name="currentList.name"
+        :template-id="currentListTemplateId"
         :templates="templatesList"
-        :has-checked-items="getCheckedItemsCount() > 0" 
+        :has-checked-items="getCheckedItemsCount() > 0"
         :is-favorite="currentList.isFavorite"
         @add-item="isAddingItem = true"
         @clear-checked="clearCheckedItems"
@@ -68,18 +85,18 @@
       />
 
       <!-- Artikel-Hinzufügen-Formular -->
-      <ItemCreationForm 
-        v-if="isAddingItem" 
+      <ItemCreationForm
+        v-if="isAddingItem"
         :categories="categories"
         :all-lists="lists"
-        @add="addNewItem" 
-        @cancel="isAddingItem = false" 
+        @add="addNewItem"
+        @cancel="isAddingItem = false"
       />
-      
+
       <!-- Artikelliste -->
-      <ItemList 
-        :items="allItems" 
-        @toggle="toggleItemChecked" 
+      <ItemList
+        :items="allItems"
+        @toggle="toggleItemChecked"
         @remove="removeItem"
         @add-new="isAddingItem = true"
       />
@@ -120,17 +137,40 @@ const isCreatingList = ref(false);
 
 // Kategorie-Store verwenden (mit Fallback)
 let categoryStore = null;
-let categories = ref(['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges']);
+let categories = ref([
+  'Obst & Gemüse',
+  'Fleisch & Fisch',
+  'Backwaren',
+  'Milchprodukte',
+  'Getränke',
+  'Sonstiges',
+]);
 
 try {
   categoryStore = useCategoryStore();
   // Kategorien aus dem Store beziehen
   categories = computed(() => {
     try {
-      return categoryStore?.currentCategories || ['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges'];
+      return (
+        categoryStore?.currentCategories || [
+          'Obst & Gemüse',
+          'Fleisch & Fisch',
+          'Backwaren',
+          'Milchprodukte',
+          'Getränke',
+          'Sonstiges',
+        ]
+      );
     } catch (e) {
       console.error('Fehler beim Abrufen der Kategorien:', e);
-      return ['Obst & Gemüse', 'Fleisch & Fisch', 'Backwaren', 'Milchprodukte', 'Getränke', 'Sonstiges'];
+      return [
+        'Obst & Gemüse',
+        'Fleisch & Fisch',
+        'Backwaren',
+        'Milchprodukte',
+        'Getränke',
+        'Sonstiges',
+      ];
     }
   });
 } catch (e) {
@@ -141,7 +181,7 @@ try {
 const templatesList = computed(() => categoryStore?.templatesList || []);
 
 // Einkaufslisten verwalten
-const { 
+const {
   lists,
   currentListId,
   currentList,
@@ -156,18 +196,12 @@ const {
   updateListFavorite: updateCurrentListFavorite,
   getCheckedItemsCount,
   getTotalItemsCount,
-  updateList
+  updateList,
 } = useShoppingLists();
 
 // Artikel verwalten
-const {
-  allItems,
-  isAddingItem,
-  addNewItem,
-  removeItem,
-  toggleItemChecked,
-  clearCheckedItems
-} = useShoppingItems(lists, currentListId);
+const { allItems, isAddingItem, addNewItem, removeItem, toggleItemChecked, clearCheckedItems } =
+  useShoppingItems(lists, currentListId);
 
 // Import/Export-Funktionen
 const {
@@ -176,7 +210,7 @@ const {
   handleImportListWithOptions,
   openImportDialog,
   showImportOptions,
-  importData
+  importData,
 } = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
 
 // Neue Liste erstellen
@@ -205,12 +239,12 @@ const startImport = () => {
 /**
  * Handler für die Bestätigung des Imports durch den Benutzer
  */
-const handleImportConfirm = (options) => {
+const handleImportConfirm = options => {
   console.log('Import-Optionen bestätigt:', options);
-  
+
   // Import mit den gewählten Optionen durchführen
   handleImportListWithOptions(importData.value, options);
-  
+
   // Dialog schließen
   showImportOptions.value = false;
 };
@@ -219,15 +253,15 @@ const handleImportConfirm = (options) => {
  * Callback-Funktion für geladene Import-Daten
  */
 const onImportOptionsLoaded = (data, availableLists) => {
-  console.log('Import-Daten geladen, zeige Optionen:', { 
-    listName: data.name, 
+  console.log('Import-Daten geladen, zeige Optionen:', {
+    listName: data.name,
     itemCount: data.items?.length || 0,
-    availableListsCount: availableLists.length 
+    availableListsCount: availableLists.length,
   });
-  
+
   // Daten aus dem Import übernehmen
   importData.value = data;
-  
+
   // Dialog anzeigen
   showImportOptions.value = true;
 };
@@ -247,32 +281,37 @@ onMounted(() => {
   if (listenImStorage) {
     try {
       const parsedLists = JSON.parse(listenImStorage);
-      console.log('Listen im Storage:', parsedLists.map(l => ({
-        id: l.id,
-        name: l.name,
-        itemCount: l.items?.length || 0
-      })));
+      console.log(
+        'Listen im Storage:',
+        parsedLists.map(l => ({
+          id: l.id,
+          name: l.name,
+          itemCount: l.items?.length || 0,
+        }))
+      );
     } catch (e) {
       console.error('Fehler beim Parsen der Listen aus dem Storage:', e);
     }
   }
-  
+
   loadLists();
-  
+
   // Kategorie-Store initialisieren, falls verfügbar
   if (categoryStore) {
     try {
       categoryStore.loadFromLocalStorage();
-      
+
       // Aktiviere die passende Kategorie-Vorlage für die aktuelle Liste
       if (currentList.value && currentList.value.templateId) {
         categoryStore.activateTemplate(currentList.value.templateId);
       }
-      
+
       // Event-Listener für Kategorieänderungen registrieren
       if (onCategoryUpdate) {
         unsubscribeCategoryUpdate = onCategoryUpdate((categoryId, newName) => {
-          console.log(`[App] Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
+          console.log(
+            `[App] Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`
+          );
           updateCategoryInItems(categoryId, newName);
         });
       }
@@ -290,7 +329,7 @@ onUnmounted(() => {
 });
 
 // Watch für isAddingItem
-watch(isAddingItem, (newVal) => {
+watch(isAddingItem, newVal => {
   if (!newVal) {
     // Formular zurücksetzen wenn geschlossen
   }

@@ -20,21 +20,21 @@ export function useItemForm() {
   // UI-Status für Artikelformular
   const isAddingItem = ref(false);
   const itemNameInput: Ref<HTMLInputElement | null> = ref(null);
-  
+
   // Neues Item Formular
   const newItem = reactive<ItemForm>({
     name: '',
     quantity: 1,
     category: 'Sonstiges',
     price: 0,
-    note: ''
+    note: '',
   });
-  
+
   // Berechnete Eigenschaften
   const isFormValid = computed<boolean>(() => {
     return Boolean(newItem.name && newItem.name.trim() !== '' && newItem.quantity > 0);
   });
-  
+
   /**
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
@@ -47,7 +47,7 @@ export function useItemForm() {
     newItem.note = '';
     isAddingItem.value = false;
   };
-  
+
   /**
    * Setzt den Fokus auf das Artikelnamen-Eingabefeld
    */
@@ -66,15 +66,15 @@ export function useItemForm() {
    */
   const populateFormWithItem = (item: ShoppingItem): void => {
     if (!item) return;
-    
+
     newItem.name = item.name;
     newItem.quantity = item.quantity;
     newItem.category = item.category;
     newItem.price = item.price;
     newItem.note = item.note || '';
-    
+
     isAddingItem.value = true;
-    
+
     // Fokus auf das Namensfeld setzen
     focusItemNameInput();
   };
@@ -85,10 +85,10 @@ export function useItemForm() {
     itemNameInput,
     newItem,
     isFormValid,
-    
+
     // Aktionen
     resetItemForm,
     focusItemNameInput,
-    populateFormWithItem
+    populateFormWithItem,
   };
 }

@@ -1,23 +1,26 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  <div
+    v-if="isOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+  >
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
       <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">Liste importieren</h3>
-      
+
       <div class="mb-6">
         <p class="text-gray-600 dark:text-gray-300 mb-2">
           Wie möchten Sie die importierte Liste verarbeiten?
         </p>
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-          Importierte Liste: <span class="font-medium">{{ importData.name }}</span> 
-          mit {{ importData.items?.length || 0 }} Artikeln
+          Importierte Liste: <span class="font-medium">{{ importData.name }}</span> mit
+          {{ importData.items?.length || 0 }} Artikeln
         </p>
-        
+
         <div class="space-y-2">
           <div class="flex items-start">
-            <input 
-              type="radio" 
-              id="option-new" 
-              name="import-option" 
+            <input
+              type="radio"
+              id="option-new"
+              name="import-option"
               value="create"
               v-model="selectedOption"
               class="mt-1 mr-2"
@@ -29,12 +32,12 @@
               </p>
             </label>
           </div>
-          
+
           <div class="flex items-start" v-if="availableLists.length > 0">
-            <input 
-              type="radio" 
-              id="option-update" 
-              name="import-option" 
+            <input
+              type="radio"
+              id="option-update"
+              name="import-option"
               value="update"
               v-model="selectedOption"
               class="mt-1 mr-2"
@@ -46,31 +49,27 @@
                   Artikel in eine bestehende Liste importieren.
                 </p>
               </label>
-              
+
               <div v-if="selectedOption === 'update'" class="mt-2">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Ziel-Liste auswählen
                 </label>
-                <select 
+                <select
                   v-model="selectedListId"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
                 >
-                  <option 
-                    v-for="list in availableLists" 
-                    :key="list.id" 
-                    :value="list.id"
-                  >
+                  <option v-for="list in availableLists" :key="list.id" :value="list.id">
                     {{ list.name }} ({{ list.items?.length || 0 }} Artikel)
                   </option>
                 </select>
-                
+
                 <!-- Optionen für den Import-Modus -->
                 <div class="mt-4">
                   <div class="flex items-center mb-2">
-                    <input 
-                      type="radio" 
-                      id="mode-append" 
-                      name="update-mode" 
+                    <input
+                      type="radio"
+                      id="mode-append"
+                      name="update-mode"
                       value="merge"
                       v-model="updateMode"
                       class="mr-2"
@@ -80,10 +79,10 @@
                     </label>
                   </div>
                   <div class="flex items-center">
-                    <input 
-                      type="radio" 
-                      id="mode-replace" 
-                      name="update-mode" 
+                    <input
+                      type="radio"
+                      id="mode-replace"
+                      name="update-mode"
                       value="replace"
                       v-model="updateMode"
                       class="mr-2"
@@ -98,7 +97,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="flex justify-end space-x-3">
         <button
           @click="$emit('cancel')"
@@ -110,7 +109,7 @@
           @click="confirmImport"
           class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
           :disabled="!isValid"
-          :class="{'opacity-50 cursor-not-allowed': !isValid}"
+          :class="{ 'opacity-50 cursor-not-allowed': !isValid }"
         >
           Importieren
         </button>
@@ -126,12 +125,12 @@ const props = defineProps({
   isOpen: Boolean,
   importData: {
     type: Object,
-    default: () => ({ name: '', items: [] })
+    default: () => ({ name: '', items: [] }),
   },
   availableLists: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 
 const emit = defineEmits(['confirm', 'cancel']);
@@ -142,19 +141,22 @@ const selectedListId = ref('');
 const updateMode = ref('merge'); // 'merge' oder 'replace'
 
 // Wenn sich die Optionen ändern, aktualisiere Sichtbarkeit
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen) {
-    findMatchingList();
+watch(
+  () => props.isOpen,
+  isOpen => {
+    if (isOpen) {
+      findMatchingList();
+    }
   }
-});
+);
 
 // Vorselektieren der Liste, falls Name identisch
 const findMatchingList = () => {
   if (props.importData?.name && props.availableLists.length > 0) {
-    const matchingList = props.availableLists.find(list => 
-      list.name.toLowerCase() === props.importData.name.toLowerCase()
+    const matchingList = props.availableLists.find(
+      list => list.name.toLowerCase() === props.importData.name.toLowerCase()
     );
-    
+
     if (matchingList) {
       selectedOption.value = 'update';
       selectedListId.value = matchingList.id;
@@ -167,11 +169,11 @@ const isValid = computed(() => {
   if (selectedOption.value === 'create') {
     return true;
   }
-  
+
   if (selectedOption.value === 'update') {
     return !!selectedListId.value;
   }
-  
+
   return false;
 });
 
@@ -180,9 +182,9 @@ const confirmImport = () => {
   const options = {
     mode: selectedOption.value === 'create' ? 'create' : updateMode.value,
     targetListId: selectedOption.value === 'update' ? selectedListId.value : undefined,
-    keepExistingItems: updateMode.value === 'merge'
+    keepExistingItems: updateMode.value === 'merge',
   };
-  
+
   console.log('Import-Optionen:', options);
   emit('confirm', options);
 };

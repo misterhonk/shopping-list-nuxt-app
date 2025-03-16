@@ -16,7 +16,7 @@ interface CategoryStore {
 export function createCategorySyncPlugin() {
   // Für die Kommunikation zwischen Store und Komponenten
   const categoryUpdateEvents: Array<(categoryId: string, newName: string) => void> = [];
-  
+
   // Event-Bus für Kategorieänderungen
   const categoryEventBus: CategoryEventBus = {
     // Event-Listener registrieren
@@ -30,14 +30,14 @@ export function createCategorySyncPlugin() {
     // Event auslösen
     emit(categoryId, newName) {
       categoryUpdateEvents.forEach(callback => callback(categoryId, newName));
-    }
+    },
   };
-  
+
   // Plugin-Funktionalität
   return ({ store }: PiniaPluginContext) => {
     // Nur für den CategoryStore
     if (store.$id !== 'categoryStore') return;
-    
+
     // Event-Bus als Store-Eigenschaft bereitstellen
     const categoryStore = store as unknown as CategoryStore;
     categoryStore.$categoryEventBus = categoryEventBus;
@@ -46,13 +46,13 @@ export function createCategorySyncPlugin() {
     const originalEditCategory = categoryStore.editCategory;
 
     // Patch für editCategory-Methode zum Synchronisieren von Änderungen
-    categoryStore.editCategory = function(categoryToEdit: any, newName: string) {
+    categoryStore.editCategory = function (categoryToEdit: any, newName: string) {
       // Kategorie-ID extrahieren
-      const categoryId = (typeof categoryToEdit === 'object') ? categoryToEdit.id : categoryToEdit;
-      
+      const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
+
       // Originale Methode aufrufen
       originalEditCategory.call(this, categoryToEdit, newName);
-      
+
       // Event auslösen, damit andere Komponenten reagieren können
       categoryEventBus.emit(categoryId, newName);
     };

@@ -23,29 +23,23 @@ export const saveCategoryData = (
     const cleanCustomTemplates = Object.entries(customTemplates).reduce(
       (acc, [id, template]) => ({
         ...acc,
-        [id]: sanitizeTemplate(template)
+        [id]: sanitizeTemplate(template),
       }),
       {} as TemplateCollection
     );
-    
+
     const dataToSave: StoredCategoryData = {
       activeTemplateId,
       customTemplates: cleanCustomTemplates,
     };
-    
+
     // Tiefe Kopie erstellen, um Referenzprobleme zu vermeiden
     const cleanDataToSave = deepCopy(dataToSave);
-    
+
     console.log('Speichere in localStorage:', cleanDataToSave);
-    localStorage.setItem(
-      'categoryTemplates',
-      JSON.stringify(cleanDataToSave)
-    );
+    localStorage.setItem('categoryTemplates', JSON.stringify(cleanDataToSave));
   } catch (error) {
-    console.error(
-      'Fehler beim Speichern der Kategorie-Vorlagen:',
-      error
-    );
+    console.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
   }
 };
 
@@ -57,23 +51,20 @@ export const loadCategoryData = (): StoredCategoryData | null => {
   try {
     console.log('Lade aus localStorage');
     const data = localStorage.getItem('categoryTemplates');
-    
+
     if (!data) {
       return null;
     }
-    
+
     const parsedData = JSON.parse(data) as StoredCategoryData;
     console.log('Geladene Daten:', parsedData);
-    
+
     return {
       activeTemplateId: parsedData.activeTemplateId || '',
-      customTemplates: parsedData.customTemplates || {}
+      customTemplates: parsedData.customTemplates || {},
     };
   } catch (error) {
-    console.error(
-      'Fehler beim Laden der Kategorie-Vorlagen:',
-      error
-    );
+    console.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
     return null;
   }
 };

@@ -20,12 +20,12 @@ export const migrateCategoriesToObjects = (
     const categoryName = item.category as string;
     const category = categoriesMap[categoryName] || {
       id: `category_${categoryName.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`,
-      name: categoryName
+      name: categoryName,
     };
 
     return {
       ...item,
-      category
+      category,
     };
   });
 };
@@ -43,7 +43,7 @@ export const migrateShoppingLists = (lists: any[]): ShoppingList[] => {
     templateId: list.templateId || 'supermarket',
     isFavorite: !!list.isFavorite,
     createdAt: list.createdAt || Date.now(),
-    modifiedAt: list.modifiedAt || Date.now()
+    modifiedAt: list.modifiedAt || Date.now(),
   }));
 };
 
@@ -80,7 +80,7 @@ export const migrateLists = (lists: any[]): ShoppingList[] => {
       templateId: list.templateId || 'supermarket',
       isFavorite: !!list.isFavorite,
       createdAt: list.createdAt || Date.now(),
-      modifiedAt: list.modifiedAt || Date.now()
+      modifiedAt: list.modifiedAt || Date.now(),
     };
 
     // Migriere die Items, falls vorhanden
@@ -94,7 +94,7 @@ export const migrateLists = (lists: any[]): ShoppingList[] => {
         price: typeof item.price === 'number' ? item.price : 0,
         note: item.note || '',
         addedAt: item.addedAt || Date.now(),
-        modifiedAt: item.modifiedAt || Date.now()
+        modifiedAt: item.modifiedAt || Date.now(),
       }));
     }
 

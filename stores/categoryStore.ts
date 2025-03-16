@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import {
   categoryTemplates,
   defaultTemplateId,
-  generateCategoryId
+  generateCategoryId,
 } from './templates/categoryTemplates';
 import { Category, CategoryTemplate, TemplateCollection } from '../composables/types';
 
@@ -39,10 +39,7 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Das aktuell ausgewählte Template
      */
     currentTemplate(): CategoryTemplate {
-      return (
-        this.allTemplates[this.activeTemplateId] ||
-        this.templates[defaultTemplateId]
-      );
+      return this.allTemplates[this.activeTemplateId] || this.templates[defaultTemplateId];
     },
 
     /**
@@ -61,7 +58,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       description: string;
       isCustom: boolean;
     }> {
-      return Object.values(this.allTemplates).map((template) => ({
+      return Object.values(this.allTemplates).map(template => ({
         id: template.id,
         name: template.name,
         description: template.description,
@@ -80,14 +77,14 @@ export const useCategoryStore = defineStore('categoryStore', {
         this.activeTemplateId = templateId;
         this.customTemplates = JSON.parse(JSON.stringify(this.customTemplates));
         this.saveToLocalStorage();
-        
+
         // Explizites Neuladen zur Sicherheit
         const localStorageData = localStorage.getItem('categoryTemplates');
         if (localStorageData) {
           const parsedData = JSON.parse(localStorageData);
           if (parsedData.customTemplates && Object.keys(parsedData.customTemplates).length > 0) {
             const updatedCustomTemplates = parsedData.customTemplates;
-            
+
             // Stelle sicher, dass der Store die aktuelle Version verwendet
             this.customTemplates = updatedCustomTemplates;
           }
@@ -105,7 +102,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       // Erstelle ein neues Kategorie-Objekt
       const newCategory: Category = {
         id: generateCategoryId(categoryName),
-        name: categoryName.trim()
+        name: categoryName.trim(),
       };
 
       // Prüfe, ob die Kategorie bereits existiert
@@ -119,44 +116,45 @@ export const useCategoryStore = defineStore('categoryStore', {
         activeTemplateId: this.activeTemplateId,
         isStandardTemplate: this.templates[this.activeTemplateId] !== undefined,
         currentTemplate: this.currentTemplate,
-        currentCategories: this.currentCategories
+        currentCategories: this.currentCategories,
       });
-      
+
       // Prüfen, ob wir mit einem Standard-Template arbeiten
       const isStandardTemplate = this.templates[this.activeTemplateId] !== undefined;
-      
+
       if (isStandardTemplate) {
         // Bei Standardvorlagen erstellen wir eine Kopie als benutzerdefiniert
-        const newTemplate = JSON.parse(JSON.stringify({
-          ...this.templates[this.activeTemplateId],
-          id: this.activeTemplateId,
-          categories: [
-            ...this.templates[this.activeTemplateId].categories,
-            newCategory,
-          ],
-        }));
-        
+        const newTemplate = JSON.parse(
+          JSON.stringify({
+            ...this.templates[this.activeTemplateId],
+            id: this.activeTemplateId,
+            categories: [...this.templates[this.activeTemplateId].categories, newCategory],
+          })
+        );
+
         // Mit $patch aktualisieren, um bessere Reaktivität zu gewährleisten
         this.$patch({
-          customTemplates: { 
-            ...this.customTemplates, 
-            [this.activeTemplateId]: newTemplate 
-          }
+          customTemplates: {
+            ...this.customTemplates,
+            [this.activeTemplateId]: newTemplate,
+          },
         });
       } else {
         // Bei benutzerdefinierten Vorlagen fügen wir der bestehenden Liste hinzu
         // Tiefe Kopie erstellen und aktualisieren
-        const updatedTemplate = JSON.parse(JSON.stringify({
-          ...this.customTemplates[this.activeTemplateId],
-          categories: [...this.customTemplates[this.activeTemplateId].categories, newCategory]
-        }));
-        
+        const updatedTemplate = JSON.parse(
+          JSON.stringify({
+            ...this.customTemplates[this.activeTemplateId],
+            categories: [...this.customTemplates[this.activeTemplateId].categories, newCategory],
+          })
+        );
+
         // Mit $patch aktualisieren
         this.$patch({
-          customTemplates: { 
-            ...this.customTemplates, 
-            [this.activeTemplateId]: updatedTemplate 
-          }
+          customTemplates: {
+            ...this.customTemplates,
+            [this.activeTemplateId]: updatedTemplate,
+          },
         });
       }
 
@@ -171,10 +169,10 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     editCategory(categoryToEdit: Category | string, newName: string): void {
       if (!newName || newName.trim() === '') return;
-      
+
       // Sicherstellen, dass wir eine Kategorie-ID haben
-      const categoryId = (typeof categoryToEdit === 'object') ? categoryToEdit.id : categoryToEdit;
-      const categoryName = (typeof categoryToEdit === 'object') ? categoryToEdit.name : 'Unknown';
+      const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
+      const categoryName = typeof categoryToEdit === 'object' ? categoryToEdit.name : 'Unknown';
 
       // Prüfen, ob die Kategorie existiert
       const existingCategory = this.currentCategories.find(cat => {
@@ -189,20 +187,22 @@ export const useCategoryStore = defineStore('categoryStore', {
         return;
       }
 
-      console.log(`Editiere Kategorie von '${existingCategory.name}' (ID: ${existingCategory.id}) zu '${newName}'`);
+      console.log(
+        `Editiere Kategorie von '${existingCategory.name}' (ID: ${existingCategory.id}) zu '${newName}'`
+      );
       console.log('Store-Zustand vor Bearbeitung:', {
         activeTemplateId: this.activeTemplateId,
         isStandardTemplate: this.templates[this.activeTemplateId] !== undefined,
-        currentCategories: this.currentCategories
+        currentCategories: this.currentCategories,
       });
-      
+
       try {
         // Prüfen, ob wir mit einem Standard-Template arbeiten
         const isStandardTemplate = this.templates[this.activeTemplateId] !== undefined;
-        
+
         // Erstelle eine Kopie der Kategorien
         let updatedCategories: Category[];
-        
+
         if (isStandardTemplate) {
           updatedCategories = this.templates[this.activeTemplateId].categories.map(cat => {
             if (cat.id === categoryId) {
@@ -218,7 +218,7 @@ export const useCategoryStore = defineStore('categoryStore', {
             return cat;
           });
         }
-        
+
         if (isStandardTemplate) {
           // Erstelle ein neues Template basierend auf dem Standard-Template
           this.customTemplates = {
@@ -226,8 +226,8 @@ export const useCategoryStore = defineStore('categoryStore', {
             [this.activeTemplateId]: {
               ...this.templates[this.activeTemplateId],
               id: this.activeTemplateId,
-              categories: updatedCategories
-            }
+              categories: updatedCategories,
+            },
           };
         } else {
           // Aktualisiere das bestehende benutzerdefinierte Template
@@ -235,20 +235,20 @@ export const useCategoryStore = defineStore('categoryStore', {
             ...this.customTemplates,
             [this.activeTemplateId]: {
               ...this.customTemplates[this.activeTemplateId],
-              categories: updatedCategories
-            }
+              categories: updatedCategories,
+            },
           };
         }
-        
+
         console.log('Erfolgreich aktualisiert');
         console.log('Neuer Store-Zustand:', {
           customTemplates: this.customTemplates[this.activeTemplateId],
-          currentCategories: this.currentCategories
+          currentCategories: this.currentCategories,
         });
-        
+
         // Speichern in LocalStorage
         this.saveToLocalStorage();
-        
+
         // Explizites Neuladen zur Sicherheit
         setTimeout(() => {
           this.loadFromLocalStorage();
@@ -264,8 +264,9 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     deleteCategory(categoryToDelete: Category | string): void {
       // Sicherstellen, dass wir eine Kategorie-ID haben
-      const categoryId = (typeof categoryToDelete === 'object') ? categoryToDelete.id : categoryToDelete;
-      const categoryName = (typeof categoryToDelete === 'object') ? categoryToDelete.name : 'Unknown';
+      const categoryId =
+        typeof categoryToDelete === 'object' ? categoryToDelete.id : categoryToDelete;
+      const categoryName = typeof categoryToDelete === 'object' ? categoryToDelete.name : 'Unknown';
 
       // Prüfen, ob die Kategorie existiert
       const existingCategory = this.currentCategories.find(cat => {
@@ -284,46 +285,54 @@ export const useCategoryStore = defineStore('categoryStore', {
       console.log('Store-Zustand vor Löschen:', {
         activeTemplateId: this.activeTemplateId,
         isStandardTemplate: this.templates[this.activeTemplateId] !== undefined,
-        currentCategories: this.currentCategories
+        currentCategories: this.currentCategories,
       });
-      
+
       // Prüfen, ob wir mit einem Standard-Template arbeiten
       const isStandardTemplate = this.templates[this.activeTemplateId] !== undefined;
-      
+
       if (isStandardTemplate) {
         // Bei Standardvorlagen erstellen wir eine Kopie als benutzerdefiniert
-        const newTemplate = JSON.parse(JSON.stringify({
-          ...this.templates[this.activeTemplateId],
-          id: this.activeTemplateId,
-          categories: this.templates[this.activeTemplateId].categories.filter(cat => cat.id !== categoryId)
-        }));
-        
+        const newTemplate = JSON.parse(
+          JSON.stringify({
+            ...this.templates[this.activeTemplateId],
+            id: this.activeTemplateId,
+            categories: this.templates[this.activeTemplateId].categories.filter(
+              cat => cat.id !== categoryId
+            ),
+          })
+        );
+
         // Mit $patch aktualisieren
         this.$patch({
-          customTemplates: { 
-            ...this.customTemplates, 
-            [this.activeTemplateId]: newTemplate 
-          }
+          customTemplates: {
+            ...this.customTemplates,
+            [this.activeTemplateId]: newTemplate,
+          },
         });
       } else {
         // Bei benutzerdefinierten Vorlagen aktualisieren wir die bestehende
-        const updatedTemplate = JSON.parse(JSON.stringify({
-          ...this.customTemplates[this.activeTemplateId],
-          categories: this.customTemplates[this.activeTemplateId].categories.filter(cat => cat.id !== categoryId)
-        }));
-        
+        const updatedTemplate = JSON.parse(
+          JSON.stringify({
+            ...this.customTemplates[this.activeTemplateId],
+            categories: this.customTemplates[this.activeTemplateId].categories.filter(
+              cat => cat.id !== categoryId
+            ),
+          })
+        );
+
         // Mit $patch aktualisieren
         this.$patch({
-          customTemplates: { 
-            ...this.customTemplates, 
-            [this.activeTemplateId]: updatedTemplate 
-          }
+          customTemplates: {
+            ...this.customTemplates,
+            [this.activeTemplateId]: updatedTemplate,
+          },
         });
       }
 
       console.log('Template nach Löschen:', this.customTemplates[this.activeTemplateId]);
       this.saveToLocalStorage();
-      
+
       // Explizites Neuladen zur Sicherheit
       setTimeout(() => {
         this.loadFromLocalStorage();
@@ -338,22 +347,19 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @returns Die ID des neuen Templates oder null bei Fehler
      */
     createTemplate(
-      name: string, 
-      description: string = '', 
+      name: string,
+      description: string = '',
       baseTemplateId: string | null = null
     ): string | null {
       if (!name || name.trim() === '') return null;
 
       // Template-ID aus dem Namen generieren
-      const id =
-        name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+      const id = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
 
       // Kategorien aus einem Basis-Template übernehmen oder leer starten
       let categories: Category[] = [];
       if (baseTemplateId && this.allTemplates[baseTemplateId]) {
-        categories = [
-          ...this.allTemplates[baseTemplateId].categories,
-        ];
+        categories = [...this.allTemplates[baseTemplateId].categories];
       }
 
       // Neues Template erstellen
@@ -403,8 +409,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.customTemplates[templateId] = {
         ...this.customTemplates[templateId],
         name: name || this.customTemplates[templateId].name,
-        description:
-          description || this.customTemplates[templateId].description,
+        description: description || this.customTemplates[templateId].description,
       };
 
       this.saveToLocalStorage();
@@ -449,29 +454,25 @@ export const useCategoryStore = defineStore('categoryStore', {
           if (!template.id || !template.categories) {
             console.error('Ungültiges Template-Format:', template);
             // Hinzufügen fehlender Eigenschaften
-            if (!template.id) template.id = template.name?.toLowerCase().replace(/\s+/g, '_') || this.activeTemplateId;
+            if (!template.id)
+              template.id =
+                template.name?.toLowerCase().replace(/\s+/g, '_') || this.activeTemplateId;
             if (!template.categories) template.categories = [];
           }
         });
-        
+
         const dataToSave = {
           activeTemplateId: this.activeTemplateId,
           customTemplates: this.customTemplates,
         };
-        
+
         // Tiefe Kopie erstellen, um Referenzprobleme zu vermeiden
         const cleanDataToSave = JSON.parse(JSON.stringify(dataToSave));
-        
+
         console.log('Speichere in localStorage:', cleanDataToSave);
-        localStorage.setItem(
-          'categoryTemplates',
-          JSON.stringify(cleanDataToSave)
-        );
+        localStorage.setItem('categoryTemplates', JSON.stringify(cleanDataToSave));
       } catch (error) {
-        console.error(
-          'Fehler beim Speichern der Kategorie-Vorlagen:',
-          error
-        );
+        console.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
       }
     },
 
@@ -499,7 +500,7 @@ export const useCategoryStore = defineStore('categoryStore', {
                 }
               }
             }
-            
+
             if (needsMigration) {
               console.log('Migration der Kategorien notwendig - alte Strings zu Objekten');
               this.migrateCategories(parsedData.customTemplates);
@@ -516,25 +517,22 @@ export const useCategoryStore = defineStore('categoryStore', {
           ) {
             this.activeTemplateId = parsedData.activeTemplateId;
           }
-          
+
           console.log('Nach dem Laden - activeTemplateId:', this.activeTemplateId);
           console.log('Nach dem Laden - customTemplates:', this.customTemplates);
         }
       } catch (error) {
-        console.error(
-          'Fehler beim Laden der Kategorie-Vorlagen:',
-          error
-        );
+        console.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
       }
     },
-    
+
     /**
      * Migration alter String-Kategorien zu Objekt-Kategorien
      * @param customTemplates - Die zu migrierenden benutzerdefinierten Templates
      */
     migrateCategories(customTemplates: TemplateCollection): void {
       console.log('Starte Migration von String-Kategorien zu Objekten');
-      
+
       // Für jedes Template die Kategorien migrieren
       for (const templateId in customTemplates) {
         const template = customTemplates[templateId];
@@ -544,7 +542,7 @@ export const useCategoryStore = defineStore('categoryStore', {
             if (typeof category === 'string') {
               return {
                 id: generateCategoryId(category),
-                name: category
+                name: category,
               };
             }
             return category; // Falls es bereits ein Objekt ist
@@ -552,11 +550,11 @@ export const useCategoryStore = defineStore('categoryStore', {
           template.categories = newCategories;
         }
       }
-      
+
       // Aktualisierte Daten übernehmen
       this.customTemplates = JSON.parse(JSON.stringify(customTemplates));
       console.log('Migration abgeschlossen, neue customTemplates:', this.customTemplates);
-      
+
       // Speichern, um das neue Format zu persistieren
       this.saveToLocalStorage();
     },

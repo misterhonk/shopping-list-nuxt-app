@@ -36,40 +36,40 @@ export function useListImport() {
     fileInput.accept = 'application/json';
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);
-    
+
     // Event-Handler für Dateiauswahl
-    fileInput.onchange = (event) => {
+    fileInput.onchange = event => {
       const target = event.target as HTMLInputElement;
       if (!target.files || target.files.length === 0) {
         console.log('Keine Datei ausgewählt');
         document.body.removeChild(fileInput);
         return;
       }
-      
+
       const file = target.files[0];
       if (file.type !== 'application/json') {
         alert('Die Datei muss im JSON-Format sein');
         document.body.removeChild(fileInput);
         return;
       }
-      
+
       const reader = new FileReader();
-      
-      reader.onload = (readerEvent) => {
+
+      reader.onload = readerEvent => {
         try {
           if (!readerEvent.target || typeof readerEvent.target.result !== 'string') {
             throw new Error('Fehler beim Lesen der Datei');
           }
-          
+
           const importData = JSON.parse(readerEvent.target.result);
-          
+
           // Validiere die Daten
           if (!importData.name || !Array.isArray(importData.items)) {
             alert('Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.');
             document.body.removeChild(fileInput);
             return;
           }
-          
+
           // Callback mit den Daten aufrufen
           callback(importData);
         } catch (error) {
@@ -79,19 +79,19 @@ export function useListImport() {
           document.body.removeChild(fileInput);
         }
       };
-      
+
       reader.onerror = () => {
         alert('Fehler beim Lesen der Datei');
         document.body.removeChild(fileInput);
       };
-      
+
       reader.readAsText(file);
     };
-    
+
     // Datei-Dialog öffnen
     fileInput.click();
   };
-  
+
   /**
    * Importiert eine Liste aus Daten mit Optionen
    * @param data - Die Importdaten
@@ -100,57 +100,62 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const importListWithOptions = (
-    data: any, 
-    options: ImportOptions, 
+    data: any,
+    options: ImportOptions,
     services: ImportServices
   ): ImportResult => {
     try {
       if (!data || !data.name || !Array.isArray(data.items)) {
-        return { 
-          success: false, 
-          message: 'Ungültige Import-Daten' 
+        return {
+          success: false,
+          message: 'Ungültige Import-Daten',
         };
       }
-      
+
       // Modi: 'create' (neue Liste), 'merge' (zu bestehender Liste hinzufügen), 'replace' (bestehende Liste ersetzen)
-      switch(options.mode) {
+      switch (options.mode) {
         case 'create':
           return importAsNewList(data, services);
-        
+
         case 'merge':
           if (!options.targetListId) {
-            return { 
-              success: false, 
-              message: 'Keine Zielliste für den Merge-Modus angegeben' 
+            return {
+              success: false,
+              message: 'Keine Zielliste für den Merge-Modus angegeben',
             };
           }
-          return mergeWithExistingList(data, options.targetListId, services, !!options.keepExistingItems);
-        
+          return mergeWithExistingList(
+            data,
+            options.targetListId,
+            services,
+            !!options.keepExistingItems
+          );
+
         case 'replace':
           if (!options.targetListId) {
-            return { 
-              success: false, 
-              message: 'Keine Zielliste für den Replace-Modus angegeben' 
+            return {
+              success: false,
+              message: 'Keine Zielliste für den Replace-Modus angegeben',
             };
           }
           return replaceExistingList(data, options.targetListId, services);
-        
+
         default:
-          return { 
-            success: false, 
-            message: 'Ungültiger Import-Modus' 
+          return {
+            success: false,
+            message: 'Ungültiger Import-Modus',
           };
       }
     } catch (error) {
       console.error('Fehler beim Import mit Optionen:', error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: 'Import fehlgeschlagen: ' + (error as Error).message,
-        error: error as Error
+        error: error as Error,
       };
     }
   };
-  
+
   /**
    * Importiert Daten als neue Liste
    * @param data - Die Importdaten
@@ -161,29 +166,29 @@ export function useListImport() {
     // Erstelle eine neue Liste
     const newList = services.createList(data.name, {
       templateId: data.templateId || 'supermarket',
-      isFavorite: false
+      isFavorite: false,
     });
-    
+
     if (!newList) {
-      return { 
-        success: false, 
-        message: 'Fehler beim Erstellen der Liste' 
+      return {
+        success: false,
+        message: 'Fehler beim Erstellen der Liste',
       };
     }
-    
+
     // Füge alle Elemente hinzu
     if (Array.isArray(data.items) && data.items.length > 0) {
       let addedCount = 0;
-      
+
       for (const item of data.items) {
         const itemData = {
           name: item.name,
           quantity: item.quantity || 1,
           category: item.category || 'Sonstiges',
           price: item.price || 0,
-          checked: !!item.checked
+          checked: !!item.checked,
         };
-        
+
         try {
           const addedItem = services.addItem(itemData);
           if (addedItem) {
@@ -193,30 +198,32 @@ export function useListImport() {
           console.error('Fehler beim Hinzufügen eines Elements:', itemError);
         }
       }
-      
+
       if (addedCount !== data.items.length) {
-        console.warn(`Nicht alle Items konnten importiert werden (${addedCount}/${data.items.length})`);
+        console.warn(
+          `Nicht alle Items konnten importiert werden (${addedCount}/${data.items.length})`
+        );
       }
-      
+
       // Aktualisiere die ID
       services.selectList(newList.id);
-      
+
       return {
         success: true,
         message: `Liste "${data.name}" mit ${addedCount} Artikel importiert`,
         listId: newList.id,
-        itemCount: addedCount
+        itemCount: addedCount,
       };
     } else {
       return {
         success: true,
         message: `Leere Liste "${data.name}" importiert`,
         listId: newList.id,
-        itemCount: 0
+        itemCount: 0,
       };
     }
   };
-  
+
   /**
    * Fügt Importdaten zu einer bestehenden Liste hinzu
    * @param data - Die Importdaten
@@ -226,27 +233,27 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const mergeWithExistingList = (
-    data: any, 
-    targetListId: string, 
+    data: any,
+    targetListId: string,
     services: ImportServices,
     keepExisting: boolean
   ): ImportResult => {
     // Aktualisiere die Liste
     services.selectList(targetListId);
-    
+
     // Füge nur die neuen Elemente hinzu
     if (Array.isArray(data.items) && data.items.length > 0) {
       let addedCount = 0;
-      
+
       for (const item of data.items) {
         const itemData = {
           name: item.name,
           quantity: item.quantity || 1,
           category: item.category || 'Sonstiges',
           price: item.price || 0,
-          checked: !!item.checked
+          checked: !!item.checked,
         };
-        
+
         try {
           const addedItem = services.addItem(itemData);
           if (addedItem) {
@@ -256,23 +263,23 @@ export function useListImport() {
           console.error('Fehler beim Hinzufügen eines Elements:', itemError);
         }
       }
-      
+
       return {
         success: true,
         message: `${addedCount} Artikel zur bestehenden Liste hinzugefügt`,
         listId: targetListId,
-        itemCount: addedCount
+        itemCount: addedCount,
       };
     } else {
       return {
         success: true,
         message: 'Keine Artikel zum Hinzufügen in den Importdaten',
         listId: targetListId,
-        itemCount: 0
+        itemCount: 0,
       };
     }
   };
-  
+
   /**
    * Ersetzt eine bestehende Liste mit den Importdaten
    * @param data - Die Importdaten
@@ -281,8 +288,8 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const replaceExistingList = (
-    data: any, 
-    targetListId: string, 
+    data: any,
+    targetListId: string,
     services: ImportServices
   ): ImportResult => {
     // Aktualisiere die Liste mit neuen Daten
@@ -296,27 +303,27 @@ export function useListImport() {
         quantity: item.quantity || 1,
         category: item.category || 'Sonstiges',
         price: item.price || 0,
-        checked: !!item.checked
-      }))
+        checked: !!item.checked,
+      })),
     });
-    
+
     if (!updateSuccess) {
       return {
         success: false,
-        message: 'Fehler beim Ersetzen der Listendaten'
+        message: 'Fehler beim Ersetzen der Listendaten',
       };
     }
-    
+
     services.selectList(targetListId);
-    
+
     return {
       success: true,
       message: `Liste ersetzt mit ${data.items.length} Artikeln`,
       listId: targetListId,
-      itemCount: data.items.length
+      itemCount: data.items.length,
     };
   };
-  
+
   /**
    * Alte Importmethode für Abwärtskompatibilität
    * @param importData - Die Importdaten
@@ -334,35 +341,35 @@ export function useListImport() {
       if (!importData.name || !Array.isArray(importData.items)) {
         return {
           success: false,
-          message: 'Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.'
+          message: 'Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.',
         };
       }
-      
+
       // Erstelle eine neue Liste
       const newList = createList(importData.name, {
         templateId: importData.templateId || 'supermarket',
-        isFavorite: false
+        isFavorite: false,
       });
-      
+
       if (!newList) {
         return {
           success: false,
-          message: 'Fehler beim Erstellen der Liste'
+          message: 'Fehler beim Erstellen der Liste',
         };
       }
-      
+
       // Füge alle Elemente hinzu
       if (Array.isArray(importData.items) && importData.items.length > 0) {
         let addedCount = 0;
-        
+
         for (const item of importData.items) {
           const itemData = {
             name: item.name,
             quantity: item.quantity || 1,
             category: item.category || 'Sonstiges',
-            price: item.price || 0
+            price: item.price || 0,
           };
-          
+
           try {
             const addedItem = addItem(itemData);
             if (addedItem) {
@@ -372,19 +379,19 @@ export function useListImport() {
             console.error('Fehler beim Hinzufügen eines Elements:', itemError);
           }
         }
-        
+
         return {
           success: true,
           message: `Liste importiert: ${importData.name}`,
           listId: newList.id,
-          itemCount: addedCount
+          itemCount: addedCount,
         };
       } else {
         return {
           success: true,
           message: `Leere Liste importiert: ${importData.name}`,
           listId: newList.id,
-          itemCount: 0
+          itemCount: 0,
         };
       }
     } catch (error) {
@@ -392,14 +399,14 @@ export function useListImport() {
       return {
         success: false,
         message: 'Import fehlgeschlagen: ' + (error as Error).message,
-        error: error as Error
+        error: error as Error,
       };
     }
   };
-  
+
   return {
     loadFileAndShowOptions,
     importListWithOptions,
-    importList
+    importList,
   };
 }

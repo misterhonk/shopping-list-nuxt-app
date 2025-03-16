@@ -6,10 +6,7 @@ import { ShoppingList, ShoppingItem } from '../types';
  * Composable für das Aktualisieren von Einkaufslisten
  * Bietet Funktionen zum Bearbeiten, Import und Export von Listen
  */
-export function useListUpdate(
-  listsRef: Ref<ShoppingList[]>,
-  currentListIdRef: Ref<string | null>
-) {
+export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: Ref<string | null>) {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
@@ -21,32 +18,32 @@ export function useListUpdate(
     try {
       const listIndex = listsRef.value.findIndex(list => list.id === listData.id);
       if (listIndex === -1) return false;
-      
+
       // Immutable Update der Liste
       const updatedLists = createImmutableCopy(listsRef.value);
-      
+
       // Alle übergebenen Eigenschaften einzeln aktualisieren
       const currentList = updatedLists[listIndex];
-      
+
       if (listData.name !== undefined) {
         currentList.name = listData.name;
       }
-      
+
       if (listData.templateId !== undefined) {
         currentList.templateId = listData.templateId;
       }
-      
+
       if (listData.isFavorite !== undefined) {
         currentList.isFavorite = listData.isFavorite;
       }
-      
+
       if (listData.items !== undefined) {
         currentList.items = listData.items;
       }
-      
+
       // Änderungsdatum aktualisieren
       currentList.modifiedAt = Date.now();
-      
+
       // Wenn Liste favorisiert/unfavorisiert wird, neu sortieren
       if (listData.isFavorite !== undefined) {
         updatedLists.sort((a, b) => {
@@ -55,10 +52,10 @@ export function useListUpdate(
           return 0;
         });
       }
-      
+
       listsRef.value = updatedLists;
       saveToStorage('shoppingLists', updatedLists);
-      
+
       return true;
     } catch (error) {
       console.error('Fehler beim Aktualisieren der Liste:', error);
@@ -75,25 +72,25 @@ export function useListUpdate(
     try {
       const targetListId = listId || currentListIdRef.value;
       if (!targetListId) return false;
-      
+
       const listIndex = listsRef.value.findIndex(list => list.id === targetListId);
       if (listIndex === -1) return false;
-      
+
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
       updatedLists[listIndex].items = [];
       updatedLists[listIndex].modifiedAt = Date.now();
-      
+
       listsRef.value = updatedLists;
       saveToStorage('shoppingLists', updatedLists);
-      
+
       return true;
     } catch (error) {
       console.error('Fehler beim Leeren der Liste:', error);
       return false;
     }
   };
-  
+
   /**
    * Fügt Artikel zu einer bestehenden Liste hinzu
    * @param listId - Die ID der Liste
@@ -102,26 +99,28 @@ export function useListUpdate(
    * @returns true bei Erfolg, false bei Fehler
    */
   const addItemsToList = (
-    listId: string, 
-    items: ShoppingItem[], 
-    options: { replace?: boolean, uniqueCheck?: boolean } = {}
+    listId: string,
+    items: ShoppingItem[],
+    options: { replace?: boolean; uniqueCheck?: boolean } = {}
   ): boolean => {
     try {
       if (!items || !Array.isArray(items) || items.length === 0) return false;
-      
+
       const listIndex = listsRef.value.findIndex(list => list.id === listId);
       if (listIndex === -1) return false;
-      
+
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
-      
+
       // Bestehende Items ersetzen oder anfügen
       if (options.replace) {
         updatedLists[listIndex].items = [...items];
       } else {
         if (options.uniqueCheck) {
           // Nur neue Items hinzufügen (basierend auf Namen)
-          const existingItemNames = new Set(updatedLists[listIndex].items.map(item => item.name.toLowerCase()));
+          const existingItemNames = new Set(
+            updatedLists[listIndex].items.map(item => item.name.toLowerCase())
+          );
           const newItems = items.filter(item => !existingItemNames.has(item.name.toLowerCase()));
           updatedLists[listIndex].items = [...updatedLists[listIndex].items, ...newItems];
         } else {
@@ -129,13 +128,13 @@ export function useListUpdate(
           updatedLists[listIndex].items = [...updatedLists[listIndex].items, ...items];
         }
       }
-      
+
       // Änderungsdatum aktualisieren
       updatedLists[listIndex].modifiedAt = Date.now();
-      
+
       listsRef.value = updatedLists;
       saveToStorage('shoppingLists', updatedLists);
-      
+
       return true;
     } catch (error) {
       console.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
@@ -146,6 +145,6 @@ export function useListUpdate(
   return {
     updateList,
     clearList,
-    addItemsToList
+    addItemsToList,
   };
 }

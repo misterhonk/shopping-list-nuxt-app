@@ -6,19 +6,28 @@ import { Category, CategoryTemplate, TemplateCollection } from '../../composable
  * @returns Eine eindeutige ID für die Kategorie
  */
 export const generateCategoryId = (name: string): string => {
-  return name.toLowerCase()
-    .replace(/[äöüß]/g, (match) => {
-      switch (match) {
-        case 'ä': return 'ae';
-        case 'ö': return 'oe';
-        case 'ü': return 'ue';
-        case 'ß': return 'ss';
-        default: return match;
-      }
-    })
-    .replace(/\s+/g, '_')
-    .replace(/[^a-z0-9_]/g, '')
-    + '_' + Date.now().toString().slice(-6);
+  return (
+    name
+      .toLowerCase()
+      .replace(/[äöüß]/g, match => {
+        switch (match) {
+          case 'ä':
+            return 'ae';
+          case 'ö':
+            return 'oe';
+          case 'ü':
+            return 'ue';
+          case 'ß':
+            return 'ss';
+          default:
+            return match;
+        }
+      })
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_]/g, '') +
+    '_' +
+    Date.now().toString().slice(-6)
+  );
 };
 
 /**
@@ -46,7 +55,10 @@ export const categoryExists = (template: CategoryTemplate, categoryName: string)
  * @param categoryId - Die ID der gesuchten Kategorie
  * @returns Die gefundene Kategorie oder undefined
  */
-export const findCategoryById = (template: CategoryTemplate, categoryId: string): Category | undefined => {
+export const findCategoryById = (
+  template: CategoryTemplate,
+  categoryId: string
+): Category | undefined => {
   return template.categories.find(cat => cat.id === categoryId);
 };
 
@@ -64,7 +76,7 @@ export const updateTemplateInCollection = (
 ): TemplateCollection => {
   return {
     ...templates,
-    [templateId]: updatedTemplate
+    [templateId]: updatedTemplate,
   };
 };
 
@@ -78,6 +90,6 @@ export const sanitizeTemplate = (template: Partial<CategoryTemplate>): CategoryT
     id: template.id || `template_${Date.now()}`,
     name: template.name || 'Unbenanntes Template',
     description: template.description || '',
-    categories: Array.isArray(template.categories) ? template.categories : []
+    categories: Array.isArray(template.categories) ? template.categories : [],
   };
 };

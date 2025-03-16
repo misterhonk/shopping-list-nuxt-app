@@ -15,21 +15,17 @@
             autofocus
           />
         </div>
-        
+
         <!-- Template auswählen -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Kategorien-Vorlage
           </label>
-          <select 
-            v-model="selectedTemplateId" 
+          <select
+            v-model="selectedTemplateId"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
           >
-            <option 
-              v-for="template in templates" 
-              :key="template.id" 
-              :value="template.id"
-            >
+            <option v-for="template in templates" :key="template.id" :value="template.id">
               {{ template.name }}
             </option>
           </select>
@@ -37,21 +33,24 @@
             Bestimmt, welche Kategorien für Artikel verfügbar sind
           </p>
         </div>
-        
+
         <!-- Als Favorit markieren -->
         <div class="flex items-center">
-          <input 
-            type="checkbox" 
-            id="favorite-checkbox-new" 
-            v-model="isFavorite" 
+          <input
+            type="checkbox"
+            id="favorite-checkbox-new"
+            v-model="isFavorite"
             class="h-4 w-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
           />
-          <label for="favorite-checkbox-new" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+          <label
+            for="favorite-checkbox-new"
+            class="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+          >
             Als Favorit markieren
           </label>
         </div>
       </div>
-      
+
       <div class="mt-6 flex justify-end space-x-3">
         <button
           type="button"
@@ -64,7 +63,7 @@
           type="submit"
           class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
           :disabled="!isValid"
-          :class="{'opacity-50 cursor-not-allowed': !isValid}"
+          :class="{ 'opacity-50 cursor-not-allowed': !isValid }"
         >
           Liste erstellen
         </button>
@@ -79,8 +78,8 @@ import { ref, computed, defineProps, defineEmits } from 'vue';
 const props = defineProps({
   templates: {
     type: Array,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const emit = defineEmits(['create', 'cancel']);
@@ -95,12 +94,12 @@ const isValid = computed(() => {
 
 const onSubmit = () => {
   if (!isValid.value) return;
-  
+
   emit('create', listName.value, {
     templateId: selectedTemplateId.value,
-    isFavorite: isFavorite.value
+    isFavorite: isFavorite.value,
   });
-  
+
   // Reset form
   listName.value = '';
   selectedTemplateId.value = 'supermarket';
@@ -112,7 +111,7 @@ const onCancel = () => {
   listName.value = '';
   selectedTemplateId.value = 'supermarket';
   isFavorite.value = false;
-  
+
   emit('cancel');
 };
 </script>

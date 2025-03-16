@@ -29,13 +29,13 @@ export function useListImportExport(
         items: list.items,
         format: 'shopping-list-app',
         version: '1.0',
-        exportedAt: Date.now()
+        exportedAt: Date.now(),
       };
-      
+
       let exportString: string;
       let filename: string;
       let mimeType: string;
-      
+
       // Exportiere in das gewünschte Format
       if (format === 'csv') {
         exportString = convertToCSV(list.items);
@@ -46,7 +46,7 @@ export function useListImportExport(
         filename = `${list.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.json`;
         mimeType = 'application/json';
       }
-      
+
       // Erstelle einen Download-Link
       const blob = new Blob([exportString], { type: mimeType });
       const url = URL.createObjectURL(blob);
@@ -56,7 +56,7 @@ export function useListImportExport(
       a.download = filename;
       document.body.appendChild(a);
       a.click();
-      
+
       // Bereinigen
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
@@ -74,21 +74,21 @@ export function useListImportExport(
   const convertToCSV = (items: ShoppingItem[]): string => {
     // CSV-Header
     const headers = ['Name', 'Menge', 'Kategorie', 'Preis', 'Erledigt', 'Notiz'];
-    
+
     // Zeilen generieren
     const rows = items.map(item => {
       const categoryName = typeof item.category === 'object' ? item.category.name : item.category;
-      
+
       return [
         `"${item.name.replace(/"/g, '""')}"`,
         item.quantity,
         `"${categoryName.replace(/"/g, '""')}"`,
         item.price || 0,
         item.checked ? 'Ja' : 'Nein',
-        item.note ? `"${item.note.replace(/"/g, '""')}"` : ''
+        item.note ? `"${item.note.replace(/"/g, '""')}"` : '',
       ].join(',');
     });
-    
+
     // CSV zusammenfügen
     return [headers.join(','), ...rows].join('\n');
   };
@@ -97,25 +97,27 @@ export function useListImportExport(
    * Öffnet den Dateiauswahl-Dialog für den Import
    * @param callback - Callback-Funktion, die aufgerufen wird, wenn Daten geladen wurden
    */
-  const openImportDialog = (callback: (data: ExportedList, availableLists: ShoppingList[]) => void): void => {
+  const openImportDialog = (
+    callback: (data: ExportedList, availableLists: ShoppingList[]) => void
+  ): void => {
     try {
       // Erstelle einen Datei-Input
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.json,.csv';
-      
-      input.onchange = async (event) => {
+
+      input.onchange = async event => {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (!file) return;
-        
+
         try {
           // Lese die Datei
           const fileData = await readFile(file);
-          
+
           if (file.name.endsWith('.json')) {
             // Verarbeite JSON-Datei
             const parsedData = JSON.parse(fileData) as ExportedList;
-            
+
             // Prüfe, ob es ein gültiges Format ist
             if (parsedData && parsedData.items && parsedData.name) {
               callback(parsedData, lists.value);
@@ -125,16 +127,16 @@ export function useListImportExport(
           } else if (file.name.endsWith('.csv')) {
             // Verarbeite CSV-Datei
             const items = parseCSV(fileData);
-            
+
             if (items.length > 0) {
               const exportObj: ExportedList = {
                 name: file.name.replace(/\.csv$/, '').replace(/_/g, ' '),
                 items,
                 format: 'shopping-list-app',
                 version: '1.0',
-                exportedAt: Date.now()
+                exportedAt: Date.now(),
               };
-              
+
               callback(exportObj, lists.value);
             } else {
               alert('Die CSV-Datei enthält keine gültigen Artikel.');
@@ -145,7 +147,7 @@ export function useListImportExport(
           alert('Beim Lesen der Datei ist ein Fehler aufgetreten.');
         }
       };
-      
+
       // Klicke auf den Input
       input.click();
     } catch (error) {
@@ -162,15 +164,15 @@ export function useListImportExport(
   const readFile = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
-      reader.onload = (event) => {
+
+      reader.onload = event => {
         resolve(event.target?.result as string);
       };
-      
-      reader.onerror = (error) => {
+
+      reader.onerror = error => {
         reject(error);
       };
-      
+
       reader.readAsText(file);
     });
   };
@@ -182,44 +184,58 @@ export function useListImportExport(
    */
   const parseCSV = (csv: string): ShoppingItem[] => {
     const items: ShoppingItem[] = [];
-    
+
     // Zeilen aufteilen
     const lines = csv.split('\n');
-    
+
     // Header verarbeiten
     const header = lines[0].split(',');
     const nameIndex = header.findIndex(col => col.toLowerCase().includes('name'));
-    const quantityIndex = header.findIndex(col => col.toLowerCase().includes('menge') || col.toLowerCase().includes('anzahl') || col.toLowerCase().includes('quantity'));
-    const categoryIndex = header.findIndex(col => col.toLowerCase().includes('kategorie') || col.toLowerCase().includes('category'));
-    const priceIndex = header.findIndex(col => col.toLowerCase().includes('preis') || col.toLowerCase().includes('price'));
-    const checkedIndex = header.findIndex(col => col.toLowerCase().includes('erledigt') || col.toLowerCase().includes('checked'));
-    const noteIndex = header.findIndex(col => col.toLowerCase().includes('notiz') || col.toLowerCase().includes('note'));
-    
+    const quantityIndex = header.findIndex(
+      col =>
+        col.toLowerCase().includes('menge') ||
+        col.toLowerCase().includes('anzahl') ||
+        col.toLowerCase().includes('quantity')
+    );
+    const categoryIndex = header.findIndex(
+      col => col.toLowerCase().includes('kategorie') || col.toLowerCase().includes('category')
+    );
+    const priceIndex = header.findIndex(
+      col => col.toLowerCase().includes('preis') || col.toLowerCase().includes('price')
+    );
+    const checkedIndex = header.findIndex(
+      col => col.toLowerCase().includes('erledigt') || col.toLowerCase().includes('checked')
+    );
+    const noteIndex = header.findIndex(
+      col => col.toLowerCase().includes('notiz') || col.toLowerCase().includes('note')
+    );
+
     // Zeilen parsen
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
-      
+
       // CSV-Zeile korrekt parsen (berücksichtigt Anführungszeichen)
       const values = parseCSVLine(lines[i]);
-      
+
       // Artikel erstellen
       const item: ShoppingItem = {
         id: Date.now() + i.toString(),
         name: nameIndex >= 0 ? values[nameIndex].replace(/^"(.*)"$/, '$1') : `Artikel ${i}`,
         quantity: quantityIndex >= 0 ? parseFloat(values[quantityIndex]) || 1 : 1,
-        category: categoryIndex >= 0 ? values[categoryIndex].replace(/^"(.*)"$/, '$1') : 'Sonstiges',
+        category:
+          categoryIndex >= 0 ? values[categoryIndex].replace(/^"(.*)"$/, '$1') : 'Sonstiges',
         checked: checkedIndex >= 0 ? isCheckedValue(values[checkedIndex]) : false,
-        price: priceIndex >= 0 ? parseFloat(values[priceIndex]) || 0 : 0
+        price: priceIndex >= 0 ? parseFloat(values[priceIndex]) || 0 : 0,
       };
-      
+
       // Optional: Notiz hinzufügen
       if (noteIndex >= 0 && values[noteIndex]) {
         item.note = values[noteIndex].replace(/^"(.*)"$/, '$1');
       }
-      
+
       items.push(item);
     }
-    
+
     return items;
   };
 
@@ -232,10 +248,10 @@ export function useListImportExport(
     const values: string[] = [];
     let currentValue = '';
     let inQuotes = false;
-    
+
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         // Handle doppelte Anführungszeichen
         if (i < line.length - 1 && line[i + 1] === '"') {
@@ -253,10 +269,10 @@ export function useListImportExport(
         currentValue += char;
       }
     }
-    
+
     // Letzten Wert hinzufügen
     values.push(currentValue);
-    
+
     return values;
   };
 
@@ -267,7 +283,13 @@ export function useListImportExport(
    */
   const isCheckedValue = (value: string): boolean => {
     const lowerValue = value.toLowerCase().trim();
-    return lowerValue === 'ja' || lowerValue === 'yes' || lowerValue === 'true' || lowerValue === '1' || lowerValue === 'x';
+    return (
+      lowerValue === 'ja' ||
+      lowerValue === 'yes' ||
+      lowerValue === 'true' ||
+      lowerValue === '1' ||
+      lowerValue === 'x'
+    );
   };
 
   /**
@@ -281,38 +303,38 @@ export function useListImportExport(
         // Neue Liste erstellen
         const newList = createList(data.name, {
           items: data.items,
-          isFavorite: false
+          isFavorite: false,
         });
-        
+
         if (newList) {
           selectList(newList.id);
         }
       } else if (options.mode === 'merge' && options.targetListId) {
         // Zu bestehender Liste hinzufügen
         const targetList = lists.value.find(list => list.id === options.targetListId);
-        
+
         if (targetList) {
           // Artikel hinzufügen
           data.items.forEach(item => {
             addItem({
               ...item,
-              id: Date.now() + Math.random().toString(36).substring(2, 9) // Neue ID generieren
+              id: Date.now() + Math.random().toString(36).substring(2, 9), // Neue ID generieren
             });
           });
-          
+
           selectList(targetList.id);
         }
       } else if (options.mode === 'replace' && options.targetListId) {
         // Bestehende Liste ersetzen
         const targetList = lists.value.find(list => list.id === options.targetListId);
-        
+
         if (targetList) {
           const updatedList: ShoppingList = {
             ...targetList,
             items: data.items,
-            modifiedAt: Date.now()
+            modifiedAt: Date.now(),
           };
-          
+
           updateList(updatedList);
           selectList(targetList.id);
         }
@@ -331,11 +353,11 @@ export function useListImportExport(
     try {
       // Lese die Datei
       const fileData = await readFile(file);
-      
+
       if (file.name.endsWith('.json')) {
         // Verarbeite JSON-Datei
         const parsedData = JSON.parse(fileData) as ExportedList;
-        
+
         // Prüfe, ob es ein gültiges Format ist
         if (parsedData && parsedData.items && parsedData.name) {
           importData.value = parsedData;
@@ -346,16 +368,16 @@ export function useListImportExport(
       } else if (file.name.endsWith('.csv')) {
         // Verarbeite CSV-Datei
         const items = parseCSV(fileData);
-        
+
         if (items.length > 0) {
           const exportObj: ExportedList = {
             name: file.name.replace(/\.csv$/, '').replace(/_/g, ' '),
             items,
             format: 'shopping-list-app',
             version: '1.0',
-            exportedAt: Date.now()
+            exportedAt: Date.now(),
           };
-          
+
           importData.value = exportObj;
           showImportOptions.value = true;
         } else {
@@ -374,6 +396,6 @@ export function useListImportExport(
     handleExportList,
     handleImportList,
     handleImportListWithOptions,
-    openImportDialog
+    openImportDialog,
   };
 }

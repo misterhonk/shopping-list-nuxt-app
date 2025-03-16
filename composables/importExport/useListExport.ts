@@ -22,62 +22,62 @@ export function useListExport() {
    * @returns true bei Erfolg, false bei Fehler
    */
   const exportList = (
-    exportData: { name: string; templateId?: string }, 
+    exportData: { name: string; templateId?: string },
     items: ShoppingItem[]
   ): boolean => {
     try {
       console.log('Starte Export für Liste:', exportData.name);
-      
+
       // Bereite die Daten für den Export vor
       const fullExportData: ExportData = {
         name: exportData.name,
         items: items || [],
         templateId: exportData.templateId,
         exportDate: new Date().toISOString(),
-        exportVersion: '1.0.0'
+        exportVersion: '1.0.0',
       };
-      
+
       console.log('Export-Daten vorbereitet:', fullExportData);
-      
+
       // Konvertiere zu JSON
       const jsonData = JSON.stringify(fullExportData, null, 2);
-      
+
       // Direkter Download mit Browser-API
       const fileName = `${fullExportData.name.replace(/\s+/g, '_')}_${Date.now()}.json`;
-      
+
       // Erstelle einen Blob und einen Download-Link
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      
+
       console.log('Blob erstellt, URL:', url);
-      
+
       // Erstelle einen unsichtbaren Link zum Herunterladen
       const link = document.createElement('a');
       link.href = url;
       link.download = fileName;
       link.style.display = 'none';
-      
+
       // Füge den Link zum DOM hinzu, klicke ihn und entferne ihn wieder
       document.body.appendChild(link);
-      
+
       console.log('Link erstellt, starte Download:', fileName);
       link.click();
-      
+
       // Kurze Verzögerung vor dem Entfernen des Links
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         console.log('Download-Link entfernt, URL freigegeben');
       }, 100);
-      
+
       return true;
     } catch (error) {
       console.error('Fehler beim Exportieren der Liste:', error);
       return false;
     }
   };
-  
+
   return {
-    exportList
+    exportList,
   };
 }

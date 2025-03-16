@@ -112,8 +112,5 @@ export const getAllTemplates = (): CategoryTemplate[] => {
  * @returns Das angeforderte Template oder das Standard-Template
  */
 export const getTemplate = (templateId: string): CategoryTemplate => {
-  return (
-    categoryTemplates[templateId] ||
-    categoryTemplates[defaultTemplateId]
-  );
+  return categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];
 };

@@ -1,8 +1,12 @@
 <template>
   <div class="mb-4" v-if="categoryStore">
-    <label for="templateSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Vorlage für diese Liste</label>
+    <label
+      for="templateSelect"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+      >Vorlage für diese Liste</label
+    >
     <div class="flex gap-2">
-      <select 
+      <select
         id="templateSelect"
         v-model="currentTemplateId"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
@@ -24,8 +28,8 @@ import { useCategoryStore } from '../stores/categoryStore';
 const props = defineProps({
   listTemplateId: {
     type: String,
-    default: 'supermarket'
-  }
+    default: 'supermarket',
+  },
 });
 
 // Emits
@@ -47,7 +51,7 @@ try {
 const updateTemplate = () => {
   // Template-Id an übergeordnete Komponente senden
   emit('update:templateId', currentTemplateId.value);
-  
+
   // Template auch im Store aktivieren
   if (categoryStore) {
     try {
@@ -59,7 +63,11 @@ const updateTemplate = () => {
 };
 
 // Reagiere auf Änderungen der Props
-watch(() => props.listTemplateId, (newVal) => {
-  currentTemplateId.value = newVal;
-}, { immediate: true });
+watch(
+  () => props.listTemplateId,
+  newVal => {
+    currentTemplateId.value = newVal;
+  },
+  { immediate: true }
+);
 </script>

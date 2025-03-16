@@ -38,7 +38,7 @@ Die App ist dann unter http://localhost:3000 verfügbar.
 Die App enthält jetzt ein flexibles Kategoriesystem mit verschiedenen Vorlagen:
 
 - **Supermarkt**: Standard-Einkaufskategorien für Lebensmittelgeschäfte
-- **Drogeriemarkt**: Kategorien für Drogerieprodukte 
+- **Drogeriemarkt**: Kategorien für Drogerieprodukte
 - **Baumarkt**: Kategorien für Baumaterialien und Werkzeuge
 - **Elektronikmarkt**: Kategorien für elektronische Produkte
 
