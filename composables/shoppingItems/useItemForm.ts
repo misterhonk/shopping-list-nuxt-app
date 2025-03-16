@@ -1,4 +1,5 @@
 import { ref, reactive, computed, Ref } from 'vue';
+
 import { ShoppingItem, Category } from '../types';
 
 /**
@@ -31,9 +32,9 @@ export function useItemForm() {
   });
 
   // Berechnete Eigenschaften
-  const isFormValid = computed<boolean>(() => {
-    return Boolean(newItem.name && newItem.name.trim() !== '' && newItem.quantity > 0);
-  });
+  const isFormValid = computed<boolean>(() =>
+    Boolean(newItem.name && newItem.name.trim() !== '' && newItem.quantity > 0)
+  );
 
   /**
    * Setzt das Artikelformular zurück
@@ -65,7 +66,9 @@ export function useItemForm() {
    * @param item - Der zu bearbeitende Artikel
    */
   const populateFormWithItem = (item: ShoppingItem): void => {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
 
     newItem.name = item.name;
     newItem.quantity = item.quantity;

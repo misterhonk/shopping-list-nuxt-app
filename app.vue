@@ -15,14 +15,14 @@
       </div>
       <div class="flex space-x-2">
         <button
-          @click="installPwa"
           class="px-3 py-1 bg-white text-orange-500 rounded-md text-sm font-medium"
+          @click="installPwa"
         >
           Installieren
         </button>
         <button
-          @click="dismissPwaNotice"
           class="px-3 py-1 bg-orange-600 text-white rounded-md text-sm"
+          @click="dismissPwaNotice"
         >
           Später
         </button>

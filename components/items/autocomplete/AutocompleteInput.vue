@@ -1,10 +1,12 @@
 <template>
   <div class="relative">
     <input
+      ref="inputElement"
       v-model="inputValue"
       type="text"
       :placeholder="placeholder"
       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+      v-bind="$attrs"
       @input="onInput"
       @focus="showSuggestions = true"
       @blur="handleBlur"
@@ -12,8 +14,6 @@
       @keydown.up.prevent="navigateSuggestions(-1)"
       @keydown.enter.prevent="selectSuggestion(highlightedIndex)"
       @keydown.esc="showSuggestions = false"
-      ref="inputElement"
-      v-bind="$attrs"
     />
 
     <div
@@ -82,7 +82,7 @@ const filteredSuggestions = computed(() => {
   }
 
   // Suche in allen Vorschlägen
-  const filtered = props.suggestions
+  return props.suggestions
     .filter(suggestion => {
       // Wenn das Objekt ein 'text'-Feld hat, prüfe dieses
       const searchText =
@@ -98,8 +98,6 @@ const filteredSuggestions = computed(() => {
       return { text: String(suggestion) };
     })
     .slice(0, props.maxSuggestions);
-
-  return filtered;
 });
 
 // Markiere die übereinstimmenden Teile im Text

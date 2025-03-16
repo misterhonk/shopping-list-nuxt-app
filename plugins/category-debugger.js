@@ -6,7 +6,9 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.hook('app:mounted', () => {
     try {
       const categoryStore = useCategoryStore();
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
 
       // Aktuellen Zustand protokollieren
       console.log('[DEBUG] Aktuelle Kategorien im Store:', categoryStore.currentCategories);

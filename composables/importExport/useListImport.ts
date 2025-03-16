@@ -74,7 +74,7 @@ export function useListImport() {
           callback(importData);
         } catch (error) {
           console.error('Fehler beim Parsen der Datei:', error);
-          alert('Die Datei konnte nicht gelesen werden: ' + (error as Error).message);
+          alert(`Die Datei konnte nicht gelesen werden: ${(error as Error).message}`);
         } finally {
           document.body.removeChild(fileInput);
         }
@@ -150,7 +150,7 @@ export function useListImport() {
       console.error('Fehler beim Import mit Optionen:', error);
       return {
         success: false,
-        message: 'Import fehlgeschlagen: ' + (error as Error).message,
+        message: `Import fehlgeschlagen: ${(error as Error).message}`,
         error: error as Error,
       };
     }
@@ -298,7 +298,7 @@ export function useListImport() {
       name: data.name,
       templateId: data.templateId || 'supermarket',
       items: data.items.map((item: any) => ({
-        id: Date.now() + '_' + Math.random().toString(36).substring(2, 9),
+        id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name,
         quantity: item.quantity || 1,
         category: item.category || 'Sonstiges',
@@ -398,7 +398,7 @@ export function useListImport() {
       console.error('Fehler beim Importieren der Liste:', error);
       return {
         success: false,
-        message: 'Import fehlgeschlagen: ' + (error as Error).message,
+        message: `Import fehlgeschlagen: ${(error as Error).message}`,
         error: error as Error,
       };
     }

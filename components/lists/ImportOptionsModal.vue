@@ -18,11 +18,11 @@
         <div class="space-y-2">
           <div class="flex items-start">
             <input
-              type="radio"
               id="option-new"
+              v-model="selectedOption"
+              type="radio"
               name="import-option"
               value="create"
-              v-model="selectedOption"
               class="mt-1 mr-2"
             />
             <label for="option-new" class="text-gray-700 dark:text-gray-200">
@@ -33,13 +33,13 @@
             </label>
           </div>
 
-          <div class="flex items-start" v-if="availableLists.length > 0">
+          <div v-if="availableLists.length > 0" class="flex items-start">
             <input
-              type="radio"
               id="option-update"
+              v-model="selectedOption"
+              type="radio"
               name="import-option"
               value="update"
-              v-model="selectedOption"
               class="mt-1 mr-2"
             />
             <div class="flex-1">
@@ -67,11 +67,11 @@
                 <div class="mt-4">
                   <div class="flex items-center mb-2">
                     <input
-                      type="radio"
                       id="mode-append"
+                      v-model="updateMode"
+                      type="radio"
                       name="update-mode"
                       value="merge"
-                      v-model="updateMode"
                       class="mr-2"
                     />
                     <label for="mode-append" class="text-sm text-gray-700 dark:text-gray-200">
@@ -80,11 +80,11 @@
                   </div>
                   <div class="flex items-center">
                     <input
-                      type="radio"
                       id="mode-replace"
+                      v-model="updateMode"
+                      type="radio"
                       name="update-mode"
                       value="replace"
-                      v-model="updateMode"
                       class="mr-2"
                     />
                     <label for="mode-replace" class="text-sm text-gray-700 dark:text-gray-200">
@@ -100,16 +100,16 @@
 
       <div class="flex justify-end space-x-3">
         <button
-          @click="$emit('cancel')"
           class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+          @click="$emit('cancel')"
         >
           Abbrechen
         </button>
         <button
-          @click="confirmImport"
           class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
           :disabled="!isValid"
           :class="{ 'opacity-50 cursor-not-allowed': !isValid }"
+          @click="confirmImport"
         >
           Importieren
         </button>

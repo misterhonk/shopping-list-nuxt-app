@@ -25,8 +25,8 @@
       Fügen Sie Artikel hinzu, um mit Ihrer Einkaufsliste zu beginnen.
     </p>
     <button
-      @click="$emit('add')"
       class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+      @click="$emit('add')"
     >
       <span class="flex items-center">
         <svg

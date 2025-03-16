@@ -1,5 +1,5 @@
-import { CategoryTemplate, TemplateCollection, Category } from '../../composables/types';
 import { generateCategoryId, deepCopy } from './utils';
+import { CategoryTemplate, TemplateCollection, Category } from '../../composables/types';
 
 /**
  * Migration alter String-Kategorien zu Objekt-Kategorien

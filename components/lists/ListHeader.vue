@@ -5,8 +5,8 @@
       <div class="flex items-center mb-4 sm:mb-0">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white mr-2">{{ listName }}</h2>
         <button
-          @click="toggleFavorite"
           class="text-gray-400 hover:text-yellow-400 dark:text-gray-500 dark:hover:text-yellow-400 focus:outline-none"
+          @click="toggleFavorite"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +28,7 @@
 
       <!-- Aktions-Buttons -->
       <div class="flex space-x-2">
-        <button @click="$emit('add-item')" class="btn btn-primary">
+        <button class="btn btn-primary" @click="$emit('add-item')">
           <span class="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@
 
         <div class="relative inline-block text-left">
           <div>
-            <button @click="isMenuOpen = !isMenuOpen" type="button" class="btn btn-secondary">
+            <button type="button" class="btn btn-secondary" @click="isMenuOpen = !isMenuOpen">
               <span class="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -82,8 +82,8 @@
             >
               <div v-if="hasCheckedItems" class="px-4 py-2 text-sm">
                 <button
-                  @click="clearChecked"
                   class="flex w-full text-left text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400"
+                  @click="clearChecked"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -107,8 +107,8 @@
 
               <div class="px-4 py-2 text-sm">
                 <button
-                  @click="openRenameDialog"
                   class="flex w-full text-left text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400"
+                  @click="openRenameDialog"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -147,8 +147,8 @@
                   <div>
                     <label class="block mb-1">Kategorie-Vorlage</label>
                     <select
-                      @change="updateTemplateId($event.target.value)"
                       class="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
+                      @change="updateTemplateId($event.target.value)"
                     >
                       <option
                         v-for="template in templates"
@@ -167,8 +167,8 @@
 
               <div class="px-4 py-2 text-sm">
                 <button
-                  @click="exportList"
                   class="flex w-full text-left text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400"
+                  @click="exportList"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -190,8 +190,8 @@
 
               <div class="px-4 py-2 text-sm">
                 <button
-                  @click="importList"
                   class="flex w-full text-left text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400"
+                  @click="importList"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -243,23 +243,23 @@
     <div v-if="isRenaming" class="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
       <div class="flex space-x-2">
         <input
+          ref="renameInput"
           v-model="newListName"
           type="text"
           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white"
           placeholder="Listenname"
-          ref="renameInput"
           @keydown.enter="saveNewName"
           @keydown.esc="cancelRename"
         />
         <button
-          @click="saveNewName"
           class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+          @click="saveNewName"
         >
           Speichern
         </button>
         <button
-          @click="cancelRename"
           class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md"
+          @click="cancelRename"
         >
           Abbrechen
         </button>

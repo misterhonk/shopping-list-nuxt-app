@@ -25,9 +25,8 @@ export default defineNuxtPlugin(nuxtApp => {
   };
 
   // Event-Listener Hook für Komponenten
-  const onCategoryUpdate = (callback: (categoryId: string, newName: string) => void) => {
-    return categoryEventBus.on(callback);
-  };
+  const onCategoryUpdate = (callback: (categoryId: string, newName: string) => void) =>
+    categoryEventBus.on(callback);
 
   // Kategorie-Store patchen, um Events zu emittieren, wenn Kategorien bearbeitet werden
   try {

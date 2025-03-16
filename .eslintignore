@@ -1,0 +1,30 @@
+# Nuxt build output
+.nuxt
+.output
+dist
+
+# Node modules
+node_modules
+
+# Logs
+*.log
+
+# Cache
+.cache
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+
+# Auto generated files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Miscellaneous
+.DS_Store
+.env
+.env.*
+!.env.example

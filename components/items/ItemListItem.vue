@@ -4,8 +4,8 @@
       <input
         type="checkbox"
         :checked="item.checked"
-        @change="$emit('toggle')"
         class="mr-3 h-5 w-5 text-orange-500 rounded focus:ring-orange-500"
+        @change="$emit('toggle')"
       />
       <div class="flex flex-col sm:flex-row sm:items-center flex-1">
         <span
@@ -23,8 +23,8 @@
       </div>
     </div>
     <button
-      @click="$emit('remove')"
       class="p-1 ml-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+      @click="$emit('remove')"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,6 @@ const getCategoryName = category => {
 
 defineEmits(['toggle', 'remove']);
 
-const formatPrice = price => {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
-};
+const formatPrice = price =>
+  new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
 </script>

@@ -6,28 +6,28 @@ import { Category, CategoryTemplate, TemplateCollection } from '../../composable
  * @returns Eine eindeutige ID für die Kategorie
  */
 export const generateCategoryId = (name: string): string => {
-  return (
-    name
-      .toLowerCase()
-      .replace(/[äöüß]/g, match => {
-        switch (match) {
-          case 'ä':
-            return 'ae';
-          case 'ö':
-            return 'oe';
-          case 'ü':
-            return 'ue';
-          case 'ß':
-            return 'ss';
-          default:
-            return match;
-        }
-      })
-      .replace(/\s+/g, '_')
-      .replace(/[^a-z0-9_]/g, '') +
-    '_' +
-    Date.now().toString().slice(-6)
-  );
+  const cleanName = name
+    .toLowerCase()
+    .replace(/[äöüß]/g, match => {
+      switch (match) {
+        case 'ä':
+          return 'ae';
+        case 'ö':
+          return 'oe';
+        case 'ü':
+          return 'ue';
+        case 'ß':
+          return 'ss';
+        default:
+          return match;
+      }
+    })
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '');
+
+  const timestamp = Date.now().toString().slice(-6);
+
+  return `${cleanName}_${timestamp}`;
 };
 
 /**
@@ -35,9 +35,7 @@ export const generateCategoryId = (name: string): string => {
  * @param obj - Das zu kopierende Objekt
  * @returns Eine tiefe Kopie des Objekts
  */
-export const deepCopy = <T>(obj: T): T => {
-  return JSON.parse(JSON.stringify(obj));
-};
+export const deepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
 /**
  * Prüft, ob eine Kategorie bereits in einem Template existiert
@@ -45,9 +43,8 @@ export const deepCopy = <T>(obj: T): T => {
  * @param categoryName - Der Name der zu prüfenden Kategorie
  * @returns true, wenn die Kategorie bereits existiert, sonst false
  */
-export const categoryExists = (template: CategoryTemplate, categoryName: string): boolean => {
-  return template.categories.some(cat => cat.name === categoryName);
-};
+export const categoryExists = (template: CategoryTemplate, categoryName: string): boolean =>
+  template.categories.some(cat => cat.name === categoryName);
 
 /**
  * Findet eine Kategorie in einem Template anhand der ID
@@ -58,9 +55,7 @@ export const categoryExists = (template: CategoryTemplate, categoryName: string)
 export const findCategoryById = (
   template: CategoryTemplate,
   categoryId: string
-): Category | undefined => {
-  return template.categories.find(cat => cat.id === categoryId);
-};
+): Category | undefined => template.categories.find(cat => cat.id === categoryId);
 
 /**
  * Aktualisiert ein Template in einer Template-Sammlung
@@ -73,23 +68,19 @@ export const updateTemplateInCollection = (
   templates: TemplateCollection,
   templateId: string,
   updatedTemplate: CategoryTemplate
-): TemplateCollection => {
-  return {
-    ...templates,
-    [templateId]: updatedTemplate,
-  };
-};
+): TemplateCollection => ({
+  ...templates,
+  [templateId]: updatedTemplate,
+});
 
 /**
  * Überprüft und korrigiert ein Template, um sicherzustellen, dass es alle erforderlichen Eigenschaften hat
  * @param template - Das zu prüfende Template
  * @returns Das korrigierte Template
  */
-export const sanitizeTemplate = (template: Partial<CategoryTemplate>): CategoryTemplate => {
-  return {
-    id: template.id || `template_${Date.now()}`,
-    name: template.name || 'Unbenanntes Template',
-    description: template.description || '',
-    categories: Array.isArray(template.categories) ? template.categories : [],
-  };
-};
+export const sanitizeTemplate = (template: Partial<CategoryTemplate>): CategoryTemplate => ({
+  id: template.id || `template_${Date.now()}`,
+  name: template.name || 'Unbenanntes Template',
+  description: template.description || '',
+  categories: Array.isArray(template.categories) ? template.categories : [],
+});

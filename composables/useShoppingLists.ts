@@ -1,7 +1,8 @@
 import { ref, computed, ComputedRef, Ref } from 'vue';
+
 import { useLocalStorage } from './core/useLocalStorage';
-import { useCategoryStore } from '../stores/category';
 import { ShoppingList, CreateListOptions } from './types';
+import { useCategoryStore } from '../stores/category';
 
 /**
  * Composable für die Verwaltung von Einkaufslisten
@@ -45,27 +46,24 @@ export function useShoppingLists() {
    * @param list - Die zu prüfende Liste
    * @return Die Anzahl der Artikel
    */
-  const getItemsCount = (list: ShoppingList): number => {
-    return Array.isArray(list?.items) ? list.items.length : 0;
-  };
+  const getItemsCount = (list: ShoppingList): number =>
+    Array.isArray(list?.items) ? list.items.length : 0;
 
   /**
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
    * @return Die Anzahl der erledigten Artikel
    */
-  const getCheckedItemsCount = (): number => {
-    return Array.isArray(currentList.value?.items)
+  const getCheckedItemsCount = (): number =>
+    Array.isArray(currentList.value?.items)
       ? currentList.value.items.filter(item => item.checked).length
       : 0;
-  };
 
   /**
    * Ermittelt die Gesamtanzahl der Artikel in der aktuellen Liste
    * @return Die Gesamtanzahl der Artikel
    */
-  const getTotalItemsCount = (): number => {
-    return Array.isArray(currentList.value?.items) ? currentList.value.items.length : 0;
-  };
+  const getTotalItemsCount = (): number =>
+    Array.isArray(currentList.value?.items) ? currentList.value.items.length : 0;
 
   /**
    * Lädt die Listen aus dem localStorage
@@ -87,8 +85,12 @@ export function useShoppingLists() {
 
         // Sortiere Listen - Favoriten zuerst
         lists.value.sort((a, b) => {
-          if (a.isFavorite && !b.isFavorite) return -1;
-          if (!a.isFavorite && b.isFavorite) return 1;
+          if (a.isFavorite && !b.isFavorite) {
+            return -1;
+          }
+          if (!a.isFavorite && b.isFavorite) {
+            return 1;
+          }
           return 0;
         });
 
@@ -119,7 +121,9 @@ export function useShoppingLists() {
    * @return Die erstellte Liste
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
-    if (!name || name.trim() === '') return null;
+    if (!name || name.trim() === '') {
+      return null;
+    }
 
     // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
     let templateId = options.templateId || 'supermarket';
@@ -153,7 +157,7 @@ export function useShoppingLists() {
       id: Date.now().toString(),
       name: name.trim(),
       items: options.items || [],
-      templateId: templateId,
+      templateId,
       isFavorite: options.isFavorite || false,
     };
 
@@ -203,7 +207,9 @@ export function useShoppingLists() {
    * @param listId - Die ID der auszuwählenden Liste
    */
   const selectList = (listId: string): void => {
-    if (!lists.value.some(list => list.id === listId)) return;
+    if (!lists.value.some(list => list.id === listId)) {
+      return;
+    }
 
     currentListId.value = listId;
     saveToStorage('currentListId', currentListId.value);
@@ -225,9 +231,13 @@ export function useShoppingLists() {
    * @return true bei Erfolg, false wenn die Liste nicht existiert
    */
   const deleteList = (listId: string): boolean => {
-    if (lists.value.length <= 1) return false;
+    if (lists.value.length <= 1) {
+      return false;
+    }
 
-    if (!lists.value.some(list => list.id === listId)) return false;
+    if (!lists.value.some(list => list.id === listId)) {
+      return false;
+    }
 
     lists.value = lists.value.filter(list => list.id !== listId);
 
@@ -247,7 +257,9 @@ export function useShoppingLists() {
    */
   const updateListTemplate = (templateId: string): void => {
     const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
-    if (listIndex === -1) return;
+    if (listIndex === -1) {
+      return;
+    }
 
     // Tiefe Kopie der Listen erstellen
     const newLists = JSON.parse(JSON.stringify(lists.value));
@@ -271,10 +283,14 @@ export function useShoppingLists() {
    * @param newName - Der neue Name der Liste
    */
   const updateListName = (newName: string): void => {
-    if (!newName || newName.trim() === '') return;
+    if (!newName || newName.trim() === '') {
+      return;
+    }
 
     const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
-    if (listIndex === -1) return;
+    if (listIndex === -1) {
+      return;
+    }
 
     // Tiefe Kopie der Listen erstellen
     const newLists = JSON.parse(JSON.stringify(lists.value));
@@ -290,7 +306,9 @@ export function useShoppingLists() {
    */
   const updateListFavorite = (isFavorite: boolean): void => {
     const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
-    if (listIndex === -1) return;
+    if (listIndex === -1) {
+      return;
+    }
 
     // Tiefe Kopie der Listen erstellen
     const newLists = JSON.parse(JSON.stringify(lists.value));
@@ -298,8 +316,12 @@ export function useShoppingLists() {
 
     // Sortiere Listen - Favoriten zuerst
     newLists.sort((a, b) => {
-      if (a.isFavorite && !b.isFavorite) return -1;
-      if (!a.isFavorite && b.isFavorite) return 1;
+      if (a.isFavorite && !b.isFavorite) {
+        return -1;
+      }
+      if (!a.isFavorite && b.isFavorite) {
+        return 1;
+      }
       return 0;
     });
 
@@ -314,7 +336,9 @@ export function useShoppingLists() {
    */
   const updateList = (updatedList: ShoppingList): boolean => {
     const listIndex = lists.value.findIndex(list => list.id === updatedList.id);
-    if (listIndex === -1) return false;
+    if (listIndex === -1) {
+      return false;
+    }
 
     // Tiefe Kopie der Listen erstellen
     const newLists = JSON.parse(JSON.stringify(lists.value));

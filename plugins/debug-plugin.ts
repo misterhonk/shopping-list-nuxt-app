@@ -34,7 +34,7 @@ export default defineNuxtPlugin(nuxtApp => {
         logEvent: (category: string, action: string, label?: string, value?: number) => {
           if (isDevelopment) {
             console.log(
-              `[Debug] Event: ${category} / ${action}${label ? ' / ' + label : ''}${value !== undefined ? ' = ' + value : ''}`
+              `[Debug] Event: ${category} / ${action}${label ? ` / ${label}` : ''}${value !== undefined ? ` = ${value}` : ''}`
             );
           }
         },

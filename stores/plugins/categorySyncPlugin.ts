@@ -1,4 +1,5 @@
 import { PiniaPluginContext } from 'pinia';
+
 import { CategoryEventBus } from '../../composables/types';
 
 /**
@@ -24,7 +25,9 @@ export function createCategorySyncPlugin() {
       categoryUpdateEvents.push(callback);
       return () => {
         const index = categoryUpdateEvents.indexOf(callback);
-        if (index !== -1) categoryUpdateEvents.splice(index, 1);
+        if (index !== -1) {
+          categoryUpdateEvents.splice(index, 1);
+        }
       };
     },
     // Event auslösen
@@ -36,7 +39,9 @@ export function createCategorySyncPlugin() {
   // Plugin-Funktionalität
   return ({ store }: PiniaPluginContext) => {
     // Nur für den CategoryStore
-    if (store.$id !== 'categoryStore') return;
+    if (store.$id !== 'categoryStore') {
+      return;
+    }
 
     // Event-Bus als Store-Eigenschaft bereitstellen
     const categoryStore = store as unknown as CategoryStore;

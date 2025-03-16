@@ -29,6 +29,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+
 import CategoryManager from '~/components/categories/CategoryManager.vue';
 
 // Stelle sicher, dass die Komponente ordnungsgemäß initialisiert ist

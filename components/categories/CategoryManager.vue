@@ -53,7 +53,7 @@
           Kategorien in "{{ currentTemplate.name }}"
         </h3>
         <div class="flex space-x-2">
-          <button @click="showNewCategoryModal = true" class="btn btn-primary">
+          <button class="btn btn-primary" @click="showNewCategoryModal = true">
             <span class="flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -91,8 +91,8 @@
             class="flex space-x-2 opacity-0 group-hover:opacity-100 md:group-hover:opacity-100 transition-opacity duration-200 absolute right-4 bg-gray-100 dark:bg-gray-800 py-1 px-2 rounded"
           >
             <button
-              @click="editCategory(category)"
               class="p-1 rounded-full text-gray-500 hover:text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700"
+              @click="editCategory(category)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -110,8 +110,8 @@
               </svg>
             </button>
             <button
-              @click="deleteCategory(category)"
               class="p-1 rounded-full text-gray-500 hover:text-red-500 hover:bg-gray-200 dark:hover:bg-gray-700"
+              @click="deleteCategory(category)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +136,7 @@
     <!-- Aktionen für Templates -->
     <div class="border-t pt-4 border-gray-200 dark:border-gray-700">
       <div class="flex flex-wrap gap-3">
-        <button @click="showNewTemplateModal = true" class="btn btn-secondary">
+        <button class="btn btn-secondary" @click="showNewTemplateModal = true">
           <span class="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -157,8 +157,8 @@
         </button>
         <button
           v-if="isTemplateCustom"
-          @click="showEditTemplateModal = true"
           class="btn btn-secondary"
+          @click="showEditTemplateModal = true"
         >
           <span class="flex items-center">
             <svg
@@ -178,7 +178,7 @@
             Vorlage bearbeiten
           </span>
         </button>
-        <button v-if="isTemplateCustom" @click="confirmDeleteTemplate" class="btn btn-danger">
+        <button v-if="isTemplateCustom" class="btn btn-danger" @click="confirmDeleteTemplate">
           <span class="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -197,7 +197,7 @@
             Vorlage löschen
           </span>
         </button>
-        <button @click="resetToDefaults" class="btn btn-secondary">
+        <button class="btn btn-secondary" @click="resetToDefaults">
           <span class="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -242,16 +242,16 @@
         </div>
         <div class="mt-6 flex justify-end space-x-3">
           <button
-            @click="showNewCategoryModal = false"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+            @click="showNewCategoryModal = false"
           >
             Abbrechen
           </button>
           <button
-            @click="addNewCategory"
             class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
             :disabled="!newCategoryName.trim()"
             :class="{ 'opacity-50 cursor-not-allowed': !newCategoryName.trim() }"
+            @click="addNewCategory"
           >
             Hinzufügen
           </button>
@@ -280,16 +280,16 @@
         </div>
         <div class="mt-6 flex justify-end space-x-3">
           <button
-            @click="showEditCategoryModal = false"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+            @click="showEditCategoryModal = false"
           >
             Abbrechen
           </button>
           <button
-            @click="saveEditedCategory"
             class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
             :disabled="!editCategoryName.trim()"
             :class="{ 'opacity-50 cursor-not-allowed': !editCategoryName.trim() }"
+            @click="saveEditedCategory"
           >
             Speichern
           </button>
@@ -344,16 +344,16 @@
         </div>
         <div class="mt-6 flex justify-end space-x-3">
           <button
-            @click="showNewTemplateModal = false"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+            @click="showNewTemplateModal = false"
           >
             Abbrechen
           </button>
           <button
-            @click="createNewTemplate"
             class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
             :disabled="!newTemplate.name.trim()"
             :class="{ 'opacity-50 cursor-not-allowed': !newTemplate.name.trim() }"
+            @click="createNewTemplate"
           >
             Vorlage erstellen
           </button>
@@ -394,16 +394,16 @@
         </div>
         <div class="mt-6 flex justify-end space-x-3">
           <button
-            @click="showEditTemplateModal = false"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+            @click="showEditTemplateModal = false"
           >
             Abbrechen
           </button>
           <button
-            @click="saveEditedTemplate"
             class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
             :disabled="!editTemplate.name.trim()"
             :class="{ 'opacity-50 cursor-not-allowed': !editTemplate.name.trim() }"
+            @click="saveEditedTemplate"
           >
             Speichern
           </button>
@@ -424,14 +424,14 @@
         </p>
         <div class="flex justify-end space-x-3">
           <button
-            @click="showDeleteTemplateModal = false"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+            @click="showDeleteTemplateModal = false"
           >
             Abbrechen
           </button>
           <button
-            @click="deleteCurrentTemplate"
             class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+            @click="deleteCurrentTemplate"
           >
             Löschen
           </button>
@@ -443,10 +443,11 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useCategoryStore } from '../../stores';
-import { generateCategoryId } from '../../stores/category/utils';
-import { defaultTemplateId } from '../../stores/category/templates';
+
 import { diagnoseCategories } from './testing-helper';
+import { useCategoryStore } from '../../stores';
+import { defaultTemplateId } from '../../stores/category/templates';
+import { generateCategoryId } from '../../stores/category/utils';
 
 // Wrapper für den Pinia-Store mit Fehlerbehandlung
 let categoryStore = null;
@@ -474,12 +475,11 @@ const currentCategories = computed(() => {
 });
 
 const activeTemplateId = computed(() => categoryStore?.activeTemplateId || '');
-const isTemplateCustom = computed(() => {
-  return (
+const isTemplateCustom = computed(
+  () =>
     categoryStore?.customTemplates &&
     categoryStore.customTemplates[activeTemplateId.value] !== undefined
-  );
-});
+);
 
 // UI-Zustand
 const isEditMode = ref(false);
@@ -513,7 +513,7 @@ const currentCategoriesArray = computed(() => {
     } else {
       // Fallback für unbekannte Formate
       console.warn('Unbekanntes Kategorieformat:', category);
-      return { id: 'unknown_' + Date.now(), name: 'Unbekannt' };
+      return { id: `unknown_${Date.now()}`, name: 'Unbekannt' };
     }
   });
 });
@@ -559,12 +559,16 @@ const toggleEditMode = () => {
 };
 
 const activateTemplate = templateId => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   categoryStore.activateTemplate(templateId);
 };
 
 const addNewCategory = () => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   if (newCategoryName.value.trim()) {
     categoryStore.addCategory(newCategoryName.value.trim());
     newCategoryName.value = '';
@@ -587,7 +591,9 @@ const editCategory = category => {
 };
 
 const saveEditedCategory = () => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   if (editCategoryName.value.trim() && currentEditingCategory.value) {
     console.log('saveEditedCategory aufgerufen mit:', {
       category: currentEditingCategory.value,
@@ -647,7 +653,9 @@ const saveEditedCategory = () => {
 };
 
 const deleteCategory = category => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
 
   const confirmText = `Möchten Sie die Kategorie "${category.name}" wirklich löschen?`;
 
@@ -665,7 +673,9 @@ const deleteCategory = category => {
 };
 
 const createNewTemplate = () => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   if (newTemplate.value.name.trim()) {
     categoryStore.createTemplate(
       newTemplate.value.name.trim(),
@@ -688,13 +698,17 @@ const confirmDeleteTemplate = () => {
 };
 
 const deleteCurrentTemplate = () => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   categoryStore.deleteTemplate(activeTemplateId.value);
   showDeleteTemplateModal.value = false;
 };
 
 const saveEditedTemplate = () => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   if (editTemplate.value.name.trim()) {
     categoryStore.updateTemplate(
       activeTemplateId.value,
@@ -707,7 +721,9 @@ const saveEditedTemplate = () => {
 };
 
 const resetToDefaults = () => {
-  if (!categoryStore) return;
+  if (!categoryStore) {
+    return;
+  }
   if (
     confirm(
       'Möchten Sie wirklich alle benutzerdefinierten Vorlagen zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.'

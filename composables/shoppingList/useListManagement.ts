@@ -1,4 +1,5 @@
 import { ref, computed, Ref } from 'vue';
+
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, CreateListOptions } from '../types';
 
@@ -58,8 +59,12 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
 
         // Sortiere Listen - Favoriten zuerst
         lists.value.sort((a, b) => {
-          if (a.isFavorite && !b.isFavorite) return -1;
-          if (!a.isFavorite && b.isFavorite) return 1;
+          if (a.isFavorite && !b.isFavorite) {
+            return -1;
+          }
+          if (!a.isFavorite && b.isFavorite) {
+            return 1;
+          }
           return 0;
         });
 
@@ -90,7 +95,9 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    * @returns Die erstellte Liste oder null bei Fehler
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
-    if (!name || name.trim() === '') return null;
+    if (!name || name.trim() === '') {
+      return null;
+    }
 
     try {
       // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
@@ -126,7 +133,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         id: timestamp.toString(),
         name: name.trim(),
         items: options.items || [],
-        templateId: templateId,
+        templateId,
         isFavorite: options.isFavorite || false,
         createdAt: timestamp,
         modifiedAt: timestamp,
@@ -137,8 +144,12 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       // Bei Favoriten Liste neu sortieren
       if (newList.isFavorite) {
         updatedLists.sort((a, b) => {
-          if (a.isFavorite && !b.isFavorite) return -1;
-          if (!a.isFavorite && b.isFavorite) return 1;
+          if (a.isFavorite && !b.isFavorite) {
+            return -1;
+          }
+          if (!a.isFavorite && b.isFavorite) {
+            return 1;
+          }
           return 0;
         });
       }
@@ -198,7 +209,9 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const selectList = (listId: string): boolean => {
     try {
-      if (!lists.value.some(list => list.id === listId)) return false;
+      if (!lists.value.some(list => list.id === listId)) {
+        return false;
+      }
 
       currentListId.value = listId;
       saveToStorage('currentListId', currentListId.value);
@@ -227,9 +240,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const deleteList = (listId: string): boolean => {
     try {
-      if (lists.value.length <= 1) return false;
+      if (lists.value.length <= 1) {
+        return false;
+      }
 
-      if (!lists.value.some(list => list.id === listId)) return false;
+      if (!lists.value.some(list => list.id === listId)) {
+        return false;
+      }
 
       // Immutable Update
       const updatedLists = lists.value.filter(list => list.id !== listId);
@@ -257,7 +274,9 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   const updateListTemplate = (templateId: string): boolean => {
     try {
       const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       // Immutable Update
       const updatedLists = createImmutableCopy(lists.value);

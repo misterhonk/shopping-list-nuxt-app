@@ -98,18 +98,15 @@ export const defaultTemplateId = 'supermarket';
  * Hilfsfunktion zum Abrufen aller Templates
  * @returns Array aller Templates
  */
-export const getAllTemplates = (): CategoryTemplate[] => {
-  return Object.values(categoryTemplates);
-};
+export const getAllTemplates = (): CategoryTemplate[] => Object.values(categoryTemplates);
 
 /**
  * Hilfsfunktion zum Abrufen eines bestimmten Templates
  * @param templateId - Die ID des zu suchenden Templates
  * @returns Das angeforderte Template oder das Standard-Template
  */
-export const getTemplate = (templateId: string): CategoryTemplate => {
-  return categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];
-};
+export const getTemplate = (templateId: string): CategoryTemplate =>
+  categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];
 
 /**
  * Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID
@@ -117,26 +114,26 @@ export const getTemplate = (templateId: string): CategoryTemplate => {
  * @returns Eine eindeutige ID für die Kategorie
  */
 export const generateCategoryId = (name: string): string => {
-  return (
-    name
-      .toLowerCase()
-      .replace(/[äöüß]/g, match => {
-        switch (match) {
-          case 'ä':
-            return 'ae';
-          case 'ö':
-            return 'oe';
-          case 'ü':
-            return 'ue';
-          case 'ß':
-            return 'ss';
-          default:
-            return match;
-        }
-      })
-      .replace(/\s+/g, '_')
-      .replace(/[^a-z0-9_]/g, '') +
-    '_' +
-    Date.now().toString().slice(-6)
-  );
+  const cleanName = name
+    .toLowerCase()
+    .replace(/[äöüß]/g, match => {
+      switch (match) {
+        case 'ä':
+          return 'ae';
+        case 'ö':
+          return 'oe';
+        case 'ü':
+          return 'ue';
+        case 'ß':
+          return 'ss';
+        default:
+          return match;
+      }
+    })
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '');
+
+  const timestamp = Date.now().toString().slice(-6);
+
+  return `${cleanName}_${timestamp}`;
 };

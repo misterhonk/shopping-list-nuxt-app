@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import { Ref, computed } from 'vue';
-import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
-import { categoryTemplates, defaultTemplateId } from './templates';
-import { saveCategoryData, loadCategoryData } from './storage';
+
 import { migrateCategories, needsMigration } from './migration';
 import {
   addCategory as addCategoryOperation,
@@ -13,6 +11,9 @@ import {
   updateTemplate as updateTemplateOperation,
   updateCategoryOrder as updateCategoryOrderOperation,
 } from './operations';
+import { saveCategoryData, loadCategoryData } from './storage';
+import { categoryTemplates, defaultTemplateId } from './templates';
+import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
 
 /**
  * Interface für den CategoryStore State

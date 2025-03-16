@@ -1,4 +1,5 @@
 import { ref, Ref, computed, ComputedRef } from 'vue';
+
 import { ShoppingList, ShoppingItem, ImportOptions, ExportedList } from './types';
 
 /**
@@ -108,7 +109,9 @@ export function useListImportExport(
 
       input.onchange = async event => {
         const file = (event.target as HTMLInputElement).files?.[0];
-        if (!file) return;
+        if (!file) {
+          return;
+        }
 
         try {
           // Lese die Datei
@@ -161,8 +164,8 @@ export function useListImportExport(
    * @param file - Die zu lesende Datei
    * @return Der Inhalt der Datei als Text
    */
-  const readFile = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
+  const readFile = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
 
       reader.onload = event => {
@@ -175,7 +178,6 @@ export function useListImportExport(
 
       reader.readAsText(file);
     });
-  };
 
   /**
    * Parst einen CSV-String in Artikel
@@ -212,7 +214,9 @@ export function useListImportExport(
 
     // Zeilen parsen
     for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
+      if (!lines[i].trim()) {
+        continue;
+      }
 
       // CSV-Zeile korrekt parsen (berücksichtigt Anführungszeichen)
       const values = parseCSVLine(lines[i]);

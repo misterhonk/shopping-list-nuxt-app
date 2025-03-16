@@ -1,5 +1,5 @@
-import { TemplateCollection } from '../../composables/types';
 import { deepCopy, sanitizeTemplate } from './utils';
+import { TemplateCollection } from '../../composables/types';
 
 /**
  * Interface für die gespeicherten Kategoriedaten

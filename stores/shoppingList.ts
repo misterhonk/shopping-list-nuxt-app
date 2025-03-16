@@ -13,20 +13,18 @@ interface ShoppingItem {
 }
 
 export const useShoppingListStore = defineStore('shoppingList', {
-  state: () => {
-    return {
-      // Dieser Store wurde durch direkte localStorage-Verwaltung in der Komponente ersetzt
-      items: [] as ShoppingItem[],
-      categories: [
-        'Obst & Gemüse',
-        'Fleisch & Fisch',
-        'Backwaren',
-        'Milchprodukte',
-        'Getränke',
-        'Sonstiges',
-      ],
-    };
-  },
+  state: () => ({
+    // Dieser Store wurde durch direkte localStorage-Verwaltung in der Komponente ersetzt
+    items: [] as ShoppingItem[],
+    categories: [
+      'Obst & Gemüse',
+      'Fleisch & Fisch',
+      'Backwaren',
+      'Milchprodukte',
+      'Getränke',
+      'Sonstiges',
+    ],
+  }),
 
   actions: {
     // Diese Aktionen werden nicht mehr verwendet

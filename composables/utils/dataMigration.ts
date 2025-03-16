@@ -9,8 +9,8 @@ import { ShoppingItem, ShoppingList, Category } from '../types';
 export const migrateCategoriesToObjects = (
   items: ShoppingItem[],
   categoriesMap: Record<string, Category>
-): ShoppingItem[] => {
-  return items.map(item => {
+): ShoppingItem[] =>
+  items.map(item => {
     // Wenn die Kategorie bereits ein Objekt ist, behalten wir sie bei
     if (typeof item.category === 'object') {
       return item;
@@ -28,15 +28,14 @@ export const migrateCategoriesToObjects = (
       category,
     };
   });
-};
 
 /**
  * Migriert alte ShoppingList-Objekte zu neuen
  * @param lists - Die zu migrierenden Listen
  * @returns Die migrierten Listen
  */
-export const migrateShoppingLists = (lists: any[]): ShoppingList[] => {
-  return lists.map(list => ({
+export const migrateShoppingLists = (lists: any[]): ShoppingList[] =>
+  lists.map(list => ({
     id: list.id || `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     name: list.name || 'Unbenannte Liste',
     items: Array.isArray(list.items) ? list.items : [],
@@ -45,7 +44,6 @@ export const migrateShoppingLists = (lists: any[]): ShoppingList[] => {
     createdAt: list.createdAt || Date.now(),
     modifiedAt: list.modifiedAt || Date.now(),
   }));
-};
 
 /**
  * Prüft, ob ein String ein gültiges JSON enthält

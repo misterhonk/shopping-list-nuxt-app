@@ -1,4 +1,5 @@
 import { Ref } from 'vue';
+
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, ShoppingItem } from '../types';
 
@@ -17,7 +18,9 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
   const updateList = (listData: Partial<ShoppingList> & { id: string }): boolean => {
     try {
       const listIndex = listsRef.value.findIndex(list => list.id === listData.id);
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       // Immutable Update der Liste
       const updatedLists = createImmutableCopy(listsRef.value);
@@ -47,8 +50,12 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
       // Wenn Liste favorisiert/unfavorisiert wird, neu sortieren
       if (listData.isFavorite !== undefined) {
         updatedLists.sort((a, b) => {
-          if (a.isFavorite && !b.isFavorite) return -1;
-          if (!a.isFavorite && b.isFavorite) return 1;
+          if (a.isFavorite && !b.isFavorite) {
+            return -1;
+          }
+          if (!a.isFavorite && b.isFavorite) {
+            return 1;
+          }
           return 0;
         });
       }
@@ -71,10 +78,14 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
   const clearList = (listId?: string): boolean => {
     try {
       const targetListId = listId || currentListIdRef.value;
-      if (!targetListId) return false;
+      if (!targetListId) {
+        return false;
+      }
 
       const listIndex = listsRef.value.findIndex(list => list.id === targetListId);
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
@@ -104,10 +115,14 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
     options: { replace?: boolean; uniqueCheck?: boolean } = {}
   ): boolean => {
     try {
-      if (!items || !Array.isArray(items) || items.length === 0) return false;
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return false;
+      }
 
       const listIndex = listsRef.value.findIndex(list => list.id === listId);
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
@@ -115,18 +130,16 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
       // Bestehende Items ersetzen oder anfügen
       if (options.replace) {
         updatedLists[listIndex].items = [...items];
+      } else if (options.uniqueCheck) {
+        // Nur neue Items hinzufügen (basierend auf Namen)
+        const existingItemNames = new Set(
+          updatedLists[listIndex].items.map(item => item.name.toLowerCase())
+        );
+        const newItems = items.filter(item => !existingItemNames.has(item.name.toLowerCase()));
+        updatedLists[listIndex].items = [...updatedLists[listIndex].items, ...newItems];
       } else {
-        if (options.uniqueCheck) {
-          // Nur neue Items hinzufügen (basierend auf Namen)
-          const existingItemNames = new Set(
-            updatedLists[listIndex].items.map(item => item.name.toLowerCase())
-          );
-          const newItems = items.filter(item => !existingItemNames.has(item.name.toLowerCase()));
-          updatedLists[listIndex].items = [...updatedLists[listIndex].items, ...newItems];
-        } else {
-          // Alle Items hinzufügen
-          updatedLists[listIndex].items = [...updatedLists[listIndex].items, ...items];
-        }
+        // Alle Items hinzufügen
+        updatedLists[listIndex].items = [...updatedLists[listIndex].items, ...items];
       }
 
       // Änderungsdatum aktualisieren

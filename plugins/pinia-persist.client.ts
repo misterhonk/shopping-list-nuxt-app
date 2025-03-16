@@ -7,7 +7,7 @@ import { defineNuxtPlugin } from '#app';
  *
  * Bleibt für historische Zwecke erhalten
  */
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin(() =>
   // Leerer Plugin
-  return {};
-});
+  ({})
+);

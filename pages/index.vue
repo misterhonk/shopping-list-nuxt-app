@@ -27,7 +27,7 @@
               <span class="hidden sm:inline">Kategorien</span>
             </span>
           </NuxtLink>
-          <button v-if="!isCreatingList" @click="isCreatingList = true" class="btn btn-primary">
+          <button v-if="!isCreatingList" class="btn btn-primary" @click="isCreatingList = true">
             <span class="flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -116,21 +116,21 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
-import { useCategoryStore } from '../stores';
-import { useShoppingLists, useShoppingItems, useListImportExport } from '../composables';
 
 // Layout-Komponenten
+import ItemCreationForm from '../components/items/ItemCreationForm.vue';
+import ItemList from '../components/items/ItemList.vue';
 import PageHeader from '../components/layout/PageHeader.vue';
 
 // Listen-Komponenten
-import ListCreationForm from '../components/lists/ListCreationForm.vue';
-import ListSelector from '../components/lists/ListSelector.vue';
-import ListHeader from '../components/lists/ListHeader.vue';
 import ImportOptionsModal from '../components/lists/ImportOptionsModal.vue';
+import ListCreationForm from '../components/lists/ListCreationForm.vue';
+import ListHeader from '../components/lists/ListHeader.vue';
+import ListSelector from '../components/lists/ListSelector.vue';
 
 // Artikel-Komponenten
-import ItemCreationForm from '../components/items/ItemCreationForm.vue';
-import ItemList from '../components/items/ItemList.vue';
+import { useShoppingLists, useShoppingItems, useListImportExport } from '../composables';
+import { useCategoryStore } from '../stores';
 
 // UI-Zustand
 const isCreatingList = ref(false);

@@ -8,11 +8,11 @@
             >Artikelname</label
           >
           <input
+            ref="nameInput"
             v-model="item.name"
             type="text"
             placeholder="z.B. Äpfel"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
-            ref="nameInput"
             autofocus
           />
         </div>
@@ -58,8 +58,8 @@
       <div class="mt-6 flex justify-end space-x-3">
         <button
           type="button"
-          @click="onCancel"
           class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+          @click="onCancel"
         >
           Abbrechen
         </button>
@@ -99,8 +99,8 @@ const props = defineProps({
 
 const emit = defineEmits(['add', 'cancel']);
 
-const normalizedCategories = computed(() => {
-  return props.categories.map(category => {
+const normalizedCategories = computed(() =>
+  props.categories.map(category => {
     // Wenn es bereits ein Objekt mit id und name ist
     if (typeof category === 'object' && category !== null && category.id && category.name) {
       return category;
@@ -114,11 +114,11 @@ const normalizedCategories = computed(() => {
     }
     // Fallback
     return {
-      id: 'unknown_' + Math.random().toString(36).substr(2, 9),
+      id: `unknown_${Math.random().toString(36).substr(2, 9)}`,
       name: String(category || 'Sonstiges'),
     };
-  });
-});
+  })
+);
 
 const item = reactive({
   name: '',
@@ -136,12 +136,12 @@ onMounted(() => {
 
 const nameInput = ref(null);
 
-const isValid = computed(() => {
-  return item.name && item.name.trim() !== '' && item.quantity > 0;
-});
+const isValid = computed(() => item.name && item.name.trim() !== '' && item.quantity > 0);
 
 const onSubmit = () => {
-  if (!isValid.value) return;
+  if (!isValid.value) {
+    return;
+  }
 
   const itemToAdd = {
     name: item.name,

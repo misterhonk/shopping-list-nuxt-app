@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3" v-if="categoryStore">
+  <div v-if="categoryStore" class="mt-3">
     <label
       for="templateSelect"
       class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -23,6 +23,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+
 import { useCategoryStore } from '../../stores/categoryStore';
 
 // Props

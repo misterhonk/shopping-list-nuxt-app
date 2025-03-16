@@ -63,7 +63,9 @@ export function useItemSuggestions(listRef: any) {
 
   // Artikel zur Historie hinzufügen
   const addToHistory = (item: any): void => {
-    if (!item || !item.name) return;
+    if (!item || !item.name) {
+      return;
+    }
 
     const normalizedName = item.name.toLowerCase().trim();
     const now = new Date().toISOString();
@@ -104,7 +106,9 @@ export function useItemSuggestions(listRef: any) {
 
   // Vorschläge basierend auf der Historie generieren
   const getSuggestions = (term = ''): ItemSuggestion[] => {
-    if (!term) return [];
+    if (!term) {
+      return [];
+    }
 
     const normalizedTerm = term.toLowerCase().trim();
     const results: ItemSuggestion[] = [];
@@ -158,7 +162,9 @@ export function useItemSuggestions(listRef: any) {
 
   // Aktualisierte Artikel zur Historie hinzufügen
   const updateHistoryFromLists = (lists: any[]): void => {
-    if (!lists || !Array.isArray(lists)) return;
+    if (!lists || !Array.isArray(lists)) {
+      return;
+    }
 
     lists.forEach(list => {
       if (list.items && Array.isArray(list.items)) {

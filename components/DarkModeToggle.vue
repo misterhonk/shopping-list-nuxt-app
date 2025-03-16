@@ -1,9 +1,9 @@
 <template>
   <button
-    @click="toggleDarkMode"
     class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 hover-lift"
     :class="isDark ? 'bg-gray-800 text-orange-400' : 'bg-gray-100 text-gray-800'"
     aria-label="Dark Mode umschalten"
+    @click="toggleDarkMode"
   >
     <transition name="theme-switch" mode="out-in">
       <svg

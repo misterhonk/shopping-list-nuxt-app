@@ -37,9 +37,9 @@
         <!-- Als Favorit markieren -->
         <div class="flex items-center">
           <input
-            type="checkbox"
             id="favorite-checkbox-new"
             v-model="isFavorite"
+            type="checkbox"
             class="h-4 w-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
           />
           <label
@@ -54,8 +54,8 @@
       <div class="mt-6 flex justify-end space-x-3">
         <button
           type="button"
-          @click="onCancel"
           class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+          @click="onCancel"
         >
           Abbrechen
         </button>
@@ -88,12 +88,12 @@ const listName = ref('');
 const selectedTemplateId = ref('supermarket'); // Default template
 const isFavorite = ref(false);
 
-const isValid = computed(() => {
-  return listName.value.trim() !== '';
-});
+const isValid = computed(() => listName.value.trim() !== '');
 
 const onSubmit = () => {
-  if (!isValid.value) return;
+  if (!isValid.value) {
+    return;
+  }
 
   emit('create', listName.value, {
     templateId: selectedTemplateId.value,

@@ -1,4 +1,5 @@
 import { computed, Ref } from 'vue';
+
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, ShoppingItem, Category } from '../types';
 
@@ -55,10 +56,10 @@ export function useItemManagement(
         grouped[categoryName].push(item);
       } else {
         // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
-        if (!grouped['Sonstiges']) {
-          grouped['Sonstiges'] = [];
+        if (!grouped.Sonstiges) {
+          grouped.Sonstiges = [];
         }
-        grouped['Sonstiges'].push(item);
+        grouped.Sonstiges.push(item);
       }
     });
 
@@ -81,7 +82,9 @@ export function useItemManagement(
     }
 
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) return null;
+    if (listIndex === -1) {
+      return null;
+    }
 
     const newItemObj: ShoppingItem = {
       id: itemData.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
@@ -126,7 +129,9 @@ export function useItemManagement(
       const listIndex = shoppingListsRef.value.findIndex(
         list => list.id === currentListIdRef.value
       );
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
         return false;
@@ -134,7 +139,9 @@ export function useItemManagement(
 
       // Prüfen, ob das Item existiert
       const itemExists = shoppingListsRef.value[listIndex].items.some(item => item.id === itemId);
-      if (!itemExists) return false;
+      if (!itemExists) {
+        return false;
+      }
 
       // Immutable Update mit Filter
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
@@ -167,7 +174,9 @@ export function useItemManagement(
       const listIndex = shoppingListsRef.value.findIndex(
         list => list.id === currentListIdRef.value
       );
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
         return false;
@@ -176,7 +185,9 @@ export function useItemManagement(
       const itemIndex = shoppingListsRef.value[listIndex].items.findIndex(
         item => item.id === itemId
       );
-      if (itemIndex === -1) return false;
+      if (itemIndex === -1) {
+        return false;
+      }
 
       // Immutable Update mit Map
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
@@ -215,7 +226,9 @@ export function useItemManagement(
       const listIndex = shoppingListsRef.value.findIndex(
         list => list.id === currentListIdRef.value
       );
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
         return false;
@@ -246,7 +259,9 @@ export function useItemManagement(
    * @returns true bei Erfolg, false bei Fehler
    */
   const updateCategoryInItems = (categoryId: string, newName: string): boolean => {
-    if (!categoryId || !newName) return false;
+    if (!categoryId || !newName) {
+      return false;
+    }
 
     try {
       let updatedAnyItem = false;
@@ -256,7 +271,9 @@ export function useItemManagement(
 
       // Jede Liste durchgehen und Items aktualisieren
       updatedLists.forEach((list, listIndex) => {
-        if (!Array.isArray(list.items)) return;
+        if (!Array.isArray(list.items)) {
+          return;
+        }
 
         // Flacher Vergleich, um zu prüfen, ob Items geändert wurden
         const originalItems = list.items;

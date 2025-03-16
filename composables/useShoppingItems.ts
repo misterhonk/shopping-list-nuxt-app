@@ -1,4 +1,5 @@
 import { reactive, ref, computed, Ref, ComputedRef } from 'vue';
+
 import { useLocalStorage } from './core/useLocalStorage';
 import { ShoppingItem, ShoppingList, Category } from './types';
 
@@ -30,9 +31,7 @@ export function useShoppingItems(
   });
 
   // Berechnete Eigenschaften
-  const isFormValid = computed((): boolean => {
-    return newItem.name.trim() !== '' && newItem.quantity > 0;
-  });
+  const isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
 
   /**
    * Gibt alle Artikel der aktuellen Liste zurück
@@ -79,10 +78,10 @@ export function useShoppingItems(
         grouped[categoryName].push(item);
       } else {
         // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
-        if (!grouped['Sonstiges']) {
-          grouped['Sonstiges'] = [];
+        if (!grouped.Sonstiges) {
+          grouped.Sonstiges = [];
         }
-        grouped['Sonstiges'].push(item);
+        grouped.Sonstiges.push(item);
       }
     });
 
@@ -104,7 +103,9 @@ export function useShoppingItems(
     }
 
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) return null;
+    if (listIndex === -1) {
+      return null;
+    }
 
     const newItemObj: ShoppingItem = {
       id: itemToAdd.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
@@ -167,7 +168,9 @@ export function useShoppingItems(
     const itemId = typeof item === 'object' ? item.id : item;
 
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) return false;
+    if (listIndex === -1) {
+      return false;
+    }
 
     if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
       return false;
@@ -175,7 +178,9 @@ export function useShoppingItems(
 
     // Prüfen, ob das Item existiert
     const itemIndex = shoppingListsRef.value[listIndex].items.findIndex(item => item.id === itemId);
-    if (itemIndex === -1) return false;
+    if (itemIndex === -1) {
+      return false;
+    }
 
     // Tiefe Kopie und Entfernen des Items
     const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
@@ -198,14 +203,18 @@ export function useShoppingItems(
     const itemId = typeof item === 'object' ? item.id : item;
 
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) return false;
+    if (listIndex === -1) {
+      return false;
+    }
 
     if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
       return false;
     }
 
     const itemIndex = shoppingListsRef.value[listIndex].items.findIndex(item => item.id === itemId);
-    if (itemIndex === -1) return false;
+    if (itemIndex === -1) {
+      return false;
+    }
 
     // Tiefe Kopie und Ändern des Status
     const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
@@ -224,7 +233,9 @@ export function useShoppingItems(
    */
   const clearCheckedItems = (): boolean => {
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) return false;
+    if (listIndex === -1) {
+      return false;
+    }
 
     if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
       return false;

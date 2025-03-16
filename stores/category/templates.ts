@@ -102,15 +102,12 @@ export const categoryTemplates: TemplateCollection = {
  * Hilfsfunktion zum Abrufen aller Templates
  * @returns Array aller Templates
  */
-export const getAllTemplates = (): CategoryTemplate[] => {
-  return Object.values(categoryTemplates);
-};
+export const getAllTemplates = (): CategoryTemplate[] => Object.values(categoryTemplates);
 
 /**
  * Hilfsfunktion zum Abrufen eines bestimmten Templates
  * @param templateId - Die ID des zu suchenden Templates
  * @returns Das angeforderte Template oder das Standard-Template
  */
-export const getTemplate = (templateId: string): CategoryTemplate => {
-  return categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];
-};
+export const getTemplate = (templateId: string): CategoryTemplate =>
+  categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];

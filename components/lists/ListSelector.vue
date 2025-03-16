@@ -5,13 +5,13 @@
       <button
         v-for="list in lists"
         :key="list.id"
-        @click="selectList(list.id)"
         class="px-4 py-2 rounded-md relative"
         :class="{
           'bg-orange-500 text-white': list.id === currentListId,
           'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600':
             list.id !== currentListId,
         }"
+        @click="selectList(list.id)"
       >
         <div class="flex items-center">
           <!-- Favoriten-Stern -->
@@ -34,8 +34,8 @@
           >
           <button
             v-if="lists.length > 1"
-            @click.stop="deleteList(list.id)"
             class="ml-1 text-white text-opacity-70 hover:text-opacity-100 flex-shrink-0"
+            @click.stop="deleteList(list.id)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,9 +72,7 @@ const props = defineProps({
 
 const emit = defineEmits(['select', 'delete']);
 
-const getItemsCount = list => {
-  return Array.isArray(list.items) ? list.items.length : 0;
-};
+const getItemsCount = list => (Array.isArray(list.items) ? list.items.length : 0);
 
 const selectList = listId => {
   emit('select', listId);

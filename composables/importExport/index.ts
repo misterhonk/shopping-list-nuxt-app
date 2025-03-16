@@ -1,6 +1,7 @@
+import { ref, Ref } from 'vue';
+
 import { useListExport } from './useListExport';
 import { useListImport } from './useListImport';
-import { ref, Ref } from 'vue';
 import { ShoppingList, ShoppingItem, ImportOptions } from '../types';
 
 /**
@@ -36,9 +37,8 @@ export function useListImportExport(
    * @param exportData - Die Exportdaten
    * @returns true bei Erfolg, false bei Fehler
    */
-  const handleExportList = (exportData: { name: string; templateId?: string }): boolean => {
-    return listExport.exportList(exportData, allItems.value);
-  };
+  const handleExportList = (exportData: { name: string; templateId?: string }): boolean =>
+    listExport.exportList(exportData, allItems.value);
 
   /**
    * Importiert eine Liste aus Daten
@@ -46,23 +46,21 @@ export function useListImportExport(
    * @param options - Die Importoptionen
    * @returns Das Importergebnis
    */
-  const handleImportListWithOptions = (data: any, options: ImportOptions) => {
-    return listImport.importListWithOptions(data, options, {
+  const handleImportListWithOptions = (data: any, options: ImportOptions) =>
+    listImport.importListWithOptions(data, options, {
       createList,
       addItem,
       selectList,
       updateList,
     });
-  };
 
   /**
    * Importiert eine Liste (alte Methode)
    * @param importData - Die Importdaten
    * @returns Das Importergebnis
    */
-  const handleImportList = (importData: any) => {
-    return listImport.importList(importData, createList, addItem);
-  };
+  const handleImportList = (importData: any) =>
+    listImport.importList(importData, createList, addItem);
 
   /**
    * Öffnet einen Dateidialog zum Importieren einer Liste und zeigt Optionen

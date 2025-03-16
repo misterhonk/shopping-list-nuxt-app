@@ -63,9 +63,7 @@ export function useLocalStorage() {
    * @param key - Der zu prüfende Schlüssel
    * @return true, wenn der Schlüssel existiert, sonst false
    */
-  const keyExists = (key: string): boolean => {
-    return localStorage.getItem(key) !== null;
-  };
+  const keyExists = (key: string): boolean => localStorage.getItem(key) !== null;
 
   return {
     saveToStorage,

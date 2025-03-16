@@ -222,7 +222,7 @@
 
 ### Tooling
 
-- [ ] ESLint-Regeln optimieren
+- [x] ESLint-Regeln optimieren
 - [x] Prettier für Formatierung einrichten
 - [ ] Husky für Pre-Commit-Hooks konfigurieren
 - [ ] TypeScript-Prüfung in CI einbauen

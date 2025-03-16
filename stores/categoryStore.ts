@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+
 import {
   categoryTemplates,
   defaultTemplateId,
@@ -97,7 +98,9 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param categoryName - Der Name der neuen Kategorie
      */
     addCategory(categoryName: string): void {
-      if (!categoryName || categoryName.trim() === '') return;
+      if (!categoryName || categoryName.trim() === '') {
+        return;
+      }
 
       // Erstelle ein neues Kategorie-Objekt
       const newCategory: Category = {
@@ -168,7 +171,9 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param newName - Der neue Name für die Kategorie
      */
     editCategory(categoryToEdit: Category | string, newName: string): void {
-      if (!newName || newName.trim() === '') return;
+      if (!newName || newName.trim() === '') {
+        return;
+      }
 
       // Sicherstellen, dass wir eine Kategorie-ID haben
       const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
@@ -351,10 +356,12 @@ export const useCategoryStore = defineStore('categoryStore', {
       description: string = '',
       baseTemplateId: string | null = null
     ): string | null {
-      if (!name || name.trim() === '') return null;
+      if (!name || name.trim() === '') {
+        return null;
+      }
 
       // Template-ID aus dem Namen generieren
-      const id = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+      const id = `${name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
 
       // Kategorien aus einem Basis-Template übernehmen oder leer starten
       let categories: Category[] = [];
@@ -385,7 +392,9 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param templateId - Die ID des zu löschenden Templates
      */
     deleteTemplate(templateId: string): void {
-      if (!this.customTemplates[templateId]) return;
+      if (!this.customTemplates[templateId]) {
+        return;
+      }
 
       delete this.customTemplates[templateId];
 
@@ -404,7 +413,9 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param description - Die neue Beschreibung (optional)
      */
     updateTemplate(templateId: string, name?: string, description?: string): void {
-      if (!this.customTemplates[templateId]) return;
+      if (!this.customTemplates[templateId]) {
+        return;
+      }
 
       this.customTemplates[templateId] = {
         ...this.customTemplates[templateId],
@@ -420,7 +431,9 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param newOrder - Die neue Reihenfolge der Kategorien
      */
     updateCategoryOrder(newOrder: Category[]): void {
-      if (!Array.isArray(newOrder) || newOrder.length === 0) return;
+      if (!Array.isArray(newOrder) || newOrder.length === 0) {
+        return;
+      }
 
       // Stelle sicher, dass wir die vordefinierten Templates nicht verändern
       let templateToEdit: CategoryTemplate | null = null;
@@ -454,10 +467,13 @@ export const useCategoryStore = defineStore('categoryStore', {
           if (!template.id || !template.categories) {
             console.error('Ungültiges Template-Format:', template);
             // Hinzufügen fehlender Eigenschaften
-            if (!template.id)
+            if (!template.id) {
               template.id =
                 template.name?.toLowerCase().replace(/\s+/g, '_') || this.activeTemplateId;
-            if (!template.categories) template.categories = [];
+            }
+            if (!template.categories) {
+              template.categories = [];
+            }
           }
         });
 

@@ -180,9 +180,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useShoppingLists } from '../../composables/useShoppingLists';
-import { useShoppingItems } from '../../composables/useShoppingItems';
+
 import PageHeader from '../../components/layout/PageHeader.vue';
+import { useShoppingItems } from '../../composables/useShoppingItems';
+import { useShoppingLists } from '../../composables/useShoppingLists';
 
 // Listen-Management
 const { lists, currentListId, currentList } = useShoppingLists();
@@ -191,32 +192,32 @@ const { lists, currentListId, currentList } = useShoppingLists();
 const { allItems } = useShoppingItems(lists, currentListId);
 
 // Berechnete Eigenschaften
-const totalItems = computed(() => {
-  return allItems.value.length || 0;
-});
+const totalItems = computed(() => allItems.value.length || 0);
 
 // Ermittle Artikel mit Preisen
-const itemsWithPrice = computed(() => {
-  return allItems.value.filter(item => item.price && item.price > 0).length || 0;
-});
+const itemsWithPrice = computed(
+  () => allItems.value.filter(item => item.price && item.price > 0).length || 0
+);
 
 // Gesamtbetrag
-const totalAmount = computed(() => {
-  return allItems.value.reduce((total, item) => {
-    return total + (item.price || 0) * (item.quantity || 1);
-  }, 0);
-});
+const totalAmount = computed(() =>
+  allItems.value.reduce((total, item) => total + (item.price || 0) * (item.quantity || 1), 0)
+);
 
 // Durchschnitt pro Artikel
 const averageItemPrice = computed(() => {
-  if (itemsWithPrice.value === 0) return 0;
+  if (itemsWithPrice.value === 0) {
+    return 0;
+  }
   const total = allItems.value.reduce((sum, item) => sum + (item.price || 0), 0);
   return total / itemsWithPrice.value;
 });
 
 // Teuerster Artikel
 const mostExpensiveItem = computed(() => {
-  if (allItems.value.length === 0) return null;
+  if (allItems.value.length === 0) {
+    return null;
+  }
 
   return [...allItems.value]
     .filter(item => item.price && item.price > 0)
@@ -225,12 +226,16 @@ const mostExpensiveItem = computed(() => {
 
 // Ausgaben nach Kategorien
 const categoryExpenses = computed(() => {
-  if (allItems.value.length === 0) return [];
+  if (allItems.value.length === 0) {
+    return [];
+  }
 
   const categories = {};
 
   allItems.value.forEach(item => {
-    if (!item.price || item.price <= 0) return;
+    if (!item.price || item.price <= 0) {
+      return;
+    }
 
     const categoryId = typeof item.category === 'object' ? item.category.id : 'sonstiges';
     const categoryName =
@@ -261,17 +266,15 @@ const categoryExpenses = computed(() => {
 const shoppingHistory = ref([]);
 
 // Hilfsfunktionen
-const formatCurrency = value => {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-};
+const formatCurrency = value =>
+  new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
 
-const formatDate = date => {
-  return new Date(date).toLocaleDateString('de-DE', {
+const formatDate = date =>
+  new Date(date).toLocaleDateString('de-DE', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
-};
 
 const getCategoryColor = categoryId => {
   const colors = {
@@ -290,13 +293,18 @@ const getCategoryColor = categoryId => {
   // Prefix prüfen und entfernen (für IDs mit Timestamp)
   const baseId = categoryId.split('_').slice(0, -1).join('_');
 
-  if (colors[categoryId]) return colors[categoryId];
-  if (colors[baseId]) return colors[baseId];
+  if (colors[categoryId]) {
+    return colors[categoryId];
+  }
+  if (colors[baseId]) {
+    return colors[baseId];
+  }
 
   // Wenn keine Übereinstimmung gefunden wird, eine Farbe basierend auf dem String generieren
-  const hash = Array.from(categoryId).reduce((acc, char) => {
-    return char.charCodeAt(0) + ((acc << 5) - acc);
-  }, 0);
+  const hash = Array.from(categoryId).reduce(
+    (acc, char) => char.charCodeAt(0) + ((acc << 5) - acc),
+    0
+  );
 
   // Konvertieren zu einer von 10 Farben
   const index = Math.abs(hash % 10);

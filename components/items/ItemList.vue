@@ -42,8 +42,9 @@
 
 <script setup>
 import { computed } from 'vue';
-import ItemListItem from './ItemListItem.vue';
+
 import EmptyState from './EmptyState.vue';
+import ItemListItem from './ItemListItem.vue';
 
 const props = defineProps({
   items: {
@@ -55,11 +56,9 @@ const props = defineProps({
 defineEmits(['toggle', 'remove', 'add-new']);
 
 // Berechne den Gesamtpreis aller Artikel
-const totalPrice = computed(() => {
-  return props.items.reduce((total, item) => {
-    return total + (item.price || 0) * (item.quantity || 1);
-  }, 0);
-});
+const totalPrice = computed(() =>
+  props.items.reduce((total, item) => total + (item.price || 0) * (item.quantity || 1), 0)
+);
 
 // Kategorien für die Gruppierung
 const groupedItems = computed(() => {
@@ -84,23 +83,23 @@ const groupedItems = computed(() => {
 });
 
 // Liste der gruppierten Kategorien
-const groupedCategories = computed(() => {
-  return Object.values(groupedItems.value).sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
-});
+const groupedCategories = computed(() =>
+  Object.values(groupedItems.value).sort((a, b) => a.name.localeCompare(b.name))
+);
 
 // Berechne den Gesamtpreis pro Kategorie
 const getCategoryTotal = categoryId => {
-  if (!groupedItems.value[categoryId]) return 0;
+  if (!groupedItems.value[categoryId]) {
+    return 0;
+  }
 
-  return groupedItems.value[categoryId].items.reduce((total, item) => {
-    return total + (item.price || 0) * (item.quantity || 1);
-  }, 0);
+  return groupedItems.value[categoryId].items.reduce(
+    (total, item) => total + (item.price || 0) * (item.quantity || 1),
+    0
+  );
 };
 
 // Formatiere den Preis
-const formatPrice = price => {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
-};
+const formatPrice = price =>
+  new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
 </script>

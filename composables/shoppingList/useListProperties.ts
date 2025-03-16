@@ -1,4 +1,5 @@
 import { Ref } from 'vue';
+
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, ShoppingItem } from '../types';
 
@@ -17,9 +18,8 @@ export function useListProperties(
    * @param list - Die zu prüfende Liste
    * @returns Die Anzahl der Artikel
    */
-  const getItemsCount = (list: ShoppingList): number => {
-    return Array.isArray(list?.items) ? list.items.length : 0;
-  };
+  const getItemsCount = (list: ShoppingList): number =>
+    Array.isArray(list?.items) ? list.items.length : 0;
 
   /**
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
@@ -48,10 +48,14 @@ export function useListProperties(
    */
   const updateListName = (newName: string): boolean => {
     try {
-      if (!newName || newName.trim() === '') return false;
+      if (!newName || newName.trim() === '') {
+        return false;
+      }
 
       const listIndex = listsRef.value.findIndex(list => list.id === currentListIdRef.value);
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
@@ -76,7 +80,9 @@ export function useListProperties(
   const updateListFavorite = (isFavorite: boolean): boolean => {
     try {
       const listIndex = listsRef.value.findIndex(list => list.id === currentListIdRef.value);
-      if (listIndex === -1) return false;
+      if (listIndex === -1) {
+        return false;
+      }
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
@@ -85,8 +91,12 @@ export function useListProperties(
 
       // Sortiere Listen - Favoriten zuerst
       updatedLists.sort((a, b) => {
-        if (a.isFavorite && !b.isFavorite) return -1;
-        if (!a.isFavorite && b.isFavorite) return 1;
+        if (a.isFavorite && !b.isFavorite) {
+          return -1;
+        }
+        if (!a.isFavorite && b.isFavorite) {
+          return 1;
+        }
         return 0;
       });
 

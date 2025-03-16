@@ -1,5 +1,6 @@
-import { defineNuxtPlugin } from '#app';
 import { migrateLists, validateList } from '../composables/utils/dataMigration';
+
+import { defineNuxtPlugin } from '#app';
 
 /**
  * Plugin zur Migration älterer Datenstrukturen
@@ -22,17 +23,16 @@ export default defineNuxtPlugin(nuxtApp => {
       // Prüfen, ob die Listen bereits im neuen Format sind
       const needsMigration =
         Array.isArray(lists) &&
-        lists.some(list => {
-          // Kriterien für Migrationsbedarf
-          return (
+        lists.some(
+          list =>
+            // Kriterien für Migrationsbedarf
             !list.hasOwnProperty('createdAt') ||
             !list.hasOwnProperty('modifiedAt') ||
             (Array.isArray(list.items) &&
               list.items.some(
                 item => typeof item.category === 'string' || !item.hasOwnProperty('addedAt')
               ))
-          );
-        });
+        );
 
       if (needsMigration) {
         console.log('[Data Migration] Migration wird durchgeführt');

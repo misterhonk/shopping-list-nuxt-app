@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Settings Button -->
-    <button @click="showSettings = true" class="btn btn-secondary">
+    <button class="btn btn-secondary" @click="showSettings = true">
       <span class="flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -36,8 +36,8 @@
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-gray-800 dark:text-white">Listeneinstellungen</h3>
           <button
-            @click="showSettings = false"
             class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
+            @click="showSettings = false"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -70,12 +70,12 @@
                 class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
               />
               <button
-                @click="updateListName"
                 class="ml-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                 :disabled="!editedName.trim() || editedName === listName"
                 :class="{
                   'opacity-50 cursor-not-allowed': !editedName.trim() || editedName === listName,
                 }"
+                @click="updateListName"
               >
                 Ändern
               </button>
@@ -89,8 +89,8 @@
             </label>
             <select
               v-model="selectedTemplateId"
-              @change="updateTemplateId"
               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+              @change="updateTemplateId"
             >
               <option v-for="template in templates" :key="template.id" :value="template.id">
                 {{ template.name }}
@@ -107,11 +107,11 @@
           <!-- Als Favorit markieren -->
           <div class="flex items-center">
             <input
-              type="checkbox"
               id="favorite-checkbox"
-              v-model="isFavorite"
-              @change="updateFavoriteStatus"
+              v-model="isFavoriteState"
+              type="checkbox"
               class="h-4 w-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+              @change="updateFavoriteStatus"
             />
             <label
               for="favorite-checkbox"
@@ -131,8 +131,8 @@
             <span class="xs:hidden">Kategorien</span>
           </NuxtLink>
           <button
-            @click="showSettings = false"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600"
+            @click="showSettings = false"
           >
             <span class="hidden xs:inline">Schließen</span>
             <span class="xs:hidden">×</span>
@@ -173,7 +173,7 @@ const showSettings = ref(false);
 // Form data
 const editedName = ref('');
 const selectedTemplateId = ref('');
-const isFavorite = ref(false);
+const isFavoriteState = ref(false); // Renamed to avoid conflict with prop
 
 // Initialize form data when props change
 watch(
@@ -195,7 +195,7 @@ watch(
 watch(
   () => props.isFavorite,
   newValue => {
-    isFavorite.value = newValue;
+    isFavoriteState.value = newValue;
   },
   { immediate: true }
 );
@@ -212,12 +212,12 @@ const updateTemplateId = () => {
 };
 
 const updateFavoriteStatus = () => {
-  emit('update:favorite', isFavorite.value);
+  emit('update:favorite', isFavoriteState.value);
 };
 
 onMounted(() => {
   editedName.value = props.listName;
   selectedTemplateId.value = props.templateId;
-  isFavorite.value = props.isFavorite;
+  isFavoriteState.value = props.isFavorite;
 });
 </script>

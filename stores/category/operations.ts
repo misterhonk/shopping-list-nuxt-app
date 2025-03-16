@@ -1,6 +1,6 @@
-import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
-import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
 import { categoryTemplates, defaultTemplateId } from './templates';
+import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
+import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
 
 /**
  * Fügt eine neue Kategorie zu einem Template hinzu
@@ -195,7 +195,7 @@ export const createTemplate = (
   }
 
   // Template-ID aus dem Namen generieren
-  const id = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+  const id = `${name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
 
   // Kategorien aus einem Basis-Template übernehmen oder leer starten
   let categories: Category[] = [];
