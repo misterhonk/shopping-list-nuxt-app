@@ -4,7 +4,7 @@
       <template #actions>
         <div class="flex space-x-2">
           <div class="hidden md:block mr-4 text-sm text-orange-500 font-medium self-center p-1 rounded-md">
-            Neu: Preisverfolgung 🏷️
+            Neu: Preisverfolgung & Statistiken 🏐
           </div>
           <NuxtLink
             to="/categories"
@@ -63,6 +63,8 @@
         @update:template-id="updateCurrentListTemplate"
         @update:name="updateCurrentListName"
         @update:favorite="updateCurrentListFavorite"
+        @export-list="handleExportList"
+        @import-list="handleImportList"
       />
 
       <!-- Artikel-Hinzufügen-Formular -->
@@ -195,6 +197,65 @@ const addNewItem = (item) => {
   console.log('Füge neuen Artikel hinzu:', newItem);
   addItem(newItem);
   isAddingItem.value = false;
+};
+
+// Export-Import-Funktionen
+const handleExportList = (exportData) => {
+  console.log('Exportiere Liste:', exportData.name);
+  
+  // Liste mit Einträgen befüllen
+  exportData.items = allItems.value;
+  
+  // JSON erstellen
+  const jsonData = JSON.stringify(exportData, null, 2);
+  
+  // Download starten
+  const fileName = `${exportData.name.replace(/\s+/g, '_')}_${Date.now()}.json`;
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  // Download-Link erstellen und klicken
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  
+  // Link nach kurzer Zeit entfernen
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, 100);
+};
+
+const handleImportList = (importData) => {
+  console.log('Importiere Liste:', importData);
+  
+  // Neue Liste erstellen
+  const newList = createList(importData.name, {
+    templateId: importData.templateId || 'supermarket',
+    isFavorite: false
+  });
+  
+  // Items hinzufügen, falls vorhanden
+  if (newList && Array.isArray(importData.items) && importData.items.length > 0) {
+    for (const item of importData.items) {
+      // Sicherstellen, dass alle erforderlichen Felder vorhanden sind
+      const itemData = {
+        name: item.name,
+        quantity: item.quantity || 1,
+        category: item.category || { id: 'sonstiges', name: 'Sonstiges' },
+        price: item.price || 0
+      };
+      
+      try {
+        addItem(itemData);
+      } catch (itemError) {
+        console.error('Fehler beim Hinzufügen eines Elements:', itemError);
+      }
+    }
+  }
 };
 
 // App-Initialisierung

@@ -11,13 +11,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
     "nuxt": "^3.9.0",
-    "pinia": "^2.1.7",
-    "@pinia/nuxt": "^0.5.1"
+    "pinia": "^2.1.7"
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.5",
+    "@vite-pwa/nuxt": "^0.10.6",
+    "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "autoprefixer": "^10.4.16"
+    "tailwindcss": "^3.3.5"
   }
 }

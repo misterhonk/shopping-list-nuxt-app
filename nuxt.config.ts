@@ -13,8 +13,44 @@ export default defineNuxtConfig({
   // Modules
   modules: [
     '@pinia/nuxt',
+    '@vite-pwa/nuxt'
   ],
 
+  // PWA-Konfiguration
+  pwa: {
+    manifest: {
+      name: 'Einkaufslisten App',
+      short_name: 'Einkaufsliste',
+      description: 'Verwalte deine Einkaufslisten',
+      theme_color: '#f97316',
+      background_color: '#ffffff',
+      display: 'standalone',
+      icons: [
+        {
+          src: 'icons/icon-64.png',
+          sizes: '64x64',
+          type: 'image/png'
+        },
+        {
+          src: 'icons/icon-192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          src: 'icons/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: null
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module'
+    }
+  },
   // CSP-freundliche Konfiguration
   vite: {
     // Wechsel zu safer code splitting für CSP-Kompatibilität

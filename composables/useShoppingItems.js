@@ -124,10 +124,13 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
   
   /**
    * Entfernt einen Artikel aus der aktuellen Liste
-   * @param {string} itemId - Die ID des zu entfernenden Artikels
+   * @param {object|string} item - Das Item oder die ID des zu entfernenden Artikels
    * @return {boolean} true bei Erfolg, false bei Fehler
    */
-  const removeItem = (itemId) => {
+  const removeItem = (item) => {
+    // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
+    const itemId = typeof item === 'object' ? item.id : item;
+    
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
     if (listIndex === -1) return false;
     
@@ -152,10 +155,13 @@ export function useShoppingItems(shoppingListsRef, currentListIdRef) {
   
   /**
    * Ändert den Markierungsstatus eines Artikels
-   * @param {string} itemId - Die ID des zu ändernden Artikels
+   * @param {object|string} item - Das Item oder die ID des zu ändernden Artikels
    * @return {boolean} true bei Erfolg, false bei Fehler
    */
-  const toggleItemChecked = (itemId) => {
+  const toggleItemChecked = (item) => {
+    // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
+    const itemId = typeof item === 'object' ? item.id : item;
+    
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
     if (listIndex === -1) return false;
     

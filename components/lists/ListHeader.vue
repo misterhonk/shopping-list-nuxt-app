@@ -39,14 +39,75 @@
           <span class="hidden sm:inline">Artikel hinzufügen</span>
         </span>
       </button>
+
+      <!-- Export/Import Dropdown -->
+      <div class="relative inline-block text-left export-menu">
+        <button
+          @click="toggleExportMenu"
+          class="btn btn-secondary"
+        >
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+            </svg>
+            <span class="hidden sm:inline">Mehr</span>
+          </span>
+        </button>
+
+        <div 
+          v-if="showExportMenu" 
+          class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 z-10"
+        >
+          <div class="py-1" role="menu" aria-orientation="vertical">
+            <button 
+              @click="exportList(props)"
+              class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 w-full text-left"
+              role="menuitem"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+              Liste exportieren
+            </button>
+            <label 
+              class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 w-full text-left cursor-pointer"
+              role="menuitem"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+              Liste importieren
+              <input 
+                type="file" 
+                accept="application/json"
+                class="hidden" 
+                @change="importListFromFile"
+              />
+            </label>
+            <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+            <NuxtLink
+              to="/statistics"
+              class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 w-full text-left"
+              role="menuitem"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Statistiken anzeigen
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+// Import Composables und Komponenten
+import { ref, onMounted, onUnmounted } from 'vue';
 import ListSettingsModal from '~/components/settings/ListSettingsModal.vue';
 
-defineProps({
+const props = defineProps({
   listName: {
     type: String,
     required: true
@@ -69,11 +130,93 @@ defineProps({
   }
 });
 
-defineEmits([
+const emit = defineEmits([
   'add-item', 
   'clear-checked', 
   'update:template-id', 
   'update:name', 
-  'update:favorite'
+  'update:favorite',
+  'import-list',
+  'export-list'
 ]);
+
+const showExportMenu = ref(false);
+
+// Toggle für das Export-Menü
+const toggleExportMenu = () => {
+  showExportMenu.value = !showExportMenu.value;
+};
+
+// Schließen des Menüs beim Klick außerhalb
+const closeOnOutsideClick = (event) => {
+  if (showExportMenu.value && !event.target.closest('.export-menu')) {
+    showExportMenu.value = false;
+  }
+};
+
+// Event-Listener für Klicks außerhalb des Menüs
+onMounted(() => {
+  document.addEventListener('click', closeOnOutsideClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeOnOutsideClick);
+});
+
+// Export-Funktion direkt implementieren, anstatt das Composable zu verwenden
+const exportList = (props) => {
+  console.log('Export-Funktion aufgerufen für:', props.listName);
+  
+  try {
+    // Daten aus den Props sammeln
+    const exportData = {
+      name: props.listName,
+      templateId: props.templateId,
+      exportDate: new Date().toISOString(),
+      // Items müssen von außen bereitgestellt werden
+      items: [],
+      exportVersion: '1.0.0'
+    };
+    
+    // Von der Elternkomponente die aktuelle Liste anfordern
+    emit('export-list', exportData);
+    showExportMenu.value = false;
+    return true;
+  } catch (error) {
+    console.error('Fehler beim Vorbereiten des Exports:', error);
+    return false;
+  }
+};
+
+// Import-Funktion
+const importListFromFile = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  try {
+    // Dateileselogik hier implementieren
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const importData = JSON.parse(event.target.result);
+        emit('import-list', importData);
+        showExportMenu.value = false;
+      } catch (error) {
+        alert('Fehler beim Importieren der Liste: ' + error.message);
+      }
+    };
+    
+    reader.onerror = () => {
+      alert('Fehler beim Lesen der Datei');
+    };
+    
+    reader.readAsText(file);
+  } catch (error) {
+    alert('Fehler beim Importieren der Liste: ' + error.message);
+  }
+  
+  // Zurücksetzen des File-Inputs
+  event.target.value = null;
+};
 </script>
