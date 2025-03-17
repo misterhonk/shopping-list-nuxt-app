@@ -23,11 +23,11 @@
 <script setup>
 // Logger initialisieren
 import { ref, computed, watch } from 'vue';
+import { createLogger } from '../utils/logger';
 
 import { useCategoryStore } from '../stores/categoryStore';
 
-const nuxtApp = useNuxtApp();
-const logger = nuxtApp.$getLogger('template-selector');
+const logger = createLogger('template-selector');
 
 // Props
 const props = defineProps({

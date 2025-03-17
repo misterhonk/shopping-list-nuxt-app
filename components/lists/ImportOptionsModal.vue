@@ -121,9 +121,9 @@
 <script setup>
 // Logger initialisieren
 import { ref, computed, watch } from 'vue';
+import { createLogger } from '../../utils/logger';
 
-const nuxtApp = useNuxtApp();
-const logger = nuxtApp.$getLogger('ImportOptionsModal');
+const logger = createLogger('ImportOptionsModal');
 
 const props = defineProps({
   isOpen: Boolean,

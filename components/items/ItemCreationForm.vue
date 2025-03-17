@@ -79,9 +79,9 @@
 <script setup>
 // Logger initialisieren
 import { reactive, computed, ref, onMounted } from 'vue';
+import { createLogger } from '../../utils/logger';
 
-const nuxtApp = useNuxtApp();
-const logger = nuxtApp.$getLogger('ItemCreationForm');
+const logger = createLogger('ItemCreationForm');
 
 const props = defineProps({
   categories: {
