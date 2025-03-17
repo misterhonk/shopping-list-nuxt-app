@@ -1,4 +1,4 @@
-import { ShoppingItem, ShoppingList, Category } from '../types';
+import type { ShoppingItem, ShoppingList, Category } from '~/composables/types';
 
 /**
  * Typdefinitionen für die Migration
