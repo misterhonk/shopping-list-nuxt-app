@@ -1,6 +1,5 @@
 import { generateCategoryId, deepCopy } from './utils';
 import { CategoryTemplate, TemplateCollection, Category } from '../../composables/types';
-import { createLogger } from '../../utils/logger';
 
 // Logger initialisieren
 const logger = createLogger('migration');

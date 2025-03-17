@@ -1,5 +1,3 @@
-import { createLogger } from '../../utils/logger';
-
 // Logger initialisieren
 const logger = createLogger('useLocalStorage');
 

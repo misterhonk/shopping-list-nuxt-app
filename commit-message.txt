@@ -3,6 +3,8 @@ feat: Implementiere strukturiertes Logging und fixe ESLint-Fehler
 - ESLint-Regeln optimiert und Konfiguration angepasst
 - Fehler mit direkten hasOwnProperty-Aufrufen behoben
 - Einfaches strukturiertes Logging in der Index-Komponente implementiert
+- Entferne komplexe Logger-Implementierung
+- Ersetze Logger-System in category-debugger.js und pinia.ts
 - Console.log-Aufrufe durch log-Funktionen mit Kontextinformationen ersetzt
 - Nicht benötigtes async-Keyword aus testMigration.js entfernt
 - Roadmap aktualisiert für erledigte Tasks

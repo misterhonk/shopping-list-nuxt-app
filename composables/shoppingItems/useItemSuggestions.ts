@@ -1,7 +1,5 @@
 import { ref, computed, watch } from 'vue';
 
-import { createLogger } from '../../utils/logger';
-
 // Logger initialisieren
 const logger = createLogger('useItemSuggestions');
 

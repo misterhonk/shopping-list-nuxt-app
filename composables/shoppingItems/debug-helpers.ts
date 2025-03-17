@@ -1,6 +1,5 @@
 import { Ref } from 'vue';
 
-import { createLogger } from '../../utils/logger';
 import { ShoppingList, ShoppingItem } from '../types';
 
 // Logger initialisieren

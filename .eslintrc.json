@@ -19,14 +19,7 @@
     "plugin:sonarjs/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": [
-    "@typescript-eslint",
-    "vue",
-    "import",
-    "promise",
-    "sonarjs",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "vue", "import", "promise", "sonarjs", "prettier"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -50,7 +43,7 @@
     "prefer-const": "error",
     "prefer-template": "error",
     "no-prototype-builtins": "error",
-    
+
     // Import rules
     "import/order": [
       "warn",
@@ -69,7 +62,7 @@
       }
     ],
     "import/no-unresolved": "off",
-    
+
     // Vue specific rules
     "vue/multi-word-component-names": "off",
     "vue/no-v-html": "warn",
@@ -84,23 +77,23 @@
         "order": ["template", "script", "style"]
       }
     ],
-    
+
     // TypeScript specific rules
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
-    
+
     // SonarJS rules
     "sonarjs/cognitive-complexity": ["warn", 25],
     "sonarjs/no-duplicate-string": ["warn", { "threshold": 5 }],
     "sonarjs/no-collapsible-if": "warn",
     "sonarjs/no-nested-template-literals": "warn",
-    
+
     // Promise rules
     "promise/always-return": "warn",
     "promise/catch-or-return": "warn",
-    
+
     // Prettier compatibility
     "prettier/prettier": ["error", {}, { "usePrettierrc": true }]
   },

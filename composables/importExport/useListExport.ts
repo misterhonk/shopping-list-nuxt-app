@@ -1,4 +1,3 @@
-import { createLogger } from '../../utils/logger';
 import { ShoppingItem } from '../types';
 
 // Logger initialisieren

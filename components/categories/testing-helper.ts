@@ -1,5 +1,4 @@
 import { ShoppingList, Category } from '../../composables/types';
-import { createLogger } from '../../utils/logger';
 
 /**
  * Diese Hilfsfunktion ermöglicht einen direkten Zugriff auf den Kategorie-Store

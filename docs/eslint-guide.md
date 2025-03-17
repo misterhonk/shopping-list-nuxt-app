@@ -37,6 +37,7 @@ npm run lint:fix
 Mit der VS Code ESLint-Erweiterung siehst du ESLint-Fehler direkt im Editor. Die Projektkonfiguration ist so eingestellt, dass ESLint-Probleme beim Speichern automatisch behoben werden.
 
 Erforderliche VS Code-Erweiterungen:
+
 - ESLint (dbaeumer.vscode-eslint)
 - Prettier (esbenp.prettier-vscode)
 
@@ -60,7 +61,7 @@ Erforderliche VS Code-Erweiterungen:
 
 - **import/order**: Gruppierung und Sortierung von Imports
 
-### TypeScript 
+### TypeScript
 
 - **@typescript-eslint/no-explicit-any**: Warnt bei Verwendung von `any`
 - **@typescript-eslint/no-unused-vars**: Erlaubt ungenutzte Variablen, die mit Unterstrich beginnen

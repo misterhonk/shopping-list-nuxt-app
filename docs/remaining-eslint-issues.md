@@ -12,8 +12,10 @@ Component name "categories" should always be multi-word (vue/multi-word-componen
 ```
 
 **Lösungen**:
+
 - Umbenennen der Komponenten in z.B. "IndexPage" und "CategoriesPage"
 - ODER die Regel in `.eslintrc.json` für diese Dateien deaktivieren:
+
 ```json
 "overrides": [
   {
@@ -34,8 +36,10 @@ Refactor this function to reduce its Cognitive Complexity from 35 to the 15 allo
 ```
 
 **Lösungen**:
+
 - Komplexe Funktionen in kleinere, besser benannte Funktionen aufteilen
 - ODER das Limit in der Konfiguration erhöhen (nicht empfohlen, aber möglich):
+
 ```json
 "rules": {
   "sonarjs/cognitive-complexity": ["warn", 25]
@@ -52,6 +56,7 @@ Refactor this function to reduce its Cognitive Complexity from 35 to the 15 allo
 ```
 
 **Lösungen**:
+
 - Unbenutzte Variablen entfernen
 - Wenn die Variable für zukünftige Verwendung gedacht ist, umbenennen mit Unterstrich-Präfix: `_nextTick`
 
@@ -64,8 +69,10 @@ Unexpected console statement (no-console)
 ```
 
 **Lösungen**:
+
 - Entfernen oder durch ein Logging-System ersetzen
 - ODER Regel für Entwicklungsumgebung deaktivieren:
+
 ```json
 // In .eslintrc.json
 "rules": {
@@ -82,6 +89,7 @@ Unexpected any. Specify a different type (@typescript-eslint/no-explicit-any)
 ```
 
 **Lösungen**:
+
 - Typen spezifizieren, wo immer möglich
 - Wo wirklich nötig, explizite Ausnahmen machen: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
 
@@ -94,6 +102,7 @@ Do not access Object.prototype method 'hasOwnProperty' from target object (no-pr
 ```
 
 **Lösungen**:
+
 - `Object.prototype.hasOwnProperty.call(obj, prop)` verwenden
 - ODER `Object.hasOwn(obj, prop)` für moderne Browser
 
@@ -106,8 +115,10 @@ Define a constant instead of duplicating this literal 3 times (sonarjs/no-duplic
 ```
 
 **Lösungen**:
+
 - Konstanten für wiederholte Strings definieren
 - ODER in Konfiguration deaktivieren:
+
 ```json
 "rules": {
   "sonarjs/no-duplicate-string": "off"
@@ -123,6 +134,7 @@ There should be no empty line within import group (import/order)
 ```
 
 **Lösungen**:
+
 - imports manuell sortieren
 - ODER ein Tool wie `eslint-plugin-simple-import-sort` verwenden und in einer commit hook automatisieren
 

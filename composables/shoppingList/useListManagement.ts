@@ -1,6 +1,5 @@
 import { ref, computed, Ref } from 'vue';
 
-import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
 import { ShoppingList, CreateListOptions } from '../types';
 
