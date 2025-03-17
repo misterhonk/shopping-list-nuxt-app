@@ -1,0 +1,8 @@
+# Für lokale Entwicklung
+services:
+  shopping-list-app:
+    volumes:
+      - ./public:/app/public:ro  # Mounted als read-only
+    command: ["node", ".output/server/index.mjs"]
+    environment:
+      - DEBUG=true

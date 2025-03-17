@@ -1,20 +1,30 @@
-version: "3.8"
-
 services:
   shopping-list-app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: shopping-list-app
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    container_name: ${CONTAINER_NAME:-shopping-list-app}
     restart: unless-stopped
     ports:
-      - "3000:3000"  # Host-Port:Container-Port
-    # Hier könnten bei Bedarf Volumes für persistente Daten hinzugefügt werden
+      - "${HOST_PORT:-3000}:3000"  # Host-Port:Container-Port
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV:-production}
     networks:
       - shopping-list-network
+    labels:
+      - "app.name=shopping-list-app"
+      - "app.description=Vue/Nuxt shopping list management application"
+      - "app.environment=${APP_ENV:-production}"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
   shopping-list-network:
     driver: bridge
+    name: ${NETWORK_NAME:-shopping-list-network}

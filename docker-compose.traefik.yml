@@ -1,0 +1,17 @@
+# Integration mit Traefik als Reverse Proxy
+services:
+  shopping-list-app:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shopping-list.rule=Host(`${DOMAIN:-shoppinglist.example.com}`)"
+      - "traefik.http.routers.shopping-list.entrypoints=websecure"
+      - "traefik.http.routers.shopping-list.tls=true"
+      - "traefik.http.routers.shopping-list.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
+      - "traefik.http.services.shopping-list.loadbalancer.server.port=3000"
+    networks:
+      - traefik-public
+      - shopping-list-network
+
+networks:
+  traefik-public:
+    external: true
