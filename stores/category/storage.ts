@@ -1,6 +1,8 @@
-import { deepCopy, sanitizeTemplate } from './utils';
-import type { TemplateCollection } from '#imports';
 import { createLogger } from '#imports';
+
+import { deepCopy, sanitizeTemplate } from './utils';
+
+import type { TemplateCollection } from '#imports';
 
 // Logger initialisieren
 const logger = createLogger('storage');

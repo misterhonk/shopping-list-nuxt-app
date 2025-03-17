@@ -1,6 +1,7 @@
-import { ref, reactive, computed, Ref } from 'vue';
+import { ref, reactive, computed } from 'vue';
 
-import { ShoppingItem, Category } from '../types';
+import type { ShoppingItem, Category } from '../types';
+import type { Ref } from 'vue';
 
 /**
  * Interface für das Formular zum Hinzufügen neuer Artikel

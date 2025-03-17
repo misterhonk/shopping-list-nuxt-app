@@ -1,7 +1,9 @@
-import { ref, computed, Ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { useLocalStorage } from '../core/useLocalStorage';
-import { ShoppingList, CreateListOptions } from '../types';
+
+import type { ShoppingList, CreateListOptions } from '../types';
+import type { Ref } from 'vue';
 
 // Logger initialisieren
 const logger = createLogger('useListManagement');

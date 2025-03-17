@@ -1,7 +1,8 @@
 import { ref, computed, watch } from 'vue';
 
 import { createLogger } from '../../utils/logger';
-import { ShoppingList, ShoppingItem } from '../types';
+
+import type { ShoppingList, ShoppingItem } from '../types';
 
 // Logger initialisieren
 const logger = createLogger('useItemSuggestions');

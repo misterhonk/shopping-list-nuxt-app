@@ -1,5 +1,6 @@
-import { ref, onMounted, Ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
+import type { Ref } from 'vue';
 /**
  * Composable für die Verwaltung des Dark Mode
  * Bietet Funktionen zum Ein-/Ausschalten des dunklen Erscheinungsbilds

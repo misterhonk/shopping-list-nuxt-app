@@ -1,7 +1,9 @@
-import { ref, Ref } from 'vue';
+import { ref } from 'vue';
 
-import { ShoppingList, ShoppingItem, ImportOptions, ExportedList } from './types';
 import { createLogger } from '../utils/logger';
+
+import type { ShoppingList, ShoppingItem, ImportOptions, ExportedList } from './types';
+import type { Ref } from 'vue';
 
 // Logger initialisieren
 const logger = createLogger('importExport');

@@ -1,5 +1,6 @@
 import { createLogger } from '../../utils/logger';
-import {
+
+import type {
   ShoppingList,
   ShoppingItem,
   ImportOptions,

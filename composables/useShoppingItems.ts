@@ -1,7 +1,9 @@
-import { reactive, ref, computed, Ref, ComputedRef } from 'vue';
+import { reactive, ref, computed } from 'vue';
 
 import { useLocalStorage } from './core/useLocalStorage';
-import { ShoppingItem, ShoppingList, Category } from './types';
+
+import type { ShoppingItem, ShoppingList, Category } from './types';
+import type { Ref, ComputedRef } from 'vue';
 
 /**
  * Composable für die Verwaltung von Artikeln in Einkaufslisten

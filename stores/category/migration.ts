@@ -1,6 +1,8 @@
-import { generateCategoryId, deepCopy } from './utils';
-import type { TemplateCollection } from '#imports';
 import { createLogger } from '#imports';
+
+import { generateCategoryId, deepCopy } from './utils';
+
+import type { TemplateCollection } from '#imports';
 
 // Logger initialisieren
 const logger = createLogger('migration');

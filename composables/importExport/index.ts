@@ -1,8 +1,9 @@
-import { ref, Ref } from 'vue';
+import { ref } from 'vue';
 
 import { useListExport } from './useListExport';
 import { useListImport } from './useListImport';
-import {
+
+import type {
   ShoppingList,
   ShoppingItem,
   ImportOptions,
@@ -10,6 +11,7 @@ import {
   CreateListOptions,
   AvailableListInfo,
 } from '../types';
+import type { Ref } from 'vue';
 
 /**
  * Hauptcomposable für Import/Export von Einkaufslisten

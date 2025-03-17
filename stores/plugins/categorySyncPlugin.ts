@@ -1,6 +1,5 @@
-import { PiniaPluginContext } from 'pinia';
-
-import { CategoryEventBus } from '../../composables/types';
+import type { CategoryEventBus } from '../../composables/types';
+import type { PiniaPluginContext } from 'pinia';
 
 /**
  * Interface für den CategoryStore mit Event-Bus
