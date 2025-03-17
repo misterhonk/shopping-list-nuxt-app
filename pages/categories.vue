@@ -31,9 +31,9 @@
 // Logger initialisieren
 import { onMounted } from 'vue';
 
-import { createLogger } from '../utils/logger';
-
 import CategoryManager from '~/components/categories/CategoryManager.vue';
+
+import { createLogger } from '../utils/logger';
 
 const logger = createLogger('categories');
 

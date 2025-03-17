@@ -1,4 +1,4 @@
-import { ShoppingList, Category, ShoppingItem } from '../../composables/types';
+import type { ShoppingList, Category, ShoppingItem } from '../../composables/types';
 
 /**
  * Diese Hilfsfunktion ermöglicht einen direkten Zugriff auf den Kategorie-Store

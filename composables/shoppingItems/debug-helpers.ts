@@ -1,5 +1,3 @@
-import { ref } from 'vue';
-
 import { createLogger } from '../../utils/logger';
 
 import type { ShoppingList, ShoppingItem } from '../types';

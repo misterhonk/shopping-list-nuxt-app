@@ -331,7 +331,7 @@ onUnmounted(() => {
 });
 
 // Watch für isAddingItem
-watch(isAddingItem, (newVal) => {
+watch(isAddingItem, newVal => {
   if (!newVal) {
     // Formular zurücksetzen wenn geschlossen
   }

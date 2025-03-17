@@ -13,7 +13,6 @@
     "format:check": "prettier --check .",
     "lint": "eslint --ext .js,.ts,.vue --ignore-path .eslintignore .",
     "lint:fix": "eslint --ext .js,.ts,.vue --fix --ignore-path .eslintignore .",
-    "add-logger": "node scripts/add-logger-init.js",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -48,7 +47,12 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,vue}": ["eslint --fix", "prettier --write"],
-    "*.{css,scss}": ["prettier --write"]
+    "*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ]
   }
 }
