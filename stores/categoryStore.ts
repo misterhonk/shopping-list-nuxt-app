@@ -475,6 +475,7 @@ export const useCategoryStore = defineStore('categoryStore', {
               template.id =
                 template.name?.toLowerCase().replace(/\s+/g, '_') || this.activeTemplateId;
             }
+
             if (!template.categories) {
               template.categories = [];
             }

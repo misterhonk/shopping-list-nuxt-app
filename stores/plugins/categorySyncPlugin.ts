@@ -8,7 +8,7 @@ import { CategoryEventBus } from '../../composables/types';
 interface CategoryStore {
   $id: string;
   $categoryEventBus?: CategoryEventBus;
-  editCategory: (categoryToEdit: any, newName: string) => void;
+  editCategory: (categoryToEdit: { id: string } | string, newName: string) => void;
 }
 
 /**
@@ -51,7 +51,10 @@ export function createCategorySyncPlugin() {
     const originalEditCategory = categoryStore.editCategory;
 
     // Patch für editCategory-Methode zum Synchronisieren von Änderungen
-    categoryStore.editCategory = function (categoryToEdit: any, newName: string) {
+    categoryStore.editCategory = function (
+      categoryToEdit: { id: string } | string,
+      newName: string
+    ) {
       // Kategorie-ID extrahieren
       const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
 

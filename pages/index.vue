@@ -121,22 +121,24 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import ItemCreationForm from '../components/items/ItemCreationForm.vue';
 import ItemList from '../components/items/ItemList.vue';
 import PageHeader from '../components/layout/PageHeader.vue';
-
 // Listen-Komponenten
 import ImportOptionsModal from '../components/lists/ImportOptionsModal.vue';
 import ListCreationForm from '../components/lists/ListCreationForm.vue';
 import ListHeader from '../components/lists/ListHeader.vue';
 import ListSelector from '../components/lists/ListSelector.vue';
-
 // Artikel-Komponenten
 import { useShoppingLists, useShoppingItems, useListImportExport } from '../composables';
 import { useCategoryStore } from '../stores';
 
 // Einfacher lokaler Logger - unabhängig von externen Systemen
 const log = {
+  // eslint-disable-next-line no-console
   debug: (...args) => console.debug('[ShoppingListPage]', ...args),
+
   info: (...args) => console.info('[ShoppingListPage]', ...args),
+
   warn: (...args) => console.warn('[ShoppingListPage]', ...args),
+
   error: (...args) => console.error('[ShoppingListPage]', ...args),
 };
 
@@ -203,7 +205,7 @@ const {
   updateListName: updateCurrentListName,
   updateListFavorite: updateCurrentListFavorite,
   getCheckedItemsCount,
-  getTotalItemsCount,
+  // getTotalItemsCount nicht verwendet
   updateList,
 } = useShoppingLists();
 
@@ -214,7 +216,7 @@ const { allItems, isAddingItem, addNewItem, removeItem, toggleItemChecked, clear
 // Import/Export-Funktionen
 const {
   handleExportList,
-  handleImportList,
+  // handleImportList nicht verwendet
   handleImportListWithOptions,
   openImportDialog,
   showImportOptions,

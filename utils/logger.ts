@@ -41,16 +41,16 @@ export function configureLogger(config: Partial<LoggerConfig>): void {
  */
 export function createLogger(module: string) {
   return {
-    debug(message: string, ...data: any[]): void {
+    debug(message: string, ...data: unknown[]): void {
       log(LogLevel.DEBUG, module, message, data);
     },
-    info(message: string, ...data: any[]): void {
+    info(message: string, ...data: unknown[]): void {
       log(LogLevel.INFO, module, message, data);
     },
-    warn(message: string, ...data: any[]): void {
+    warn(message: string, ...data: unknown[]): void {
       log(LogLevel.WARN, module, message, data);
     },
-    error(message: string, ...data: any[]): void {
+    error(message: string, ...data: unknown[]): void {
       log(LogLevel.ERROR, module, message, data);
     },
   };
@@ -59,7 +59,7 @@ export function createLogger(module: string) {
 /**
  * Internal log function
  */
-function log(level: LogLevel, module: string, message: string, data: any[]): void {
+function log(level: LogLevel, module: string, message: string, data: unknown[]): void {
   // Check if we should log based on minimum level
   const levels = Object.values(LogLevel);
   if (levels.indexOf(level) < levels.indexOf(currentConfig.minLevel)) {

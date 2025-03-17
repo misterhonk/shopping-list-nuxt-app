@@ -1,4 +1,5 @@
-import { migrateLists, validateList } from '../composables/utils/dataMigration';
+// Wir benötigen nur die migrateLists Funktion
+import { migrateLists } from '../composables/utils/dataMigration';
 import { createLogger } from '../utils/logger';
 
 import { defineNuxtPlugin } from '#app';
@@ -10,7 +11,7 @@ const logger = createLogger('data-migration');
  * Plugin zur Migration älterer Datenstrukturen
  * Stellt sicher, dass vorhandene Daten beim App-Start in das aktuelle Format konvertiert werden
  */
-export default defineNuxtPlugin(nuxtApp => {
+export default defineNuxtPlugin(_nuxtApp => {
   // Bei App-Start ausführen
   logger.info('[Data Migration] Plugin gestartet');
 

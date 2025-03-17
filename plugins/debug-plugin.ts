@@ -38,9 +38,17 @@ export default defineNuxtPlugin(nuxtApp => {
         isDevelopment,
         logEvent: (category: string, action: string, label?: string, value?: number) => {
           if (isDevelopment) {
-            logger.info(
-              `[Debug] Event: ${category} / ${action}${label ? ` / ${label}` : ''}${value !== undefined ? ` = ${value}` : ''}`
-            );
+            let message = `[Debug] Event: ${category} / ${action}`;
+
+            if (label) {
+              message += ` / ${label}`;
+            }
+
+            if (value !== undefined) {
+              message += ` = ${value}`;
+            }
+
+            logger.info(message);
           }
         },
       },

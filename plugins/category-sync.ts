@@ -10,7 +10,7 @@ const logger = createLogger('category-sync');
  * Plugin für die Synchronisierung von Kategorien über die App hinweg
  * Stellt sicher, dass Kategorieänderungen an alle Komponenten weitergegeben werden
  */
-export default defineNuxtPlugin(nuxtApp => {
+export default defineNuxtPlugin(_nuxtApp => {
   // Einfacher Event-Bus für Kategorieänderungen
   const callbacks: Array<(categoryId: string, newName: string) => void> = [];
 
@@ -42,7 +42,10 @@ export default defineNuxtPlugin(nuxtApp => {
       const originalEditCategory = categoryStore.editCategory;
 
       // Methode überschreiben um Events auszulösen
-      categoryStore.editCategory = function (categoryToEdit: any, newName: string) {
+      categoryStore.editCategory = function (
+        categoryToEdit: { id: string } | string,
+        newName: string
+      ) {
         // Originale Methode aufrufen
         originalEditCategory.call(this, categoryToEdit, newName);
 

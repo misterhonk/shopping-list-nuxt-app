@@ -11,7 +11,7 @@ const logger = createLogger('importExport');
  * Bietet Funktionen zum Speichern und Laden von Listen in verschiedenen Formaten
  */
 export function useListImportExport(
-  createList: (name: string, options: any) => ShoppingList | null,
+  createList: (name: string, options: Record<string, unknown>) => ShoppingList | null,
   addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null,
   allItems: ComputedRef<ShoppingItem[]>,
   lists: Ref<ShoppingList[]>,

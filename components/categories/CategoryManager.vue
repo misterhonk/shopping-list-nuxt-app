@@ -443,15 +443,15 @@
 
 <script setup>
 // Logger initialisieren
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 import { diagnoseCategories } from './testing-helper';
 import { useCategoryStore } from '../../stores';
 import { defaultTemplateId } from '../../stores/category/templates';
 import { generateCategoryId } from '../../stores/category/utils';
+import { createLogger } from '../../utils/logger';
 
-const nuxtApp = useNuxtApp();
-const logger = nuxtApp.$getLogger('CategoryManager');
+const logger = createLogger('CategoryManager');
 
 // Wrapper für den Pinia-Store mit Fehlerbehandlung
 let categoryStore = null;

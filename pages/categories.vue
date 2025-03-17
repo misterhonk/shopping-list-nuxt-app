@@ -29,12 +29,13 @@
 
 <script setup>
 // Logger initialisieren
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
+
+import { createLogger } from '../utils/logger';
 
 import CategoryManager from '~/components/categories/CategoryManager.vue';
 
-const nuxtApp = useNuxtApp();
-const logger = nuxtApp.$getLogger('categories');
+const logger = createLogger('categories');
 
 // Stelle sicher, dass die Komponente ordnungsgemäß initialisiert ist
 onMounted(() => {
