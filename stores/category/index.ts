@@ -12,8 +12,8 @@ import {
 } from './operations';
 import { saveCategoryData, loadCategoryData } from './storage';
 import { categoryTemplates, defaultTemplateId } from './templates';
-import { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
-import { createLogger } from '~/utils/logger';
+import type { Category, CategoryTemplate, TemplateCollection } from '#imports';
+import { createLogger } from '#imports';
 
 // Logger initialisieren
 const logger = createLogger('index');

@@ -1,4 +1,5 @@
-import { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
+// Importieren der Typen über die #imports-Syntax von Nuxt
+import type { Category, CategoryTemplate, TemplateCollection } from '#imports';
 
 /**
  * Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID
