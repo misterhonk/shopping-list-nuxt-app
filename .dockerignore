@@ -1,0 +1,33 @@
+# Entwicklungsdateien und Verzeichnisse
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.git
+.github
+.gitignore
+.vscode
+.idea
+*.md
+!README.md
+
+# Nuxt Build-Verzeichnisse (werden neu erstellt)
+.nuxt
+dist
+.output
+
+# Tests
+__tests__
+test
+tests
+coverage
+
+# Temporäre Dateien
+*.log
+*.tmp
+.DS_Store
+
+# Docker-Dateien selbst
+Dockerfile
+docker-compose.yml
+.dockerignore
