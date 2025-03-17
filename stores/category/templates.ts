@@ -1,4 +1,4 @@
-import { CategoryTemplate, TemplateCollection } from '../../composables/types';
+import type { CategoryTemplate, TemplateCollection } from '#imports';
 
 /**
  * Standard-Template-ID
