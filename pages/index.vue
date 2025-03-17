@@ -127,8 +127,10 @@ import ListCreationForm from '../components/lists/ListCreationForm.vue';
 import ListHeader from '../components/lists/ListHeader.vue';
 import ListSelector from '../components/lists/ListSelector.vue';
 // Artikel-Komponenten
-import { useShoppingLists, useShoppingItems, useListImportExport } from '../composables';
-import { useCategoryStore } from '../stores';
+import { useListImportExport } from '../composables/importExport';
+import { useShoppingItems } from '../composables/useShoppingItems';
+import { useShoppingLists } from '../composables/useShoppingLists';
+import { useCategoryStore } from '../stores/category';
 
 // Einfacher lokaler Logger - unabhängig von externen Systemen
 const log = {

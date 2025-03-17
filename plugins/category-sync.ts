@@ -1,7 +1,7 @@
 import { createLogger } from '../utils/logger';
 
 import { defineNuxtPlugin } from '#app';
-import { useCategoryStore } from '~/stores';
+import { useCategoryStore } from '~/stores/category';
 
 // Logger initialisieren
 const logger = createLogger('category-sync');

@@ -1,7 +1,5 @@
-/**
- * Zentrale Export-Datei für alle Stores
- * Erleichtert den Import in Komponenten
- */
+// Diese Datei dient nur als Referenz, da Nuxt 3 Auto-Imports verwendet.
+// Direkte Imports von Stores werden bevorzugt.
 
-// Kategorie-Store
-export { useCategoryStore } from './category';
+// Hinweis: Wenn Sie den useCategoryStore benötigen, importieren Sie ihn direkt wie folgt:
+// import { useCategoryStore } from '~/stores/category';

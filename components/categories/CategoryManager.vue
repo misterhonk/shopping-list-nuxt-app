@@ -446,7 +446,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 
 import { diagnoseCategories } from './testing-helper';
-import { useCategoryStore } from '../../stores';
+import { useCategoryStore } from '../../stores/category';
 import { defaultTemplateId } from '../../stores/category/templates';
 import { generateCategoryId } from '../../stores/category/utils';
 import { createLogger } from '../../utils/logger';
