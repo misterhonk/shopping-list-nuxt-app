@@ -114,7 +114,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 
 // Layout-Komponenten
@@ -131,18 +131,10 @@ import { useListImportExport } from '../composables/importExport';
 import { useShoppingItems } from '../composables/useShoppingItems';
 import { useShoppingLists } from '../composables/useShoppingLists';
 import { useCategoryStore } from '../stores/category';
+import { createLogger } from '../utils/logger';
 
-// Einfacher lokaler Logger - unabhängig von externen Systemen
-const log = {
-  // eslint-disable-next-line no-console
-  debug: (...args) => console.debug('[ShoppingListPage]', ...args),
-
-  info: (...args) => console.info('[ShoppingListPage]', ...args),
-
-  warn: (...args) => console.warn('[ShoppingListPage]', ...args),
-
-  error: (...args) => console.error('[ShoppingListPage]', ...args),
-};
+// Logger initialisieren
+const logger = createLogger('IndexPage');
 
 // UI-Zustand
 const isCreatingList = ref(false);
@@ -174,7 +166,7 @@ try {
         ]
       );
     } catch (e) {
-      console.error('Fehler beim Abrufen der Kategorien:', e);
+      logger.error('Fehler beim Abrufen der Kategorien:', e);
       return [
         'Obst & Gemüse',
         'Fleisch & Fisch',
@@ -186,7 +178,7 @@ try {
     }
   });
 } catch (e) {
-  console.error('Pinia konnte nicht initialisiert werden:', e);
+  logger.error('Pinia konnte nicht initialisiert werden:', e);
 }
 
 // Templates aus dem CategoryStore
@@ -226,7 +218,7 @@ const {
 } = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
 
 // Neue Liste erstellen
-const createNewList = (name, options) => {
+const createNewList = (name: string, options: any) => {
   createList(name, options);
   isCreatingList.value = false;
 };
@@ -236,7 +228,7 @@ const createNewList = (name, options) => {
  * Nimmt die aktuelle Liste und leitet sie an handleExportList weiter
  */
 const exportCurrentList = () => {
-  log.info('Exportiere aktuelle Liste:', currentList.value.name);
+  logger.info('Exportiere aktuelle Liste:', currentList.value.name);
   handleExportList(currentList.value);
 };
 
@@ -251,8 +243,8 @@ const startImport = () => {
 /**
  * Handler für die Bestätigung des Imports durch den Benutzer
  */
-const handleImportConfirm = options => {
-  log.info('Import-Optionen bestätigt:', options);
+const handleImportConfirm = (options: any) => {
+  logger.info('Import-Optionen bestätigt:', options);
 
   // Import mit den gewählten Optionen durchführen
   handleImportListWithOptions(importData.value, options);
@@ -264,8 +256,8 @@ const handleImportConfirm = options => {
 /**
  * Callback-Funktion für geladene Import-Daten
  */
-const onImportOptionsLoaded = (data, availableLists) => {
-  log.info('Import-Daten geladen, zeige Optionen:', {
+const onImportOptionsLoaded = (data: any, availableLists: any[]) => {
+  logger.info('Import-Daten geladen, zeige Optionen:', {
     listName: data.name,
     itemCount: data.items?.length || 0,
     availableListsCount: availableLists.length,
@@ -288,21 +280,21 @@ let unsubscribeCategoryUpdate = null;
 // App-Initialisierung
 onMounted(() => {
   // Debug: Aktuellen Listenstand protokollieren
-  log.debug('App gestartet, Listenstand beim Start:');
+  logger.debug('App gestartet, Listenstand beim Start:');
   const listenImStorage = localStorage.getItem('shoppingLists');
   if (listenImStorage) {
     try {
       const parsedLists = JSON.parse(listenImStorage);
-      log.debug(
+      logger.debug(
         'Listen im Storage:',
-        parsedLists.map(l => ({
+        parsedLists.map((l: any) => ({
           id: l.id,
           name: l.name,
           itemCount: l.items?.length || 0,
         }))
       );
     } catch (e) {
-      log.error('Fehler beim Parsen der Listen aus dem Storage:', e);
+      logger.error('Fehler beim Parsen der Listen aus dem Storage:', e);
     }
   }
 
@@ -320,13 +312,13 @@ onMounted(() => {
 
       // Event-Listener für Kategorieänderungen registrieren
       if (onCategoryUpdate) {
-        unsubscribeCategoryUpdate = onCategoryUpdate((categoryId, newName) => {
-          log.debug(`Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
+        unsubscribeCategoryUpdate = onCategoryUpdate((categoryId: string, newName: string) => {
+          logger.debug(`Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
           updateCategoryInItems(categoryId, newName);
         });
       }
     } catch (e) {
-      log.error('Fehler beim Laden der Kategorien:', e);
+      logger.error('Fehler beim Laden der Kategorien:', e);
     }
   }
 });
@@ -339,24 +331,9 @@ onUnmounted(() => {
 });
 
 // Watch für isAddingItem
-watch(isAddingItem, newVal => {
+watch(isAddingItem, (newVal) => {
   if (!newVal) {
     // Formular zurücksetzen wenn geschlossen
   }
 });
 </script>
-
-<style>
-/* Basisstil für Buttons */
-.btn {
-  @apply px-2 sm:px-4 py-2 rounded-md font-medium transition-all text-sm sm:text-base;
-}
-
-.btn-primary {
-  @apply bg-orange-500 text-white hover:bg-orange-600;
-}
-
-.btn-secondary {
-  @apply bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600;
-}
-</style>

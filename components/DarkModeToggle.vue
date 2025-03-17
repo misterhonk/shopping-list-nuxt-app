@@ -40,19 +40,10 @@
   </button>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useDarkMode } from '~/composables/useDarkMode';
 
-export default {
-  setup() {
-    const { isDark, toggleDarkMode } = useDarkMode();
-
-    return {
-      isDark,
-      toggleDarkMode,
-    };
-  },
-};
+const { isDark, toggleDarkMode } = useDarkMode();
 </script>
 
 <style scoped>
