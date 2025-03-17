@@ -1,4 +1,4 @@
-import { Category, CategoryTemplate, TemplateCollection } from '../../composables/types';
+import { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
 
 /**
  * Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID
