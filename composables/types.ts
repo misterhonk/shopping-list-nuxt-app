@@ -86,6 +86,16 @@ export interface ExportedList {
   format: string;
   version: string;
   exportedAt: number;
+  templateId?: string;
+}
+
+/**
+ * Interface für Verfügbare Listen im Import-Dialog
+ */
+export interface AvailableListInfo {
+  id: string;
+  name: string;
+  itemCount: number;
 }
 
 /**

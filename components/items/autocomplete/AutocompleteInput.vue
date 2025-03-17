@@ -29,7 +29,12 @@
           @mousedown.prevent="selectSuggestion(index)"
           @mouseover="highlightedIndex = index"
         >
-          <span v-html="highlightMatch(suggestion.text)"></span>
+          <span class="flex items-center">
+            <template v-for="(part, idx) in splitTextForHighlight(suggestion.text)" :key="idx">
+              <span v-if="part.highlight" class="text-orange-500 font-bold">{{ part.text }}</span>
+              <span v-else>{{ part.text }}</span>
+            </template>
+          </span>
           <span v-if="suggestion.subtext" class="ml-2 text-xs text-gray-500 dark:text-gray-400">
             {{ suggestion.subtext }}
           </span>
@@ -100,14 +105,44 @@ const filteredSuggestions = computed(() => {
     .slice(0, props.maxSuggestions);
 });
 
-// Markiere die übereinstimmenden Teile im Text
-const highlightMatch = text => {
+// Teilt den Text in hervorgehobene und normale Teile
+const splitTextForHighlight = text => {
   if (!inputValue.value || inputValue.value.length < props.minChars) {
-    return text;
+    return [{ text, highlight: false }];
   }
 
-  const regex = new RegExp(`(${inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-  return text.replace(regex, '<strong class="text-orange-500">$1</strong>');
+  const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\][{}]/g, '\\$&'), 'gi');
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = inputRegex.exec(text)) !== null) {
+    // Text vor dem Match
+    if (match.index > lastIndex) {
+      parts.push({
+        text: text.substring(lastIndex, match.index),
+        highlight: false,
+      });
+    }
+
+    // Der hervorgehobene Teil
+    parts.push({
+      text: match[0],
+      highlight: true,
+    });
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Text nach dem letzten Match
+  if (lastIndex < text.length) {
+    parts.push({
+      text: text.substring(lastIndex),
+      highlight: false,
+    });
+  }
+
+  return parts.length ? parts : [{ text, highlight: false }];
 };
 
 // Eingabebehandlung

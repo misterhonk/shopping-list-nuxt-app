@@ -1,4 +1,4 @@
-import { ref, Ref, computed, ComputedRef } from 'vue';
+import { ref, Ref } from 'vue';
 
 import { ShoppingList, ShoppingItem, ImportOptions, ExportedList } from './types';
 import { createLogger } from '../utils/logger';

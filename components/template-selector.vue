@@ -23,9 +23,9 @@
 <script setup>
 // Logger initialisieren
 import { ref, computed, watch } from 'vue';
-import { createLogger } from '../utils/logger';
 
 import { useCategoryStore } from '../stores/categoryStore';
+import { createLogger } from '../utils/logger';
 
 const logger = createLogger('template-selector');
 

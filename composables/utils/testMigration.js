@@ -43,10 +43,6 @@ const oldList = {
 
 // Importfunktion für Browserkonsole
 function testMigration() {
-  // Pfad zum Modul
-  const modulePath =
-    '/Users/martinmelcher/Dev/shopping-list-app/composables/utils/dataMigration.ts';
-
   // In einer echten Anwendung würde hier der Import des Moduls stehen
   logger.info('Simuliere Migration der alten Liste:', oldList);
 

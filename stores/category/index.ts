@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { Ref, computed } from 'vue';
 
 import { migrateCategories, needsMigration } from './migration';
 import {

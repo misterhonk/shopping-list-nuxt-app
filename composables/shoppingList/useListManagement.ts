@@ -92,6 +92,39 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   };
 
   /**
+   * Ermittelt die passende Template-ID basierend auf dem Listennamen
+   */
+  const getTemplateIdFromName = (name: string, defaultTemplateId: string): string => {
+    const lowerName = name.toLowerCase();
+
+    if (
+      lowerName.includes('drogerie') ||
+      lowerName.includes('apotheke') ||
+      lowerName.includes('kosmetik')
+    ) {
+      return 'drugstore';
+    }
+
+    if (
+      lowerName.includes('baumarkt') ||
+      lowerName.includes('werkzeug') ||
+      lowerName.includes('bau')
+    ) {
+      return 'hardware';
+    }
+
+    if (
+      lowerName.includes('elektronik') ||
+      lowerName.includes('technik') ||
+      lowerName.includes('computer')
+    ) {
+      return 'electronics';
+    }
+
+    return defaultTemplateId;
+  };
+
+  /**
    * Erstellt eine neue Liste
    * @param name - Der Name der Liste
    * @param options - Optionale Parameter für die Liste
@@ -105,30 +138,10 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     try {
       // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
       let templateId = options.templateId || 'supermarket';
-      const lowerName = name.toLowerCase();
 
       // Nur automatisch aus dem Namen schließen, wenn keine templateId gesetzt wurde
       if (!options.templateId) {
-        // Versuche, aus dem Namen auf den Geschäftstyp zu schließen
-        if (
-          lowerName.includes('drogerie') ||
-          lowerName.includes('apotheke') ||
-          lowerName.includes('kosmetik')
-        ) {
-          templateId = 'drugstore';
-        } else if (
-          lowerName.includes('baumarkt') ||
-          lowerName.includes('werkzeug') ||
-          lowerName.includes('bau')
-        ) {
-          templateId = 'hardware';
-        } else if (
-          lowerName.includes('elektronik') ||
-          lowerName.includes('technik') ||
-          lowerName.includes('computer')
-        ) {
-          templateId = 'electronics';
-        }
+        templateId = getTemplateIdFromName(name, 'supermarket');
       }
 
       const timestamp = Date.now();

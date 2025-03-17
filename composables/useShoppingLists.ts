@@ -1,4 +1,4 @@
-import { ref, computed, ComputedRef, Ref } from 'vue';
+import { ref, computed, ComputedRef } from 'vue';
 
 import { createLogger } from '../utils/logger';
 import { useLocalStorage } from './core/useLocalStorage';
@@ -12,16 +12,99 @@ const logger = createLogger('useShoppingLists');
  * Composable für die Verwaltung von Einkaufslisten
  * Bietet Funktionen zum Erstellen, Aktualisieren, Löschen und Auswählen von Listen
  */
-export function useShoppingLists() {
-  const { saveToStorage, loadFromStorage } = useLocalStorage();
+/**
+ * Aktiviert das Kategorien-Template im Store (wenn möglich)
+ * Lagert die Error-Handlung in eine separate Funktion aus
+ */
+/**
+ * Interface für den Kategorie-Store
+ */
+interface CategoryStore {
+  activateTemplate: (templateId: string) => void;
+}
 
-  // Pinia Store für Kategorien
-  let categoryStore = null;
+/**
+ * Aktiviert das Kategorien-Template im Store (wenn möglich)
+ * Lagert die Error-Handlung in eine separate Funktion aus
+ */
+const activateTemplateInStore = (store: CategoryStore | null, templateId: string): void => {
+  if (!store) {
+    return;
+  }
+
   try {
-    categoryStore = useCategoryStore();
+    store.activateTemplate(templateId);
+  } catch (e) {
+    logger.error('Fehler beim Aktivieren der Template:', e);
+  }
+};
+
+/**
+ * Sortiert Listen mit Favoriten zuerst
+ */
+const sortListsByFavorite = (lists: ShoppingList[]): ShoppingList[] =>
+  [...lists].sort((a, b) => {
+    if (a.isFavorite && !b.isFavorite) {
+      return -1;
+    }
+    if (!a.isFavorite && b.isFavorite) {
+      return 1;
+    }
+    return 0;
+  });
+
+/**
+ * Erstellt eine tiefe Kopie der Listen
+ */
+const createDeepCopy = <T>(data: T): T => JSON.parse(JSON.stringify(data));
+
+/**
+ * Composable für die Verwaltung von Einkaufslisten
+ * Bietet Funktionen zum Erstellen, Aktualisieren, Löschen und Auswählen von Listen
+ */
+/**
+ * Factory für einen sicheren Kategorie-Store Zugriff
+ */
+const createCategoryStore = (): CategoryStore | null => {
+  try {
+    return useCategoryStore();
   } catch (e) {
     logger.error('Fehler beim Initialisieren des CategoryStore:', e);
+    return null;
   }
+};
+
+/**
+ * Hilfsfunktionen zur Liste-Verwaltung
+ */
+const listManagementHelpers = () => {
+  const { saveToStorage, loadFromStorage } = useLocalStorage();
+
+  /**
+   * Speichert Listen im localStorage
+   */
+  const saveLists = (lists: ShoppingList[], currentId: string | null): void => {
+    saveToStorage('shoppingLists', lists);
+    saveToStorage('currentListId', currentId);
+  };
+
+  /**
+   * Lädt Listen aus dem localStorage
+   */
+  const loadData = () => ({
+    lists: loadFromStorage<ShoppingList[]>('shoppingLists'),
+    currentId: loadFromStorage<string>('currentListId'),
+  });
+
+  return { saveLists, loadData };
+};
+
+export function useShoppingLists() {
+  const { saveToStorage } = useLocalStorage();
+  const { saveLists: saveListsToStorage, loadData } = listManagementHelpers();
+
+  // Pinia Store für Kategorien
+  const categoryStore = createCategoryStore();
 
   // Reaktive Daten
   const lists = ref<ShoppingList[]>([]);
@@ -70,52 +153,104 @@ export function useShoppingLists() {
     Array.isArray(currentList.value?.items) ? currentList.value.items.length : 0;
 
   /**
+   * Bereitet die geladenen Listen für die Anwendung auf
+   */
+  const prepareListsData = (storedLists: ShoppingList[]): ShoppingList[] => {
+    // Explizite Aufbereitung der Daten
+    const prepared = storedLists.map(list => ({
+      id: list.id,
+      name: list.name,
+      items: Array.isArray(list.items) ? list.items : [],
+      templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
+      isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
+    }));
+
+    // Sortiere Listen - Favoriten zuerst
+    return prepared.sort((a, b) => {
+      if (a.isFavorite && !b.isFavorite) {
+        return -1;
+      }
+      if (!a.isFavorite && b.isFavorite) {
+        return 1;
+      }
+      return 0;
+    });
+  };
+
+  /**
+   * Prüft ob eine Liste existiert
+   */
+  const listExists = (listId: string): boolean => lists.value.some(list => list.id === listId);
+
+  // Speicherfunktion wird beim Ändern der Daten verwendet
+
+  /**
    * Lädt die Listen aus dem localStorage
    * @return true bei Erfolg, false bei Fehler
    */
   const loadLists = (): boolean => {
     try {
-      const storedLists = loadFromStorage<ShoppingList[]>('shoppingLists');
+      const { lists: storedLists, currentId } = loadData();
 
-      if (storedLists && Array.isArray(storedLists)) {
-        // Explizite Aufbereitung der Daten
-        lists.value = storedLists.map(list => ({
-          id: list.id,
-          name: list.name,
-          items: Array.isArray(list.items) ? list.items : [],
-          templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
-          isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
-        }));
-
-        // Sortiere Listen - Favoriten zuerst
-        lists.value.sort((a, b) => {
-          if (a.isFavorite && !b.isFavorite) {
-            return -1;
-          }
-          if (!a.isFavorite && b.isFavorite) {
-            return 1;
-          }
-          return 0;
-        });
-
-        const currentId = loadFromStorage<string>('currentListId');
-        if (currentId && lists.value.some(list => list.id === currentId)) {
-          currentListId.value = currentId;
-        } else if (lists.value.length > 0) {
-          currentListId.value = lists.value[0].id;
-        }
-
-        initialized.value = true;
-        return true;
-      } else {
+      // Prüfe ob gültige Listen vorhanden sind
+      if (!storedLists || !Array.isArray(storedLists)) {
         createDefaultList();
         return false;
       }
+
+      // Daten aufbereiten und in reaktive Variablen übernehmen
+      lists.value = prepareListsData(storedLists);
+
+      // Aktuelle Liste setzen
+      if (currentId && listExists(currentId)) {
+        currentListId.value = currentId;
+      } else if (lists.value.length > 0) {
+        currentListId.value = lists.value[0].id;
+      }
+
+      initialized.value = true;
+      return true;
     } catch (error) {
       logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
       return false;
     }
+  };
+
+  /**
+   * Bestimmt eine Template-ID basierend auf dem Listennamen
+   */
+  const determineTemplateId = (name: string, defaultId = 'supermarket'): string => {
+    const lowerName = name.toLowerCase();
+
+    // Drogerie/Apotheke
+    if (
+      lowerName.includes('drogerie') ||
+      lowerName.includes('apotheke') ||
+      lowerName.includes('kosmetik')
+    ) {
+      return 'drugstore';
+    }
+
+    // Baumarkt
+    if (
+      lowerName.includes('baumarkt') ||
+      lowerName.includes('werkzeug') ||
+      lowerName.includes('bau')
+    ) {
+      return 'hardware';
+    }
+
+    // Elektronik
+    if (
+      lowerName.includes('elektronik') ||
+      lowerName.includes('technik') ||
+      lowerName.includes('computer')
+    ) {
+      return 'electronics';
+    }
+
+    return defaultId;
   };
 
   /**
@@ -129,33 +264,8 @@ export function useShoppingLists() {
       return null;
     }
 
-    // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
-    let templateId = options.templateId || 'supermarket';
-    const lowerName = name.toLowerCase();
-
-    // Nur automatisch aus dem Namen schließen, wenn keine templateId gesetzt wurde
-    if (!options.templateId) {
-      // Versuche, aus dem Namen auf den Geschäftstyp zu schließen
-      if (
-        lowerName.includes('drogerie') ||
-        lowerName.includes('apotheke') ||
-        lowerName.includes('kosmetik')
-      ) {
-        templateId = 'drugstore';
-      } else if (
-        lowerName.includes('baumarkt') ||
-        lowerName.includes('werkzeug') ||
-        lowerName.includes('bau')
-      ) {
-        templateId = 'hardware';
-      } else if (
-        lowerName.includes('elektronik') ||
-        lowerName.includes('technik') ||
-        lowerName.includes('computer')
-      ) {
-        templateId = 'electronics';
-      }
-    }
+    // Finde einen passenden Template-ID basierend auf dem Namen
+    const templateId = options.templateId || determineTemplateId(name);
 
     const newList: ShoppingList = {
       id: Date.now().toString(),
@@ -172,13 +282,7 @@ export function useShoppingLists() {
     saveToStorage('currentListId', currentListId.value);
 
     // Aktiviere die passende Template im Store
-    if (categoryStore) {
-      try {
-        categoryStore.activateTemplate(templateId);
-      } catch (e) {
-        logger.error('Fehler beim Aktivieren der Template:', e);
-      }
-    }
+    activateTemplateInStore(categoryStore, templateId);
 
     return newList;
   };
@@ -220,12 +324,8 @@ export function useShoppingLists() {
 
     // Aktiviere die passende Kategorie-Vorlage für diese Liste
     const selectedList = lists.value.find(list => list.id === listId);
-    if (selectedList && categoryStore && selectedList.templateId) {
-      try {
-        categoryStore.activateTemplate(selectedList.templateId);
-      } catch (e) {
-        logger.error('Fehler beim Aktivieren der Template:', e);
-      }
+    if (selectedList?.templateId) {
+      activateTemplateInStore(categoryStore, selectedList.templateId);
     }
   };
 
@@ -260,27 +360,29 @@ export function useShoppingLists() {
    * @param templateId - Die neue Template-ID
    */
   const updateListTemplate = (templateId: string): void => {
-    const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
+    const listIndex = findListIndex(currentListId.value || '');
     if (listIndex === -1) {
       return;
     }
 
     // Tiefe Kopie der Listen erstellen
-    const newLists = JSON.parse(JSON.stringify(lists.value));
+    const newLists = createDeepCopy(lists.value);
     newLists[listIndex].templateId = templateId;
     lists.value = newLists;
 
     // Aktiviere das Template im Store
-    if (categoryStore) {
-      try {
-        categoryStore.activateTemplate(templateId);
-      } catch (e) {
-        logger.error('Fehler beim Aktivieren der Template:', e);
-      }
-    }
+    activateTemplateInStore(categoryStore, templateId);
 
     saveToStorage('shoppingLists', lists.value);
   };
+
+  /**
+   * Sucht eine Liste nach ID und gibt den Index zurück
+   * @param listId - Die ID der zu suchenden Liste
+   * @returns Der Index oder -1 wenn nicht gefunden
+   */
+  const findListIndex = (listId: string): number =>
+    lists.value.findIndex(list => list.id === listId);
 
   /**
    * Aktualisiert den Namen einer Liste
@@ -291,13 +393,13 @@ export function useShoppingLists() {
       return;
     }
 
-    const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
+    const listIndex = findListIndex(currentListId.value || '');
     if (listIndex === -1) {
       return;
     }
 
     // Tiefe Kopie der Listen erstellen
-    const newLists = JSON.parse(JSON.stringify(lists.value));
+    const newLists = createDeepCopy(lists.value);
     newLists[listIndex].name = newName.trim();
     lists.value = newLists;
 
@@ -309,27 +411,17 @@ export function useShoppingLists() {
    * @param isFavorite - Der neue Favoriten-Status
    */
   const updateListFavorite = (isFavorite: boolean): void => {
-    const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
+    const listIndex = findListIndex(currentListId.value || '');
     if (listIndex === -1) {
       return;
     }
 
     // Tiefe Kopie der Listen erstellen
-    const newLists = JSON.parse(JSON.stringify(lists.value));
+    const newLists = createDeepCopy(lists.value);
     newLists[listIndex].isFavorite = isFavorite;
 
     // Sortiere Listen - Favoriten zuerst
-    newLists.sort((a, b) => {
-      if (a.isFavorite && !b.isFavorite) {
-        return -1;
-      }
-      if (!a.isFavorite && b.isFavorite) {
-        return 1;
-      }
-      return 0;
-    });
-
-    lists.value = newLists;
+    lists.value = sortListsByFavorite(newLists);
     saveToStorage('shoppingLists', lists.value);
   };
 
@@ -339,13 +431,13 @@ export function useShoppingLists() {
    * @return true bei Erfolg, false bei Fehler
    */
   const updateList = (updatedList: ShoppingList): boolean => {
-    const listIndex = lists.value.findIndex(list => list.id === updatedList.id);
+    const listIndex = findListIndex(updatedList.id);
     if (listIndex === -1) {
       return false;
     }
 
     // Tiefe Kopie der Listen erstellen
-    const newLists = JSON.parse(JSON.stringify(lists.value));
+    const newLists = createDeepCopy(lists.value);
     newLists[listIndex] = updatedList;
 
     lists.value = newLists;
@@ -366,8 +458,7 @@ export function useShoppingLists() {
       isFavorite: list.isFavorite || false,
     }));
 
-    saveToStorage('shoppingLists', cleanedLists);
-    saveToStorage('currentListId', currentListId.value);
+    saveListsToStorage(cleanedLists, currentListId.value);
   };
 
   return {

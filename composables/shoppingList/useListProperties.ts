@@ -1,7 +1,8 @@
 import { Ref } from 'vue';
 
+import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
-import { ShoppingList, ShoppingItem } from '../types';
+import { ShoppingList } from '../types';
 
 // Logger initialisieren
 const logger = createLogger('useListProperties');

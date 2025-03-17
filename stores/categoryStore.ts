@@ -513,12 +513,9 @@ export const useCategoryStore = defineStore('categoryStore', {
             let needsMigration = false;
             for (const templateId in parsedData.customTemplates) {
               const template = parsedData.customTemplates[templateId];
-              if (template.categories && template.categories.length > 0) {
-                // Prüfen, ob Kategorien als Strings oder als Objekte vorliegen
-                if (typeof template.categories[0] === 'string') {
-                  needsMigration = true;
-                  break;
-                }
+              if (template.categories?.length > 0 && typeof template.categories[0] === 'string') {
+                needsMigration = true;
+                break;
               }
             }
 

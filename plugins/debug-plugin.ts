@@ -14,7 +14,8 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.hook('app:mounted', () => {
     const onCategoryUpdate = nuxtApp.$onCategoryUpdate;
     if (onCategoryUpdate) {
-      const unsubscribe = onCategoryUpdate((categoryId: string, newName: string) => {
+      // Register listener but don't store unsubscribe function (not needed)
+      onCategoryUpdate((categoryId: string, newName: string) => {
         logger.info(`[Debug] Kategorie-Update erkannt: ID=${categoryId}, Name=${newName}`);
       });
 

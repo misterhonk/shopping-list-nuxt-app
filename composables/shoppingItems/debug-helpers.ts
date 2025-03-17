@@ -1,5 +1,6 @@
 import { Ref } from 'vue';
 
+import { createLogger } from '../../utils/logger';
 import { ShoppingList, ShoppingItem } from '../types';
 
 // Logger initialisieren
@@ -37,7 +38,7 @@ export function createDebuggedRemoveItem(
   originalRemoveItem: (item: ShoppingItem | string) => boolean,
   shoppingListsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>,
-  saveToStorage: (key: string, value: any) => void
+  saveToStorage: (key: string, value: unknown) => void
 ): (item: ShoppingItem | string) => boolean {
   return function debuggedRemoveItem(item: ShoppingItem | string): boolean {
     // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)

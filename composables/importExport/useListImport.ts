@@ -1,5 +1,11 @@
 import { createLogger } from '../../utils/logger';
-import { ShoppingList, ShoppingItem, ImportOptions } from '../types';
+import {
+  ShoppingList,
+  ShoppingItem,
+  ImportOptions,
+  ExportedList,
+  CreateListOptions,
+} from '../types';
 
 // Logger initialisieren
 const logger = createLogger('useListImport');
@@ -19,7 +25,7 @@ interface ImportResult {
  * Interface für die Dienste, die für den Import benötigt werden
  */
 interface ImportServices {
-  createList: (name: string, options: any) => ShoppingList | null;
+  createList: (name: string, options: CreateListOptions) => ShoppingList | null;
   addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null;
   selectList: (listId: string) => boolean;
   updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
@@ -33,7 +39,7 @@ export function useListImport() {
    * Lädt eine Datei und zeigt Optionen an
    * @param callback - Callback für geladene Daten
    */
-  const loadFileAndShowOptions = (callback: (data: any) => void): void => {
+  const loadFileAndShowOptions = (callback: (data: ExportedList) => void): void => {
     // Erstelle einen temporären Datei-Input
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -65,14 +71,24 @@ export function useListImport() {
             throw new Error('Fehler beim Lesen der Datei');
           }
 
-          const importData = JSON.parse(readerEvent.target.result);
+          const parsedData = JSON.parse(readerEvent.target.result);
 
           // Validiere die Daten
-          if (!importData.name || !Array.isArray(importData.items)) {
+          if (!parsedData.name || !Array.isArray(parsedData.items)) {
             alert('Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.');
             document.body.removeChild(fileInput);
             return;
           }
+
+          // Prüfe, ob es ein gültiges Format ist
+          const importData: ExportedList = {
+            name: parsedData.name || '',
+            items: Array.isArray(parsedData.items) ? parsedData.items : [],
+            format: parsedData.format || 'shopping-list-app',
+            version: parsedData.version || '1.0',
+            exportedAt: parsedData.exportedAt || Date.now(),
+            templateId: parsedData.templateId,
+          };
 
           // Callback mit den Daten aufrufen
           callback(importData);
@@ -104,7 +120,7 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const importListWithOptions = (
-    data: any,
+    data: ExportedList,
     options: ImportOptions,
     services: ImportServices
   ): ImportResult => {
@@ -166,7 +182,7 @@ export function useListImport() {
    * @param services - Die benötigten Dienste
    * @returns Das Importergebnis
    */
-  const importAsNewList = (data: any, services: ImportServices): ImportResult => {
+  const importAsNewList = (data: ExportedList, services: ImportServices): ImportResult => {
     // Erstelle eine neue Liste
     const newList = services.createList(data.name, {
       templateId: data.templateId || 'supermarket',
@@ -237,10 +253,10 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const mergeWithExistingList = (
-    data: any,
+    data: ExportedList,
     targetListId: string,
     services: ImportServices,
-    keepExisting: boolean
+    _keepExisting: boolean
   ): ImportResult => {
     // Aktualisiere die Liste
     services.selectList(targetListId);
@@ -292,7 +308,7 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const replaceExistingList = (
-    data: any,
+    data: ExportedList,
     targetListId: string,
     services: ImportServices
   ): ImportResult => {
@@ -301,7 +317,7 @@ export function useListImport() {
       id: targetListId,
       name: data.name,
       templateId: data.templateId || 'supermarket',
-      items: data.items.map((item: any) => ({
+      items: data.items.map((item: ShoppingItem) => ({
         id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name,
         quantity: item.quantity || 1,
@@ -336,8 +352,8 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const importList = (
-    importData: any,
-    createList: (name: string, options: any) => ShoppingList | null,
+    importData: ExportedList,
+    createList: (name: string, options: CreateListOptions) => ShoppingList | null,
     addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null
   ): ImportResult => {
     try {

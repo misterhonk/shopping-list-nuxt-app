@@ -98,7 +98,11 @@ export function useShoppingItems(
     const itemToAdd = itemData || newItem;
 
     // Prüfen, ob die Daten gültig sind
-    if (!itemToAdd.name || itemToAdd.name.trim() === '' || !(itemToAdd.quantity! > 0)) {
+    if (
+      !itemToAdd.name ||
+      itemToAdd.name.trim() === '' ||
+      !(itemToAdd.quantity && itemToAdd.quantity > 0)
+    ) {
       return null;
     }
 

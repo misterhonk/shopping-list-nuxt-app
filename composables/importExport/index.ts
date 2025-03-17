@@ -2,23 +2,20 @@ import { ref, Ref } from 'vue';
 
 import { useListExport } from './useListExport';
 import { useListImport } from './useListImport';
-import { ShoppingList, ShoppingItem, ImportOptions } from '../types';
-
-/**
- * Interface für die Import/Export-Dienste
- */
-interface ImportExportServices {
-  createList: (name: string, options: any) => ShoppingList | null;
-  addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null;
-  selectList: (listId: string) => boolean;
-  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
-}
+import {
+  ShoppingList,
+  ShoppingItem,
+  ImportOptions,
+  ExportedList,
+  CreateListOptions,
+  AvailableListInfo,
+} from '../types';
 
 /**
  * Hauptcomposable für Import/Export von Einkaufslisten
  */
 export function useListImportExport(
-  createList: (name: string, options: any) => ShoppingList | null,
+  createList: (name: string, options: CreateListOptions) => ShoppingList | null,
   addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null,
   allItems: Ref<ShoppingItem[]>,
   lists: Ref<ShoppingList[]>,
@@ -30,7 +27,7 @@ export function useListImportExport(
 
   // Status der Import-Dialog-Anzeige
   const showImportOptions: Ref<boolean> = ref(false);
-  const importData: Ref<any> = ref(null);
+  const importData: Ref<ExportedList | null> = ref(null);
 
   /**
    * Exportiert eine Liste
@@ -46,7 +43,7 @@ export function useListImportExport(
    * @param options - Die Importoptionen
    * @returns Das Importergebnis
    */
-  const handleImportListWithOptions = (data: any, options: ImportOptions) =>
+  const handleImportListWithOptions = (data: ExportedList, options: ImportOptions) =>
     listImport.importListWithOptions(data, options, {
       createList,
       addItem,
@@ -59,7 +56,7 @@ export function useListImportExport(
    * @param importData - Die Importdaten
    * @returns Das Importergebnis
    */
-  const handleImportList = (importData: any) =>
+  const handleImportList = (importData: ExportedList) =>
     listImport.importList(importData, createList, addItem);
 
   /**
@@ -67,7 +64,7 @@ export function useListImportExport(
    * @param onImportOptionsLoaded - Callback für geladene Import-Optionen
    */
   const openImportDialog = (
-    onImportOptionsLoaded: (data: any, availableLists: any[]) => void
+    onImportOptionsLoaded: (data: ExportedList, availableLists: AvailableListInfo[]) => void
   ): void => {
     // Die verfügbaren Listen für Optionen vorbereiten
     const availableLists = lists.value.map(list => ({

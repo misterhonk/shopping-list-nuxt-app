@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   lists: {
     type: Array,
     default: () => [],

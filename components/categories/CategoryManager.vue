@@ -486,7 +486,6 @@ const isTemplateCustom = computed(
 );
 
 // UI-Zustand
-const isEditMode = ref(false);
 const showNewCategoryModal = ref(false);
 const showEditCategoryModal = ref(false);
 const showNewTemplateModal = ref(false);
@@ -558,9 +557,6 @@ onMounted(() => {
 });
 
 // Methoden
-const toggleEditMode = () => {
-  isEditMode.value = !isEditMode.value;
-};
 
 const activateTemplate = templateId => {
   if (!categoryStore) {

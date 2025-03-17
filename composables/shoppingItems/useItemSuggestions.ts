@@ -1,5 +1,8 @@
 import { ref, computed, watch } from 'vue';
 
+import { createLogger } from '../../utils/logger';
+import { ShoppingList, ShoppingItem } from '../types';
+
 // Logger initialisieren
 const logger = createLogger('useItemSuggestions');
 
@@ -22,7 +25,7 @@ interface ItemSuggestion {
 /**
  * Composable für Artikelvorschläge basierend auf vergangenen Einkäufen
  */
-export function useItemSuggestions(listRef: any) {
+export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
   // Lokaler Speicher für die Artikelhistorie
   const getItem = (key: string): string | null => {
     try {
@@ -65,7 +68,7 @@ export function useItemSuggestions(listRef: any) {
   const itemHistory = ref<Record<string, ItemHistoryEntry>>(loadItemHistory());
 
   // Artikel zur Historie hinzufügen
-  const addToHistory = (item: any): void => {
+  const addToHistory = (item: ShoppingItem): void => {
     if (!item || !item.name) {
       return;
     }
@@ -107,6 +110,35 @@ export function useItemSuggestions(listRef: any) {
     saveItemHistory(itemHistory.value);
   };
 
+  /**
+   * Ermittelt die häufigste Kategorie für einen Artikel
+   */
+  const getMostCommonCategory = (categories: Record<string, number>): string | null => {
+    let mostCommonCategory: string | null = null;
+    let maxCount = 0;
+
+    for (const [categoryId, count] of Object.entries(categories)) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommonCategory = categoryId;
+      }
+    }
+
+    return mostCommonCategory;
+  };
+
+  /**
+   * Berechnet den Durchschnittspreis eines Artikels
+   */
+  const calculateAveragePrice = (prices: Array<{ price: number; date: string }>): number => {
+    if (!prices || prices.length === 0) {
+      return 0;
+    }
+
+    const sum = prices.reduce((acc, curr) => acc + curr.price, 0);
+    return sum / prices.length;
+  };
+
   // Vorschläge basierend auf der Historie generieren
   const getSuggestions = (term = ''): ItemSuggestion[] => {
     if (!term) {
@@ -119,23 +151,9 @@ export function useItemSuggestions(listRef: any) {
     // Durch die Historie iterieren und passende Einträge finden
     for (const [itemName, data] of Object.entries(itemHistory.value)) {
       if (itemName.includes(normalizedTerm)) {
-        // Häufigste Kategorie ermitteln
-        let mostCommonCategory: string | null = null;
-        let maxCount = 0;
-
-        for (const [categoryId, count] of Object.entries(data.categories)) {
-          if (count > maxCount) {
-            maxCount = count;
-            mostCommonCategory = categoryId;
-          }
-        }
-
-        // Durchschnittspreis berechnen
-        let avgPrice = 0;
-        if (data.prices && data.prices.length > 0) {
-          const sum = data.prices.reduce((acc, curr) => acc + curr.price, 0);
-          avgPrice = sum / data.prices.length;
-        }
+        // Häufigste Kategorie und Durchschnittspreis ermitteln
+        const mostCommonCategory = getMostCommonCategory(data.categories);
+        const avgPrice = calculateAveragePrice(data.prices);
 
         // Ergebnis hinzufügen
         results.push({
@@ -164,14 +182,14 @@ export function useItemSuggestions(listRef: any) {
   };
 
   // Aktualisierte Artikel zur Historie hinzufügen
-  const updateHistoryFromLists = (lists: any[]): void => {
+  const updateHistoryFromLists = (lists: ShoppingList[]): void => {
     if (!lists || !Array.isArray(lists)) {
       return;
     }
 
     lists.forEach(list => {
       if (list.items && Array.isArray(list.items)) {
-        list.items.forEach((item: any) => {
+        list.items.forEach((item: ShoppingItem) => {
           if (item && item.name) {
             addToHistory(item);
           }

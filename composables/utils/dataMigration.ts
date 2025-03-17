@@ -1,6 +1,31 @@
 import { ShoppingItem, ShoppingList, Category } from '../types';
 
 /**
+ * Typdefinitionen für die Migration
+ */
+interface LegacyItem {
+  id?: string;
+  name?: string;
+  quantity?: number;
+  category?: string | Category;
+  checked?: boolean;
+  price?: number;
+  note?: string;
+  addedAt?: number;
+  modifiedAt?: number;
+}
+
+interface LegacyList {
+  id?: string;
+  name?: string;
+  items?: LegacyItem[];
+  templateId?: string;
+  isFavorite?: boolean;
+  createdAt?: number;
+  modifiedAt?: number;
+}
+
+/**
  * Migriert alte Kategorien-Strings zu Kategorie-Objekten
  * @param items - Die zu migrierenden Artikel
  * @param categoriesMap - Eine Map von Kategorienamen zu Kategorien-Objekten
@@ -34,7 +59,7 @@ export const migrateCategoriesToObjects = (
  * @param lists - Die zu migrierenden Listen
  * @returns Die migrierten Listen
  */
-export const migrateShoppingLists = (lists: any[]): ShoppingList[] =>
+export const migrateShoppingLists = (lists: LegacyList[]): ShoppingList[] =>
   lists.map(list => ({
     id: list.id || `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     name: list.name || 'Unbenannte Liste',
@@ -64,7 +89,7 @@ export const isValidJSON = (str: string): boolean => {
  * @param lists - Die zu migrierenden Listen
  * @returns Die migrierten Listen
  */
-export const migrateLists = (lists: any[]): ShoppingList[] => {
+export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
   if (!Array.isArray(lists)) {
     return [];
   }
@@ -83,7 +108,7 @@ export const migrateLists = (lists: any[]): ShoppingList[] => {
 
     // Migriere die Items, falls vorhanden
     if (Array.isArray(list.items)) {
-      migratedList.items = list.items.map((item: any) => ({
+      migratedList.items = list.items.map((item: LegacyItem) => ({
         id: item.id || `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name || 'Unbenannter Artikel',
         quantity: typeof item.quantity === 'number' ? item.quantity : 1,
@@ -105,18 +130,21 @@ export const migrateLists = (lists: any[]): ShoppingList[] => {
  * @param list - Die zu prüfende Liste
  * @returns true, wenn die Liste gültig ist, sonst false
  */
-export const validateList = (list: any): boolean => {
+export const validateList = (list: unknown): boolean => {
   if (!list || typeof list !== 'object') {
     return false;
   }
 
+  // Type-Cast zu LegacyList
+  const typedList = list as LegacyList;
+
   // Prüfe, ob die Liste die notwendigen Eigenschaften hat
-  if (!list.id || typeof list.name !== 'string' || !Array.isArray(list.items)) {
+  if (!typedList.id || typeof typedList.name !== 'string' || !Array.isArray(typedList.items)) {
     return false;
   }
 
   // Prüfe die Items
-  for (const item of list.items) {
+  for (const item of typedList.items || []) {
     if (!item.id || typeof item.name !== 'string' || typeof item.quantity !== 'number') {
       return false;
     }

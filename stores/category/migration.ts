@@ -1,5 +1,6 @@
 import { generateCategoryId, deepCopy } from './utils';
-import { CategoryTemplate, TemplateCollection, Category } from '../../composables/types';
+import { TemplateCollection } from '../../composables/types';
+import { createLogger } from '../../utils/logger';
 
 // Logger initialisieren
 const logger = createLogger('migration');
@@ -45,11 +46,8 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
 export const needsMigration = (customTemplates: TemplateCollection): boolean => {
   for (const templateId in customTemplates) {
     const template = customTemplates[templateId];
-    if (template.categories && template.categories.length > 0) {
-      // Prüfen, ob Kategorien als Strings oder als Objekte vorliegen
-      if (typeof template.categories[0] === 'string') {
-        return true;
-      }
+    if (template.categories?.length > 0 && typeof template.categories[0] === 'string') {
+      return true;
     }
   }
   return false;
