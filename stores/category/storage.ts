@@ -1,11 +1,17 @@
-import { createLogger } from '#imports';
+import { createLogger } from '~/utils/logger';
+import { useLocalStorage } from '~/composables/core/useLocalStorage';
+import { sanitizeTemplate } from './utils';
 
-import { deepCopy, sanitizeTemplate } from './utils';
-
-import type { TemplateCollection } from '#imports';
+import type { TemplateCollection } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('storage');
+
+// LocalStorage-Funktionen
+const { saveToStorage, loadFromStorage, createImmutableCopy } = useLocalStorage();
+
+// Key für den LocalStorage
+const STORAGE_KEY = 'categoryTemplates';
 
 /**
  * Interface für die gespeicherten Kategoriedaten
@@ -40,10 +46,10 @@ export const saveCategoryData = (
     };
 
     // Tiefe Kopie erstellen, um Referenzprobleme zu vermeiden
-    const cleanDataToSave = deepCopy(dataToSave);
+    const cleanDataToSave = createImmutableCopy(dataToSave);
 
     logger.info('Speichere in localStorage:', cleanDataToSave);
-    localStorage.setItem('categoryTemplates', JSON.stringify(cleanDataToSave));
+    saveToStorage(STORAGE_KEY, cleanDataToSave);
   } catch (error) {
     logger.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
   }
@@ -56,13 +62,12 @@ export const saveCategoryData = (
 export const loadCategoryData = (): StoredCategoryData | null => {
   try {
     logger.info('Lade aus localStorage');
-    const data = localStorage.getItem('categoryTemplates');
+    const parsedData = loadFromStorage<StoredCategoryData>(STORAGE_KEY);
 
-    if (!data) {
+    if (!parsedData) {
       return null;
     }
 
-    const parsedData = JSON.parse(data) as StoredCategoryData;
     logger.info('Geladene Daten:', parsedData);
 
     return {

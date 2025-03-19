@@ -1,4 +1,5 @@
 import { defineNuxtPlugin } from '#app';
+import { useDarkMode } from '~/composables/useDarkMode';
 
 /**
  * Plugin für die Initialisierung des Dark Mode
@@ -7,36 +8,9 @@ import { defineNuxtPlugin } from '#app';
 export default defineNuxtPlugin(() => {
   // Dark Mode beim ersten Laden der Seite initialisieren
   if (process.client) {
-    const savedTheme = localStorage.getItem('darkMode');
-
-    // Dark Mode aktivieren, wenn gespeichert oder Systempräferenz
-    if (
-      savedTheme === 'dark' ||
-      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-    }
-
-    // Event-Listener für Systemänderungen
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    // Änderungen der Systempräferenz überwachen, wenn keine gespeicherte Einstellung
-    const handleSystemDarkModeChange = (event: MediaQueryListEvent): void => {
-      if (!localStorage.getItem('darkMode')) {
-        if (event.matches) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-    };
-
-    // Event-Listener hinzufügen
-    if (darkModeMediaQuery.addEventListener) {
-      darkModeMediaQuery.addEventListener('change', handleSystemDarkModeChange);
-    } else {
-      // Fallback für ältere Browser
-      darkModeMediaQuery.addListener(handleSystemDarkModeChange);
-    }
+    const { initializeDarkMode } = useDarkMode();
+    
+    // Alle Dark Mode-Logik ist im Composable gekapselt
+    initializeDarkMode();
   }
 });

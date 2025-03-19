@@ -20,47 +20,52 @@
   </div>
 </template>
 
-<script setup>
-// Logger initialisieren
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 
 import { useCategoryStore } from '../stores/categoryStore';
 import { createLogger } from '../utils/logger';
 
-const logger = createLogger('template-selector');
+import type { CategoryTemplate } from '../composables/types';
+
+// Logger initialisieren
+const logger = createLogger('TemplateSelector');
 
 // Props
-const props = defineProps({
-  listTemplateId: {
-    type: String,
-    default: 'supermarket',
-  },
+interface Props {
+  listTemplateId?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  listTemplateId: 'supermarket',
 });
 
 // Emits
-const emit = defineEmits(['update:templateId']);
+const emit = defineEmits<{
+  (e: 'update:templateId', value: string): void;
+}>();
 
 // Lokaler Zustand
-let categoryStore = null;
+const categoryStore = ref(null);
 const currentTemplateId = ref(props.listTemplateId);
-const templatesList = computed(() => categoryStore?.templatesList || []);
+const templatesList = computed<CategoryTemplate[]>(() => categoryStore.value?.templatesList || []);
 
 // Kategorie-Store initialisieren (mit Fehlerbehandlung)
 try {
-  categoryStore = useCategoryStore();
+  categoryStore.value = useCategoryStore();
 } catch (e) {
   logger.error('Fehler beim Initialisieren des Kategorie-Stores:', e);
 }
 
 // Aktualisiere Kategorie-Template
-const updateTemplate = () => {
+const updateTemplate = (): void => {
   // Template-Id an übergeordnete Komponente senden
   emit('update:templateId', currentTemplateId.value);
 
   // Template auch im Store aktivieren
-  if (categoryStore) {
+  if (categoryStore.value) {
     try {
-      categoryStore.activateTemplate(currentTemplateId.value);
+      categoryStore.value.activateTemplate(currentTemplateId.value);
     } catch (e) {
       logger.error('Fehler beim Aktivieren des Templates:', e);
     }
@@ -70,7 +75,7 @@ const updateTemplate = () => {
 // Reagiere auf Änderungen der Props
 watch(
   () => props.listTemplateId,
-  newVal => {
+  (newVal: string) => {
     currentTemplateId.value = newVal;
   },
   { immediate: true }

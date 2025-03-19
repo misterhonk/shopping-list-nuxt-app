@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { createLogger } from '#imports';
+import { createLogger } from '~/utils/logger';
 
 import { migrateCategories, needsMigration } from './migration';
 import {
@@ -15,7 +15,7 @@ import {
 import { saveCategoryData, loadCategoryData } from './storage';
 import { categoryTemplates, defaultTemplateId } from './templates';
 
-import type { Category, CategoryTemplate, TemplateCollection } from '#imports';
+import type { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('index');

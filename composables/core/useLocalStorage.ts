@@ -1,11 +1,21 @@
-// Logger initialisieren
-const logger = createLogger('useLocalStorage');
+import { createLogger } from '~/utils/logger';
 
 /**
  * Ein Composable für die Verwaltung des localStorage
  * Bietet Funktionen zum Speichern, Laden und Löschen von Daten
  */
 export function useLocalStorage() {
+  // Logger initialisieren
+  const logger = createLogger('useLocalStorage');
+
+  /**
+   * Erstellt eine tiefe Kopie eines Objekts oder Arrays durch JSON-Parsing
+   * Nützlich für immutable Updates von verschachtelten Datenstrukturen
+   *
+   * @param obj - Das zu kopierende Objekt oder Array
+   * @returns Eine tiefe Kopie des Objekts oder Arrays
+   */
+  const createImmutableCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj)) as T;
   /**
    * Speichert Daten im localStorage
    * @param key - Der Schlüssel, unter dem die Daten gespeichert werden
@@ -74,5 +84,6 @@ export function useLocalStorage() {
     removeFromStorage,
     clearStorage,
     keyExists,
+    createImmutableCopy,
   };
 }

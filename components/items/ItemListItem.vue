@@ -1,12 +1,15 @@
 <template>
   <li class="p-4 flex justify-between items-center">
     <div class="flex items-center flex-1">
-      <input
-        type="checkbox"
-        :checked="item.checked"
-        class="mr-3 h-5 w-5 text-orange-500 rounded focus:ring-orange-500"
-        @change="$emit('toggle')"
-      />
+      <div class="custom-checkbox mr-3">
+        <input
+          type="checkbox"
+          :checked="item.checked"
+          class="custom-checkbox-input"
+          @change="$emit('toggle')"
+        />
+        <span class="custom-checkbox-mark"></span>
+      </div>
       <div class="flex flex-col sm:flex-row sm:items-center flex-1">
         <span
           :class="{ 'line-through text-gray-400 dark:text-gray-500': item.checked }"
@@ -44,15 +47,16 @@
   </li>
 </template>
 
-<script setup>
-defineProps({
-  item: {
-    type: Object,
-    required: true,
-  },
-});
+<script setup lang="ts">
+import type { ShoppingItem, Category } from '~/composables/types';
 
-const getCategoryName = category => {
+interface Props {
+  item: ShoppingItem;
+}
+
+defineProps<Props>();
+
+const getCategoryName = (category: Category | string): string => {
   if (typeof category === 'object' && category !== null && category.name) {
     return category.name;
   }
@@ -62,8 +66,11 @@ const getCategoryName = category => {
   return 'Sonstiges';
 };
 
-defineEmits(['toggle', 'remove']);
+defineEmits<{
+  (e: 'toggle'): void;
+  (e: 'remove'): void;
+}>();
 
-const formatPrice = price =>
+const formatPrice = (price: number): string =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
 </script>

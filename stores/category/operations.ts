@@ -1,8 +1,8 @@
-import { createLogger } from '#imports';
+import { createLogger } from '~/utils/logger';
 
 import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
 
-import type { Category, CategoryTemplate, TemplateCollection } from '#imports';
+import type { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('operations');
