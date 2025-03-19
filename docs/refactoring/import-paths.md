@@ -44,9 +44,9 @@ import type { ShoppingItem } from '~/composables/types';
    - Dann interne Module
    - Zuletzt Typen
 
-## Zu korrigierende Dateien
+## Bereits korrigierte Dateien
 
-Die folgenden Dateien sollten priorisiert behandelt werden:
+Folgende Dateien wurden bereits korrigiert:
 
 1. `composables/importExport/useListImport.ts`
 2. `composables/importExport/useListExport.ts`
@@ -54,11 +54,30 @@ Die folgenden Dateien sollten priorisiert behandelt werden:
 4. `composables/shoppingItems/debug-helpers.ts`
 5. `composables/shoppingItems/useItemManagement.ts`
 6. `composables/shoppingList/useListProperties.ts`
+7. `composables/shoppingList/useListUpdate.ts`
+
+## Zu überprüfende Dateien
+
+Die folgenden Dateien sollten noch überprüft und bei Bedarf korrigiert werden:
+
+1. Vue-Komponenten in `components/`
+2. Stores in `stores/`
+3. Plugins in `plugins/`
+4. Weitere Composables in `composables/`
 
 ## Umsetzungsstrategie
 
-1. Verwende ESLint mit Import-Regeln, um Probleme zu identifizieren
-2. Nutze IDE-Funktionen für globale Suche/Ersetzen
+1. Verwende ESLint mit Import-Regeln, um Probleme zu identifizieren:
+   ```json
+   // .eslintrc.json
+   "rules": {
+     "import/no-relative-parent-imports": "warn",
+     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "type-imports" }]
+   }
+   ```
+2. Nutze IDE-Funktionen für globale Suche/Ersetzen:
+   - Suche nach `from '../` und `from '../../'`
+   - Ersetze mit den entsprechenden Nuxt-Aliase
 3. Aktualisiere Imports und teste nach jeder Datei-Kategorie
 
 ## Vorteile
@@ -67,3 +86,4 @@ Die folgenden Dateien sollten priorisiert behandelt werden:
 - Einfacheres Refactoring (Pfade brechen weniger leicht)
 - Konsistenter Codestil
 - Verbesserte IDE-Unterstützung
+- Bessere Fehlermeldungen bei fehlenden Imports
