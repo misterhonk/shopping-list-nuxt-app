@@ -1,4 +1,6 @@
+import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
+import { sortListsByFavorites } from '../utils/listUtils';
 
 import type { ShoppingList, ShoppingItem } from '../types';
 import type { Ref } from 'vue';
@@ -52,19 +54,13 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
 
       // Wenn Liste favorisiert/unfavorisiert wird, neu sortieren
       if (listData.isFavorite !== undefined) {
-        updatedLists.sort((a, b) => {
-          if (a.isFavorite && !b.isFavorite) {
-            return -1;
-          }
-          if (!a.isFavorite && b.isFavorite) {
-            return 1;
-          }
-          return 0;
-        });
+        // Verwende die gemeinsame Sortierfunktion
+        listsRef.value = sortListsByFavorites(updatedLists);
+      } else {
+        listsRef.value = updatedLists;
       }
-
-      listsRef.value = updatedLists;
-      saveToStorage('shoppingLists', updatedLists);
+      
+      saveToStorage('shoppingLists', listsRef.value);
 
       return true;
     } catch (error) {

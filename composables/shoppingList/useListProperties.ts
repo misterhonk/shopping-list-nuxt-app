@@ -1,5 +1,6 @@
 import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
+import { getItemsCount, getCheckedItemsCount } from '../utils/listUtils';
 
 import type { ShoppingList } from '../types';
 import type { Ref } from 'vue';
@@ -18,31 +19,21 @@ export function useListProperties(
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
-   * Ermittelt die Anzahl der Artikel in einer Liste
-   * @param list - Die zu prüfende Liste
-   * @returns Die Anzahl der Artikel
+   * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
+   * @returns Die Anzahl der erledigten Artikel
    */
-  const getItemsCount = (list: ShoppingList): number =>
-    Array.isArray(list?.items) ? list.items.length : 0;
+  const getTotalItemsCount = (): number => {
+    const currentList = listsRef.value.find(list => list.id === currentListIdRef.value);
+    return currentList ? getItemsCount(currentList) : 0;
+  };
 
   /**
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
    * @returns Die Anzahl der erledigten Artikel
    */
-  const getCheckedItemsCount = (): number => {
+  const getCurrentCheckedItemsCount = (): number => {
     const currentList = listsRef.value.find(list => list.id === currentListIdRef.value);
-    return Array.isArray(currentList?.items)
-      ? currentList.items.filter(item => item.checked).length
-      : 0;
-  };
-
-  /**
-   * Ermittelt die Gesamtanzahl der Artikel in der aktuellen Liste
-   * @returns Die Gesamtanzahl der Artikel
-   */
-  const getTotalItemsCount = (): number => {
-    const currentList = listsRef.value.find(list => list.id === currentListIdRef.value);
-    return Array.isArray(currentList?.items) ? currentList.items.length : 0;
+    return currentList ? getCheckedItemsCount(currentList) : 0;
   };
 
   /**
@@ -116,7 +107,7 @@ export function useListProperties(
 
   return {
     getItemsCount,
-    getCheckedItemsCount,
+    getCheckedItemsCount: getCurrentCheckedItemsCount,
     getTotalItemsCount,
     updateListName,
     updateListFavorite,

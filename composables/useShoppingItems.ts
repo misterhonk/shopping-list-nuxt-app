@@ -1,6 +1,14 @@
 import { reactive, ref, computed } from 'vue';
 
 import { useLocalStorage } from './core/useLocalStorage';
+import { 
+  createItemObject, 
+  itemBelongsToCategory, 
+  updateItemCategory, 
+  groupItemsByCategory,
+  calculateTotalPrice,
+  calculateCategoryPrice
+} from './utils/itemUtils';
 
 import type { ShoppingItem, ShoppingList, Category } from './types';
 import type { Ref, ComputedRef } from 'vue';
@@ -13,7 +21,7 @@ export function useShoppingItems(
   shoppingListsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
 ) {
-  const { saveToStorage } = useLocalStorage();
+  const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
@@ -51,8 +59,7 @@ export function useShoppingItems(
    */
   const getItemsGrouped = (categories: (string | Category)[]): Record<string, ShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
-    const grouped: Record<string, ShoppingItem[]> = {};
-
+    
     // Prüfen, ob items ein gültiges Array ist
     if (!currentList || !Array.isArray(currentList.items)) {
       return categories.reduce(
@@ -64,30 +71,10 @@ export function useShoppingItems(
         {} as Record<string, ShoppingItem[]>
       );
     }
-
-    // Für jede Kategorie ein Array erstellen (auch wenn leer)
-    categories.forEach(category => {
-      const categoryName = typeof category === 'object' ? category.name : category;
-      grouped[categoryName] = [];
-    });
-
-    // Dann Elemente in die entsprechenden Kategorien einsortieren
-    currentList.items.forEach(item => {
-      const category = item.category || 'Sonstiges';
-      const categoryName = typeof category === 'object' ? category.name : category;
-
-      if (grouped[categoryName]) {
-        grouped[categoryName].push(item);
-      } else {
-        // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
-        if (!grouped.Sonstiges) {
-          grouped.Sonstiges = [];
-        }
-        grouped.Sonstiges.push(item);
-      }
-    });
-
-    return grouped;
+    
+    // Kategorienamen aus dem Objekt extrahieren
+    const categoryNames = categories.map(cat => typeof cat === 'object' ? cat.name : cat);
+    return groupItemsByCategory(currentList.items, categoryNames);
   };
 
   /**
@@ -113,29 +100,23 @@ export function useShoppingItems(
       return null;
     }
 
-    const newItemObj: ShoppingItem = {
-      id: itemToAdd.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
-      name: itemToAdd.name,
-      quantity: itemToAdd.quantity || 1,
-      category: itemToAdd.category || 'Sonstiges',
-      checked: itemToAdd.checked || false,
-      price: itemToAdd.price || 0,
-    };
+    const newItemObj = createItemObject(itemToAdd);
 
-    // Tiefe Kopie der Liste erstellen
-    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
+    // Immutable Update der Listen mit dem neuen Item
+    const updatedLists = createImmutableCopy(shoppingListsRef.value);
 
     // Sicherstellen, dass items existiert
-    if (!Array.isArray(newLists[listIndex].items)) {
-      newLists[listIndex].items = [];
+    if (!Array.isArray(updatedLists[listIndex].items)) {
+      updatedLists[listIndex].items = [];
     }
 
     // Item hinzufügen
-    newLists[listIndex].items.push(newItemObj);
+    updatedLists[listIndex].items.push(newItemObj);
+    updatedLists[listIndex].modifiedAt = Date.now();
 
     // Update der Listen-Referenz und Speichern
-    shoppingListsRef.value = newLists;
-    saveToStorage('shoppingLists', newLists);
+    shoppingListsRef.value = updatedLists;
+    saveToStorage('shoppingLists', updatedLists);
 
     // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
     if (!itemData) {
@@ -188,13 +169,14 @@ export function useShoppingItems(
       return false;
     }
 
-    // Tiefe Kopie und Entfernen des Items
-    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
-    newLists[listIndex].items = newLists[listIndex].items.filter(item => item.id !== itemId);
+    // Immutable Update und Entfernen des Items
+    const updatedLists = createImmutableCopy(shoppingListsRef.value);
+    updatedLists[listIndex].items = updatedLists[listIndex].items.filter(item => item.id !== itemId);
+    updatedLists[listIndex].modifiedAt = Date.now();
 
     // Update und Speichern
-    shoppingListsRef.value = newLists;
-    saveToStorage('shoppingLists', newLists);
+    shoppingListsRef.value = updatedLists;
+    saveToStorage('shoppingLists', updatedLists);
 
     return true;
   };
@@ -222,13 +204,23 @@ export function useShoppingItems(
       return false;
     }
 
-    // Tiefe Kopie und Ändern des Status
-    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
-    newLists[listIndex].items[itemIndex].checked = !newLists[listIndex].items[itemIndex].checked;
+    // Immutable Update und Ändern des Status
+    const updatedLists = createImmutableCopy(shoppingListsRef.value);
+    updatedLists[listIndex].items = updatedLists[listIndex].items.map((item, index) => {
+      if (index === itemIndex) {
+        return {
+          ...item,
+          checked: !item.checked,
+          modifiedAt: Date.now(),
+        };
+      }
+      return item;
+    });
+    updatedLists[listIndex].modifiedAt = Date.now();
 
     // Update und Speichern
-    shoppingListsRef.value = newLists;
-    saveToStorage('shoppingLists', newLists);
+    shoppingListsRef.value = updatedLists;
+    saveToStorage('shoppingLists', updatedLists);
 
     return true;
   };
@@ -247,13 +239,14 @@ export function useShoppingItems(
       return false;
     }
 
-    // Tiefe Kopie und Filtern der nicht erledigten Items
-    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
-    newLists[listIndex].items = newLists[listIndex].items.filter(item => !item.checked);
+    // Immutable Update und Filtern der nicht erledigten Items
+    const updatedLists = createImmutableCopy(shoppingListsRef.value);
+    updatedLists[listIndex].items = updatedLists[listIndex].items.filter(item => !item.checked);
+    updatedLists[listIndex].modifiedAt = Date.now();
 
     // Update und Speichern
-    shoppingListsRef.value = newLists;
-    saveToStorage('shoppingLists', newLists);
+    shoppingListsRef.value = updatedLists;
+    saveToStorage('shoppingLists', updatedLists);
 
     return true;
   };
@@ -293,11 +286,7 @@ export function useShoppingItems(
       return 0;
     }
 
-    return currentList.items.reduce((total, item) => {
-      const itemPrice = item.price || 0;
-      const itemQuantity = item.quantity || 1;
-      return total + itemPrice * itemQuantity;
-    }, 0);
+    return calculateTotalPrice(currentList.items);
   };
 
   /**
@@ -312,16 +301,7 @@ export function useShoppingItems(
       return 0;
     }
 
-    return currentList.items
-      .filter(item => {
-        const itemCategoryId = typeof item.category === 'object' ? item.category.id : 'sonstiges';
-        return itemCategoryId === categoryId;
-      })
-      .reduce((total, item) => {
-        const itemPrice = item.price || 0;
-        const itemQuantity = item.quantity || 1;
-        return total + itemPrice * itemQuantity;
-      }, 0);
+    return calculateCategoryPrice(currentList.items, categoryId);
   };
 
   /**
@@ -330,25 +310,41 @@ export function useShoppingItems(
    * @param newName - Der neue Name für die Kategorie
    */
   const updateCategoryInItems = (categoryId: string, newName: string): void => {
+    if (!categoryId || !newName) {
+      return;
+    }
+    
     // Alle Listen durchgehen und die Kategorie in den Items aktualisieren
-    const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
+    const updatedLists = createImmutableCopy(shoppingListsRef.value);
 
     let hasUpdates = false;
 
-    newLists.forEach((list: ShoppingList) => {
+    updatedLists.forEach((list: ShoppingList, listIndex: number) => {
       if (Array.isArray(list.items)) {
-        list.items.forEach(item => {
-          if (typeof item.category === 'object' && item.category.id === categoryId) {
-            item.category.name = newName;
+        // Alle Items in der Liste durchgehen
+        updatedLists[listIndex].items = list.items.map(item => {
+          const matchFound = itemBelongsToCategory(item, categoryId);
+
+          // Wenn Match gefunden, Kategorie aktualisieren
+          if (matchFound) {
             hasUpdates = true;
+            return updateItemCategory(item, categoryId, newName);
           }
+
+          return item;
         });
+        
+        // Nur die Liste als geändert markieren, wenn Items geändert wurden
+        if (hasUpdates) {
+          updatedLists[listIndex].modifiedAt = Date.now();
+        }
       }
     });
 
+    // Nur speichern, wenn Änderungen vorgenommen wurden
     if (hasUpdates) {
-      shoppingListsRef.value = newLists;
-      saveToStorage('shoppingLists', newLists);
+      shoppingListsRef.value = updatedLists;
+      saveToStorage('shoppingLists', updatedLists);
     }
   };
 

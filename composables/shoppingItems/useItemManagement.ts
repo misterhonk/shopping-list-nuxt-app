@@ -2,6 +2,12 @@ import { computed } from 'vue';
 
 import { createLogger } from '../../utils/logger';
 import { useLocalStorage } from '../core/useLocalStorage';
+import { 
+  createItemObject, 
+  itemBelongsToCategory, 
+  updateItemCategory, 
+  groupItemsByCategory
+} from '../utils/itemUtils';
 
 import type { ShoppingList, ShoppingItem } from '../types';
 import type { Ref } from 'vue';
@@ -35,8 +41,7 @@ export function useItemManagement(
    */
   const getItemsGrouped = (categories: string[]): Record<string, ShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
-    const grouped: Record<string, ShoppingItem[]> = {};
-
+    
     // Prüfen, ob items ein gültiges Array ist
     if (!currentList || !Array.isArray(currentList.items)) {
       return categories.reduce(
@@ -47,29 +52,8 @@ export function useItemManagement(
         {} as Record<string, ShoppingItem[]>
       );
     }
-
-    // Für jede Kategorie ein Array erstellen (auch wenn leer)
-    categories.forEach(category => {
-      grouped[category] = [];
-    });
-
-    // Dann Elemente in die entsprechenden Kategorien einsortieren
-    currentList.items.forEach(item => {
-      const category = item.category || 'Sonstiges';
-      const categoryName = typeof category === 'object' ? category.name : category;
-
-      if (grouped[categoryName]) {
-        grouped[categoryName].push(item);
-      } else {
-        // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
-        if (!grouped.Sonstiges) {
-          grouped.Sonstiges = [];
-        }
-        grouped.Sonstiges.push(item);
-      }
-    });
-
-    return grouped;
+    
+    return groupItemsByCategory(currentList.items, categories);
   };
 
   /**
@@ -92,16 +76,7 @@ export function useItemManagement(
       return null;
     }
 
-    const newItemObj: ShoppingItem = {
-      id: itemData.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
-      name: itemData.name,
-      quantity: itemData.quantity || 1,
-      category: itemData.category || 'Sonstiges',
-      checked: itemData.checked || false,
-      price: itemData.price || 0,
-      addedAt: Date.now(),
-      modifiedAt: Date.now(),
-    };
+    const newItemObj = createItemObject(itemData);
 
     // Immutable Update der Listen mit dem neuen Item
     const updatedLists = createImmutableCopy(shoppingListsRef.value);
@@ -286,32 +261,12 @@ export function useItemManagement(
 
         // Alle Items in der Liste durchgehen
         updatedLists[listIndex].items = list.items.map(item => {
-          // Normalisierte Prüfung für Kategorie-ID
-          let matchFound = false;
-
-          if (item.category) {
-            if (typeof item.category === 'object' && item.category.id === categoryId) {
-              matchFound = true;
-            } else if (typeof item.category === 'string') {
-              // Fallback für alte Kategorieformate
-              const normalizedCategoryId = item.category.toLowerCase().replace(/[\s&]/g, '_');
-              if (normalizedCategoryId === categoryId) {
-                matchFound = true;
-              }
-            }
-          }
+          const matchFound = itemBelongsToCategory(item, categoryId);
 
           // Wenn Match gefunden, Kategorie aktualisieren
           if (matchFound) {
             updatedAnyItem = true;
-            return {
-              ...item,
-              category: {
-                id: categoryId,
-                name: newName,
-              },
-              modifiedAt: Date.now(),
-            };
+            return updateItemCategory(item, categoryId, newName);
           }
 
           return item;
