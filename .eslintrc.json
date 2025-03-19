@@ -19,7 +19,7 @@
     "plugin:sonarjs/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["@typescript-eslint", "vue", "import", "promise", "sonarjs", "prettier"],
+  "plugins": ["@typescript-eslint", "vue", "import", "promise", "sonarjs", "prettier", "unused-imports"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -32,7 +32,13 @@
     "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
     "no-debugger": "warn",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ],
+    "import/no-unused-modules": [1, {"unusedExports": true}],
     "camelcase": ["error", { "properties": "never" }],
     "arrow-body-style": ["error", "as-needed"],
     "curly": ["error", "all"],
@@ -64,7 +70,7 @@
     "import/no-unresolved": "off",
 
     // Vue specific rules
-    "vue/multi-word-component-names": "off",
+    "vue/multi-word-component-names": "warn",
     "vue/no-v-html": "warn",
     "vue/require-default-prop": "error",
     "vue/component-name-in-template-casing": ["error", "PascalCase"],
