@@ -4,6 +4,19 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
 
 ## [2025-03-20]
 
+### Phase 4.1-4.2: Service-Layer einführen und Storage-Repository implementieren - Abgeschlossen
+- Verzeichnisstruktur für Services und Repositories erstellt
+- Service-Klassen implementiert:
+  - BaseService als Basis mit Fehlerbehandlung und Logging
+  - ShoppingListService für Einkaufslistenverwaltung
+  - ItemService für die Artikelverwaltung
+  - CategoryService für die Kategorieverwaltung
+- Repository-Interface für die Datenzugriffsabstraktion:
+  - StorageRepository als Interface
+  - LocalStorageRepository als Implementierung
+- Zentrale Initialisierung der Services mit Dependency Injection
+- Umfassende Dokumentation zum Service-Layer-Konzept erstellt
+
 ### Phase 3.2: Validierungs-Utilities implementieren - Abgeschlossen
 - Neue Verzeichnisstruktur `utils/validation/` mit Type Guards und Formularvalidierung:
   - Type Guards für wichtige Datenstrukturen (ShoppingItem, ShoppingList, Category)
@@ -50,6 +63,4 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
   - Konsistentere Fehlerbehandlung in allen Funktionen
 
 ### Geplant
-- Einführung eines Service-Layers zur Trennung von UI-Logik und Geschäftslogik
-- Implementierung eines Repository-Patterns für Datenspeicherung
 - Umstellung der Composables auf den Service-Layer

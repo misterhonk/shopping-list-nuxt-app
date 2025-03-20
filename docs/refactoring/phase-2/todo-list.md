@@ -51,18 +51,18 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 
 ## 4. Core-Funktionalität klarer isolieren
 
-- [ ] **4.1 Service-Layer einführen**
-  - [ ] Verzeichnisstruktur für Services erstellen
-  - [ ] `ShoppingListService` implementieren
-  - [ ] `ItemService` implementieren 
-  - [ ] `CategoryService` implementieren
-  - [ ] Commit: `feat: Service-Layer für Geschäftslogik eingeführt`
+- [x] **4.1 Service-Layer einführen**
+  - [x] Verzeichnisstruktur für Services erstellen
+  - [x] `ShoppingListService` implementieren
+  - [x] `ItemService` implementieren 
+  - [x] `CategoryService` implementieren
+  - [x] Commit: `feat: Service-Layer für Geschäftslogik eingeführt`
 
 - [ ] **4.2 Storage-Repository implementieren**
-  - [ ] Interface für `StorageRepository` definieren
-  - [ ] `LocalStorageRepository` als Implementierung erstellen
+  - [x] Interface für `StorageRepository` definieren
+  - [x] `LocalStorageRepository` als Implementierung erstellen
   - [ ] Tests für Storage-Funktionalität schreiben
-  - [ ] Commit: `feat: Repository-Pattern für Datenspeicherung implementiert`
+  - [x] Commit: `feat: Repository-Pattern für Datenspeicherung implementiert` (im Rahmen von 4.1 erledigt)
 
 - [ ] **4.3 Composables auf Service-Layer umstellen**
   - [ ] `useShoppingItems` auf Services umstellen
@@ -81,10 +81,12 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: Service-Layer einführen (4.1)
-- **Nächster Schritt**: Verzeichnisstruktur für Services erstellen
+- **Aktueller Fokus**: Composables auf Service-Layer umstellen (4.3)
+- **Nächster Schritt**: useShoppingItems auf Services umstellen
 - **Abgeschlossen**: 
   - Vereinfachung komplexer Funktionen (1.1 - 1.3)
   - TypeScript strenger konfigurieren (2.1 - 2.2)
   - UI-Status-Interfaces definieren (3.1)
   - Validierungs-Utilities implementieren (3.2)
+  - Service-Layer einführen (4.1)
+  - Storage-Repository implementieren (4.2)
