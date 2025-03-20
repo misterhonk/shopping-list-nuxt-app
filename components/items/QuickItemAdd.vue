@@ -30,7 +30,7 @@
           <div class="flex items-center h-9">
             <button 
               type="button" 
-              class="px-2 py-1 h-full bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-l-md hover:bg-orange-200 dark:hover:bg-orange-800"
+              class="px-2 py-1 h-full bg-orange-500 text-white rounded-l-md hover:bg-orange-600"
               @click="decreaseQuantity"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -45,7 +45,7 @@
             />
             <button 
               type="button" 
-              class="px-2 py-1 h-full bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-r-md hover:bg-orange-200 dark:hover:bg-orange-800"
+              class="px-2 py-1 h-full bg-orange-500 text-white rounded-r-md hover:bg-orange-600"
               @click="increaseQuantity"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
