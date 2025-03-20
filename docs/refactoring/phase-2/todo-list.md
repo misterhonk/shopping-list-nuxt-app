@@ -38,11 +38,11 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 
 ## 3. Interfaces für alle Datenstrukturen definieren
 
-- [ ] **3.1 UI-Status-Interfaces definieren**
-  - [ ] Erstellung von `types/uiTypes.ts` für UI-spezifische Interfaces
-  - [ ] Definition von Interfaces für Formular-Zustände
-  - [ ] Definition von Interfaces für Filter-Optionen
-  - [ ] Commit: `feat: UI-Status-Interfaces für bessere Typsicherheit definiert`
+- [x] **3.1 UI-Status-Interfaces definieren**
+  - [x] Erstellung von `types/uiTypes.ts` für UI-spezifische Interfaces
+  - [x] Definition von Interfaces für Formular-Zustände
+  - [x] Definition von Interfaces für Filter-Optionen
+  - [x] Commit: `feat: UI-Status-Interfaces für bessere Typsicherheit definiert`
 
 - [ ] **3.2 Validierungs-Utilities implementieren**
   - [ ] Type Guards für wichtige Datenstrukturen erstellen
@@ -81,8 +81,9 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: UI-Status-Interfaces definieren (3.1)
-- **Nächster Schritt**: Erstellung von `types/uiTypes.ts`
+- **Aktueller Fokus**: Validierungs-Utilities implementieren (3.2)
+- **Nächster Schritt**: Type Guards für wichtige Datenstrukturen erstellen
 - **Abgeschlossen**: 
   - Vereinfachung komplexer Funktionen (1.1 - 1.3)
   - TypeScript strenger konfigurieren (2.1 - 2.2)
+  - UI-Status-Interfaces definieren (3.1)

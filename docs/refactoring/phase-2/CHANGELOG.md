@@ -4,6 +4,14 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
 
 ## [2025-03-20]
 
+### Phase 3.1: UI-Status-Interfaces definieren - Abgeschlossen
+- Neue Datei `types/uiTypes.ts` mit umfangreichen UI-spezifischen Interfaces erstellt:
+  - FormStatus-Typen für Formularzustände (`ItemFormState`, `ListFormState`)
+  - Interfaces für UI-Komponenten (`ListStatusDisplay`, `ItemStatusDisplay`, etc.)
+  - Typen für Benachrichtigungen, Dialoge und Drag-and-Drop
+- Zentrale Typen-Exportdatei (`types/index.ts`) für einheitlichen Import
+- Umfassende Dokumentation in `docs/ui-types.md` mit Nutzungsbeispielen
+
 ### Phase 2: TypeScript strenger konfigurieren - Abgeschlossen
 - ESLint-Regeln für TypeScript konfiguriert:
   - Aktivierung von `@typescript-eslint/explicit-function-return-type` als Warnung
@@ -35,7 +43,6 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
   - Konsistentere Fehlerbehandlung in allen Funktionen
 
 ### Geplant
-- Definition von Interfaces für UI-Zustände
 - Implementierung von Validierungs-Utilities
 - Einführung eines Service-Layers zur Trennung von UI-Logik und Geschäftslogik
 - Implementierung eines Repository-Patterns für Datenspeicherung
