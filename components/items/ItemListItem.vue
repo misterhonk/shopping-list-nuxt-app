@@ -1,19 +1,18 @@
 <template>
-  <li class="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" @click="$emit('toggle')">
-    <div class="flex items-center flex-1">
-      <label class="custom-checkbox mr-3 cursor-pointer">
+  <li class="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+    <div class="flex items-center flex-1" @click="handleToggle">
+      <div class="custom-checkbox mr-3 cursor-pointer" @click.stop="handleToggle">
         <input
           type="checkbox"
           :checked="item.checked"
           class="custom-checkbox-input"
-          @click.stop="$emit('toggle')"
         />
-        <span class="custom-checkbox-mark relative" @click.stop="$emit('toggle')">
-          <svg v-if="item.checked" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="custom-checkbox-mark relative">
+          <svg v-if="item.checked" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           </svg>
-        </span>
-      </label>
+        </div>
+      </div>
       <div class="flex flex-col sm:flex-row sm:items-center flex-1">
         <span
           :class="{ 'line-through text-gray-400 dark:text-gray-500': item.checked }"
@@ -49,21 +48,25 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import type { ShoppingItem, Category } from '~/composables/types';
 
 interface Props {
   item: ShoppingItem;
 }
 
-defineProps<Props>();
-
-// getCategoryName wurde entfernt, da Kategorien nun als Überschriften angezeigt werden
-
-defineEmits<{
+const props = defineProps<Props>();
+const emit = defineEmits<{
   (e: 'toggle'): void;
   (e: 'remove'): void;
 }>();
 
+// Funktion zum Formatieren des Preises
 const formatPrice = (price: number): string =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
+
+// Wrapper-Funktion für das Toggle-Event
+const handleToggle = (): void => {
+  emit('toggle');
+};
 </script>
