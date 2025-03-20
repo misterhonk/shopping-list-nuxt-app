@@ -4,17 +4,17 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 
 ## 1. Vereinfachung komplexer Funktionen
 
-- [ ] **1.1 Erstellung von `utils/listOperations.ts`**
-  - [ ] Gemeinsame Basisfunktionen für Listen- und Item-Operationen implementieren
-  - [ ] Funktionen für immutable Updates erstellen
-  - [ ] Tests für neue Utility-Funktionen schreiben
-  - [ ] Commit: `refactor: Basisfunktionen für Listenoperationen erstellt`
+- [x] **1.1 Erstellung von `utils/listOperations.ts`**
+  - [x] Gemeinsame Basisfunktionen für Listen- und Item-Operationen implementieren
+  - [x] Funktionen für immutable Updates erstellen
+  - [x] JSDoc-Dokumentation für alle Funktionen
+  - [x] Commit: `refactor: Basisfunktionen für Listenoperationen erstellt`
 
-- [ ] **1.2 Refaktorierung von `useShoppingItems.ts`**
-  - [ ] Funktionen wie `addItem`, `removeItem`, `toggleItemChecked` vereinfachen
-  - [ ] Gemeinsame Logik durch Basisfunktionen ersetzen
-  - [ ] Prüfung und Verbesserung der Fehlerbehandlung
-  - [ ] Commit: `refactor: useShoppingItems vereinfacht durch Verwendung von Basisfunktionen`
+- [x] **1.2 Refaktorierung von `useShoppingItems.ts`**
+  - [x] Funktionen wie `addItem`, `removeItem`, `toggleItemChecked` vereinfachen
+  - [x] Gemeinsame Logik durch Basisfunktionen ersetzen
+  - [x] Prüfung und Verbesserung der Fehlerbehandlung
+  - [x] Commit: `refactor: useShoppingItems vereinfacht durch Verwendung von Basisfunktionen`
 
 - [ ] **1.3 Refaktorierung von `useListManagement.ts`**
   - [ ] Listenmanagement-Funktionen vereinfachen
@@ -80,5 +80,6 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: Vereinfachung komplexer Funktionen (1.1 - 1.3)
-- **Nächster Schritt**: Implementierung von `utils/listOperations.ts`
+- **Aktueller Fokus**: Vereinfachung komplexer Funktionen (1.3)
+- **Nächster Schritt**: Refaktorierung von `useListManagement.ts`
+- **Abgeschlossen**: Erstellung von `utils/operations/listOperations.ts` und Refaktorierung von `useShoppingItems.ts`
