@@ -32,6 +32,9 @@
     "import/resolver": {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx", ".vue"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true
       }
     }
   },
@@ -76,6 +79,7 @@
       }
     ],
     "import/no-unresolved": "off",
+    "import/no-relative-parent-imports": "warn",
 
     // Vue specific rules
     "vue/multi-word-component-names": "warn",
@@ -93,10 +97,26 @@
     ],
 
     // TypeScript specific rules
-    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-function-return-type": ["warn", {
+      "allowExpressions": true,
+      "allowHigherOrderFunctions": true,
+      "allowTypedFunctionExpressions": true,
+      "allowDirectConstAssertionInArrowFunctions": true
+    }],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
+    "@typescript-eslint/prefer-nullish-coalescing": "warn",
+    "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/consistent-type-imports": ["error", {
+      "prefer": "type-imports",
+      "disallowTypeAnnotations": false
+    }],
+    "@typescript-eslint/no-unnecessary-type-assertion": "warn",
+    "@typescript-eslint/no-unnecessary-condition": "warn",
+    "@typescript-eslint/array-type": ["error", {
+      "default": "array"
+    }],
 
     // SonarJS rules
     "sonarjs/cognitive-complexity": ["warn", 25],
