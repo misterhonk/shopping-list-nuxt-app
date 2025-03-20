@@ -9,9 +9,20 @@ import {
   calculateTotalPrice,
   calculateCategoryPrice,
 } from './utils/itemUtils';
+import {
+  findListById,
+  addItemToList,
+  removeItemFromList,
+  updateItemInList,
+  removeItemsFromList
+} from './utils/operations';
+import { createLogger } from '~/utils/logger';
 
 import type { ShoppingItem, ShoppingList, Category } from './types';
 import type { Ref, ComputedRef } from 'vue';
+
+// Logger initialisieren
+const logger = createLogger('useShoppingItems');
 
 /**
  * Composable für die Verwaltung von Artikeln in Einkaufslisten
@@ -21,7 +32,7 @@ export function useShoppingItems(
   shoppingListsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
 ) {
-  const { saveToStorage, createImmutableCopy } = useLocalStorage();
+  const { saveToStorage } = useLocalStorage();
 
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
@@ -47,7 +58,7 @@ export function useShoppingItems(
    * Gibt alle Artikel der aktuellen Liste zurück
    */
   const allItems: ComputedRef<ShoppingItem[]> = computed(() => {
-    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
     if (!currentList || !Array.isArray(currentList.items)) {
       return [];
     }
@@ -58,7 +69,7 @@ export function useShoppingItems(
    * Gruppiert Artikel nach Kategorien
    */
   const getItemsGrouped = (categories: (string | Category)[]): Record<string, ShoppingItem[]> => {
-    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
 
     // Prüfen, ob items ein gültiges Array ist
     if (!currentList || !Array.isArray(currentList.items)) {
@@ -78,45 +89,56 @@ export function useShoppingItems(
   };
 
   /**
+   * Speichert die aktualisierten Listen und aktualisiert die Referenz
+   * @param updatedLists - Die aktualisierten Listen
+   * @returns true bei Erfolg, false bei Fehler
+   */
+  const saveUpdatedLists = (updatedLists: ShoppingList[] | null): boolean => {
+    if (!updatedLists) {
+      return false;
+    }
+    
+    shoppingListsRef.value = updatedLists;
+    saveToStorage('shoppingLists', updatedLists);
+    return true;
+  };
+
+  /**
    * Fügt einen neuen Artikel zur aktuellen Liste hinzu
    * @param itemData - Daten des neuen Artikels (optional)
    * @return Das hinzugefügte Item oder null bei Fehler
    */
   const addItem = (itemData: Partial<ShoppingItem> | null = null): ShoppingItem | null => {
+    // Wenn no listId, frühzeitig beenden
+    if (!currentListIdRef.value) {
+      logger.error('Keine Liste ausgewählt.');
+      return null;
+    }
+    
     // Wenn itemData übergeben wurde, verwenden wir das, ansonsten das newItem
     const itemToAdd = itemData || newItem;
 
     // Prüfen, ob die Daten gültig sind
-    if (
-      !itemToAdd.name ||
-      itemToAdd.name.trim() === '' ||
-      !(itemToAdd.quantity && itemToAdd.quantity > 0)
-    ) {
+    if (!itemToAdd.name || itemToAdd.name.trim() === '' || 
+        !(itemToAdd.quantity && itemToAdd.quantity > 0)) {
+      logger.error('Ungültige Artikeldaten.');
       return null;
     }
 
-    const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) {
-      return null;
-    }
-
+    // Item-Objekt erstellen
     const newItemObj = createItemObject(itemToAdd);
 
-    // Immutable Update der Listen mit dem neuen Item
-    const updatedLists = createImmutableCopy(shoppingListsRef.value);
-
-    // Sicherstellen, dass items existiert
-    if (!Array.isArray(updatedLists[listIndex].items)) {
-      updatedLists[listIndex].items = [];
-    }
-
-    // Item hinzufügen
-    updatedLists[listIndex].items.push(newItemObj);
-    updatedLists[listIndex].modifiedAt = Date.now();
+    // Basisfunktion zur Aktualisierung der Listen verwenden
+    const updatedLists = addItemToList(
+      shoppingListsRef.value,
+      currentListIdRef.value,
+      newItemObj
+    );
 
     // Update der Listen-Referenz und Speichern
-    shoppingListsRef.value = updatedLists;
-    saveToStorage('shoppingLists', updatedLists);
+    if (!saveUpdatedLists(updatedLists)) {
+      return null;
+    }
 
     // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
     if (!itemData) {
@@ -151,36 +173,24 @@ export function useShoppingItems(
    * @return true bei Erfolg, false bei Fehler
    */
   const removeItem = (item: ShoppingItem | string): boolean => {
-    // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
+    // Wenn keine Liste ausgewählt ist, frühzeitig beenden
+    if (!currentListIdRef.value) {
+      logger.error('Keine Liste ausgewählt.');
+      return false;
+    }
+    
+    // Item-ID aus dem Parameter extrahieren
     const itemId = typeof item === 'object' ? item.id : item;
-
-    const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) {
-      return false;
-    }
-
-    if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
-      return false;
-    }
-
-    // Prüfen, ob das Item existiert
-    const itemIndex = shoppingListsRef.value[listIndex].items.findIndex(item => item.id === itemId);
-    if (itemIndex === -1) {
-      return false;
-    }
-
-    // Immutable Update und Entfernen des Items
-    const updatedLists = createImmutableCopy(shoppingListsRef.value);
-    updatedLists[listIndex].items = updatedLists[listIndex].items.filter(
-      item => item.id !== itemId
+    
+    // Basisfunktion zur Entfernung des Items verwenden
+    const updatedLists = removeItemFromList(
+      shoppingListsRef.value,
+      currentListIdRef.value,
+      itemId
     );
-    updatedLists[listIndex].modifiedAt = Date.now();
-
-    // Update und Speichern
-    shoppingListsRef.value = updatedLists;
-    saveToStorage('shoppingLists', updatedLists);
-
-    return true;
+    
+    // Update der Listen-Referenz und Speichern
+    return saveUpdatedLists(updatedLists);
   };
 
   /**
@@ -189,42 +199,29 @@ export function useShoppingItems(
    * @return true bei Erfolg, false bei Fehler
    */
   const toggleItemChecked = (item: ShoppingItem | string): boolean => {
-    // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
+    // Wenn keine Liste ausgewählt ist, frühzeitig beenden
+    if (!currentListIdRef.value) {
+      logger.error('Keine Liste ausgewählt.');
+      return false;
+    }
+    
+    // Item-ID aus dem Parameter extrahieren
     const itemId = typeof item === 'object' ? item.id : item;
-
-    const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) {
-      return false;
-    }
-
-    if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
-      return false;
-    }
-
-    const itemIndex = shoppingListsRef.value[listIndex].items.findIndex(item => item.id === itemId);
-    if (itemIndex === -1) {
-      return false;
-    }
-
-    // Immutable Update und Ändern des Status
-    const updatedLists = createImmutableCopy(shoppingListsRef.value);
-    updatedLists[listIndex].items = updatedLists[listIndex].items.map((item, index) => {
-      if (index === itemIndex) {
-        return {
-          ...item,
-          checked: !item.checked,
-          modifiedAt: Date.now(),
-        };
-      }
-      return item;
-    });
-    updatedLists[listIndex].modifiedAt = Date.now();
-
-    // Update und Speichern
-    shoppingListsRef.value = updatedLists;
-    saveToStorage('shoppingLists', updatedLists);
-
-    return true;
+    
+    // Basisfunktion zur Aktualisierung des Items verwenden
+    const updatedLists = updateItemInList(
+      shoppingListsRef.value,
+      currentListIdRef.value,
+      itemId,
+      (item) => ({
+        ...item,
+        checked: !item.checked,
+        modifiedAt: Date.now()
+      })
+    );
+    
+    // Update der Listen-Referenz und Speichern
+    return saveUpdatedLists(updatedLists);
   };
 
   /**
@@ -232,25 +229,21 @@ export function useShoppingItems(
    * @return true bei Erfolg, false bei Fehler
    */
   const clearCheckedItems = (): boolean => {
-    const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    if (listIndex === -1) {
+    // Wenn keine Liste ausgewählt ist, frühzeitig beenden
+    if (!currentListIdRef.value) {
+      logger.error('Keine Liste ausgewählt.');
       return false;
     }
-
-    if (!Array.isArray(shoppingListsRef.value[listIndex].items)) {
-      return false;
-    }
-
-    // Immutable Update und Filtern der nicht erledigten Items
-    const updatedLists = createImmutableCopy(shoppingListsRef.value);
-    updatedLists[listIndex].items = updatedLists[listIndex].items.filter(item => !item.checked);
-    updatedLists[listIndex].modifiedAt = Date.now();
-
-    // Update und Speichern
-    shoppingListsRef.value = updatedLists;
-    saveToStorage('shoppingLists', updatedLists);
-
-    return true;
+    
+    // Basisfunktion zur Entfernung der erledigten Items verwenden
+    const updatedLists = removeItemsFromList(
+      shoppingListsRef.value,
+      currentListIdRef.value,
+      (item) => item.checked
+    );
+    
+    // Update der Listen-Referenz und Speichern
+    return saveUpdatedLists(updatedLists);
   };
 
   /**
@@ -282,7 +275,7 @@ export function useShoppingItems(
    * @return Der Gesamtpreis
    */
   const getTotalPrice = (): number => {
-    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
 
     if (!currentList || !Array.isArray(currentList.items)) {
       return 0;
@@ -297,7 +290,7 @@ export function useShoppingItems(
    * @return Der Preis für diese Kategorie
    */
   const getCategoryPrice = (categoryId: string): number => {
-    const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
+    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
 
     if (!currentList || !Array.isArray(currentList.items)) {
       return 0;
@@ -317,30 +310,39 @@ export function useShoppingItems(
     }
 
     // Alle Listen durchgehen und die Kategorie in den Items aktualisieren
-    const updatedLists = createImmutableCopy(shoppingListsRef.value);
-
     let hasUpdates = false;
+    let updatedLists = [...shoppingListsRef.value];
 
-    updatedLists.forEach((list: ShoppingList, listIndex: number) => {
-      if (Array.isArray(list.items)) {
-        // Alle Items in der Liste durchgehen
-        updatedLists[listIndex].items = list.items.map(item => {
-          const matchFound = itemBelongsToCategory(item, categoryId);
-
-          // Wenn Match gefunden, Kategorie aktualisieren
-          if (matchFound) {
-            hasUpdates = true;
-            return updateItemCategory(item, categoryId, newName);
-          }
-
-          return item;
-        });
-
-        // Nur die Liste als geändert markieren, wenn Items geändert wurden
-        if (hasUpdates) {
-          updatedLists[listIndex].modifiedAt = Date.now();
-        }
+    updatedLists = updatedLists.map(list => {
+      if (!Array.isArray(list.items)) {
+        return list;
       }
+      
+      // Updates für diese Liste überprüfen
+      let listUpdated = false;
+      const updatedItems = list.items.map(item => {
+        const matchFound = itemBelongsToCategory(item, categoryId);
+        
+        // Wenn Match gefunden, Kategorie aktualisieren
+        if (matchFound) {
+          listUpdated = true;
+          hasUpdates = true;
+          return updateItemCategory(item, categoryId, newName);
+        }
+        
+        return item;
+      });
+      
+      // Nur aktualisieren, wenn Änderungen vorgenommen wurden
+      if (listUpdated) {
+        return {
+          ...list,
+          items: updatedItems,
+          modifiedAt: Date.now()
+        };
+      }
+      
+      return list;
     });
 
     // Nur speichern, wenn Änderungen vorgenommen wurden
