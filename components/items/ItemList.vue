@@ -1,7 +1,7 @@
 <template>
   <div class="mb-8">
     <div class="flex justify-between items-center mb-3">
-      <h3 class="font-bold text-xl text-orange-500">Einkaufsliste:</h3>
+      <h3 class="font-bold text-lg text-orange-500">Einkaufsliste</h3>
       <div
         v-if="totalPrice > 0"
         class="text-sm font-medium bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full"
