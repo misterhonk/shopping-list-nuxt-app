@@ -6,10 +6,10 @@
           type="checkbox"
           :checked="item.checked"
           class="custom-checkbox-input"
-          @change="$emit('toggle')"
+          @click.stop="$emit('toggle')"
         />
-        <span class="custom-checkbox-mark">
-          <svg v-if="item.checked" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <span class="custom-checkbox-mark relative">
+          <svg v-if="item.checked" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           </svg>
         </span>
@@ -17,7 +17,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center flex-1">
         <span
           :class="{ 'line-through text-gray-400 dark:text-gray-500': item.checked }"
-          class="font-medium mr-2"
+          class="font-medium mr-2 transition-all duration-200"
         >
           {{ item.name }} ({{ item.quantity }})
         </span>
