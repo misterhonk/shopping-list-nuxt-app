@@ -1,4 +1,4 @@
-# Shopping List App
+# Shopping List App (v2.0.0)
 
 Eine einfache Einkaufslisten-App mit Nuxt.js und Vue 3, die folgende Funktionen bietet:
 
@@ -16,10 +16,12 @@ Eine einfache Einkaufslisten-App mit Nuxt.js und Vue 3, die folgende Funktionen 
 
 ## Technologien
 
-- Vue 3 / Nuxt 3
+- Vue 3 / Nuxt 3 mit TypeScript
 - Composition API
 - Tailwind CSS
 - Pinia State Management
+- Service-orientierte Architektur
+- Repository-Pattern für Datenzugriff
 
 ## Installation
 
@@ -43,3 +45,13 @@ Die App enthält jetzt ein flexibles Kategoriesystem mit verschiedenen Vorlagen:
 - **Elektronikmarkt**: Kategorien für elektronische Produkte
 
 Sie können diese Vorlagen verwenden, eigene erstellen oder bestehende anpassen. Jede Kategorie kann hinzugefügt, bearbeitet oder gelöscht werden.
+
+## Versionierung
+
+Die App folgt den Prinzipien der [Semantischen Versionierung](https://semver.org/lang/de/).
+
+Aktuelle Version: **2.0.0**
+
+Details zur Versionierungsstrategie finden Sie in der [Versionierungsdokumentation](docs/versioning-strategy.md).
+
+Eine detaillierte Liste der Änderungen zwischen Versionen finden Sie im [Changelog](CHANGELOG.md).
