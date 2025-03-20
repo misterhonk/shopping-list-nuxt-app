@@ -88,7 +88,7 @@
 
       <!-- Artikelliste -->
       <ItemList
-        :items="allItems"
+        :items="currentListItems"
         @toggle="toggleItemChecked"
         @remove="removeItem"
       />
@@ -196,9 +196,19 @@ const {
   updateList,
 } = useShoppingLists();
 
-// Artikel verwalten
-const { allItems, /*isAddingItem,*/ addNewItem, removeItem, toggleItemChecked, clearCheckedItems } =
-  useShoppingItems(lists, currentListId);
+// Artikel verwalten - Die currentListId wird hier übergeben
+const { allItems, addNewItem, removeItem, toggleItemChecked, clearCheckedItems, updateCategoryInItems } =
+  useShoppingItems(currentListId);
+
+// Berechne eine gefilterte Liste mit nur den Artikeln der aktuell ausgewählten Liste
+const currentListItems = computed(() => {
+  if (!currentListId.value) return [];
+  
+  return allItems.value.filter(item => {
+    const listId = item.listId || (currentList.value?.id || null);
+    return listId === currentListId.value;
+  });
+});
 
 // Import/Export-Funktionen
 const {
@@ -263,9 +273,6 @@ const onImportOptionsLoaded = (data: any, availableLists: any[]) => {
   showImportOptions.value = true;
 };
 
-// Kategorieänderungen überwachen und synchronisieren
-const { updateCategoryInItems } = useShoppingItems(lists, currentListId);
-
 // Kategoriesynchronisierungs-Funktion aus dem Nuxt-Plugin holen
 const onCategoryUpdate = useNuxtApp().$onCategoryUpdate;
 let unsubscribeCategoryUpdate = null;
@@ -322,14 +329,4 @@ onUnmounted(() => {
     unsubscribeCategoryUpdate();
   }
 });
-
-// Der folgende Code wird nicht mehr benötigt, da wir das isAddingItem-Flag nicht mehr verwenden
-/*
-// Watch für isAddingItem
-watch(isAddingItem, newVal => {
-  if (!newVal) {
-    // Formular zurücksetzen wenn geschlossen
-  }
-});
-*/
 </script>

@@ -14,12 +14,17 @@ const logger = createLogger('useShoppingItems');
 /**
  * Composable für die Verwaltung von Artikeln in Einkaufslisten
  * Bietet Funktionen zum Hinzufügen, Bearbeiten, Löschen und Markieren von Artikeln
+ * 
+ * @param providedCurrentListId - Optional: Eine Ref auf die aktuelle Listen-ID von außen
  */
-export function useShoppingItems() {
+export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
   const itemNameInput = ref<HTMLInputElement | null>(null);
-  const currentListId = ref<string | null>(null);
+  
+  // Entweder providedCurrentListId verwenden oder eine neue Ref erstellen
+  const currentListId = providedCurrentListId || ref<string | null>(null);
+  
   const items = ref<ShoppingItem[]>([]);
 
   // Neues Item Formular
@@ -42,7 +47,10 @@ export function useShoppingItems() {
    * Lädt die aktuelle Listen-ID und die aktuellen Artikel
    */
   const loadCurrentListData = (): void => {
-    currentListId.value = shoppingListService.getCurrentListId();
+    // Nur laden, wenn kein providedCurrentListId übergeben wurde
+    if (!providedCurrentListId) {
+      currentListId.value = shoppingListService.getCurrentListId();
+    }
     refreshItems();
   };
 
@@ -50,12 +58,21 @@ export function useShoppingItems() {
    * Aktualisiert die Artikel der aktuellen Liste
    */
   const refreshItems = (): void => {
-    if (!currentListId.value) {
-      items.value = [];
-      return;
-    }
-
-    items.value = itemService.getItemsByListId(currentListId.value);
+    // Get all items from all lists
+    const allLists = shoppingListService.getAllLists();
+    const allItemsFromAllLists: ShoppingItem[] = [];
+    
+    allLists.forEach(list => {
+      // Get items from this list and make sure they have the listId
+      const listItems = list.items.map(item => ({
+        ...item,
+        listId: list.id
+      }));
+      
+      allItemsFromAllLists.push(...listItems);
+    });
+    
+    items.value = allItemsFromAllLists;
   };
 
   // Beim Mounting die aktuelle Liste und Artikel laden
@@ -69,7 +86,7 @@ export function useShoppingItems() {
   });
 
   /**
-   * Gibt alle Artikel der aktuellen Liste zurück
+   * Gibt alle Artikel (aus allen Listen) zurück
    */
   const allItems: ComputedRef<ShoppingItem[]> = computed(() => items.value);
 
@@ -149,8 +166,12 @@ export function useShoppingItems() {
    * @return true bei Erfolg, false bei Fehler
    */
   const removeItem = (item: ShoppingItem | string): boolean => {
+    // Item-Objekt und Liste-ID extrahieren
+    const itemObj = typeof item === 'object' ? item : null;
+    const listId = itemObj?.listId || currentListId.value;
+    
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
-    if (!currentListId.value) {
+    if (!listId) {
       logger.error('Keine Liste ausgewählt.');
       return false;
     }
@@ -159,7 +180,7 @@ export function useShoppingItems() {
     const itemId = typeof item === 'object' ? item.id : item;
     
     // Item entfernen
-    const success = itemService.removeItem(currentListId.value, itemId);
+    const success = itemService.removeItem(listId, itemId);
     
     // Bei Erfolg Artikel aktualisieren
     if (success) {
@@ -175,9 +196,13 @@ export function useShoppingItems() {
    * @return true bei Erfolg, false bei Fehler
    */
   const toggleItemChecked = (item: ShoppingItem | string): boolean => {
-    // Wenn keine Liste ausgewählt ist, frühzeitig beenden
-    if (!currentListId.value) {
-      logger.error('Keine Liste ausgewählt.');
+    // Item-Objekt und Liste-ID extrahieren
+    const itemObj = typeof item === 'object' ? item : null;
+    const listId = itemObj?.listId || currentListId.value;
+    
+    // Wenn keine Liste ausgewählt ist und das Item kein listId hat, frühzeitig beenden
+    if (!listId) {
+      logger.error('Keine Liste ausgewählt oder keine listId im Item gefunden.');
       return false;
     }
     
@@ -185,7 +210,7 @@ export function useShoppingItems() {
     const itemId = typeof item === 'object' ? item.id : item;
     
     // Status ändern
-    const updatedItem = itemService.toggleItemChecked(currentListId.value, itemId);
+    const updatedItem = itemService.toggleItemChecked(listId, itemId);
     
     // Bei Erfolg Artikel aktualisieren
     const success = updatedItem !== null;
@@ -306,7 +331,7 @@ export function useShoppingItems() {
     }
 
     // Bei Änderungen die Items aktualisieren
-    if (hasChanges && currentListId.value) {
+    if (hasChanges) {
       refreshItems();
     }
   };

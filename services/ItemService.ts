@@ -45,7 +45,12 @@ export class ItemService extends BaseService {
         throw new Error(`Liste mit ID ${listId} nicht gefunden`);
       }
       
-      return Array.isArray(list.items) ? [...list.items] : [];
+      // Stelle sicher, dass jedes Item die listId hat
+      const items = Array.isArray(list.items) ? [...list.items] : [];
+      return items.map(item => ({
+        ...item,
+        listId: listId // Stelle sicher, dass jedes Item die listId hat
+      }));
     }, `Fehler beim Abrufen der Artikel für Liste ${listId}`) ?? [];
   }
 
@@ -99,6 +104,7 @@ export class ItemService extends BaseService {
         price: item.price || 0,
         addedAt: timestamp,
         modifiedAt: timestamp,
+        listId: listId // Wichtig: Setze die ListId für das neue Item
       };
       
       // Liste aktualisieren
@@ -150,6 +156,7 @@ export class ItemService extends BaseService {
         ...currentItem,
         ...updates,
         id: itemId, // ID darf nicht überschrieben werden
+        listId: listId, // Stelle sicher, dass die ListId gesetzt ist
         modifiedAt: Date.now(),
       };
       

@@ -44,6 +44,7 @@ export interface ShoppingItem {
   note?: string;
   addedAt?: number;
   modifiedAt?: number;
+  listId?: string; // Die ID der Liste, zu der dieser Artikel gehört
 }
 
 /**

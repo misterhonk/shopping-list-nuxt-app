@@ -14,7 +14,7 @@
         type="submit"
         class="px-3 py-2 bg-orange-500 text-white rounded-r-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
         :disabled="!isValid"
-        :class="{ 'opacity-50 cursor-not-allowed': !isValid }"
+        :class="{ 'cursor-not-allowed': !isValid }"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
@@ -59,9 +59,9 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategorie</label>
           <select
             v-model="itemCategory"
-            class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+            class="w-full px-2 py-1 h-9 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
           >
-            <option v-for="category in categories" :key="category.id" :value="category">
+            <option v-for="category in normalizedCategories" :key="category.id" :value="category">
               {{ category.name }}
             </option>
           </select>
@@ -75,14 +75,14 @@
             step="0.01"
             min="0"
             placeholder="0.00"
-            class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
+            class="w-full px-2 py-1 h-9 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
           />
         </div>
         
         <div class="flex items-end">
           <button
             type="button"
-            class="w-full px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md"
+            class="w-full px-3 py-1 h-9 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600"
             @click="hideDetails"
           >
             Weniger Details
@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 const props = defineProps({
   categories: {
@@ -143,6 +143,20 @@ const normalizedCategories = computed(() =>
     };
   })
 );
+
+// Kategorien überwachen und Auswahl aktualisieren wenn die Kategorien sich ändern
+watch(normalizedCategories, (newCategories) => {
+  if (newCategories.length > 0) {
+    // Wenn die alte Kategorie nicht mehr in der Liste ist oder keine Kategorie gesetzt ist
+    const currentCategoryExists = itemCategory.value && newCategories.some(cat => 
+      cat.id === itemCategory.value.id || cat.name === itemCategory.value.name
+    );
+    
+    if (!currentCategoryExists) {
+      itemCategory.value = newCategories[0];
+    }
+  }
+}, { immediate: true });
 
 // Validierung
 const isValid = computed(() => itemName.value && itemName.value.trim() !== '');
@@ -204,11 +218,6 @@ const hideDetailsOnBlur = (event) => {
 
 // Beim Mounten
 onMounted(() => {
-  // Kategorie initialisieren
-  if (normalizedCategories.value.length > 0) {
-    itemCategory.value = normalizedCategories.value[0];
-  }
-  
   // Fokus auf das Namensfeld setzen
   if (nameInput.value) {
     nameInput.value.focus();
