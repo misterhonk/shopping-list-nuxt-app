@@ -8,6 +8,11 @@ import {
   determineTemplateId,
   activateTemplateInStore,
 } from '../utils/listUtils';
+import {
+  findListById,
+  findListIndex,
+  updateList
+} from '../utils/operations';
 
 import type { ShoppingList, CreateListOptions } from '../types';
 import type { Ref } from 'vue';
@@ -36,7 +41,7 @@ interface CategoryStoreService {
  * } = useListManagement(categoryStore);
  */
 export function useListManagement(categoryStore?: CategoryStoreService) {
-  const { saveToStorage, loadFromStorage, createImmutableCopy } = useLocalStorage();
+  const { saveToStorage, loadFromStorage } = useLocalStorage();
 
   // Reaktive Daten
   const lists: Ref<ShoppingList[]> = ref([]);
@@ -44,16 +49,17 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   const initialized = ref(false);
 
   // Berechnete Werte
-  const currentList = computed<ShoppingList>(
-    () =>
-      lists.value.find(list => list.id === currentListId.value) || {
+  const currentList = computed<ShoppingList>(() => {
+    return (
+      findListById(lists.value, currentListId.value || '') || {
         id: '',
         name: '',
         items: [],
         templateId: 'supermarket',
         isFavorite: false,
       }
-  );
+    );
+  });
 
   const currentListTemplateId = computed({
     get: () => currentList.value.templateId || 'supermarket',
@@ -74,6 +80,23 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     createdAt: list.createdAt || 0,
     modifiedAt: list.modifiedAt || Date.now(),
   });
+
+  /**
+   * Speichert die aktuellen Listen und aktuelle Listen-ID
+   * @returns true bei Erfolg, false bei Fehler
+   */
+  const saveListData = (): boolean => {
+    try {
+      saveToStorage('shoppingLists', lists.value);
+      if (currentListId.value) {
+        saveToStorage('currentListId', currentListId.value);
+      }
+      return true;
+    } catch (error) {
+      logger.error('Fehler beim Speichern der Listen und Listen-ID:', error);
+      return false;
+    }
+  };
 
   /**
    * Lädt die Liste und die aktuelle Listen-ID aus dem Speicher
@@ -174,6 +197,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
     if (!name || name.trim() === '') {
+      logger.error('Fehler beim Erstellen einer Liste: Kein Name angegeben');
       return null;
     }
 
@@ -190,8 +214,11 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       currentListId.value = newList.id;
 
       // Speichern und Template aktivieren
-      saveToStorage('shoppingLists', lists.value);
-      saveToStorage('currentListId', currentListId.value);
+      if (!saveListData()) {
+        logger.error('Fehler beim Speichern der neuen Liste');
+        return null;
+      }
+      
       activateTemplateInStore(categoryStore, newList.templateId);
 
       return newList;
@@ -221,8 +248,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     currentListId.value = defaultList.id;
     initialized.value = true;
 
-    saveToStorage('shoppingLists', lists.value);
-    saveToStorage('currentListId', currentListId.value);
+    saveListData();
 
     return defaultList;
   };
@@ -234,7 +260,14 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const selectList = (listId: string): boolean => {
     try {
-      if (!lists.value.some(list => list.id === listId)) {
+      if (!listId) {
+        logger.error('Keine Listen-ID zum Auswählen angegeben');
+        return false;
+      }
+      
+      const list = findListById(lists.value, listId);
+      if (!list) {
+        logger.error(`Liste mit ID ${listId} nicht gefunden`);
         return false;
       }
 
@@ -242,9 +275,8 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       saveToStorage('currentListId', currentListId.value);
 
       // Aktiviere die passende Kategorie-Vorlage für diese Liste
-      const selectedList = lists.value.find(list => list.id === listId);
-      if (selectedList && selectedList.templateId) {
-        activateTemplateInStore(categoryStore, selectedList.templateId);
+      if (list.templateId) {
+        activateTemplateInStore(categoryStore, list.templateId);
       }
 
       return true;
@@ -261,11 +293,19 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const deleteList = (listId: string): boolean => {
     try {
+      if (!listId) {
+        logger.error('Keine Listen-ID zum Löschen angegeben');
+        return false;
+      }
+      
       if (lists.value.length <= 1) {
+        logger.error('Die letzte Liste kann nicht gelöscht werden');
         return false;
       }
 
-      if (!lists.value.some(list => list.id === listId)) {
+      const list = findListById(lists.value, listId);
+      if (!list) {
+        logger.error(`Liste mit ID ${listId} nicht gefunden`);
         return false;
       }
 
@@ -273,14 +313,12 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       const updatedLists = lists.value.filter(list => list.id !== listId);
       lists.value = updatedLists;
 
+      // Wenn die aktuell ausgewählte Liste gelöscht wurde, die erste Liste auswählen
       if (listId === currentListId.value) {
         currentListId.value = lists.value[0].id;
       }
 
-      saveToStorage('shoppingLists', lists.value);
-      saveToStorage('currentListId', currentListId.value);
-
-      return true;
+      return saveListData();
     } catch (error) {
       logger.error('Fehler beim Löschen einer Liste:', error);
       return false;
@@ -294,23 +332,37 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const updateListTemplate = (templateId: string): boolean => {
     try {
-      const listIndex = lists.value.findIndex(list => list.id === currentListId.value);
-      if (listIndex === -1) {
+      if (!currentListId.value) {
+        logger.error('Keine aktuelle Liste ausgewählt');
+        return false;
+      }
+      
+      if (!templateId) {
+        logger.error('Keine Template-ID angegeben');
         return false;
       }
 
-      // Immutable Update
-      const updatedLists = createImmutableCopy(lists.value);
-      updatedLists[listIndex].templateId = templateId;
-      updatedLists[listIndex].modifiedAt = Date.now();
+      // Basisfunktion zur Aktualisierung der Liste verwenden
+      const updatedLists = updateList(
+        lists.value,
+        currentListId.value,
+        (list) => ({
+          ...list,
+          templateId: templateId,
+          modifiedAt: Date.now()
+        })
+      );
+
+      if (!updatedLists) {
+        return false;
+      }
 
       lists.value = updatedLists;
 
       // Aktiviere das Template im Store
       activateTemplateInStore(categoryStore, templateId);
 
-      saveToStorage('shoppingLists', lists.value);
-      return true;
+      return saveToStorage('shoppingLists', lists.value);
     } catch (error) {
       logger.error('Fehler beim Aktualisieren der Template-ID:', error);
       return false;
@@ -322,14 +374,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    * @returns true bei Erfolg, false bei Fehler
    */
   const saveLists = (): boolean => {
-    try {
-      saveToStorage('shoppingLists', lists.value);
-      saveToStorage('currentListId', currentListId.value);
-      return true;
-    } catch (error) {
-      logger.error('Fehler beim Speichern der Listen:', error);
-      return false;
-    }
+    return saveListData();
   };
 
   return {
