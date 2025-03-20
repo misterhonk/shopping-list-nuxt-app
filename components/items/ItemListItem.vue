@@ -8,7 +8,11 @@
           class="custom-checkbox-input"
           @change="$emit('toggle')"
         />
-        <span class="custom-checkbox-mark"></span>
+        <span class="custom-checkbox-mark">
+          <svg v-if="item.checked" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+          </svg>
+        </span>
       </div>
       <div class="flex flex-col sm:flex-row sm:items-center flex-1">
         <span
@@ -17,11 +21,8 @@
         >
           {{ item.name }} ({{ item.quantity }})
         </span>
-        <span v-if="item.price" class="text-sm text-gray-600 dark:text-gray-400">
+        <span v-if="item.price" class="text-sm text-gray-600 dark:text-gray-400 sm:ml-auto">
           {{ formatPrice(item.price * item.quantity) }}
-        </span>
-        <span class="text-sm text-orange-500 dark:text-orange-400 sm:ml-auto">
-          {{ getCategoryName(item.category) }}
         </span>
       </div>
     </div>
@@ -56,15 +57,7 @@ interface Props {
 
 defineProps<Props>();
 
-const getCategoryName = (category: Category | string): string => {
-  if (typeof category === 'object' && category !== null && category.name) {
-    return category.name;
-  }
-  if (typeof category === 'string') {
-    return category;
-  }
-  return 'Sonstiges';
-};
+// getCategoryName wurde entfernt, da Kategorien nun als Überschriften angezeigt werden
 
 defineEmits<{
   (e: 'toggle'): void;
