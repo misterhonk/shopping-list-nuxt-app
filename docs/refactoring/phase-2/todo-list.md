@@ -58,17 +58,17 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
   - [x] `CategoryService` implementieren
   - [x] Commit: `feat: Service-Layer für Geschäftslogik eingeführt`
 
-- [ ] **4.2 Storage-Repository implementieren**
+- [x] **4.2 Storage-Repository implementieren**
   - [x] Interface für `StorageRepository` definieren
   - [x] `LocalStorageRepository` als Implementierung erstellen
-  - [ ] Tests für Storage-Funktionalität schreiben
+  - [x] Tests für Storage-Funktionalität schreiben
   - [x] Commit: `feat: Repository-Pattern für Datenspeicherung implementiert` (im Rahmen von 4.1 erledigt)
 
-- [ ] **4.3 Composables auf Service-Layer umstellen**
-  - [ ] `useShoppingItems` auf Services umstellen
-  - [ ] `useListManagement` auf Services umstellen
-  - [ ] `useShoppingLists` auf Services umstellen
-  - [ ] Commit: `refactor: Composables auf Service-Layer umgestellt`
+- [x] **4.3 Composables auf Service-Layer umstellen**
+  - [x] `useShoppingItems` auf Services umstellen
+  - [x] `useListManagement` auf Services umstellen
+  - [x] `useShoppingLists` auf Services umstellen
+  - [x] Commit: `refactor: Composables auf Service-Layer umgestellt`
 
 ## Hinweise zur Umsetzung
 
@@ -81,8 +81,8 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: Composables auf Service-Layer umstellen (4.3)
-- **Nächster Schritt**: useShoppingItems auf Services umstellen
+- **Aktueller Status**: Phase 2 vollständig abgeschlossen! ✅
+- **Nächste Phase**: Core-Funktionalität im Service-Layer weiter verbessern
 - **Abgeschlossen**: 
   - Vereinfachung komplexer Funktionen (1.1 - 1.3)
   - TypeScript strenger konfigurieren (2.1 - 2.2)
@@ -90,3 +90,4 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
   - Validierungs-Utilities implementieren (3.2)
   - Service-Layer einführen (4.1)
   - Storage-Repository implementieren (4.2)
+  - Composables auf Service-Layer umstellen (4.3)

@@ -4,6 +4,14 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
 
 ## [2025-03-20]
 
+### Phase 4.3: Composables auf Service-Layer umstellen - Abgeschlossen
+- Composables refaktoriert zur Verwendung des Service-Layers:
+  - `useShoppingItems` verwendet den `ItemService` für Artikeloperationen
+  - `useListManagement` verwendet den `ShoppingListService` für Listenoperationen
+  - Reaktiver Zustand mit onMounted und watch zur Aktualisierung
+  - Verbesserte Fehlerbehandlung und Logging
+  - Klare Trennung von UI-Logik und Geschäftslogik
+
 ### Phase 4.1-4.2: Service-Layer einführen und Storage-Repository implementieren - Abgeschlossen
 - Verzeichnisstruktur für Services und Repositories erstellt
 - Service-Klassen implementiert:
@@ -62,5 +70,23 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
   - Verbesserte Null- und Existenzprüfungen
   - Konsistentere Fehlerbehandlung in allen Funktionen
 
-### Geplant
-- Umstellung der Composables auf den Service-Layer
+## Zusammenfassung
+
+Phase 2 des Refactorings wurde erfolgreich abgeschlossen, mit einem Fokus auf:
+
+1. **Verbesserte Codestruktur**:
+   - Zentrale Basisfunktionen für häufige Operationen
+   - Klare Trennung von Zuständigkeiten zwischen UI und Geschäftslogik
+   - Konsistente Fehlerbehandlung und Logging
+
+2. **Erhöhte Typsicherheit**:
+   - Strikte TypeScript-Konfiguration
+   - Umfassende UI-Status-Interfaces
+   - Type Guards und Validierungs-Utilities
+
+3. **Bessere Architektur**:
+   - Service-Layer für die Geschäftslogik
+   - Repository-Pattern für die Datenzugriffsabstraktion
+   - Klare Abhängigkeitsstruktur mit Dependency Injection
+
+Diese Verbesserungen haben die Wartbarkeit, Testbarkeit und Erweiterbarkeit der App deutlich erhöht und eine solide Grundlage für zukünftige Entwicklungen geschaffen.
