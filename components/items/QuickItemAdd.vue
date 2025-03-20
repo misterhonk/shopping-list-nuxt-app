@@ -8,6 +8,7 @@
         placeholder="Artikel hinzufügen..."
         class="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
         @focus="showDetails = true"
+        @blur="hideDetailsOnBlur"
       />
       <button
         type="submit"
@@ -26,10 +27,10 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Menge</label>
-          <div class="flex items-center">
+          <div class="flex items-center h-9">
             <button 
               type="button" 
-              class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-l-md"
+              class="px-2 py-1 h-full bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-l-md hover:bg-orange-200 dark:hover:bg-orange-800"
               @click="decreaseQuantity"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -40,11 +41,11 @@
               v-model.number="itemQuantity"
               type="number"
               min="1"
-              class="w-12 px-2 py-1 text-center border-t border-b border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              class="w-12 h-full px-2 py-1 text-center border-t border-b border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             />
             <button 
               type="button" 
-              class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-r-md"
+              class="px-2 py-1 h-full bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-r-md hover:bg-orange-200 dark:hover:bg-orange-800"
               @click="increaseQuantity"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -184,6 +185,21 @@ const decreaseQuantity = () => {
 // Details ausblenden
 const hideDetails = () => {
   showDetails.value = false;
+};
+
+// Details ausblenden, wenn nicht mehr im Fokus
+const hideDetailsOnBlur = (event) => {
+  // Wir prüfen, ob wir zu einem Element innerhalb des Formulars navigieren
+  // Wenn ja, dann behalten wir die Details offen
+  const relatedTarget = event.relatedTarget;
+  if (relatedTarget && (relatedTarget.closest('form') || relatedTarget.closest('.mt-3'))) {
+    return;
+  }
+  
+  // Ansonsten blenden wir die Details aus
+  if (itemName.value.trim() === '') {
+    showDetails.value = false;
+  }
 };
 
 // Beim Mounten
