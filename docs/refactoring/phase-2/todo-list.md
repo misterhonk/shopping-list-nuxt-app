@@ -44,10 +44,10 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
   - [x] Definition von Interfaces für Filter-Optionen
   - [x] Commit: `feat: UI-Status-Interfaces für bessere Typsicherheit definiert`
 
-- [ ] **3.2 Validierungs-Utilities implementieren**
-  - [ ] Type Guards für wichtige Datenstrukturen erstellen
-  - [ ] Validierungsfunktionen für Benutzerinput implementieren
-  - [ ] Commit: `feat: Type Guards und Validierungsfunktionen für Datenstrukturen implementiert`
+- [x] **3.2 Validierungs-Utilities implementieren**
+  - [x] Type Guards für wichtige Datenstrukturen erstellen
+  - [x] Validierungsfunktionen für Benutzerinput implementieren
+  - [x] Commit: `feat: Type Guards und Validierungsfunktionen für Datenstrukturen implementiert`
 
 ## 4. Core-Funktionalität klarer isolieren
 
@@ -81,9 +81,10 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: Validierungs-Utilities implementieren (3.2)
-- **Nächster Schritt**: Type Guards für wichtige Datenstrukturen erstellen
+- **Aktueller Fokus**: Service-Layer einführen (4.1)
+- **Nächster Schritt**: Verzeichnisstruktur für Services erstellen
 - **Abgeschlossen**: 
   - Vereinfachung komplexer Funktionen (1.1 - 1.3)
   - TypeScript strenger konfigurieren (2.1 - 2.2)
   - UI-Status-Interfaces definieren (3.1)
+  - Validierungs-Utilities implementieren (3.2)

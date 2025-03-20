@@ -4,6 +4,13 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
 
 ## [2025-03-20]
 
+### Phase 3.2: Validierungs-Utilities implementieren - Abgeschlossen
+- Neue Verzeichnisstruktur `utils/validation/` mit Type Guards und Formularvalidierung:
+  - Type Guards für wichtige Datenstrukturen (ShoppingItem, ShoppingList, Category)
+  - Funktionen für Formularvalidierung mit flexiblen ValidationRules
+  - Zentrale Exportdatei für einfachen Import aller Validierungsfunktionen
+- Dokumentation zur Verwendung der Validierungs-Utilities in `docs/validation-utilities.md`
+
 ### Phase 3.1: UI-Status-Interfaces definieren - Abgeschlossen
 - Neue Datei `types/uiTypes.ts` mit umfangreichen UI-spezifischen Interfaces erstellt:
   - FormStatus-Typen für Formularzustände (`ItemFormState`, `ListFormState`)
@@ -43,6 +50,6 @@ Dieses Dokument enthält eine chronologische Aufzeichnung aller Änderungen, die
   - Konsistentere Fehlerbehandlung in allen Funktionen
 
 ### Geplant
-- Implementierung von Validierungs-Utilities
 - Einführung eines Service-Layers zur Trennung von UI-Logik und Geschäftslogik
 - Implementierung eines Repository-Patterns für Datenspeicherung
+- Umstellung der Composables auf den Service-Layer
