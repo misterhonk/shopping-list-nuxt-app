@@ -9,6 +9,7 @@ In dieser Dokumentation werden die bisher durchgeführten Refactoring-Maßnahmen
 ### 1. Listenmanagement-Funktionalität
 
 #### Erstellte Utilities
+
 - Neue Datei `composables/utils/listUtils.ts` mit gemeinsamen Hilfsfunktionen:
   - `sortListsByFavorites`: Sortierung von Listen nach Favoriten-Status
   - `determineTemplateId`: Bestimmung der Template-ID anhand des Listennamens
@@ -16,18 +17,20 @@ In dieser Dokumentation werden die bisher durchgeführten Refactoring-Maßnahmen
   - `getItemsCount` und `getCheckedItemsCount`: Hilfsfunktionen für Listenstatistiken
 
 #### Angepasste Dateien
-- `useListProperties.ts`: 
+
+- `useListProperties.ts`:
   - Verwendet nun gemeinsame Funktionen für Artikelzählung
   - Redundante Implementierungen entfernt
-- `useListUpdate.ts`: 
+- `useListUpdate.ts`:
   - Verwendet `sortListsByFavorites` für konsistente Sortierlogik
-- `useListManagement.ts`: 
+- `useListManagement.ts`:
   - Integriert `sortListsByFavorites`, `determineTemplateId` und `activateTemplateInStore`
   - Aufgeteilt in kleinere, fokussierte Funktionen
 
 ### 2. Artikelverwaltungs-Funktionalität
 
 #### Erstellte Utilities
+
 - Neue Datei `composables/utils/itemUtils.ts` mit gemeinsamen Hilfsfunktionen:
   - `itemBelongsToCategory`: Überprüft, ob ein Artikel zu einer Kategorie gehört
   - `updateItemCategory`: Aktualisiert Kategorieinformationen in einem Artikel
@@ -37,6 +40,7 @@ In dieser Dokumentation werden die bisher durchgeführten Refactoring-Maßnahmen
   - `calculateCategoryPrice`: Berechnet den Preis für eine bestimmte Kategorie
 
 #### Angepasste Dateien
+
 - `useItemManagement.ts`:
   - Verwendung der zentralen Utility-Funktionen
   - Entfernung duplizierter Logik
@@ -66,5 +70,6 @@ In dieser Dokumentation werden die bisher durchgeführten Refactoring-Maßnahmen
 4. **Verbesserung der TypeScript-Typdefinitionen**: Sicherstellen, dass alle Typen korrekt und vollständig definiert sind
 
 Diese Refactoring-Maßnahmen entsprechen den Zielen aus dem Refactoring-Plan, insbesondere:
+
 - "Importpfade optimieren" aus Phase 1: Quick Wins
 - "Duplizierte Logik eliminieren" aus Phase 2: Moderate Verbesserungen

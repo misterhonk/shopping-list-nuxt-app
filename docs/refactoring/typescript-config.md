@@ -37,18 +37,24 @@ Wir verwenden eine strenge TypeScript-Konfiguration, um frühzeitig potenzielle 
 ```typescript
 // SCHLECHT
 const items = [];
-function processItem(item) { /* ... */ }
+function processItem(item) {
+  /* ... */
+}
 
 // GUT
 const items: ShoppingItem[] = [];
-function processItem(item: ShoppingItem): void { /* ... */ }
+function processItem(item: ShoppingItem): void {
+  /* ... */
+}
 ```
 
 ### `any` vermeiden
 
 ```typescript
 // SCHLECHT
-function parseData(data: any) { /* ... */ }
+function parseData(data: any) {
+  /* ... */
+}
 
 // GUT
 function parseData(data: unknown) {
