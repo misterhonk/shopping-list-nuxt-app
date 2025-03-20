@@ -89,21 +89,21 @@
   .custom-checkbox {
     @apply relative flex items-center;
   }
-  
+
   .custom-checkbox-input {
     @apply absolute opacity-0 h-0 w-0;
   }
-  
+
   .custom-checkbox-mark {
     @apply h-6 w-6 rounded-md border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 
     flex items-center justify-center transition-all duration-200
     hover:border-orange-400 dark:hover:border-orange-500;
   }
-  
+
   .custom-checkbox-input:checked ~ .custom-checkbox-mark {
     @apply bg-orange-500 border-orange-500 dark:bg-orange-600 dark:border-orange-600;
   }
-  
+
   .custom-checkbox-input:focus-visible ~ .custom-checkbox-mark {
     @apply ring-2 ring-orange-400 ring-offset-2 dark:ring-offset-gray-800;
   }

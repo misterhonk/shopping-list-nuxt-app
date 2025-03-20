@@ -19,7 +19,15 @@
     "plugin:sonarjs/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["@typescript-eslint", "vue", "import", "promise", "sonarjs", "prettier", "unused-imports"],
+  "plugins": [
+    "@typescript-eslint",
+    "vue",
+    "import",
+    "promise",
+    "sonarjs",
+    "prettier",
+    "unused-imports"
+  ],
   "settings": {
     "import/resolver": {
       "node": {
@@ -38,7 +46,7 @@
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
     ],
-    "import/no-unused-modules": [1, {"unusedExports": true}],
+    "import/no-unused-modules": [1, { "unusedExports": true }],
     "camelcase": ["error", { "properties": "never" }],
     "arrow-body-style": ["error", "as-needed"],
     "curly": ["error", "all"],
