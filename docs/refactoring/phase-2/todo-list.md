@@ -16,11 +16,11 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
   - [x] Prüfung und Verbesserung der Fehlerbehandlung
   - [x] Commit: `refactor: useShoppingItems vereinfacht durch Verwendung von Basisfunktionen`
 
-- [ ] **1.3 Refaktorierung von `useListManagement.ts`**
-  - [ ] Listenmanagement-Funktionen vereinfachen
-  - [ ] Duplizierte Logik entfernen
-  - [ ] Durchgängige Nutzung immutable Updates sicherstellen
-  - [ ] Commit: `refactor: useListManagement vereinfacht durch Verwendung von Basisfunktionen`
+- [x] **1.3 Refaktorierung von `useListManagement.ts`**
+  - [x] Listenmanagement-Funktionen vereinfachen
+  - [x] Duplizierte Logik entfernen
+  - [x] Durchgängige Nutzung immutable Updates sicherstellen
+  - [x] Commit: `refactor: useListManagement vereinfacht durch Verwendung von Basisfunktionen`
 
 ## 2. TypeScript strenger konfigurieren
 
@@ -80,6 +80,9 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: Vereinfachung komplexer Funktionen (1.3)
-- **Nächster Schritt**: Refaktorierung von `useListManagement.ts`
-- **Abgeschlossen**: Erstellung von `utils/operations/listOperations.ts` und Refaktorierung von `useShoppingItems.ts`
+- **Aktueller Fokus**: Verbesserung der TypeScript-Konfiguration (2.1)
+- **Nächster Schritt**: Erweiterte ESLint-Regeln für TypeScript
+- **Abgeschlossen**: 
+  - Vereinfachung komplexer Funktionen (1.1 - 1.3)
+  - Basisfunktionen für Listenoperationen
+  - Refaktorierung von useShoppingItems und useListManagement
