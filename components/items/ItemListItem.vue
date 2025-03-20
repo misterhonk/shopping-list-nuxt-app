@@ -1,7 +1,7 @@
 <template>
-  <li class="p-4 flex justify-between items-center">
+  <li class="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" @click="$emit('toggle')">
     <div class="flex items-center flex-1">
-      <div class="custom-checkbox mr-3">
+      <label class="custom-checkbox mr-3 cursor-pointer">
         <input
           type="checkbox"
           :checked="item.checked"
@@ -13,7 +13,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           </svg>
         </span>
-      </div>
+      </label>
       <div class="flex flex-col sm:flex-row sm:items-center flex-1">
         <span
           :class="{ 'line-through text-gray-400 dark:text-gray-500': item.checked }"
@@ -28,7 +28,7 @@
     </div>
     <button
       class="p-1 ml-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-      @click="$emit('remove')"
+      @click.stop="$emit('remove')"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
