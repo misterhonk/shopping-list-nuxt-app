@@ -1,314 +1,207 @@
-# Shopping List App - Roadmap 2025
+# Shopping List App - Roadmap 2025-2026
 
-## Neue Features
+## ✅ Abgeschlossene Meilensteine
 
-### Preisverfolgung erweitern
+### Refactoring Phase 1 (Q1 2025)
+- ✅ **Aufräumen und Optimieren**
+  - ✅ Tote Code-Teile entfernen
+  - ✅ TypeScript-Integration verbessert
+  - ✅ Codekommentare verbessert
+  - ✅ CSS-Stile bereinigt
+  - ✅ Import-Pfade optimiert
+  - ✅ Relative Imports auf Nuxt-Aliase umgestellt
+  - ✅ Duplizierte Import/Export-Funktionalität konsolidiert
 
-- [ ] Preiseingabe bei Artikelerfassung implementieren
-- [ ] Preishistorie pro Artikel speichern
-- [ ] Funktion zur Anzeige des günstigsten Preises eines Artikels
-- [ ] Preisvergleich zwischen verschiedenen Märkten ermöglichen
-- [ ] Gesamtsumme der Einkaufsliste berechnen und anzeigen
-- [ ] Budgetplanung mit Preiswarnung implementieren
-- [ ] Exportfunktion für Preisdaten als CSV
+### Refactoring Phase 2 (Q1 2025)
+- ✅ **Architektur**
+  - ✅ Service-orientierte Architektur eingeführt
+  - ✅ Repository-Pattern implementiert
+  - ✅ UI-Logik von Geschäftslogik getrennt
+  - ✅ TypeScript strenger konfiguriert
+  - ✅ Interfaces für alle Datenstrukturen definiert
+  - ✅ Komplexe Funktionen vereinfacht
 
-### Statistik-Dashboard
+### DevOps & Deployment (Q1 2025)
+- ✅ **Docker-Setup**
+  - ✅ Multi-Stage-Build konfiguriert
+  - ✅ Multi-Environment-Setup mit .env-Dateien
+  - ✅ Docker-Compose für parallele Instanzen
+  - ✅ Traefik-Integration für Reverse-Proxy und SSL
 
-- [ ] Basisstatistiken implementieren (Gesamtausgaben, Durchschnittskosten)
-- [ ] Statistik nach Kategorien (Ausgaben pro Kategorie)
-- [ ] Zeitreihenanalyse (Ausgaben über Zeit)
-- [ ] Visualisierung mit Diagrammen (Balken-, Linien-, Kreisdiagramme)
-- [ ] Filterfunktionen für Statistiken (Zeitraum, Kategorie)
-- [ ] Top-5-Listen (teuerste Artikel, häufigste Artikel)
-- [ ] Speichern und Exportieren von Statistikberichten
+### Qualitätssicherung
+- ✅ **Tooling**
+  - ✅ ESLint-Regeln optimiert
+  - ✅ Prettier für Formatierung eingerichtet
+  - ✅ Husky für Pre-Commit-Hooks konfiguriert
+- ✅ **Monitoring**
+  - ✅ Strukturiertes Logging-System implementiert
+  - ✅ Konsolenausgaben durch strukturiertes Logging ersetzt
 
-### Einkaufsplanung
+## 🚀 Geplante Meilensteine
 
-- [ ] Einkaufsrouten für verschiedene Märkte definieren
-- [ ] Sortierung der Artikel nach optimaler Einkaufsroute
-- [ ] Automatische Empfehlung basierend auf bisherigen Einkäufen
-- [ ] Wiederholungseinkäufe planen (wöchentlich, monatlich)
-- [ ] Erinnerungen für geplante Einkäufe
-- [ ] Integration mit Kalender-API
-- [ ] Feature "Jetzt einkaufen" mit aktiver Liste und Navigation
+### Milestone 1: Basis-Funktionalitäten Erweitern (Q2 2025)
+- 🔄 **Preisverfolgung** (Sprint 1-2)
+  - [ ] Preiseingabe bei Artikelerfassung implementieren
+  - [ ] Preishistorie pro Artikel speichern
+  - [ ] Gesamtsumme der Einkaufsliste berechnen und anzeigen
 
-### Artikelmanagement erweitern
+- 🔄 **Artikelmanagement** (Sprint 3)
+  - [ ] Detaillierte Artikelbeschreibungen (Größe, Marke, etc.)
+  - [ ] Verbessertes Kategorie-Management
+  - [ ] Schnellere Artikelerfassung
 
-- [ ] Barcodes scannen und speichern
-- [ ] Bilderkennung für Artikel
-- [ ] Detaillierte Artikelbeschreibungen (Größe, Marke, etc.)
-- [ ] Alternativvorschläge für Artikel
-- [ ] Bewertungssystem für Produkte
-- [ ] Saisonale Artikelmarkierung
-- [ ] Allergene und Ernährungsinformationen
+### Milestone 2: Datenanalyse & Visualisierung (Q3 2025)
+- 🔄 **Statistik-Dashboard** (Sprint 4-5)
+  - [ ] Basisstatistiken implementieren (Gesamtausgaben, Durchschnittskosten)
+  - [ ] Statistik nach Kategorien (Ausgaben pro Kategorie)
+  - [ ] Visualisierung mit Diagrammen (Balken-, Linien-, Kreisdiagramme)
 
-### Rezepteintegration
+- 🔄 **Preisvergleich** (Sprint 6)
+  - [ ] Preisvergleich zwischen verschiedenen Märkten
+  - [ ] Funktion zur Anzeige des günstigsten Preises eines Artikels
+  - [ ] Top-5-Listen (teuerste Artikel, häufigste Artikel)
 
-- [ ] Rezeptverwaltung implementieren
-- [ ] Automatische Einkaufsliste aus Rezept generieren
-- [ ] Rezeptsuche und -vorschläge
-- [ ] Nährwertinformationen zu Rezepten
-- [ ] Rezepteimport aus URLs/Webseiten
-- [ ] Portionsgrößenanpassung mit automatischer Mengenanpassung
-- [ ] Favoriten-Rezepte speichern
+### Milestone 3: Kollaboration & Integration (Q4 2025)
+- 🔄 **Sharing & Kollaboration** (Sprint 7-8)
+  - [ ] Listen teilen via Link oder QR-Code
+  - [ ] Echtzeit-Kollaboration für gemeinsame Listen
+  - [ ] Aktivitätsprotokoll für gemeinsame Listen
 
-### Sharing & Kollaboration
+- 🔄 **Backend-Integration** (Sprint 9-10)
+  - [ ] Cloud-Speicherung implementieren
+  - [ ] Benutzerkonten einrichten
+  - [ ] Datensynchronisation zwischen Geräten
 
-- [ ] Listen teilen via Link oder QR-Code
-- [ ] Echtzeit-Kollaboration für gemeinsame Listen
-- [ ] Kommentarfunktion für Artikel
-- [ ] Aufgabenzuweisung (wer kauft was)
-- [ ] Aktivitätsprotokoll für gemeinsame Listen
-- [ ] Synchronisation zwischen verschiedenen Geräten verbessern
-- [ ] Push-Benachrichtigungen bei Listenänderungen
+### Milestone 4: Planung & Organisation (Q1 2026)
+- 🔄 **Einkaufsplanung** (Sprint 11-12)
+  - [ ] Sortierung der Artikel nach optimaler Einkaufsroute
+  - [ ] Wiederholungseinkäufe planen (wöchentlich, monatlich)
+  - [ ] Erinnerungen für geplante Einkäufe
 
-### Backend-Integration
+- 🔄 **Budgetierung** (Sprint 13)
+  - [ ] Budgetplanung mit Preiswarnung implementieren
+  - [ ] Budget-Tracking über Zeit
+  - [ ] Exportfunktion für Preisdaten als CSV
 
-- [ ] Cloud-Speicherung implementieren
-- [ ] Benutzerkonten einrichten
-- [ ] Authentifizierung einbauen (Email, Google, Apple)
-- [ ] Datensynchronisation zwischen Geräten
-- [ ] API für Drittanbieterintegration
-- [ ] Backup-Funktion implementieren
-- [ ] Multi-Geräte-Support optimieren
+### Milestone 5: Erweitertes Feature-Set (Q2 2026)
+- 🔄 **Rezepteintegration** (Sprint 14-15)
+  - [ ] Rezeptverwaltung implementieren
+  - [ ] Automatische Einkaufsliste aus Rezept generieren
+  - [ ] Rezeptsuche und -vorschläge
 
-## UI/UX Verbesserungen
+- 🔄 **Erweiterte Artikelerkennung** (Sprint 16)
+  - [ ] Barcodes scannen und speichern
+  - [ ] Bilderkennung für Artikel
+  - [ ] Alternativvorschläge für Artikel
 
-### Benutzeroberfläche modernisieren
+## 🧪 Kontinuierliche Verbesserungen
 
+### 🎨 UI/UX
+#### Kurzfristige Ziele (Q2-Q3 2025)
 - [ ] Design-Audit durchführen
 - [ ] Konsistentes Farbschema optimieren
-- [ ] Typenraster überarbeiten (Schriftgrößen, Zeilenabstände)
-- [ ] Icons und Visuelles modernisieren
-- [ ] Micro-Animationen für Feedback hinzufügen
-- [ ] Leerstaaten (empty states) für alle Ansichten gestalten
-- [ ] Visuelles Feedback für Aktionen verbessern
-
-### Mobile Experience
-
 - [ ] Touchgesten optimieren (Swipe, Drag & Drop)
-- [ ] Bottom-Navigation für mobile Geräte
-- [ ] Verbesserte Darstellung auf kleinen Bildschirmen
-- [ ] Optimierte Tastatureingabe auf Mobilgeräten
-- [ ] Verbesserung der Scrollperformance
-- [ ] Offline-Indicator implementieren
-- [ ] PWA-Installation prominenter platzieren
+- [ ] Leerstaaten (empty states) für alle Ansichten gestalten
 
-### Barrierefreiheit
-
-- [ ] Vollständiger Audit zur Barrierefreiheit (WCAG 2.1)
-- [ ] Kontrastverhältnisse verbessern
-- [ ] Tastaturbedienung optimieren
-- [ ] Screenreader-Unterstützung testen und verbessern
-- [ ] Alt-Texte für Icons und Bilder
-- [ ] Fokus-Indikatoren verbessern
-- [ ] Testläufe mit Nutzern mit Einschränkungen
-
-### Nutzererfahrung
-
+#### Mittelfristige Ziele (Q3 2025-Q1 2026)
+- [ ] Micro-Animationen für Feedback hinzufügen
+- [ ] Bottom-Navigation für mobile Geräte optimieren
 - [ ] Onboarding für Neulinge implementieren
 - [ ] Tooltips und Hilfetexte hinzufügen
-- [ ] Drag & Drop für Listenpositionen
-- [ ] Such- und Filterfunktionen optimieren
-- [ ] Kontextmenüs für häufige Aktionen
+
+#### Langfristige Ziele (Q2-Q4 2026)
+- [ ] Vollständiger Audit zur Barrierefreiheit (WCAG 2.1)
+- [ ] Tablet- und Desktop-Layout optimieren
 - [ ] Nutzerführung (Guided Tour) für neue Features
-- [ ] Tastenkürzel für Poweruser
-
-### Responsives Design
-
-- [ ] Tablet-Layout optimieren
-- [ ] Desktop-Ansicht mit Mehrspaltenlayout
 - [ ] Druckfreundliche Ansicht für Listen
-- [ ] Wearable-Integration (Smartwatch)
-- [ ] Responsive Bilder und Assets
-- [ ] Verbesserung der Performance auf älteren Geräten
-- [ ] TV/große Displays-Unterstützung
 
-### Nutzerinteraktionen
-
-- [ ] Inline-Editierung für schnellere Anpassungen
-- [ ] Undo/Redo-Funktionalität implementieren
-- [ ] Batch-Aktionen für mehrere Elemente
-- [ ] Optimiertes Formular-Handling
-- [ ] Erweiterte Filterfunktionen
-- [ ] Sortierung per Drag & Drop
-- [ ] Multi-Auswahl für Artikel
-
-## Code-Sicherheit
-
-### Datenschutz
-
-- [ ] Audit aller gespeicherten Daten
-- [ ] Sensible Daten identifizieren und schützen
-- [ ] End-to-End-Verschlüsselung für geteilte Listen
-- [ ] Cookie-Nutzung überprüfen und minimieren
-- [ ] Privatsphäreeinstellungen implementieren
-- [ ] Datenschutzerklärung aktualisieren
-- [ ] Opt-in für Datenerfassung
-
-### Code-Qualität
-
-- [ ] Vollständiger Security-Audit
-- [ ] Abhängigkeiten auf Sicherheitslücken prüfen
-- [ ] Content Security Policy implementieren
-- [ ] XSS-Schutz verbessern
-- [ ] CSRF-Schutz implementieren
-- [ ] Input-Validierung verstärken
-- [ ] Security-Headers konfigurieren
-
-### Datensicherung
-
-- [ ] Automatische Backups implementieren
-- [ ] Wiederherstellungsfunktion verbessern
-- [ ] Datenexport in verschiedene Formate
-- [ ] Datenintegrität sicherstellen
-- [ ] Versionierung von Daten
-- [ ] Konfliktlösung bei gleichzeitigen Änderungen
-- [ ] Notfallwiederherstellung
-
-## Code-Robustheit
-
-### Architektur
-
-- [ ] Code-Organisation überprüfen
-- [ ] Zuständigkeiten klarer trennen (SRP)
-- [ ] Dependency Injection verwenden wo sinnvoll
-- [ ] Core-Funktionalität klar isolieren
-- [ ] Plugin-System überarbeiten
-- [ ] Modulstruktur optimieren
-- [ ] Domain-Driven Design anwenden
-
-### Refactoring
-
-- [ ] Duplizierte Logik eliminieren
-- [ ] Komplexe Funktionen vereinfachen
-- [ ] Codekommentare verbessern
-- [ ] Konsistente Namenskonventionen durchsetzen
-- [ ] Code-Komplexität reduzieren
-- [ ] Tote Code-Teile entfernen
-- [ ] Veraltete Patterns modernisieren
-
-### Performance
-
-- [ ] Rendering-Performance optimieren
-- [ ] Lazy Loading implementieren
-- [ ] Bundle-Größe reduzieren
-- [ ] Caching-Strategien implementieren
-- [ ] Kritische Render-Pfade optimieren
-- [ ] Bilder und Assets optimieren
-- [ ] Netzwerkanfragen minimieren
-
-### Fehlerbehandlung
-
-- [ ] Globale Fehlerbehandlung verbessern
-- [x] Strukturierte Fehlerprotokollierung
-- [ ] Nutzerfreundliche Fehlermeldungen
-- [ ] Automatische Wiederherstellung nach Fehlern
-- [ ] Offline-Fehlerbehandlung optimieren
-- [ ] Validierung von Benutzereingaben
-- [ ] Boundary testing für alle Inputs
-
-### Typ-Sicherheit
-
-- [ ] TypeScript strenger konfigurieren
-- [ ] Interfaces für alle Datenstrukturen definieren
-- [ ] Generics für wiederverwendbare Funktionen
-- [ ] Type Guards implementieren
-- [ ] Nullability explizit machen
-- [ ] Typen für API-Responses definieren
-- [ ] Runtimechecks für kritische Daten
-
-## Entwicklungsumgebung
-
-### Tooling
-
-- [x] ESLint-Regeln optimieren
-- [x] Prettier für Formatierung einrichten
-- [ ] Husky für Pre-Commit-Hooks konfigurieren
-- [ ] TypeScript-Prüfung in CI einbauen
-- [ ] Automatisierte Code-Review-Tools
-- [ ] IDE-Konfiguration für Team standardisieren
-- [ ] VSCode-Extensions empfehlen
-
-### CI/CD
-
-- [ ] CI/CD-Pipeline einrichten
-- [ ] Automatisierte Tests in Pipeline
-- [ ] Deployment-Prozess automatisieren
-- [ ] Canary-Releases einrichten
-- [ ] Rollback-Strategie implementieren
-- [ ] Release-Notes automatisieren
-- [ ] Versionsverwaltung verbessern
-
-### Dokumentation
-
-- [ ] API-Dokumentation aktualisieren
-- [ ] Architektur-Dokumentation erstellen
-- [ ] Komponenten-Dokumentation erstellen
-- [ ] JSDoc für wichtige Funktionen
-- [ ] Entwicklungsrichtlinien dokumentieren
-- [ ] Onboarding-Dokumentation erstellen
-- [ ] Visuelle Komponenten-Bibliothek (Storybook)
-
-### Testing
-
+### 👨‍💻 Code-Qualität
+#### Kurzfristige Ziele (Q2-Q3 2025)
 - [ ] Unit-Tests für kritische Funktionen schreiben
+- [ ] Automatisierte Tests in CI integrieren
+- [ ] Code-Review-Prozess etablieren
+- [ ] TypeScript strict mode feinjustieren
+
+#### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] End-to-End-Tests implementieren
-- [ ] Snapshot-Tests für UI-Komponenten
 - [ ] Performance-Tests einrichten
+- [ ] Bundle-Größe reduzieren
+- [ ] CI/CD-Pipeline verfeinern
+
+#### Langfristige Ziele (Q2-Q4 2026)
 - [ ] A11y-Tests automatisieren
+- [ ] Performance-Monitoring einrichten
 - [ ] Integrationstests für API-Verbindungen
 - [ ] Mobile-Tests auf verschiedenen Geräten
 
-### Monitoring
+### 🔒 Sicherheit & Datenschutz
+#### Kurzfristige Ziele (Q2-Q3 2025)
+- [ ] Vollständiger Security-Audit
+- [ ] Abhängigkeiten auf Sicherheitslücken prüfen
+- [ ] Input-Validierung verstärken
+- [ ] Audit aller gespeicherten Daten
 
-- [x] Error-Logging-Service einbinden
-- [ ] Performance-Monitoring einrichten
-- [ ] Nutzerverhalten analysieren
-- [ ] Real-User-Monitoring implementieren
+#### Mittelfristige Ziele (Q3 2025-Q1 2026)
+- [ ] Automatische Backups implementieren
+- [ ] Wiederherstellungsfunktion verbessern
+- [ ] Datenexport in verschiedene Formate
+- [ ] Versionierung von Daten
+
+#### Langfristige Ziele (Q2-Q4 2026)
+- [ ] End-to-End-Verschlüsselung für geteilte Listen
+- [ ] Content Security Policy implementieren
+- [ ] Cookie-Nutzung überprüfen und minimieren
+- [ ] Privatsphäreeinstellungen implementieren
+
+### 🛠️ DevOps & Performance
+#### Kurzfristige Ziele (Q2-Q3 2025)
+- [ ] Automatisierte Code-Review-Tools einrichten
+- [ ] IDE-Konfiguration für Team standardisieren
+- [ ] Deployment-Prozess weiter automatisieren
+- [ ] VSCode-Extensions empfehlen
+
+#### Mittelfristige Ziele (Q3 2025-Q1 2026)
+- [ ] Rendering-Performance optimieren
+- [ ] Lazy Loading implementieren
+- [ ] Caching-Strategien implementieren
+- [ ] Canary-Releases einrichten
+
+#### Langfristige Ziele (Q2-Q4 2026)
+- [ ] Rollback-Strategie verbessern
+- [ ] Release-Notes automatisieren
 - [ ] Server-Monitoring für Backend
 - [ ] Uptime-Checking implementieren
-- [ ] Alerting bei kritischen Fehlern
 
-## Fehlerbehebung
+### 📝 Dokumentation
+#### Kurzfristige Ziele (Q2-Q3 2025)
+- [ ] API-Dokumentation aktualisieren
+- [ ] Architektur-Dokumentation erweitern
+- [ ] JSDoc für wichtige Funktionen ergänzen
+- [ ] Entwicklungsrichtlinien dokumentieren
 
-### Bekannte Bugs
+#### Mittelfristige Ziele (Q3 2025-Q1 2026)
+- [ ] Komponenten-Dokumentation erstellen
+- [ ] Onboarding-Dokumentation verfassen
+- [ ] Visuelle Komponenten-Bibliothek (Storybook) einrichten
+- [ ] Benutzerhandbuch aktualisieren
 
+## 🐞 Bekannte Probleme & Technische Schulden
+
+### Dringende Bugs (Q2 2025)
 - [ ] PWA-Installation auf iOS zuverlässiger machen
-- [ ] Dark-Mode-Übergänge glätten
-- [ ] Formulare für mobile Geräte optimieren
 - [ ] Safari-spezifische Probleme beheben
 - [ ] LocalStorage-Limits berücksichtigen
-- [ ] Caching-Probleme bei Updates lösen
 - [ ] Offline-Modus robuster machen
 
-### Technische Schulden
-
-- [ ] Veraltete Komponenten modernisieren
-- [ ] Legacy-Code-Teile identifizieren und ersetzen
-- [ ] API-Konsistenz verbessern
-- [ ] Unnötige Abhängigkeiten entfernen
-- [ ] Obsolete Features entfernen
-- [ ] Build-Prozess optimieren
-- [ ] Redundante CSS-Stile bereinigen
-- [x] Konsolenausgaben durch strukturiertes Logging ersetzen
-
-### Edge Cases
-
+### Edge Cases (Q3-Q4 2025)
 - [ ] Umgang mit sehr großen Listen verbessern
 - [ ] Langsame Netzwerkverbindungen testen
-- [ ] Internationalisierung verbessern
-- [ ] Verschiedene Zeitzonen berücksichtigen
 - [ ] Geräte mit wenig Speicher unterstützen
 - [ ] Extreme Bildschirmgrößen testen
-- [ ] Grenzwerte für Eingabefelder überprüfen
 
-### Browser-Kompatibilität
-
-- [ ] Support für ältere Browser definieren
-- [ ] iOS Safari-Kompatibilität verbessern
-- [ ] Firefox-spezifische Probleme beheben
-- [ ] Edge-Kompatibilität sicherstellen
-- [ ] Mobile Chrome-Optimierungen
-- [ ] Browserübergreifende Feature-Detection
-- [ ] Polyfills für kritische Funktionen
+### Technische Schulden (fortlaufend)
+- [ ] API-Konsistenz weiter verbessern
+- [ ] Unnötige Abhängigkeiten identifizieren und entfernen
+- [ ] Build-Prozess weiter optimieren
+- [ ] Browser-Kompatibilität verbessern
+- [ ] Responsives Design weiter optimieren
