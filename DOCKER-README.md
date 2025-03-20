@@ -19,6 +19,7 @@ docker-compose up -d --build
 ```
 
 Dies wird:
+
 - Das Docker-Image bauen
 - Den Container im detached-Modus starten (läuft im Hintergrund)
 - Den Container auf Port 3000 verfügbar machen
@@ -80,16 +81,16 @@ Für den produktiven Einsatz wird empfohlen, einen Reverse-Proxy wie Nginx oder 
 Eine einfache `docker-compose.override.yml` für Traefik könnte so aussehen:
 
 ```yaml
-version: "3.8"
+version: '3.8'
 
 services:
   shopping-list-app:
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.shopping-list.rule=Host(`einkaufsliste.beispiel.de`)"
-      - "traefik.http.routers.shopping-list.entrypoints=websecure"
-      - "traefik.http.routers.shopping-list.tls.certresolver=myresolver"
-      - "traefik.http.services.shopping-list.loadbalancer.server.port=3000"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.shopping-list.rule=Host(`einkaufsliste.beispiel.de`)'
+      - 'traefik.http.routers.shopping-list.entrypoints=websecure'
+      - 'traefik.http.routers.shopping-list.tls.certresolver=myresolver'
+      - 'traefik.http.services.shopping-list.loadbalancer.server.port=3000'
     networks:
       - traefik-public
       - shopping-list-network

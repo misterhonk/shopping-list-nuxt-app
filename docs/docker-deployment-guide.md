@@ -34,6 +34,7 @@ cd shopping-list-app
 ### Docker-Dateien prüfen
 
 Folgende Dateien sollten vorhanden sein:
+
 - `Dockerfile` - Definition des Container-Images
 - `docker-compose.yml` - Hauptkonfiguration
 - `docker-compose.override.yml` - Entwicklungsspezifische Konfiguration
@@ -55,6 +56,7 @@ docker compose up -d --build
 ```
 
 Die Produktionsumgebung ist dann verfügbar unter:
+
 - http://localhost:3000 (oder der konfigurierte HOST_PORT)
 
 ### Entwicklungsumgebung
@@ -68,6 +70,7 @@ docker compose up -d --build
 ```
 
 Die Entwicklungsumgebung ist dann verfügbar unter:
+
 - http://localhost:3001 (oder der konfigurierte HOST_PORT)
 
 ### Beide Umgebungen parallel
@@ -137,6 +140,7 @@ DOMAIN=shoppinglist.yourdomain.com docker compose -f docker-compose.yml -f docke
 ### Anpassung der Traefik-Konfiguration
 
 Die wichtigsten Umgebungsvariablen für Traefik:
+
 - `DOMAIN` - Domainname für die App (z.B. shoppinglist.yourdomain.com)
 - `CERT_RESOLVER` - Name des Zertifikatsresolvers in deiner Traefik-Konfiguration
 
@@ -153,37 +157,41 @@ cp .env.example .env.custom
 
 ### Verfügbare Umgebungsvariablen
 
-| Variable | Beschreibung | Standardwert |
-|----------|--------------|--------------|
-| CONTAINER_NAME | Name des Docker-Containers | shopping-list-app |
-| HOST_PORT | Port auf dem Host-System | 3000 |
-| NODE_ENV | Node.js-Umgebung | production |
-| APP_ENV | Anwendungsumgebung | production |
-| NETWORK_NAME | Name des Docker-Netzwerks | shopping-list-network |
-| DOMAIN | Domain für Traefik | shoppinglist.example.com |
-| CERT_RESOLVER | Zertifikats-Resolver für Traefik | letsencrypt |
+| Variable       | Beschreibung                     | Standardwert             |
+| -------------- | -------------------------------- | ------------------------ |
+| CONTAINER_NAME | Name des Docker-Containers       | shopping-list-app        |
+| HOST_PORT      | Port auf dem Host-System         | 3000                     |
+| NODE_ENV       | Node.js-Umgebung                 | production               |
+| APP_ENV        | Anwendungsumgebung               | production               |
+| NETWORK_NAME   | Name des Docker-Netzwerks        | shopping-list-network    |
+| DOMAIN         | Domain für Traefik               | shoppinglist.example.com |
+| CERT_RESOLVER  | Zertifikats-Resolver für Traefik | letsencrypt              |
 
 ## Troubleshooting
 
 ### Container startet nicht
 
 Prüfe die Logs:
+
 ```bash
 docker compose logs
 ```
 
 Häufige Probleme:
+
 - Port bereits in Verwendung: Ändere den HOST_PORT in der .env-Datei
 - Fehler beim Build: Probleme mit Abhängigkeiten oder unvollständiger Code
 
 ### App ist nicht erreichbar
 
 1. Prüfe, ob der Container läuft:
+
    ```bash
    docker ps | grep shopping-list-app
    ```
 
 2. Prüfe die Port-Bindung:
+
    ```bash
    docker port shopping-list-app
    ```
@@ -196,6 +204,7 @@ Häufige Probleme:
 ### Docker-Image neu bauen erzwingen
 
 Um ein vollständig neues Image zu bauen (ohne Cache):
+
 ```bash
 docker compose build --no-cache
 docker compose up -d
@@ -206,6 +215,7 @@ docker compose up -d
 ### Image-Tags für Versionen
 
 Für wichtige Releases solltest du Tags verwenden:
+
 ```bash
 docker tag shopping-list-app-shopping-list-app:latest shopping-list-app:v1.0.0
 ```
@@ -213,6 +223,7 @@ docker tag shopping-list-app-shopping-list-app:latest shopping-list-app:v1.0.0
 ### Regelmäßige Updates
 
 Halte das Base-Image aktuell:
+
 ```bash
 # Hole das neueste Node.js-Image
 docker pull node:20-alpine

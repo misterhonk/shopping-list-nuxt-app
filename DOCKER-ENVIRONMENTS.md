@@ -26,21 +26,22 @@ docker compose up -d --build
 
 ## Umgebungsvariablen
 
-| Variable | Beschreibung | Standardwert |
-|----------|--------------|--------------|
-| CONTAINER_NAME | Name des Docker-Containers | shopping-list-app |
-| HOST_PORT | Port auf dem Host-System | 3000 |
-| NODE_ENV | Node.js-Umgebung | production |
-| APP_ENV | Anwendungsumgebung | production |
-| NETWORK_NAME | Name des Docker-Netzwerks | shopping-list-network |
-| DOMAIN | Domain für Traefik (nur bei docker-compose.traefik.yml) | shoppinglist.example.com |
-| CERT_RESOLVER | Zertifikats-Resolver für Traefik | letsencrypt |
+| Variable       | Beschreibung                                            | Standardwert             |
+| -------------- | ------------------------------------------------------- | ------------------------ |
+| CONTAINER_NAME | Name des Docker-Containers                              | shopping-list-app        |
+| HOST_PORT      | Port auf dem Host-System                                | 3000                     |
+| NODE_ENV       | Node.js-Umgebung                                        | production               |
+| APP_ENV        | Anwendungsumgebung                                      | production               |
+| NETWORK_NAME   | Name des Docker-Netzwerks                               | shopping-list-network    |
+| DOMAIN         | Domain für Traefik (nur bei docker-compose.traefik.yml) | shoppinglist.example.com |
+| CERT_RESOLVER  | Zertifikats-Resolver für Traefik                        | letsencrypt              |
 
 ## Verschiedene Compose-Datei-Optionen
 
 ### Basis-Konfiguration (docker-compose.yml)
 
 Die Basiskonfiguration enthält:
+
 - Build-Anweisungen
 - Port-Mapping
 - Netzwerk-Konfiguration
@@ -49,6 +50,7 @@ Die Basiskonfiguration enthält:
 ### Lokale Entwicklung (docker-compose.override.yml)
 
 Diese Datei wird automatisch mit docker-compose.yml zusammengeführt, wenn sie vorhanden ist, und bietet:
+
 - Volume-Mounts für schnelle Änderungen
 - Entwicklungsspezifische Umgebungsvariablen
 
@@ -61,6 +63,7 @@ docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d
 ```
 
 Diese Konfiguration fügt hinzu:
+
 - Traefik-Labels für Routing
 - TLS/SSL-Konfiguration
 - Integration mit dem Traefik-Netzwerk

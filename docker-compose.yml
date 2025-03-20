@@ -8,17 +8,17 @@ services:
     container_name: ${CONTAINER_NAME:-shopping-list-app}
     restart: unless-stopped
     ports:
-      - "${HOST_PORT:-3000}:3000"  # Host-Port:Container-Port
+      - '${HOST_PORT:-3000}:3000' # Host-Port:Container-Port
     environment:
       - NODE_ENV=${NODE_ENV:-production}
     networks:
       - shopping-list-network
     labels:
-      - "app.name=shopping-list-app"
-      - "app.description=Vue/Nuxt shopping list management application"
-      - "app.environment=${APP_ENV:-production}"
+      - 'app.name=shopping-list-app'
+      - 'app.description=Vue/Nuxt shopping list management application'
+      - 'app.environment=${APP_ENV:-production}'
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000']
       interval: 30s
       timeout: 10s
       retries: 3
