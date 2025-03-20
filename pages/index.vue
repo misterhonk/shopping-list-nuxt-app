@@ -65,24 +65,10 @@
       :current-list-id="currentListId"
       @select="selectList"
       @delete="deleteList"
+      @add-item="isAddingItem = true"
     />
 
     <div v-if="currentListId && initialized">
-      <!-- Listenname und Aktionsbuttons -->
-      <ListHeader
-        :list-name="currentList.name"
-        :template-id="currentListTemplateId"
-        :templates="templatesList"
-        :has-checked-items="getCheckedItemsCount() > 0"
-        :is-favorite="currentList.isFavorite"
-        @add-item="isAddingItem = true"
-        @clear-checked="clearCheckedItems"
-        @update:template-id="updateCurrentListTemplate"
-        @update:name="updateCurrentListName"
-        @update:favorite="updateCurrentListFavorite"
-        @export-list="exportCurrentList"
-        @import-list="startImport"
-      />
 
       <!-- Artikel-Hinzufügen-Formular -->
       <ItemCreationForm
@@ -124,7 +110,7 @@ import PageHeader from '../components/layout/PageHeader.vue';
 // Listen-Komponenten
 import ImportOptionsModal from '../components/lists/ImportOptionsModal.vue';
 import ListCreationForm from '../components/lists/ListCreationForm.vue';
-import ListHeader from '../components/lists/ListHeader.vue';
+// import ListHeader from '../components/lists/ListHeader.vue'; // Aktuell nicht verwendet
 import ListSelector from '../components/lists/ListSelector.vue';
 // Artikel-Komponenten
 import { useListImportExport } from '../composables/importExport';
