@@ -24,16 +24,17 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 
 ## 2. TypeScript strenger konfigurieren
 
-- [ ] **2.1 Erweiterte ESLint-Regeln für TypeScript**
-  - [ ] Konfiguration von `no-explicit-any` und anderen TypeScript-spezifischen Regeln
-  - [ ] Konfiguration von `explicit-function-return-type`
-  - [ ] Anpassung der ESLint-Konfiguration für bessere TypeScript-Unterstützung
-  - [ ] Commit: `chore: ESLint-Regeln für strikte TypeScript-Prüfung konfiguriert`
+- [x] **2.1 Erweiterte ESLint-Regeln für TypeScript**
+  - [x] Konfiguration von `no-explicit-any` und anderen TypeScript-spezifischen Regeln
+  - [x] Konfiguration von `explicit-function-return-type`
+  - [x] Anpassung der ESLint-Konfiguration für bessere TypeScript-Unterstützung
+  - [x] Commit: `chore: ESLint-Regeln für strikte TypeScript-Prüfung konfiguriert`
 
-- [ ] **2.2 Beseitigung von `any`-Typen**
-  - [ ] Durchsuchen des Codes nach `any`-Typen
-  - [ ] Ersetzen durch spezifische Typen oder `unknown` mit Type Guards
-  - [ ] Commit: `refactor: any-Typen durch spezifische Typen ersetzt`
+- [x] **2.2 Beseitigung von `any`-Typen**
+  - [x] Durchsuchen des Codes nach `any`-Typen
+  - [x] Ersetzen durch spezifische Typen oder `unknown` mit Type Guards
+  - [x] Anmerkung: Bei der Codesuche wurden keine `any`-Typen im Code gefunden
+  - [x] Commit: `refactor: any-Typen durch spezifische Typen ersetzt` (übersprungen, da nicht nötig)
 
 ## 3. Interfaces für alle Datenstrukturen definieren
 
@@ -80,9 +81,8 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## Status und Fortschritt
 
 - **Startdatum Phase 2.1**: 20.03.2025
-- **Aktueller Fokus**: Verbesserung der TypeScript-Konfiguration (2.1)
-- **Nächster Schritt**: Erweiterte ESLint-Regeln für TypeScript
+- **Aktueller Fokus**: UI-Status-Interfaces definieren (3.1)
+- **Nächster Schritt**: Erstellung von `types/uiTypes.ts`
 - **Abgeschlossen**: 
   - Vereinfachung komplexer Funktionen (1.1 - 1.3)
-  - Basisfunktionen für Listenoperationen
-  - Refaktorierung von useShoppingItems und useListManagement
+  - TypeScript strenger konfigurieren (2.1 - 2.2)
