@@ -65,12 +65,18 @@
       :current-list-id="currentListId"
       @select="selectList"
       @delete="deleteList"
-      @add-item="isAddingItem = true"
     />
 
     <div v-if="currentListId && initialized">
 
-      <!-- Artikel-Hinzufügen-Formular -->
+      <!-- Schnelle Artikeleingabe -->
+      <QuickItemAdd
+        :categories="categories"
+        @add-item="addNewItem"
+      />
+
+      <!-- Alte Artikel-Hinzufügen-Formular (auskommentiert) -->
+      <!--
       <ItemCreationForm
         v-if="isAddingItem"
         :categories="categories"
@@ -78,13 +84,13 @@
         @add="addNewItem"
         @cancel="isAddingItem = false"
       />
+      -->
 
       <!-- Artikelliste -->
       <ItemList
         :items="allItems"
         @toggle="toggleItemChecked"
         @remove="removeItem"
-        @add-new="isAddingItem = true"
       />
     </div>
 
@@ -106,6 +112,7 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 // Layout-Komponenten
 import ItemCreationForm from '../components/items/ItemCreationForm.vue';
 import ItemList from '../components/items/ItemList.vue';
+import QuickItemAdd from '../components/items/QuickItemAdd.vue';
 import PageHeader from '../components/layout/PageHeader.vue';
 // Listen-Komponenten
 import ImportOptionsModal from '../components/lists/ImportOptionsModal.vue';
@@ -190,7 +197,7 @@ const {
 } = useShoppingLists();
 
 // Artikel verwalten
-const { allItems, isAddingItem, addNewItem, removeItem, toggleItemChecked, clearCheckedItems } =
+const { allItems, /*isAddingItem,*/ addNewItem, removeItem, toggleItemChecked, clearCheckedItems } =
   useShoppingItems(lists, currentListId);
 
 // Import/Export-Funktionen
@@ -316,10 +323,13 @@ onUnmounted(() => {
   }
 });
 
+// Der folgende Code wird nicht mehr benötigt, da wir das isAddingItem-Flag nicht mehr verwenden
+/*
 // Watch für isAddingItem
 watch(isAddingItem, newVal => {
   if (!newVal) {
     // Formular zurücksetzen wenn geschlossen
   }
 });
+*/
 </script>

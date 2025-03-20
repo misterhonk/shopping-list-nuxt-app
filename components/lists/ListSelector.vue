@@ -103,32 +103,8 @@
       </div>
     </div>
 
-    <!-- Quick Action Bar für aktuelle Liste (ersetzt ListHeader) -->
-    <div v-if="currentListId" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 mb-4 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <button 
-          class="btn btn-primary"
-          @click="$emit('add-item')"
-        >
-          <span class="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            Artikel hinzufügen
-          </span>
-        </button>
-      </div>
+    <!-- Quick Action Bar für aktuelle Liste (nur Menü-Button) -->
+    <div v-if="currentListId" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 mb-4 flex justify-end items-center">
       <div>
         <button class="btn btn-secondary">
           <svg
