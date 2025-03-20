@@ -1,25 +1,12 @@
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed, onMounted, watch } from 'vue';
 
-import { useLocalStorage } from './core/useLocalStorage';
-import {
-  createItemObject,
-  itemBelongsToCategory,
-  updateItemCategory,
-  groupItemsByCategory,
-  calculateTotalPrice,
-  calculateCategoryPrice,
-} from './utils/itemUtils';
-import {
-  findListById,
-  addItemToList,
-  removeItemFromList,
-  updateItemInList,
-  removeItemsFromList
-} from './utils/operations';
 import { createLogger } from '~/utils/logger';
-
-import type { ShoppingItem, ShoppingList, Category } from './types';
+import { initializeServices } from '~/services';
+import type { ShoppingItem, Category } from './types';
 import type { Ref, ComputedRef } from 'vue';
+
+// Services initialisieren
+const { itemService, shoppingListService } = initializeServices();
 
 // Logger initialisieren
 const logger = createLogger('useShoppingItems');
@@ -28,15 +15,12 @@ const logger = createLogger('useShoppingItems');
  * Composable für die Verwaltung von Artikeln in Einkaufslisten
  * Bietet Funktionen zum Hinzufügen, Bearbeiten, Löschen und Markieren von Artikeln
  */
-export function useShoppingItems(
-  shoppingListsRef: Ref<ShoppingList[]>,
-  currentListIdRef: Ref<string | null>
-) {
-  const { saveToStorage } = useLocalStorage();
-
+export function useShoppingItems() {
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
   const itemNameInput = ref<HTMLInputElement | null>(null);
+  const currentListId = ref<string | null>(null);
+  const items = ref<ShoppingItem[]>([]);
 
   // Neues Item Formular
   const newItem = reactive<{
@@ -55,24 +39,45 @@ export function useShoppingItems(
   const isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
 
   /**
+   * Lädt die aktuelle Listen-ID und die aktuellen Artikel
+   */
+  const loadCurrentListData = (): void => {
+    currentListId.value = shoppingListService.getCurrentListId();
+    refreshItems();
+  };
+
+  /**
+   * Aktualisiert die Artikel der aktuellen Liste
+   */
+  const refreshItems = (): void => {
+    if (!currentListId.value) {
+      items.value = [];
+      return;
+    }
+
+    items.value = itemService.getItemsByListId(currentListId.value);
+  };
+
+  // Beim Mounting die aktuelle Liste und Artikel laden
+  onMounted(() => {
+    loadCurrentListData();
+  });
+
+  // Bei Änderung der aktuellen Listen-ID die Artikel aktualisieren
+  watch(currentListId, () => {
+    refreshItems();
+  });
+
+  /**
    * Gibt alle Artikel der aktuellen Liste zurück
    */
-  const allItems: ComputedRef<ShoppingItem[]> = computed(() => {
-    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
-    if (!currentList || !Array.isArray(currentList.items)) {
-      return [];
-    }
-    return currentList.items;
-  });
+  const allItems: ComputedRef<ShoppingItem[]> = computed(() => items.value);
 
   /**
    * Gruppiert Artikel nach Kategorien
    */
   const getItemsGrouped = (categories: (string | Category)[]): Record<string, ShoppingItem[]> => {
-    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
-
-    // Prüfen, ob items ein gültiges Array ist
-    if (!currentList || !Array.isArray(currentList.items)) {
+    if (!currentListId.value) {
       return categories.reduce(
         (obj, cat) => {
           const categoryName = typeof cat === 'object' ? cat.name : cat;
@@ -85,22 +90,7 @@ export function useShoppingItems(
 
     // Kategorienamen aus dem Objekt extrahieren
     const categoryNames = categories.map(cat => (typeof cat === 'object' ? cat.name : cat));
-    return groupItemsByCategory(currentList.items, categoryNames);
-  };
-
-  /**
-   * Speichert die aktualisierten Listen und aktualisiert die Referenz
-   * @param updatedLists - Die aktualisierten Listen
-   * @returns true bei Erfolg, false bei Fehler
-   */
-  const saveUpdatedLists = (updatedLists: ShoppingList[] | null): boolean => {
-    if (!updatedLists) {
-      return false;
-    }
-    
-    shoppingListsRef.value = updatedLists;
-    saveToStorage('shoppingLists', updatedLists);
-    return true;
+    return itemService.groupItemsByCategory(currentListId.value, categoryNames);
   };
 
   /**
@@ -109,8 +99,8 @@ export function useShoppingItems(
    * @return Das hinzugefügte Item oder null bei Fehler
    */
   const addItem = (itemData: Partial<ShoppingItem> | null = null): ShoppingItem | null => {
-    // Wenn no listId, frühzeitig beenden
-    if (!currentListIdRef.value) {
+    // Wenn keine Liste ausgewählt ist, frühzeitig beenden
+    if (!currentListId.value) {
       logger.error('Keine Liste ausgewählt.');
       return null;
     }
@@ -118,34 +108,20 @@ export function useShoppingItems(
     // Wenn itemData übergeben wurde, verwenden wir das, ansonsten das newItem
     const itemToAdd = itemData || newItem;
 
-    // Prüfen, ob die Daten gültig sind
-    if (!itemToAdd.name || itemToAdd.name.trim() === '' || 
-        !(itemToAdd.quantity && itemToAdd.quantity > 0)) {
-      logger.error('Ungültige Artikeldaten.');
-      return null;
+    // Artikel hinzufügen
+    const addedItem = itemService.addItem(currentListId.value, itemToAdd);
+
+    // Wenn erfolgreich, Artikel aktualisieren
+    if (addedItem) {
+      refreshItems();
+      
+      // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
+      if (!itemData) {
+        resetItemForm();
+      }
     }
 
-    // Item-Objekt erstellen
-    const newItemObj = createItemObject(itemToAdd);
-
-    // Basisfunktion zur Aktualisierung der Listen verwenden
-    const updatedLists = addItemToList(
-      shoppingListsRef.value,
-      currentListIdRef.value,
-      newItemObj
-    );
-
-    // Update der Listen-Referenz und Speichern
-    if (!saveUpdatedLists(updatedLists)) {
-      return null;
-    }
-
-    // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
-    if (!itemData) {
-      resetItemForm();
-    }
-
-    return newItemObj;
+    return addedItem;
   };
 
   /**
@@ -174,7 +150,7 @@ export function useShoppingItems(
    */
   const removeItem = (item: ShoppingItem | string): boolean => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
-    if (!currentListIdRef.value) {
+    if (!currentListId.value) {
       logger.error('Keine Liste ausgewählt.');
       return false;
     }
@@ -182,15 +158,15 @@ export function useShoppingItems(
     // Item-ID aus dem Parameter extrahieren
     const itemId = typeof item === 'object' ? item.id : item;
     
-    // Basisfunktion zur Entfernung des Items verwenden
-    const updatedLists = removeItemFromList(
-      shoppingListsRef.value,
-      currentListIdRef.value,
-      itemId
-    );
+    // Item entfernen
+    const success = itemService.removeItem(currentListId.value, itemId);
     
-    // Update der Listen-Referenz und Speichern
-    return saveUpdatedLists(updatedLists);
+    // Bei Erfolg Artikel aktualisieren
+    if (success) {
+      refreshItems();
+    }
+    
+    return success;
   };
 
   /**
@@ -200,7 +176,7 @@ export function useShoppingItems(
    */
   const toggleItemChecked = (item: ShoppingItem | string): boolean => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
-    if (!currentListIdRef.value) {
+    if (!currentListId.value) {
       logger.error('Keine Liste ausgewählt.');
       return false;
     }
@@ -208,20 +184,16 @@ export function useShoppingItems(
     // Item-ID aus dem Parameter extrahieren
     const itemId = typeof item === 'object' ? item.id : item;
     
-    // Basisfunktion zur Aktualisierung des Items verwenden
-    const updatedLists = updateItemInList(
-      shoppingListsRef.value,
-      currentListIdRef.value,
-      itemId,
-      (item) => ({
-        ...item,
-        checked: !item.checked,
-        modifiedAt: Date.now()
-      })
-    );
+    // Status ändern
+    const updatedItem = itemService.toggleItemChecked(currentListId.value, itemId);
     
-    // Update der Listen-Referenz und Speichern
-    return saveUpdatedLists(updatedLists);
+    // Bei Erfolg Artikel aktualisieren
+    const success = updatedItem !== null;
+    if (success) {
+      refreshItems();
+    }
+    
+    return success;
   };
 
   /**
@@ -230,20 +202,20 @@ export function useShoppingItems(
    */
   const clearCheckedItems = (): boolean => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
-    if (!currentListIdRef.value) {
+    if (!currentListId.value) {
       logger.error('Keine Liste ausgewählt.');
       return false;
     }
     
-    // Basisfunktion zur Entfernung der erledigten Items verwenden
-    const updatedLists = removeItemsFromList(
-      shoppingListsRef.value,
-      currentListIdRef.value,
-      (item) => item.checked
-    );
+    // Erledigte Artikel entfernen
+    const success = itemService.clearCheckedItems(currentListId.value);
     
-    // Update der Listen-Referenz und Speichern
-    return saveUpdatedLists(updatedLists);
+    // Bei Erfolg Artikel aktualisieren
+    if (success) {
+      refreshItems();
+    }
+    
+    return success;
   };
 
   /**
@@ -275,13 +247,11 @@ export function useShoppingItems(
    * @return Der Gesamtpreis
    */
   const getTotalPrice = (): number => {
-    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
-
-    if (!currentList || !Array.isArray(currentList.items)) {
+    if (!currentListId.value) {
       return 0;
     }
 
-    return calculateTotalPrice(currentList.items);
+    return itemService.calculateTotalPrice(currentListId.value);
   };
 
   /**
@@ -290,13 +260,11 @@ export function useShoppingItems(
    * @return Der Preis für diese Kategorie
    */
   const getCategoryPrice = (categoryId: string): number => {
-    const currentList = findListById(shoppingListsRef.value, currentListIdRef.value || '');
-
-    if (!currentList || !Array.isArray(currentList.items)) {
+    if (!currentListId.value) {
       return 0;
     }
 
-    return calculateCategoryPrice(currentList.items, categoryId);
+    return itemService.calculateCategoryPrice(currentListId.value, categoryId);
   };
 
   /**
@@ -309,46 +277,37 @@ export function useShoppingItems(
       return;
     }
 
-    // Alle Listen durchgehen und die Kategorie in den Items aktualisieren
-    let hasUpdates = false;
-    let updatedLists = [...shoppingListsRef.value];
+    // Alle Listen durchlaufen und nach Änderungsbedarf suchen
+    const lists = shoppingListService.getAllLists();
+    let hasChanges = false;
 
-    updatedLists = updatedLists.map(list => {
-      if (!Array.isArray(list.items)) {
-        return list;
-      }
-      
-      // Updates für diese Liste überprüfen
-      let listUpdated = false;
-      const updatedItems = list.items.map(item => {
-        const matchFound = itemBelongsToCategory(item, categoryId);
+    for (const list of lists) {
+      for (const item of list.items) {
+        // Prüfen, ob das Item diese Kategorie verwendet
+        let needsUpdate = false;
         
-        // Wenn Match gefunden, Kategorie aktualisieren
-        if (matchFound) {
-          listUpdated = true;
-          hasUpdates = true;
-          return updateItemCategory(item, categoryId, newName);
+        if (typeof item.category === 'object' && item.category && item.category.id === categoryId) {
+          needsUpdate = true;
+        } else if (typeof item.category === 'string' && item.category === categoryId) {
+          needsUpdate = true;
         }
         
-        return item;
-      });
-      
-      // Nur aktualisieren, wenn Änderungen vorgenommen wurden
-      if (listUpdated) {
-        return {
-          ...list,
-          items: updatedItems,
-          modifiedAt: Date.now()
-        };
+        if (needsUpdate) {
+          // Item aktualisieren
+          itemService.updateItem(list.id, item.id, {
+            category: {
+              id: categoryId,
+              name: newName,
+            }
+          });
+          hasChanges = true;
+        }
       }
-      
-      return list;
-    });
+    }
 
-    // Nur speichern, wenn Änderungen vorgenommen wurden
-    if (hasUpdates) {
-      shoppingListsRef.value = updatedLists;
-      saveToStorage('shoppingLists', updatedLists);
+    // Bei Änderungen die Items aktualisieren
+    if (hasChanges && currentListId.value) {
+      refreshItems();
     }
   };
 
@@ -359,6 +318,7 @@ export function useShoppingItems(
     newItem,
     isFormValid,
     allItems,
+    currentListId,
 
     // Berechnete Eigenschaften
     getItemsGrouped,
@@ -366,6 +326,8 @@ export function useShoppingItems(
     getCategoryPrice,
 
     // Aktionen
+    loadCurrentListData,
+    refreshItems,
     addItem,
     addNewItem, // Alias für addItem mit besserer Semantik für die UI
     removeItem,

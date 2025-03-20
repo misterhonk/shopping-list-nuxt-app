@@ -1,21 +1,17 @@
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 import { createLogger } from '~/utils/logger';
-
-import { useLocalStorage } from '../core/useLocalStorage';
+import { initializeServices } from '~/services';
 import {
   sortListsByFavorites,
   determineTemplateId,
-  activateTemplateInStore,
 } from '../utils/listUtils';
-import {
-  findListById,
-  findListIndex,
-  updateList
-} from '../utils/operations';
 
 import type { ShoppingList, CreateListOptions } from '../types';
 import type { Ref } from 'vue';
+
+// Services initialisieren
+const { shoppingListService, categoryService } = initializeServices();
 
 // Logger initialisieren
 const logger = createLogger('useListManagement');
@@ -41,8 +37,6 @@ interface CategoryStoreService {
  * } = useListManagement(categoryStore);
  */
 export function useListManagement(categoryStore?: CategoryStoreService) {
-  const { saveToStorage, loadFromStorage } = useLocalStorage();
-
   // Reaktive Daten
   const lists: Ref<ShoppingList[]> = ref([]);
   const currentListId: Ref<string | null> = ref(null);
@@ -50,15 +44,20 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
 
   // Berechnete Werte
   const currentList = computed<ShoppingList>(() => {
-    return (
-      findListById(lists.value, currentListId.value || '') || {
-        id: '',
-        name: '',
-        items: [],
-        templateId: 'supermarket',
-        isFavorite: false,
-      }
-    );
+    const id = currentListId.value || '';
+    const list = shoppingListService.getListById(id);
+    
+    if (list) {
+      return list;
+    }
+    
+    return {
+      id: '',
+      name: '',
+      items: [],
+      templateId: 'supermarket',
+      isFavorite: false,
+    };
   });
 
   const currentListTemplateId = computed({
@@ -67,94 +66,44 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   });
 
   /**
-   * Wandelt eine gespeicherte Liste in ein standardisiertes Format um
-   * @param list - Die gespeicherte Liste
-   * @returns Die standardisierte Liste mit allen erforderlichen Feldern
+   * Aktualisiert die lokalen Listen aus dem Service
    */
-  const normalizeList = (list: Partial<ShoppingList>): ShoppingList => ({
-    id: list.id || '',
-    name: list.name || '',
-    items: Array.isArray(list.items) ? list.items : [],
-    templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
-    isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
-    createdAt: list.createdAt || 0,
-    modifiedAt: list.modifiedAt || Date.now(),
+  const refreshLists = (): void => {
+    lists.value = shoppingListService.getAllLists();
+    
+    // Sortieren
+    lists.value = sortListsByFavorites(lists.value);
+  };
+
+  /**
+   * Setzt die aktuelle Listen-ID aus dem Service
+   */
+  const refreshCurrentListId = (): void => {
+    currentListId.value = shoppingListService.getCurrentListId();
+  };
+
+  // Beim Mounting Daten laden
+  onMounted(() => {
+    loadLists();
   });
 
   /**
-   * Speichert die aktuellen Listen und aktuelle Listen-ID
-   * @returns true bei Erfolg, false bei Fehler
-   */
-  const saveListData = (): boolean => {
-    try {
-      saveToStorage('shoppingLists', lists.value);
-      if (currentListId.value) {
-        saveToStorage('currentListId', currentListId.value);
-      }
-      return true;
-    } catch (error) {
-      logger.error('Fehler beim Speichern der Listen und Listen-ID:', error);
-      return false;
-    }
-  };
-
-  /**
-   * Lädt die Liste und die aktuelle Listen-ID aus dem Speicher
-   * @returns Die Liste aus dem Speicher oder null bei Fehler
-   */
-  const loadListsFromStorage = (): ShoppingList[] | null => {
-    try {
-      const storedLists = loadFromStorage<ShoppingList[]>('shoppingLists');
-      return storedLists && Array.isArray(storedLists) ? storedLists : null;
-    } catch (error) {
-      logger.error('Fehler beim Laden der Listen aus dem Speicher:', error);
-      return null;
-    }
-  };
-
-  /**
-   * Setzt die aktuelle Listen-ID basierend auf dem gespeicherten Wert oder der ersten Liste
-   */
-  const setCurrentListId = () => {
-    try {
-      const currentId = loadFromStorage<string>('currentListId');
-      if (currentId && lists.value.some(list => list.id === currentId)) {
-        currentListId.value = currentId;
-      } else if (lists.value.length > 0) {
-        currentListId.value = lists.value[0].id;
-      }
-    } catch (error) {
-      logger.error('Fehler beim Setzen der aktuellen Listen-ID:', error);
-      if (lists.value.length > 0) {
-        currentListId.value = lists.value[0].id;
-      }
-    }
-  };
-
-  /**
-   * Lädt die Listen aus dem localStorage
+   * Lädt die Listen und die aktuelle Listen-ID
    * @returns true bei Erfolg, false bei Fehler
    */
   const loadLists = (): boolean => {
     try {
-      const storedLists = loadListsFromStorage();
-
-      if (storedLists) {
-        // Explizite Aufbereitung der Daten
-        lists.value = storedLists.map(normalizeList);
-
-        // Sortiere Listen
-        lists.value = sortListsByFavorites(lists.value);
-
-        // Setze aktuelle Liste
-        setCurrentListId();
-
-        initialized.value = true;
-        return true;
-      } else {
+      refreshLists();
+      refreshCurrentListId();
+      
+      // Wenn keine Listen vorhanden sind, eine Standardliste erstellen
+      if (lists.value.length === 0) {
         createDefaultList();
         return false;
       }
+      
+      initialized.value = true;
+      return true;
     } catch (error) {
       logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
@@ -202,25 +151,25 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     }
 
     try {
-      const newList = createListObject(name, options);
-
-      // Füge Liste hinzu und sortiere bei Bedarf
-      lists.value = [...lists.value, newList];
-      if (newList.isFavorite) {
-        lists.value = sortListsByFavorites(lists.value);
-      }
-
-      // Setze als aktuelle Liste
-      currentListId.value = newList.id;
-
-      // Speichern und Template aktivieren
-      if (!saveListData()) {
-        logger.error('Fehler beim Speichern der neuen Liste');
-        return null;
+      // Neue Liste mit dem Service erstellen
+      const newList = shoppingListService.createList(name, options);
+      
+      if (newList) {
+        // Listen aktualisieren
+        refreshLists();
+        
+        // Als aktuelle Liste setzen
+        currentListId.value = newList.id;
+        
+        // Template aktivieren
+        if (categoryStore && newList.templateId) {
+          categoryStore.activateTemplate(newList.templateId);
+        } else {
+          // Fallback auf den CategoryService
+          categoryService.setActiveTemplate(newList.templateId || 'supermarket');
+        }
       }
       
-      activateTemplateInStore(categoryStore, newList.templateId);
-
       return newList;
     } catch (error) {
       logger.error('Fehler beim Erstellen einer neuen Liste:', error);
@@ -233,24 +182,36 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    * @returns Die erstellte Standardliste
    */
   const createDefaultList = (): ShoppingList => {
-    const timestamp = Date.now();
-    const defaultList: ShoppingList = {
-      id: timestamp.toString(),
-      name: 'Wocheneinkauf',
-      items: [],
-      templateId: 'supermarket', // Standardvorlage für neue Listen
+    const defaultList = shoppingListService.createList('Wocheneinkauf', {
+      templateId: 'supermarket',
       isFavorite: false,
-      createdAt: timestamp,
-      modifiedAt: timestamp,
-    };
-
-    lists.value = [defaultList];
-    currentListId.value = defaultList.id;
+    });
+    
+    if (defaultList) {
+      // Listen aktualisieren
+      refreshLists();
+      
+      // Als aktuelle Liste setzen
+      currentListId.value = defaultList.id;
+    } else {
+      // Fallback, falls der Service fehlschlägt
+      const timestamp = Date.now();
+      const newDefaultList: ShoppingList = {
+        id: timestamp.toString(),
+        name: 'Wocheneinkauf',
+        items: [],
+        templateId: 'supermarket',
+        isFavorite: false,
+        createdAt: timestamp,
+        modifiedAt: timestamp,
+      };
+      
+      lists.value = [newDefaultList];
+      currentListId.value = newDefaultList.id;
+    }
+    
     initialized.value = true;
-
-    saveListData();
-
-    return defaultList;
+    return defaultList || lists.value[0];
   };
 
   /**
@@ -265,21 +226,27 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         return false;
       }
       
-      const list = findListById(lists.value, listId);
-      if (!list) {
-        logger.error(`Liste mit ID ${listId} nicht gefunden`);
-        return false;
+      // Liste mit dem Service auswählen
+      const success = shoppingListService.setCurrentListId(listId);
+      
+      if (success) {
+        // Lokalen Zustand aktualisieren
+        currentListId.value = listId;
+        
+        // Template aktivieren
+        const list = shoppingListService.getListById(listId);
+        
+        if (list && list.templateId) {
+          if (categoryStore) {
+            categoryStore.activateTemplate(list.templateId);
+          } else {
+            // Fallback auf den CategoryService
+            categoryService.setActiveTemplate(list.templateId);
+          }
+        }
       }
-
-      currentListId.value = listId;
-      saveToStorage('currentListId', currentListId.value);
-
-      // Aktiviere die passende Kategorie-Vorlage für diese Liste
-      if (list.templateId) {
-        activateTemplateInStore(categoryStore, list.templateId);
-      }
-
-      return true;
+      
+      return success;
     } catch (error) {
       logger.error('Fehler beim Auswählen einer Liste:', error);
       return false;
@@ -298,27 +265,18 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         return false;
       }
       
-      if (lists.value.length <= 1) {
-        logger.error('Die letzte Liste kann nicht gelöscht werden');
-        return false;
+      // Liste mit dem Service löschen
+      const success = shoppingListService.deleteList(listId);
+      
+      if (success) {
+        // Listen aktualisieren
+        refreshLists();
+        
+        // Aktuelle Listen-ID aktualisieren
+        refreshCurrentListId();
       }
-
-      const list = findListById(lists.value, listId);
-      if (!list) {
-        logger.error(`Liste mit ID ${listId} nicht gefunden`);
-        return false;
-      }
-
-      // Immutable Update mit Filter
-      const updatedLists = lists.value.filter(list => list.id !== listId);
-      lists.value = updatedLists;
-
-      // Wenn die aktuell ausgewählte Liste gelöscht wurde, die erste Liste auswählen
-      if (listId === currentListId.value) {
-        currentListId.value = lists.value[0].id;
-      }
-
-      return saveListData();
+      
+      return success;
     } catch (error) {
       logger.error('Fehler beim Löschen einer Liste:', error);
       return false;
@@ -341,28 +299,39 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         logger.error('Keine Template-ID angegeben');
         return false;
       }
-
-      // Basisfunktion zur Aktualisierung der Liste verwenden
-      const updatedLists = updateList(
-        lists.value,
-        currentListId.value,
-        (list) => ({
-          ...list,
-          templateId: templateId,
-          modifiedAt: Date.now()
-        })
-      );
-
-      if (!updatedLists) {
+      
+      // Aktuelle Liste laden
+      const currentList = shoppingListService.getListById(currentListId.value);
+      
+      if (!currentList) {
+        logger.error(`Liste mit ID ${currentListId.value} nicht gefunden`);
         return false;
       }
-
-      lists.value = updatedLists;
-
-      // Aktiviere das Template im Store
-      activateTemplateInStore(categoryStore, templateId);
-
-      return saveToStorage('shoppingLists', lists.value);
+      
+      // Liste aktualisieren
+      const updatedList = {
+        ...currentList,
+        templateId: templateId,
+        modifiedAt: Date.now(),
+      };
+      
+      // Mit dem Service aktualisieren
+      const success = shoppingListService.updateList(updatedList) !== null;
+      
+      if (success) {
+        // Listen aktualisieren
+        refreshLists();
+        
+        // Template aktivieren
+        if (categoryStore) {
+          categoryStore.activateTemplate(templateId);
+        } else {
+          // Fallback auf den CategoryService
+          categoryService.setActiveTemplate(templateId);
+        }
+      }
+      
+      return success;
     } catch (error) {
       logger.error('Fehler beim Aktualisieren der Template-ID:', error);
       return false;
@@ -370,11 +339,18 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   };
 
   /**
-   * Speichert den aktuellen Zustand der Listen im localStorage
+   * Speichert den aktuellen Zustand der Listen
    * @returns true bei Erfolg, false bei Fehler
    */
   const saveLists = (): boolean => {
-    return saveListData();
+    try {
+      // Daten sind bereits im Service gespeichert, daher nur aktualisieren
+      refreshLists();
+      return true;
+    } catch (error) {
+      logger.error('Fehler beim Speichern der Listen:', error);
+      return false;
+    }
   };
 
   return {
@@ -387,6 +363,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
 
     // Funktionen
     loadLists,
+    refreshLists,
     createList,
     createDefaultList,
     selectList,
