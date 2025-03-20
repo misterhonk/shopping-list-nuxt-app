@@ -1,5 +1,6 @@
-import { createLogger } from '~/utils/logger';
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
+import { createLogger } from '~/utils/logger';
+
 import { sanitizeTemplate } from './utils';
 
 import type { TemplateCollection } from '~/composables/types';

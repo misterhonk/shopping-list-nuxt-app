@@ -1,6 +1,6 @@
-import { defineNuxtPlugin } from '#app';
-
 import { createLogger } from '../utils/logger';
+
+import { defineNuxtPlugin } from '#app';
 
 // Logger initialisieren
 const logger = createLogger('debug-plugin');

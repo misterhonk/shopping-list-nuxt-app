@@ -1,5 +1,6 @@
-import { defineNuxtPlugin } from '#app';
 import { useDarkMode } from '~/composables/useDarkMode';
+
+import { defineNuxtPlugin } from '#app';
 
 /**
  * Plugin für die Initialisierung des Dark Mode
@@ -9,7 +10,7 @@ export default defineNuxtPlugin(() => {
   // Dark Mode beim ersten Laden der Seite initialisieren
   if (process.client) {
     const { initializeDarkMode } = useDarkMode();
-    
+
     // Alle Dark Mode-Logik ist im Composable gekapselt
     initializeDarkMode();
   }

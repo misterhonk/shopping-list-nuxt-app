@@ -1,8 +1,9 @@
 // Wir benötigen nur die migrateLists Funktion
-import { defineNuxtPlugin } from '#app';
 
 import { migrateLists } from '../composables/utils/dataMigration';
 import { createLogger } from '../utils/logger';
+
+import { defineNuxtPlugin } from '#app';
 
 // Logger initialisieren
 const logger = createLogger('data-migration');
