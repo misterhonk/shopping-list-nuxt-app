@@ -1,15 +1,16 @@
 import { ref, computed } from 'vue';
 
-import { useLocalStorage } from '../core/useLocalStorage';
 import { createLogger } from '~/utils/logger';
-import { 
-  sortListsByFavorites, 
-  determineTemplateId, 
-  activateTemplateInStore 
+
+import { useLocalStorage } from '../core/useLocalStorage';
+import {
+  sortListsByFavorites,
+  determineTemplateId,
+  activateTemplateInStore,
 } from '../utils/listUtils';
 
-import type { Ref } from 'vue';
 import type { ShoppingList, CreateListOptions } from '../types';
+import type { Ref } from 'vue';
 
 // Logger initialisieren
 const logger = createLogger('useListManagement');
@@ -64,17 +65,15 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    * @param list - Die gespeicherte Liste
    * @returns Die standardisierte Liste mit allen erforderlichen Feldern
    */
-  const normalizeList = (list: Partial<ShoppingList>): ShoppingList => {
-    return {
-      id: list.id || '',
-      name: list.name || '',
-      items: Array.isArray(list.items) ? list.items : [],
-      templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
-      isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
-      createdAt: list.createdAt || 0,
-      modifiedAt: list.modifiedAt || Date.now(),
-    };
-  };
+  const normalizeList = (list: Partial<ShoppingList>): ShoppingList => ({
+    id: list.id || '',
+    name: list.name || '',
+    items: Array.isArray(list.items) ? list.items : [],
+    templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
+    isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
+    createdAt: list.createdAt || 0,
+    modifiedAt: list.modifiedAt || Date.now(),
+  });
 
   /**
    * Lädt die Liste und die aktuelle Listen-ID aus dem Speicher
@@ -120,10 +119,10 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       if (storedLists) {
         // Explizite Aufbereitung der Daten
         lists.value = storedLists.map(normalizeList);
-        
+
         // Sortiere Listen
         lists.value = sortListsByFavorites(lists.value);
-        
+
         // Setze aktuelle Liste
         setCurrentListId();
 
@@ -180,7 +179,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
 
     try {
       const newList = createListObject(name, options);
-      
+
       // Füge Liste hinzu und sortiere bei Bedarf
       lists.value = [...lists.value, newList];
       if (newList.isFavorite) {

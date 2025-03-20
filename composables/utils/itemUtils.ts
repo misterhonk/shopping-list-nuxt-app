@@ -40,34 +40,30 @@ export const updateItemCategory = (
   item: ShoppingItem,
   categoryId: string,
   newName: string
-): ShoppingItem => {
-  return {
-    ...item,
-    category: {
-      id: categoryId,
-      name: newName,
-    },
-    modifiedAt: Date.now(),
-  };
-};
+): ShoppingItem => ({
+  ...item,
+  category: {
+    id: categoryId,
+    name: newName,
+  },
+  modifiedAt: Date.now(),
+});
 
 /**
  * Erstellt ein neues Item-Objekt basierend auf den übergebenen Daten
  * @param itemData - Die Daten für das neue Item
  * @returns Das neue Item-Objekt
  */
-export const createItemObject = (itemData: Partial<ShoppingItem>): ShoppingItem => {
-  return {
-    id: itemData.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
-    name: itemData.name || '',
-    quantity: itemData.quantity || 1,
-    category: itemData.category || 'Sonstiges',
-    checked: itemData.checked || false,
-    price: itemData.price || 0,
-    addedAt: Date.now(),
-    modifiedAt: Date.now(),
-  };
-};
+export const createItemObject = (itemData: Partial<ShoppingItem>): ShoppingItem => ({
+  id: itemData.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
+  name: itemData.name || '',
+  quantity: itemData.quantity || 1,
+  category: itemData.category || 'Sonstiges',
+  checked: itemData.checked || false,
+  price: itemData.price || 0,
+  addedAt: Date.now(),
+  modifiedAt: Date.now(),
+});
 
 /**
  * Gruppiert Artikel nach Kategorien

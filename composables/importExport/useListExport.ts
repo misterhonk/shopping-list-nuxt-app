@@ -1,6 +1,6 @@
-import { createLogger } from '../../utils/logger';
+import { createLogger } from '~/utils/logger';
 
-import type { ShoppingItem } from '../types';
+import type { ShoppingItem } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('useListExport');

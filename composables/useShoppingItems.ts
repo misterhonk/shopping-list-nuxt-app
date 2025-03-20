@@ -1,13 +1,13 @@
 import { reactive, ref, computed } from 'vue';
 
 import { useLocalStorage } from './core/useLocalStorage';
-import { 
-  createItemObject, 
-  itemBelongsToCategory, 
-  updateItemCategory, 
+import {
+  createItemObject,
+  itemBelongsToCategory,
+  updateItemCategory,
   groupItemsByCategory,
   calculateTotalPrice,
-  calculateCategoryPrice
+  calculateCategoryPrice,
 } from './utils/itemUtils';
 
 import type { ShoppingItem, ShoppingList, Category } from './types';
@@ -59,7 +59,7 @@ export function useShoppingItems(
    */
   const getItemsGrouped = (categories: (string | Category)[]): Record<string, ShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
-    
+
     // Prüfen, ob items ein gültiges Array ist
     if (!currentList || !Array.isArray(currentList.items)) {
       return categories.reduce(
@@ -71,9 +71,9 @@ export function useShoppingItems(
         {} as Record<string, ShoppingItem[]>
       );
     }
-    
+
     // Kategorienamen aus dem Objekt extrahieren
-    const categoryNames = categories.map(cat => typeof cat === 'object' ? cat.name : cat);
+    const categoryNames = categories.map(cat => (typeof cat === 'object' ? cat.name : cat));
     return groupItemsByCategory(currentList.items, categoryNames);
   };
 
@@ -171,7 +171,9 @@ export function useShoppingItems(
 
     // Immutable Update und Entfernen des Items
     const updatedLists = createImmutableCopy(shoppingListsRef.value);
-    updatedLists[listIndex].items = updatedLists[listIndex].items.filter(item => item.id !== itemId);
+    updatedLists[listIndex].items = updatedLists[listIndex].items.filter(
+      item => item.id !== itemId
+    );
     updatedLists[listIndex].modifiedAt = Date.now();
 
     // Update und Speichern
@@ -313,7 +315,7 @@ export function useShoppingItems(
     if (!categoryId || !newName) {
       return;
     }
-    
+
     // Alle Listen durchgehen und die Kategorie in den Items aktualisieren
     const updatedLists = createImmutableCopy(shoppingListsRef.value);
 
@@ -333,7 +335,7 @@ export function useShoppingItems(
 
           return item;
         });
-        
+
         // Nur die Liste als geändert markieren, wenn Items geändert wurden
         if (hasUpdates) {
           updatedLists[listIndex].modifiedAt = Date.now();

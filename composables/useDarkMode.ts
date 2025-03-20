@@ -1,4 +1,5 @@
 import { ref, onMounted } from 'vue';
+
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
 
 import type { Ref } from 'vue';
@@ -25,7 +26,7 @@ export const useDarkMode = () => {
       document.documentElement.classList.remove('dark');
     }
   };
-  
+
   /**
    * Schaltet zwischen hellem und dunklem Modus um
    */
@@ -60,9 +61,8 @@ export const useDarkMode = () => {
    * Prüft, ob das System Dark Mode bevorzugt
    * @returns true wenn das System Dark Mode bevorzugt, sonst false
    */
-  const systemPrefersDarkMode = (): boolean => {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  };
+  const systemPrefersDarkMode = (): boolean =>
+    window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   /**
    * Initialisiert den Dark Mode basierend auf gespeicherten Einstellungen oder Systemeinstellungen
@@ -79,11 +79,11 @@ export const useDarkMode = () => {
 
     // Initial setzen
     updateDOMDarkMode(isDark.value);
-    
+
     // Event-Listener für Systemänderungen einrichten
     setupSystemPreferenceListener();
   };
-  
+
   /**
    * Richtet einen Event-Listener für Änderungen der Systemeinstellung ein
    */

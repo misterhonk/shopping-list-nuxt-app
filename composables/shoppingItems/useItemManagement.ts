@@ -1,16 +1,16 @@
 import { computed } from 'vue';
 
-import { createLogger } from '../../utils/logger';
-import { useLocalStorage } from '../core/useLocalStorage';
-import { 
-  createItemObject, 
-  itemBelongsToCategory, 
-  updateItemCategory, 
-  groupItemsByCategory
-} from '../utils/itemUtils';
+import { useLocalStorage } from '~/composables/core/useLocalStorage';
+import {
+  createItemObject,
+  itemBelongsToCategory,
+  updateItemCategory,
+  groupItemsByCategory,
+} from '~/composables/utils/itemUtils';
+import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, ShoppingItem } from '../types';
 import type { Ref } from 'vue';
+import type { ShoppingList, ShoppingItem } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('useItemManagement');
@@ -41,7 +41,7 @@ export function useItemManagement(
    */
   const getItemsGrouped = (categories: string[]): Record<string, ShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
-    
+
     // Prüfen, ob items ein gültiges Array ist
     if (!currentList || !Array.isArray(currentList.items)) {
       return categories.reduce(
@@ -52,7 +52,7 @@ export function useItemManagement(
         {} as Record<string, ShoppingItem[]>
       );
     }
-    
+
     return groupItemsByCategory(currentList.items, categories);
   };
 

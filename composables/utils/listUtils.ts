@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, CategoryTemplate } from '../types';
+import type { ShoppingList } from '../types';
 
 // Logger initialisieren
 const logger = createLogger('listUtils');
@@ -10,8 +10,8 @@ const logger = createLogger('listUtils');
  * @param lists - Die zu sortierenden Listen
  * @returns Die sortierten Listen
  */
-export const sortListsByFavorites = (lists: ShoppingList[]): ShoppingList[] => {
-  return [...lists].sort((a, b) => {
+export const sortListsByFavorites = (lists: ShoppingList[]): ShoppingList[] =>
+  [...lists].sort((a, b) => {
     if (a.isFavorite && !b.isFavorite) {
       return -1;
     }
@@ -20,7 +20,6 @@ export const sortListsByFavorites = (lists: ShoppingList[]): ShoppingList[] => {
     }
     return 0;
   });
-};
 
 /**
  * Ermittelt die passende Template-ID basierend auf dem Listennamen

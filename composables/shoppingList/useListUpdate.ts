@@ -1,9 +1,9 @@
-import { createLogger } from '../../utils/logger';
-import { useLocalStorage } from '../core/useLocalStorage';
-import { sortListsByFavorites } from '../utils/listUtils';
+import { useLocalStorage } from '~/composables/core/useLocalStorage';
+import { sortListsByFavorites } from '~/composables/utils/listUtils';
+import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, ShoppingItem } from '../types';
 import type { Ref } from 'vue';
+import type { ShoppingList, ShoppingItem } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('useListUpdate');
@@ -59,7 +59,7 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
       } else {
         listsRef.value = updatedLists;
       }
-      
+
       saveToStorage('shoppingLists', listsRef.value);
 
       return true;
