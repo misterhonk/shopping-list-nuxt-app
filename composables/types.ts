@@ -11,6 +11,7 @@ export interface Category {
   name: string;
   color?: string;
   icon?: string;
+  position?: number; // Position für die Sortierung nach Laufweg
 }
 
 /**
@@ -21,6 +22,7 @@ export interface CategoryTemplate {
   name: string;
   description: string;
   categories: Category[];
+  defaultCategoryOrder?: string[]; // Array von Category-IDs in der Standard-Laufweg-Reihenfolge
   isCustom?: boolean;
 }
 
@@ -29,6 +31,15 @@ export interface CategoryTemplate {
  */
 export interface TemplateCollection {
   [key: string]: CategoryTemplate;
+}
+
+/**
+ * Interface für die Sortierungskonfiguration von Kategorien
+ */
+export interface CategorySortConfig {
+  templateId: string;        // ID der Vorlage, zu der diese Konfiguration gehört
+  useCustomSort: boolean;    // Ob benutzerdefinierte Sortierung verwendet werden soll
+  customOrder: string[];     // Array von Category-IDs in benutzerdefinierter Reihenfolge
 }
 
 /**

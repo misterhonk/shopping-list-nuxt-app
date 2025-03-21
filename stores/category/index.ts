@@ -14,8 +14,15 @@ import {
 } from './operations';
 import { saveCategoryData, loadCategoryData } from './storage';
 import { categoryTemplates, defaultTemplateId } from './templates';
+import {
+  loadSortConfigs,
+  saveSortConfigs,
+  getSortConfigForTemplate,
+  updateSortConfig,
+  sortCategories,
+} from './sorting';
 
-import type { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
+import type { Category, CategorySortConfig, CategoryTemplate, TemplateCollection } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('index');
@@ -28,6 +35,7 @@ interface CategoryState {
   activeTemplateId: string;
   customTemplates: TemplateCollection;
   isEditMode: boolean;
+  sortConfigs: Record<string, CategorySortConfig>;
 }
 
 /**
@@ -39,6 +47,7 @@ export const useCategoryStore = defineStore('categoryStore', {
     activeTemplateId: defaultTemplateId,
     customTemplates: {},
     isEditMode: false,
+    sortConfigs: {},
   }),
 
   getters: {
@@ -64,6 +73,14 @@ export const useCategoryStore = defineStore('categoryStore', {
     },
 
     /**
+     * Sortierte Kategorien des aktuellen Templates (nach Laufweg, Benutzerdefiniert oder Alphabetisch)
+     */
+    sortedCategories(): Category[] {
+      const currentSortConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      return sortCategories(this.currentCategories, this.currentTemplate, currentSortConfig);
+    },
+
+    /**
      * Alle Templates als Array für die Auswahl
      */
     templatesList(): Array<{
@@ -78,6 +95,20 @@ export const useCategoryStore = defineStore('categoryStore', {
         description: template.description,
         isCustom: this.customTemplates[template.id] !== undefined,
       }));
+    },
+
+    /**
+     * Aktuelle Sortierungskonfiguration für das ausgewählte Template
+     */
+    currentSortConfig(): CategorySortConfig {
+      return getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+    },
+
+    /**
+     * Gibt an, ob die aktuelle Sortierung benutzerdefiniert ist
+     */
+    isCustomSortActive(): boolean {
+      return this.currentSortConfig.useCustomSort;
     },
   },
 
@@ -148,6 +179,20 @@ export const useCategoryStore = defineStore('categoryStore', {
         this.customTemplates
       );
 
+      // Kategorie auch aus benutzerdefinierten Sortierungen entfernen
+      if (this.sortConfigs[this.activeTemplateId]) {
+        const updatedOrder = this.sortConfigs[this.activeTemplateId].customOrder.filter(
+          id => id !== categoryId
+        );
+        
+        this.sortConfigs[this.activeTemplateId] = {
+          ...this.sortConfigs[this.activeTemplateId],
+          customOrder: updatedOrder,
+        };
+        
+        saveSortConfigs(this.sortConfigs);
+      }
+
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
@@ -179,6 +224,16 @@ export const useCategoryStore = defineStore('categoryStore', {
       if (result.newTemplateId) {
         this.customTemplates = result.customTemplates;
         this.activeTemplateId = result.newTemplateId;
+        
+        // Wenn es ein Basis-Template gab, dessen Sortierung übernehmen
+        if (baseTemplateId && this.sortConfigs[baseTemplateId]) {
+          this.sortConfigs[result.newTemplateId] = {
+            ...this.sortConfigs[baseTemplateId],
+            templateId: result.newTemplateId,
+          };
+          saveSortConfigs(this.sortConfigs);
+        }
+        
         this.saveToLocalStorage();
         return result.newTemplateId;
       }
@@ -192,6 +247,14 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     deleteTemplate(templateId: string): void {
       this.customTemplates = deleteTemplateOperation(templateId, this.customTemplates);
+
+      // Sortierungskonfiguration für das gelöschte Template entfernen
+      if (this.sortConfigs[templateId]) {
+        const updatedConfigs = { ...this.sortConfigs };
+        delete updatedConfigs[templateId];
+        this.sortConfigs = updatedConfigs;
+        saveSortConfigs(this.sortConfigs);
+      }
 
       // Falls das aktive Template gelöscht wurde, zurück zum Standard
       if (this.activeTemplateId === templateId) {
@@ -234,6 +297,67 @@ export const useCategoryStore = defineStore('categoryStore', {
     },
 
     /**
+     * Sortierung zwischen Standard und Benutzerdefiniert umschalten
+     */
+    toggleSortMode(): void {
+      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      
+      const updatedConfig = {
+        ...currentConfig,
+        useCustomSort: !currentConfig.useCustomSort,
+      };
+      
+      // Wenn wir zum ersten Mal auf benutzerdefinierte Sortierung umschalten,
+      // verwenden wir die Standard-Reihenfolge als Ausgangspunkt
+      if (updatedConfig.useCustomSort && updatedConfig.customOrder.length === 0) {
+        const template = this.allTemplates[this.activeTemplateId];
+        if (template.defaultCategoryOrder) {
+          updatedConfig.customOrder = [...template.defaultCategoryOrder];
+        } else {
+          // Andernfalls nehmen wir einfach die aktuelle Reihenfolge der Kategorien
+          updatedConfig.customOrder = this.currentCategories.map(cat => cat.id);
+        }
+      }
+      
+      this.sortConfigs = updateSortConfig(updatedConfig, this.sortConfigs);
+      saveSortConfigs(this.sortConfigs);
+    },
+
+    /**
+     * Benutzerdefinierte Sortierreihenfolge aktualisieren
+     * @param newOrder - Array mit Kategorie-IDs in der neuen Reihenfolge
+     */
+    updateCustomSortOrder(newOrder: string[]): void {
+      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      
+      const updatedConfig = {
+        ...currentConfig,
+        useCustomSort: true,
+        customOrder: newOrder,
+      };
+      
+      this.sortConfigs = updateSortConfig(updatedConfig, this.sortConfigs);
+      saveSortConfigs(this.sortConfigs);
+    },
+
+    /**
+     * Benutzerdefinierte Sortierung zurücksetzen auf Standard-Laufweg
+     */
+    resetToDefaultSort(): void {
+      const template = this.allTemplates[this.activeTemplateId];
+      const defaultOrder = template.defaultCategoryOrder || [];
+      
+      const updatedConfig: CategorySortConfig = {
+        templateId: this.activeTemplateId,
+        useCustomSort: false,
+        customOrder: [...defaultOrder],
+      };
+      
+      this.sortConfigs = updateSortConfig(updatedConfig, this.sortConfigs);
+      saveSortConfigs(this.sortConfigs);
+    },
+
+    /**
      * Daten im Local Storage speichern
      */
     saveToLocalStorage(): void {
@@ -265,6 +389,9 @@ export const useCategoryStore = defineStore('categoryStore', {
             this.activeTemplateId = data.activeTemplateId;
           }
         }
+        
+        // Sortierungskonfigurationen laden
+        this.sortConfigs = loadSortConfigs();
       } catch (error) {
         logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
       }
@@ -277,6 +404,10 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.customTemplates = {};
       this.activeTemplateId = defaultTemplateId;
       this.saveToLocalStorage();
+      
+      // Sortierungskonfigurationen zurücksetzen
+      this.sortConfigs = {};
+      saveSortConfigs({});
     },
   },
 });
