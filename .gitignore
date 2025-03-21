@@ -17,6 +17,7 @@ logs
 .DS_Store
 .fleet
 .idea
+commit-message.txt
 
 # Local env files
 .env
