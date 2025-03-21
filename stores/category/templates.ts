@@ -1,4 +1,5 @@
 import type { CategoryTemplate, TemplateCollection } from '~/composables/types';
+import { addDefaultPathsToTemplates } from '../templates/defaultPaths';
 
 /**
  * Standard-Template-ID
@@ -8,7 +9,7 @@ export const defaultTemplateId = 'supermarket';
 /**
  * Kategorie-Vorlagen für verschiedene Geschäftstypen
  */
-export const categoryTemplates: TemplateCollection = {
+const baseTemplates: TemplateCollection = {
   // Standardvorlage für Supermärkte
   supermarket: {
     id: 'supermarket',
@@ -97,6 +98,9 @@ export const categoryTemplates: TemplateCollection = {
     ],
   },
 };
+
+// Templates mit Standard-Laufwegen ergänzen
+export const categoryTemplates = addDefaultPathsToTemplates(baseTemplates);
 
 /**
  * Hilfsfunktion zum Abrufen aller Templates

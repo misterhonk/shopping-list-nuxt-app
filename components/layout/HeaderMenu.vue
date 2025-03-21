@@ -112,6 +112,30 @@
               </svg>
             </NuxtLink>
 
+            <!-- Category Sorting -->
+            <NuxtLink
+              to="/settings/category-sorting"
+              class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+              role="menuitem"
+              @click="closeMenu"
+            >
+              <span class="flex-1 text-left">Laufweg-Sortierung</span>
+              <svg
+                class="ml-2 h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                />
+              </svg>
+            </NuxtLink>
+
             <!-- Separator -->
             <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
 

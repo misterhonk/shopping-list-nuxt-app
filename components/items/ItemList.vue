@@ -11,7 +11,7 @@
     </div>
 
     <div v-if="items.length > 0">
-      <div v-for="category in groupedCategories" :key="category.id" class="mb-4">
+      <div v-for="category in sortedGroupedCategories" :key="category.id" class="mb-4">
         <h4
           class="text-md font-semibold text-gray-600 dark:text-gray-300 px-3 py-1 bg-gray-50 dark:bg-gray-700 rounded-t-lg flex justify-between items-center"
         >
@@ -42,6 +42,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useCategoryStore } from '~/stores/category';
 
 import EmptyState from './EmptyState.vue';
 import ItemListItem from './ItemListItem.vue';
@@ -54,6 +55,13 @@ const props = defineProps({
 });
 
 defineEmits(['toggle', 'remove', 'add-new']);
+
+// Kategorie-Store für die Sortierung
+const categoryStore = useCategoryStore();
+
+// Aktives Template und sortierte Kategorien
+const activeTemplate = computed(() => categoryStore.currentTemplate);
+const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel
 const totalPrice = computed(() =>
@@ -82,10 +90,35 @@ const groupedItems = computed(() => {
   return groups;
 });
 
-// Liste der gruppierten Kategorien
-const groupedCategories = computed(() =>
-  Object.values(groupedItems.value).sort((a, b) => a.name.localeCompare(b.name))
-);
+// Kategorien-Sortierreihenfolge
+const categorySortOrder = computed(() => {
+  // Sortierte Kategorien aus dem Store holen (nach Laufweg oder benutzerdefiniert)
+  return sortedCategories.value.map(cat => cat.id);
+});
+
+// Liste der gruppierten Kategorien, sortiert nach der Laufweg-Reihenfolge
+const sortedGroupedCategories = computed(() => {
+  const categories = Object.values(groupedItems.value);
+  
+  // Sortierungsfunktion basierend auf der Kategoriereihenfolge
+  return categories.sort((a, b) => {
+    // Position in der Sortierreihenfolge suchen
+    const indexA = categorySortOrder.value.indexOf(a.id);
+    const indexB = categorySortOrder.value.indexOf(b.id);
+    
+    // Wenn beide Kategorien in der Sortierreihenfolge vorhanden sind
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    
+    // Wenn nur eine Kategorie in der Sortierreihenfolge vorhanden ist
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    
+    // Fallback: Alphabetisch sortieren, wenn keine Kategorie in der Sortierreihenfolge ist
+    return a.name.localeCompare(b.name);
+  });
+});
 
 // Berechne den Gesamtpreis pro Kategorie
 const getCategoryTotal = categoryId => {
