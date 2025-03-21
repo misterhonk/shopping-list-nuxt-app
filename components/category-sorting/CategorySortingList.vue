@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { VueDraggable } from 'vue-draggable-next';
+import draggable from 'vuedraggable';
 import { useCategoryStore } from '~/stores/category';
 
 // Store-Instanz erzeugen
@@ -21,6 +21,9 @@ const emit = defineEmits(['sortingChanged']);
 const enabled = ref(true);
 const isMounted = ref(false);
 
+// Stellen Sie sicher, dass der Store geladen wird
+categoryStore.loadFromLocalStorage();
+
 // Computed Properties für Kategorien und Sortierungsoptionen
 const categories = computed(() => categoryStore.currentCategories);
 const sortedCategories = computed(() => categoryStore.sortedCategories);
@@ -36,6 +39,7 @@ const draggableCategories = computed({
   },
   set: (value: string[]) => {
     // Wenn sich die Reihenfolge geändert hat, im Store aktualisieren
+    if (!Array.isArray(value)) return;
     categoryStore.updateCustomSortOrder(value);
     emit('sortingChanged', value);
   },
@@ -65,6 +69,17 @@ const resetToDefaultSort = () => {
 const getCategoryById = (id: string) => {
   return categoriesMap.value.get(id) || { name: id, id };
 };
+
+// Überprüfen, ob die draggable-Komponente korrekt geladen wurde
+const dragOptions = computed(() => {
+  return {
+    animation: 200,
+    group: "categories",
+    disabled: !isCustomSortActive.value,
+    ghostClass: "ghost",
+    dragClass: "dragging"
+  };
+});
 </script>
 
 <template>
@@ -97,14 +112,11 @@ const getCategoryById = (id: string) => {
     </div>
 
     <!-- Drag & Drop Bereich -->
-    <VueDraggable
+    <draggable
       v-model="draggableCategories"
-      :disabled="!isCustomSortActive || !enabled"
+      v-bind="dragOptions"
       item-key="id"
-      group="categories"
       handle=".drag-handle"
-      ghost-class="ghost"
-      drag-class="dragging"
       class="category-list"
     >
       <template #item="{ element }">
@@ -137,7 +149,7 @@ const getCategoryById = (id: string) => {
           </div>
         </div>
       </template>
-    </VueDraggable>
+    </draggable>
   </div>
 </template>
 

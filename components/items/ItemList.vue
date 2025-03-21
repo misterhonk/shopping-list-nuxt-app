@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useCategoryStore } from '~/stores/category';
 
 import EmptyState from './EmptyState.vue';
@@ -58,6 +58,11 @@ defineEmits(['toggle', 'remove', 'add-new']);
 
 // Kategorie-Store für die Sortierung
 const categoryStore = useCategoryStore();
+
+// Beim Mounten der Komponente den Store aus dem localStorage laden
+onMounted(() => {
+  categoryStore.loadFromLocalStorage();
+});
 
 // Aktives Template und sortierte Kategorien
 const activeTemplate = computed(() => categoryStore.currentTemplate);
