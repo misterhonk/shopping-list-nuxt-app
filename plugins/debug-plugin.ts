@@ -1,6 +1,7 @@
 import { createLogger } from '../utils/logger';
 
 import { defineNuxtPlugin } from '#app';
+import { APP_VERSION } from '~/services/updateService';
 
 // Logger initialisieren
 const logger = createLogger('debug-plugin');
@@ -29,12 +30,12 @@ export default defineNuxtPlugin(nuxtApp => {
   });
 
   // Debug-Informationen für die App bereitstellen
-  const APP_VERSION = '1.0.0';
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   return {
     provide: {
       debug: {
+        // Aktuelle Version aus dem zentralen Service importieren
         version: APP_VERSION,
         isDevelopment,
         logEvent: (category: string, action: string, label?: string, value?: number) => {

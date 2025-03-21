@@ -20,6 +20,7 @@ export default defineNuxtConfig({
 
   // PWA-Konfiguration
   pwa: {
+    registerType: 'autoUpdate', // Automatische Updates erzwingen
     manifest: {
       name: 'Einkaufslisten App',
       short_name: 'Einkaufsliste',
@@ -27,6 +28,7 @@ export default defineNuxtConfig({
       theme_color: '#f97316',
       background_color: '#ffffff',
       display: 'standalone',
+      version: '2.0.1', // Explizite Version im Manifest
       icons: [
         {
           src: 'icons/icon-64.png',
@@ -46,17 +48,60 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
+      // Sofortiges Aktivieren des neuen Service Workers
+      skipWaiting: true,
+      // Kontrolle über alle Clients übernehmen
+      clientsClaim: true,
+      // Veraltete Caches bereinigen
+      cleanupOutdatedCaches: true,
+      // Kürzere Update-Intervalle für Dev-Mode
       navigateFallback: null,
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      // Aggressivere Caching-Strategie vermeiden
+      runtimeCaching: [
+        {
+          urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/,
+          handler: 'NetworkFirst', // Auf NetworkFirst geändert für häufigere Updates
+          options: {
+            cacheName: 'images',
+            expiration: {
+              maxEntries: 60,
+              maxAgeSeconds: 60 * 60 * 24 // 1 Tag (kürzer als zuvor)
+            }
+          }
+        },
+        {
+          urlPattern: /\.(?:js|css)$/,
+          handler: 'NetworkFirst', 
+          options: {
+            cacheName: 'static-resources',
+            expiration: {
+              maxEntries: 60,
+              maxAgeSeconds: 60 * 60 * 12 // 12 Stunden
+            }
+          }
+        },
+        {
+          urlPattern: /\/_nuxt\//,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'nuxt-resources',
+            expiration: {
+              maxEntries: 100,
+              maxAgeSeconds: 60 * 60 * 6 // 6 Stunden (noch kürzer für häufigere Updates)
+            }
+          }
+        }
+      ],
     },
     devOptions: {
       enabled: true,
       type: 'module',
-    },
+    }
   },
-  // CSP-freundliche Konfiguration
+  
+  // Vite Konfiguration für PWA auf iOS
   vite: {
-    // Wechsel zu safer code splitting für CSP-Kompatibilität
     build: {
       target: 'esnext',
       cssCodeSplit: true,
@@ -66,8 +111,24 @@ export default defineNuxtConfig({
           comments: false,
         },
       },
+      // Build-Versioning für bessere Cache-Busting
+      rollupOptions: {
+        output: {
+          entryFileNames: `[name].[hash].js`,
+          chunkFileNames: `[name].[hash].js`,
+          assetFileNames: `[name].[hash].[ext]`
+        }
+      }
     },
-    // Optimierungen für CSP-Kompatibilität
+    // Spezielle Header für bessere Cache-Kontrolle
+    server: {
+      headers: {
+        'Service-Worker-Allowed': '/',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    },
     optimizeDeps: {
       include: [],
       exclude: [],
@@ -81,6 +142,10 @@ export default defineNuxtConfig({
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: 'Meine wöchentliche Einkaufsliste' },
+        // Cache-Control Meta-Tags für iOS
+        { 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' },
+        { 'http-equiv': 'Pragma', content: 'no-cache' },
+        { 'http-equiv': 'Expires', content: '0' },
       ],
       // Explizites CSP-Tag
       script: [
@@ -89,6 +154,16 @@ export default defineNuxtConfig({
         },
       ],
     },
+    // Cache-Kontrolle über HTTP-Header
+    pageTransition: false, // Verbessert das Reload-Verhalten
+    // Hash im Dateinamen für Cache-Busting
+    buildAssetsDir: `_nuxt_${Date.now()}/`
+  },
+
+  // Server-Konfiguration für Testing
+  server: {
+    host: '0.0.0.0', // Auf allen Interfaces hören
+    port: 3000 // Standard-Port
   },
 
   // Stellen Sie sicher, dass client-seitige Navigation aktiviert ist

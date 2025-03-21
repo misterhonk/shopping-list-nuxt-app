@@ -21,7 +21,7 @@
           <div class="text-sm text-gray-500 dark:text-gray-400">
             Shopping List App &copy; {{ new Date().getFullYear() }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">Version 2.0.0</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Version {{ appVersion }}</div>
         </div>
       </div>
     </footer>
@@ -30,6 +30,10 @@
 
 <script setup>
 import HeaderMenu from '../components/layout/HeaderMenu.vue';
+import { APP_VERSION } from '~/services/updateService';
+
+// App-Version aus dem zentralen Service importieren
+const appVersion = APP_VERSION;
 </script>
 
 <style>
