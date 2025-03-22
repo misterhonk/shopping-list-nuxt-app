@@ -145,18 +145,23 @@
 - [ ] Automatisierte Tests in CI integrieren
 - [ ] Code-Review-Prozess etablieren
 - ✅ TypeScript strict mode feinjustieren
+- ✅ commitlint für Commit-Message-Validierung
+- ✅ GitHub Actions CI-Workflow
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] End-to-End-Tests implementieren
 - [ ] Performance-Tests einrichten
 - [ ] Bundle-Größe reduzieren
 - [ ] CI/CD-Pipeline verfeinern
+- [ ] Docker-Compose für lokale Entwicklung
+- [ ] Erweiterte Commit-Validierung mit Release-Notes
 
 #### Langfristige Ziele (Q2-Q4 2026)
 - [ ] A11y-Tests automatisieren
 - [ ] Performance-Monitoring einrichten
 - [ ] Integrationstests für API-Verbindungen
 - [ ] Mobile-Tests auf verschiedenen Geräten
+- [ ] Internationalisierungs-Workflow
 
 ### 🔒 Sicherheit & Datenschutz
 #### Kurzfristige Ziele (Q2-Q3 2025)
@@ -183,18 +188,29 @@
 - ✅ IDE-Konfiguration für Team standardisieren
 - ✅ Deployment-Prozess weiter automatisieren
 - [ ] VSCode-Extensions empfehlen
+- [ ] Test-Automatisierung einführen (Vue Testing Library/Vitest)
+- [ ] End-to-End-Tests mit Cypress oder Playwright
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] Rendering-Performance optimieren
 - [ ] Lazy Loading implementieren
 - [ ] Caching-Strategien implementieren
 - [ ] Canary-Releases einrichten
+- [ ] Code-Qualitätsmetriken mit SonarQube oder CodeClimate
+- [ ] Bundle-Analysen mit Webpack Bundle Analyzer
+- [ ] Performance-Budgets für die Web-App definieren
+- [ ] Security-Checks (npm audit)
+- [ ] Dependency-Scanning für Sicherheitslücken
 
 #### Langfristige Ziele (Q2-Q4 2026)
 - [ ] Rollback-Strategie verbessern
 - [ ] Release-Notes automatisieren
 - [ ] Server-Monitoring für Backend
 - [ ] Uptime-Checking implementieren
+- [ ] Lighthouse CI für Leistungsbewertung
+- [ ] Performance-Regression-Tests
+- [ ] Web Vitals Tracking
+- [ ] OWASP ZAP für Sicherheitsscans
 
 ### 📝 Dokumentation
 #### Kurzfristige Ziele (Q2-Q3 2025)
@@ -202,12 +218,19 @@
 - ✅ Architektur-Dokumentation erweitern
 - [ ] JSDoc für wichtige Funktionen ergänzen
 - ✅ Entwicklungsrichtlinien dokumentieren
+- [ ] Automatische API-Dokumentationsgenerierung
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] Komponenten-Dokumentation erstellen
 - [ ] Onboarding-Dokumentation verfassen
 - [ ] Visuelle Komponenten-Bibliothek (Storybook) einrichten
 - [ ] Benutzerhandbuch aktualisieren
+- [ ] Erzeugung von Typendokumentation aus TypeScript
+
+#### Langfristige Ziele (Q2-Q4 2026)
+- [ ] Automatische Changelog-Generierung
+- [ ] Interaktive Dokumentation für Entwickler
+- [ ] Nutzerhandbuch in der App integrieren
 
 ## 🐞 Bekannte Probleme & Technische Schulden
 
