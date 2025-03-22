@@ -16,7 +16,7 @@
           @touchstart="handleTouchStart($event, list.id)"
           @touchmove="handleTouchMove($event)"
           @touchend="handleTouchEnd(list.id)"
-          @touchcancel="handleTouchCancel()"
+          @touchcancel="handleTouchCancel"
         >
           <!-- Favoriten-Stern -->
           <svg
@@ -36,7 +36,7 @@
             class="ml-1 text-xs bg-white bg-opacity-30 rounded-full px-1 sm:px-2 py-0.5 flex-shrink-0"
             >{{ getItemsCount(list) }}</span
           >
-          
+
           <!-- Delete button - shown on non-touch devices -->
           <button
             v-if="lists.length > 1 && !isMobileDevice"
@@ -58,10 +58,10 @@
               />
             </svg>
           </button>
-          
+
           <!-- Swipe indicators (visible during swipe) -->
-          <div 
-            v-if="currentSwipedListId === list.id && swipeDirection === 'left'" 
+          <div
+            v-if="currentSwipedListId === list.id && swipeDirection === 'left'"
             class="absolute inset-y-0 right-0 flex items-center justify-center bg-red-500 text-white px-2 rounded-r-md"
           >
             <svg
@@ -79,9 +79,9 @@
               />
             </svg>
           </div>
-          
-          <div 
-            v-if="currentSwipedListId === list.id && swipeDirection === 'right'" 
+
+          <div
+            v-if="currentSwipedListId === list.id && swipeDirection === 'right'"
             class="absolute inset-y-0 left-0 flex items-center justify-center bg-blue-500 text-white px-2 rounded-l-md"
           >
             <svg
@@ -107,27 +107,29 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import type { ShoppingList } from '~/types/app-types';
 
-const props = defineProps({
-  lists: {
-    type: Array,
-    default: () => [],
-  },
-  currentListId: {
-    type: String,
-    default: null,
-  },
+const props = withDefaults(defineProps<{
+  lists: ShoppingList[];
+  currentListId: string | null;
+}>(), {
+  lists: () => [],
+  currentListId: null
 });
 
-const emit = defineEmits(['select', 'delete', 'add-item']);
+const emit = defineEmits<{
+  (e: 'select', listId: string): void;
+  (e: 'delete', listId: string): void;
+  (e: 'add-item'): void;
+}>();
 
-const getItemsCount = (list: any) => (Array.isArray(list.items) ? list.items.length : 0);
+const getItemsCount = (list: ShoppingList): number => (Array.isArray(list.items) ? list.items.length : 0);
 
-const selectList = (listId: string) => {
+const selectList = (listId: string): void => {
   emit('select', listId);
 };
 
-const deleteList = (listId: string) => {
+const deleteList = (listId: string): void => {
   if (confirm('Möchtest du diese Liste wirklich löschen?')) {
     emit('delete', listId);
   }
@@ -147,18 +149,20 @@ onMounted(() => {
   );
 });
 
-const handleTouchStart = (event: TouchEvent, listId: string) => {
+const handleTouchStart = (event: TouchEvent, listId: string): void => {
   touchStartX.value = event.touches[0].clientX;
   currentSwipedListId.value = listId;
   swipeDirection.value = null;
 };
 
-const handleTouchMove = (event: TouchEvent) => {
-  if (!currentSwipedListId.value) return;
-  
+const handleTouchMove = (event: TouchEvent): void => {
+  if (!currentSwipedListId.value) {
+    return;
+  }
+
   touchEndX.value = event.touches[0].clientX;
   const swipeDistance = touchEndX.value - touchStartX.value;
-  
+
   // Determine swipe direction for visual feedback
   if (swipeDistance > 50) {
     swipeDirection.value = 'right';
@@ -169,31 +173,33 @@ const handleTouchMove = (event: TouchEvent) => {
   }
 };
 
-const handleTouchEnd = (listId: string) => {
-  if (!currentSwipedListId.value) return;
-  
+const handleTouchEnd = (listId: string): void => {
+  if (!currentSwipedListId.value) {
+    return;
+  }
+
   const swipeDistance = touchEndX.value - touchStartX.value;
-  
+
   // Swipe right to edit (placeholder)
   if (swipeDistance > 100) {
     console.log('Swipe right on list:', listId);
     // Placeholder for edit action
   }
-  
+
   // Swipe left to delete
   if (swipeDistance < -100) {
     deleteList(listId);
   }
-  
+
   // Reset
   resetSwipe();
 };
 
-const handleTouchCancel = () => {
+const handleTouchCancel = (): void => {
   resetSwipe();
 };
 
-const resetSwipe = () => {
+const resetSwipe = (): void => {
   currentSwipedListId.value = null;
   swipeDirection.value = null;
 };
@@ -202,12 +208,12 @@ const resetSwipe = () => {
 <style scoped>
 /* Verstecken der Scrollbar, aber Beibehalten der Funktionalität */
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none; /* Chrome, Safari and Opera */
 }
 
 /* Touch swipe transitions */

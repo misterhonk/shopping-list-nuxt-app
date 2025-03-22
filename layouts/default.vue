@@ -28,12 +28,13 @@
   </div>
 </template>
 
-<script setup>
-import HeaderMenu from '../components/layout/HeaderMenu.vue';
+<script setup lang="ts">
 import { APP_VERSION } from '~/services/updateService';
 
+import HeaderMenu from '~/components/layout/HeaderMenu.vue';
+
 // App-Version aus dem zentralen Service importieren
-const appVersion = APP_VERSION;
+const appVersion: string = APP_VERSION;
 </script>
 
 <style>

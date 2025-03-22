@@ -76,38 +76,47 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Logger initialisieren
 import { reactive, computed, ref, onMounted } from 'vue';
+import type { Category, ShoppingItem } from '~/types/app-types';
 
-import { createLogger } from '../../utils/logger';
+import { createLogger } from '~/utils/logger';
 
 const logger = createLogger('ItemCreationForm');
 
-const props = defineProps({
-  categories: {
-    type: Array,
-    default: () => [
-      'Obst & Gemüse',
-      'Fleisch & Fisch',
-      'Backwaren',
-      'Milchprodukte',
-      'Getränke',
-      'Sonstiges',
-    ],
-  },
-  allLists: {
-    type: Array,
-    default: () => [],
-  },
+type CategoryInput = Category | string;
+interface NewItem {
+  name: string;
+  quantity: number;
+  category: Category | null;
+  price: number;
+}
+
+const props = withDefaults(defineProps<{
+  categories: CategoryInput[];
+  allLists: any[];
+}>(), {
+  categories: () => [
+    'Obst & Gemüse',
+    'Fleisch & Fisch',
+    'Backwaren',
+    'Milchprodukte',
+    'Getränke',
+    'Sonstiges',
+  ],
+  allLists: () => [],
 });
 
-const emit = defineEmits(['add', 'cancel']);
+const emit = defineEmits<{
+  (e: 'add', item: NewItem): void;
+  (e: 'cancel'): void;
+}>();
 
-const normalizedCategories = computed(() =>
+const normalizedCategories = computed<Category[]>(() =>
   props.categories.map(category => {
     // Wenn es bereits ein Objekt mit id und name ist
-    if (typeof category === 'object' && category !== null && category.id && category.name) {
+    if (typeof category === 'object' && category?.id && category.name) {
       return category;
     }
     // Wenn es ein String ist, konvertiere es zu einem Objekt
@@ -120,12 +129,12 @@ const normalizedCategories = computed(() =>
     // Fallback
     return {
       id: `unknown_${Math.random().toString(36).substr(2, 9)}`,
-      name: String(category || 'Sonstiges'),
+      name: String(category ?? 'Sonstiges'),
     };
   })
 );
 
-const item = reactive({
+const item = reactive<NewItem>({
   name: '',
   quantity: 1,
   category: null,
@@ -139,11 +148,20 @@ onMounted(() => {
   }
 });
 
-const nameInput = ref(null);
+const nameInput = ref<HTMLInputElement | null>(null);
 
-const isValid = computed(() => item.name && item.name.trim() !== '' && item.quantity > 0);
+const isValid = computed<boolean>(() => item.name && item.name.trim() !== '' && item.quantity > 0);
 
-const onSubmit = () => {
+interface ItemHistory {
+  [key: string]: {
+    count: number;
+    lastUsed: string | null;
+    categories: Record<string, number>;
+    prices: Array<{price: number, date: string}>;
+  }
+}
+
+const onSubmit = (): void => {
   if (!isValid.value) {
     return;
   }
@@ -156,14 +174,14 @@ const onSubmit = () => {
         ? item.category
         : {
             id: 'sonstiges',
-            name: String(item.category || 'Sonstiges'),
+            name: String(item.category ?? 'Sonstiges'),
           },
     price: parseFloat(item.price) || 0,
   };
 
   // Zum Verlauf hinzufügen - vereinfachte Version ohne Speichern
   try {
-    const itemHistory = JSON.parse(localStorage.getItem('itemHistory') || '{}');
+    const itemHistory = JSON.parse(localStorage.getItem('itemHistory') || '{}') as ItemHistory;
     const normalizedName = item.name.toLowerCase().trim();
     const now = new Date().toISOString();
 
@@ -177,7 +195,7 @@ const onSubmit = () => {
     existingItem.count += 1;
     existingItem.lastUsed = now;
 
-    const categoryId = item.category?.id || 'sonstiges';
+    const categoryId = item.category?.id ?? 'sonstiges';
     existingItem.categories[categoryId] = (existingItem.categories[categoryId] || 0) + 1;
 
     if (item.price && item.price > 0) {
@@ -208,14 +226,14 @@ const onSubmit = () => {
   focusInput();
 };
 
-const onCancel = () => {
+const onCancel = (): void => {
   item.name = '';
   item.quantity = 1;
   item.price = 0;
   emit('cancel');
 };
 
-const focusInput = () => {
+const focusInput = (): void => {
   if (nameInput.value) {
     nameInput.value.focus();
   }

@@ -40,21 +40,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue';
+
 import { useCategoryStore } from '~/stores/category';
+import type { ShoppingItem, Category } from '~/types/app-types';
 
 import EmptyState from './EmptyState.vue';
 import ItemListItem from './ItemListItem.vue';
 
-const props = defineProps({
-  items: {
-    type: Array,
-    default: () => [],
-  },
+const props = withDefaults(defineProps<{
+  items: ShoppingItem[];
+}>(), {
+  items: () => []
 });
 
-defineEmits(['toggle', 'remove', 'add-new']);
+const emit = defineEmits<{
+  (e: 'toggle', item: ShoppingItem): void;
+  (e: 'remove', item: ShoppingItem): void;
+  (e: 'add-new'): void;
+}>();
 
 // Kategorie-Store für die Sortierung
 const categoryStore = useCategoryStore();
@@ -70,16 +75,24 @@ const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel
 const totalPrice = computed(() =>
-  props.items.reduce((total, item) => total + (item.price || 0) * (item.quantity || 1), 0)
+  props.items.reduce((total, item) => total + (item.price ?? 0) * (item.quantity ?? 1), 0)
 );
 
+interface GroupedCategory {
+  id: string;
+  name: string;
+  items: ShoppingItem[];
+}
+
+type GroupedItems = Record<string, GroupedCategory>;
+
 // Kategorien für die Gruppierung
-const groupedItems = computed(() => {
-  const groups = {};
+const groupedItems = computed<GroupedItems>(() => {
+  const groups: GroupedItems = {};
 
   props.items.forEach(item => {
-    const categoryId = item.category?.id || 'sonstiges';
-    const categoryName = item.category?.name || 'Sonstiges';
+    const categoryId = item.category?.id ?? 'sonstiges';
+    const categoryName = item.category?.name ?? 'Sonstiges';
 
     if (!groups[categoryId]) {
       groups[categoryId] = {
@@ -96,48 +109,52 @@ const groupedItems = computed(() => {
 });
 
 // Kategorien-Sortierreihenfolge
-const categorySortOrder = computed(() => {
+const categorySortOrder = computed(() =>
   // Sortierte Kategorien aus dem Store holen (nach Laufweg oder benutzerdefiniert)
-  return sortedCategories.value.map(cat => cat.id);
-});
+  sortedCategories.value.map(cat => cat.id)
+);
 
 // Liste der gruppierten Kategorien, sortiert nach der Laufweg-Reihenfolge
-const sortedGroupedCategories = computed(() => {
+const sortedGroupedCategories = computed<GroupedCategory[]>(() => {
   const categories = Object.values(groupedItems.value);
-  
+
   // Sortierungsfunktion basierend auf der Kategoriereihenfolge
   return categories.sort((a, b) => {
     // Position in der Sortierreihenfolge suchen
     const indexA = categorySortOrder.value.indexOf(a.id);
     const indexB = categorySortOrder.value.indexOf(b.id);
-    
+
     // Wenn beide Kategorien in der Sortierreihenfolge vorhanden sind
     if (indexA !== -1 && indexB !== -1) {
       return indexA - indexB;
     }
-    
+
     // Wenn nur eine Kategorie in der Sortierreihenfolge vorhanden ist
-    if (indexA !== -1) return -1;
-    if (indexB !== -1) return 1;
-    
+    if (indexA !== -1) {
+      return -1;
+    }
+    if (indexB !== -1) {
+      return 1;
+    }
+
     // Fallback: Alphabetisch sortieren, wenn keine Kategorie in der Sortierreihenfolge ist
     return a.name.localeCompare(b.name);
   });
 });
 
 // Berechne den Gesamtpreis pro Kategorie
-const getCategoryTotal = categoryId => {
+const getCategoryTotal = (categoryId: string): number => {
   if (!groupedItems.value[categoryId]) {
     return 0;
   }
 
   return groupedItems.value[categoryId].items.reduce(
-    (total, item) => total + (item.price || 0) * (item.quantity || 1),
+    (total, item) => total + (item.price ?? 0) * (item.quantity ?? 1),
     0
   );
 };
 
 // Formatiere den Preis
-const formatPrice = price =>
+const formatPrice = (price: number): string =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
 </script>
