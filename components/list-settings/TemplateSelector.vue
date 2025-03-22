@@ -21,30 +21,31 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Logger initialisieren
 import { ref, computed, watch } from 'vue';
+import type { CategoryTemplate } from '~/types/app-types';
 
-import { useCategoryStore } from '../../stores/categoryStore';
-import { createLogger } from '../../utils/logger';
+import { useCategoryStore } from '~/stores/categoryStore';
+import { createLogger } from '~/utils/logger';
 
 const logger = createLogger('TemplateSelector');
 
-// Props
-const props = defineProps({
-  listTemplateId: {
-    type: String,
-    default: 'supermarket',
-  },
+const props = withDefaults(defineProps<{
+  listTemplateId: string;
+}>(), {
+  listTemplateId: 'supermarket',
 });
 
 // Emits
-const emit = defineEmits(['update:templateId']);
+const emit = defineEmits<{
+  (e: 'update:templateId', templateId: string): void;
+}>();
 
 // Lokaler Zustand
 let categoryStore = null;
-const currentTemplateId = ref(props.listTemplateId);
-const templatesList = computed(() => categoryStore?.templatesList || []);
+const currentTemplateId = ref<string>(props.listTemplateId);
+const templatesList = computed<CategoryTemplate[]>(() => categoryStore?.templatesList ?? []);
 
 // Kategorie-Store initialisieren (mit Fehlerbehandlung)
 try {
@@ -54,7 +55,7 @@ try {
 }
 
 // Aktualisiere Kategorie-Template
-const updateTemplate = () => {
+const updateTemplate = (): void => {
   // Template-Id an übergeordnete Komponente senden
   emit('update:templateId', currentTemplateId.value);
 

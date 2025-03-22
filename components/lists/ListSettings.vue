@@ -44,23 +44,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
+import type { CategoryTemplate } from '~/types/app-types';
 
-const props = defineProps({
-  templateId: {
-    type: String,
-    default: 'supermarket',
-  },
-  templates: {
-    type: Array,
-    default: () => [],
-  },
+const props = withDefaults(defineProps<{
+  templateId: string;
+  templates: CategoryTemplate[];
+}>(), {
+  templateId: 'supermarket',
+  templates: () => [],
 });
 
-const emit = defineEmits(['update:templateId']);
+const emit = defineEmits<{
+  (e: 'update:templateId', templateId: string): void;
+}>();
 
-const localTemplateId = ref(props.templateId);
+const localTemplateId = ref<string>(props.templateId);
 
 // Bei Änderung von außen aktualisieren
 watch(
@@ -70,7 +70,7 @@ watch(
   }
 );
 
-const updateTemplate = () => {
+const updateTemplate = (): void => {
   emit('update:templateId', localTemplateId.value);
 };
 </script>

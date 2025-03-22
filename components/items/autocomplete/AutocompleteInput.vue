@@ -44,44 +44,46 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import type { ItemSuggestion } from '~/types/app-types';
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  suggestions: {
-    type: Array,
-    default: () => [],
-  },
-  minChars: {
-    type: Number,
-    default: 1,
-  },
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  maxSuggestions: {
-    type: Number,
-    default: 6,
-  },
+interface TextPart {
+  text: string;
+  highlight: boolean;
+}
+
+type SuggestionInput = string | ItemSuggestion;
+
+const props = withDefaults(defineProps<{
+  modelValue: string;
+  suggestions: SuggestionInput[];
+  minChars?: number;
+  placeholder?: string;
+  maxSuggestions?: number;
+}>(), {
+  modelValue: '',
+  suggestions: () => [],
+  minChars: 1,
+  placeholder: '',
+  maxSuggestions: 6
 });
 
-const emit = defineEmits(['update:modelValue', 'select']);
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+  (e: 'select', suggestion: ItemSuggestion): void;
+}>();
 
 // Referenz zum Input-Element
-const inputElement = ref(null);
+const inputElement = ref<HTMLInputElement | null>(null);
 
 // Zustand der Komponente
-const inputValue = ref(props.modelValue);
-const showSuggestions = ref(false);
-const highlightedIndex = ref(-1);
+const inputValue = ref<string>(props.modelValue);
+const showSuggestions = ref<boolean>(false);
+const highlightedIndex = ref<number>(-1);
 
 // Gefilterte Vorschläge basierend auf Eingabe
-const filteredSuggestions = computed(() => {
+const filteredSuggestions = computed<ItemSuggestion[]>(() => {
   if (!inputValue.value || inputValue.value.length < props.minChars) {
     return [];
   }
@@ -98,7 +100,7 @@ const filteredSuggestions = computed(() => {
     .map(suggestion => {
       // Normalisiere das Ausgabeformat
       if (typeof suggestion === 'object' && suggestion.text) {
-        return suggestion;
+        return suggestion as ItemSuggestion;
       }
       return { text: String(suggestion) };
     })
@@ -106,13 +108,13 @@ const filteredSuggestions = computed(() => {
 });
 
 // Teilt den Text in hervorgehobene und normale Teile
-const splitTextForHighlight = text => {
+const splitTextForHighlight = (text: string): TextPart[] => {
   if (!inputValue.value || inputValue.value.length < props.minChars) {
     return [{ text, highlight: false }];
   }
 
-  const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\][{}]/g, '\\$&'), 'gi');
-  const parts = [];
+  const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
+  const parts: TextPart[] = [];
   let lastIndex = 0;
   let match;
 
@@ -146,14 +148,14 @@ const splitTextForHighlight = text => {
 };
 
 // Eingabebehandlung
-const onInput = () => {
+const onInput = (): void => {
   emit('update:modelValue', inputValue.value);
   showSuggestions.value = true;
   highlightedIndex.value = -1;
 };
 
 // Vorschläge mit Tasten navigieren
-const navigateSuggestions = direction => {
+const navigateSuggestions = (direction: number): void => {
   if (!showSuggestions.value || filteredSuggestions.value.length === 0) {
     return;
   }
@@ -170,7 +172,7 @@ const navigateSuggestions = direction => {
 };
 
 // Vorschlag auswählen
-const selectSuggestion = index => {
+const selectSuggestion = (index: number): void => {
   if (index < 0 || index >= filteredSuggestions.value.length) {
     return;
   }
@@ -192,7 +194,7 @@ const selectSuggestion = index => {
 };
 
 // Behandlung für Blur-Event
-const handleBlur = () => {
+const handleBlur = (): void => {
   // Verzögerung hinzufügen, damit mousedown-Event auf Vorschlägen zuerst ausgelöst wird
   setTimeout(() => {
     showSuggestions.value = false;

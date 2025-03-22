@@ -50,7 +50,7 @@
         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
           <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Teuerster Artikel</h3>
           <p class="text-2xl font-bold text-gray-800 dark:text-white">
-            {{ mostExpensiveItem?.name || '-' }}
+            {{ mostExpensiveItem?.name ?? '-' }}
           </p>
           <p class="text-sm text-gray-500 dark:text-gray-400">
             {{ mostExpensiveItem ? formatCurrency(mostExpensiveItem.price) : '-' }}
@@ -178,12 +178,30 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import type { ShoppingItem, Category } from '~/types/app-types';
 
-import PageHeader from '../../components/layout/PageHeader.vue';
-import { useShoppingItems } from '../../composables/useShoppingItems';
-import { useShoppingLists } from '../../composables/useShoppingLists';
+import PageHeader from '~/components/layout/PageHeader.vue';
+import { useShoppingItems } from '~/composables/useShoppingItems';
+import { useShoppingLists } from '~/composables/useShoppingLists';
+
+// Schnittstelle für Kategorie-Ausgaben
+interface CategoryExpense {
+  id: string;
+  name: string;
+  amount: number;
+  percentage: number;
+}
+
+// Schnittstelle für Einkaufshistorie
+interface ShoppingHistoryItem {
+  id: string;
+  name: string;
+  date: number;
+  itemCount: number;
+  totalAmount: number;
+}
 
 // Listen-Management
 const { lists, currentListId, currentList } = useShoppingLists();
@@ -192,45 +210,45 @@ const { lists, currentListId, currentList } = useShoppingLists();
 const { allItems } = useShoppingItems(lists, currentListId);
 
 // Berechnete Eigenschaften
-const totalItems = computed(() => allItems.value.length || 0);
+const totalItems = computed<number>(() => allItems.value.length ?? 0);
 
 // Ermittle Artikel mit Preisen
-const itemsWithPrice = computed(
-  () => allItems.value.filter(item => item.price && item.price > 0).length || 0
+const itemsWithPrice = computed<number>(
+  () => allItems.value.filter(item => item.price && item.price > 0).length ?? 0
 );
 
 // Gesamtbetrag
-const totalAmount = computed(() =>
-  allItems.value.reduce((total, item) => total + (item.price || 0) * (item.quantity || 1), 0)
+const totalAmount = computed<number>(() =>
+  allItems.value.reduce((total, item) => total + (item.price ?? 0) * (item.quantity ?? 1), 0)
 );
 
 // Durchschnitt pro Artikel
-const averageItemPrice = computed(() => {
+const averageItemPrice = computed<number>(() => {
   if (itemsWithPrice.value === 0) {
     return 0;
   }
-  const total = allItems.value.reduce((sum, item) => sum + (item.price || 0), 0);
+  const total = allItems.value.reduce((sum, item) => sum + (item.price ?? 0), 0);
   return total / itemsWithPrice.value;
 });
 
 // Teuerster Artikel
-const mostExpensiveItem = computed(() => {
+const mostExpensiveItem = computed<ShoppingItem | null>(() => {
   if (allItems.value.length === 0) {
     return null;
   }
 
   return [...allItems.value]
     .filter(item => item.price && item.price > 0)
-    .sort((a, b) => (b.price || 0) - (a.price || 0))[0];
+    .sort((a, b) => (b.price ?? 0) - (a.price ?? 0))[0];
 });
 
 // Ausgaben nach Kategorien
-const categoryExpenses = computed(() => {
+const categoryExpenses = computed<CategoryExpense[]>(() => {
   if (allItems.value.length === 0) {
     return [];
   }
 
-  const categories = {};
+  const categories: Record<string, CategoryExpense> = {};
 
   allItems.value.forEach(item => {
     if (!item.price || item.price <= 0) {
@@ -239,14 +257,15 @@ const categoryExpenses = computed(() => {
 
     const categoryId = typeof item.category === 'object' ? item.category.id : 'sonstiges';
     const categoryName =
-      typeof item.category === 'object' ? item.category.name : item.category || 'Sonstiges';
-    const itemAmount = (item.price || 0) * (item.quantity || 1);
+      typeof item.category === 'object' ? item.category.name : item.category ?? 'Sonstiges';
+    const itemAmount = (item.price ?? 0) * (item.quantity ?? 1);
 
     if (!categories[categoryId]) {
       categories[categoryId] = {
         id: categoryId,
         name: categoryName,
         amount: 0,
+        percentage: 0
       };
     }
 
@@ -263,21 +282,21 @@ const categoryExpenses = computed(() => {
 });
 
 // Mock für die Einkaufshistorie (später zu implementieren)
-const shoppingHistory = ref([]);
+const shoppingHistory = ref<ShoppingHistoryItem[]>([]);
 
 // Hilfsfunktionen
-const formatCurrency = value =>
+const formatCurrency = (value: number): string =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
 
-const formatDate = date =>
+const formatDate = (date: number): string =>
   new Date(date).toLocaleDateString('de-DE', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 
-const getCategoryColor = categoryId => {
-  const colors = {
+const getCategoryColor = (categoryId: string): string => {
+  const colors: Record<string, string> = {
     obst_gemuese: 'bg-green-500',
     fleisch_fisch: 'bg-red-500',
     backwaren: 'bg-yellow-500',

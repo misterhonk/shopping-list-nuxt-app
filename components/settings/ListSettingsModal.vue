@@ -143,37 +143,30 @@
   </div>
 </template>
 
-<script setup>
-import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import type { CategoryTemplate } from '~/types/app-types';
 
-const props = defineProps({
-  listName: {
-    type: String,
-    required: true,
-  },
-  templateId: {
-    type: String,
-    required: true,
-  },
-  templates: {
-    type: Array,
-    required: true,
-  },
-  isFavorite: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<{
+  listName: string;
+  templateId: string;
+  templates: CategoryTemplate[];
+  isFavorite?: boolean;
+}>();
 
-const emit = defineEmits(['update:template-id', 'update:name', 'update:favorite']);
+const emit = defineEmits<{
+  (e: 'update:template-id', templateId: string): void;
+  (e: 'update:name', name: string): void;
+  (e: 'update:favorite', isFavorite: boolean): void;
+}>();
 
 // UI Status
-const showSettings = ref(false);
+const showSettings = ref<boolean>(false);
 
 // Form data
-const editedName = ref('');
-const selectedTemplateId = ref('');
-const isFavoriteState = ref(false); // Renamed to avoid conflict with prop
+const editedName = ref<string>('');
+const selectedTemplateId = ref<string>('');
+const isFavoriteState = ref<boolean>(false); // Renamed to avoid conflict with prop
 
 // Initialize form data when props change
 watch(
@@ -195,29 +188,29 @@ watch(
 watch(
   () => props.isFavorite,
   newValue => {
-    isFavoriteState.value = newValue;
+    isFavoriteState.value = newValue || false;
   },
   { immediate: true }
 );
 
 // Update methods
-const updateListName = () => {
+const updateListName = (): void => {
   if (editedName.value.trim() && editedName.value !== props.listName) {
     emit('update:name', editedName.value);
   }
 };
 
-const updateTemplateId = () => {
+const updateTemplateId = (): void => {
   emit('update:template-id', selectedTemplateId.value);
 };
 
-const updateFavoriteStatus = () => {
+const updateFavoriteStatus = (): void => {
   emit('update:favorite', isFavoriteState.value);
 };
 
 onMounted(() => {
   editedName.value = props.listName;
   selectedTemplateId.value = props.templateId;
-  isFavoriteState.value = props.isFavorite;
+  isFavoriteState.value = props.isFavorite || false;
 });
 </script>
