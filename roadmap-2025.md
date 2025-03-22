@@ -37,6 +37,30 @@
   - ✅ Strukturiertes Logging-System implementiert
   - ✅ Konsolenausgaben durch strukturiertes Logging ersetzt
 
+### UI/UX (teilweise vorgezogen aus Q2-Q3 2025)
+- ✅ **UI-Optimierungen**
+  - ✅ Kompakterer Header mit Einkaufswagen-Icon
+  - ✅ Horizontales, scrollbares Tab-System für Listen
+  - ✅ Direkte Artikeleingabe mit optionalen Details
+  - ✅ Konsistente Farbgebung für Aktions-Buttons
+  - ✅ Verbesserte Checkbox-Funktionalität mit visuellen Effekten
+  - ✅ Touchgesten optimiert (Swipe für Listenelemente)
+
+### Artikelmanagement (teilweise vorgezogen)
+- ✅ **Kategorie-Verwaltung**
+  - ✅ Laufweg-Sortierung für Kategorien implementiert
+  - ✅ Drag & Drop für Kategoriesortierung
+  - ✅ Standardsortierung nach Markttyp
+  - ✅ Option zum Wechseln zwischen Standard und benutzerdefinierter Sortierung
+
+### PWA Verbesserungen (vorgezogen)
+- ✅ **PWA-Update-Mechanismus**
+  - ✅ Service Worker Optimierung mit skipWaiting und clientsClaim
+  - ✅ Cache-Strategien verbessert (NetworkFirst statt StaleWhileRevalidate)
+  - ✅ Zentrale Versionsverwaltung implementiert
+  - ✅ Update-Benachrichtigungen für Benutzer
+  - ✅ iOS-spezifische Verbesserungen für Homescreen-Apps
+
 ## 🚀 Geplante Meilensteine
 
 ### Milestone 1: Basis-Funktionalitäten Erweitern (Q2 2025)
@@ -47,8 +71,8 @@
 
 - 🔄 **Artikelmanagement** (Sprint 3)
   - [ ] Detaillierte Artikelbeschreibungen (Größe, Marke, etc.)
-  - [ ] Verbessertes Kategorie-Management
-  - [ ] Schnellere Artikelerfassung
+  - ✅ Verbessertes Kategorie-Management
+  - ✅ Schnellere Artikelerfassung
 
 ### Milestone 2: Datenanalyse & Visualisierung (Q3 2025)
 - 🔄 **Statistik-Dashboard** (Sprint 4-5)
@@ -74,7 +98,7 @@
 
 ### Milestone 4: Planung & Organisation (Q1 2026)
 - 🔄 **Einkaufsplanung** (Sprint 11-12)
-  - [ ] Sortierung der Artikel nach optimaler Einkaufsroute
+  - ✅ Sortierung der Artikel nach optimaler Einkaufsroute
   - [ ] Wiederholungseinkäufe planen (wöchentlich, monatlich)
   - [ ] Erinnerungen für geplante Einkäufe
 
@@ -98,14 +122,14 @@
 
 ### 🎨 UI/UX
 #### Kurzfristige Ziele (Q2-Q3 2025)
-- [ ] Design-Audit durchführen
-- [ ] Konsistentes Farbschema optimieren
-- [ ] Touchgesten optimieren (Swipe, Drag & Drop)
+- ✅ Design-Audit durchführen
+- ✅ Konsistentes Farbschema optimieren
+- ✅ Touchgesten optimieren (Swipe, Drag & Drop)
 - [ ] Leerstaaten (empty states) für alle Ansichten gestalten
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] Micro-Animationen für Feedback hinzufügen
-- [ ] Bottom-Navigation für mobile Geräte optimieren
+- ✅ Bottom-Navigation für mobile Geräte optimieren
 - [ ] Onboarding für Neulinge implementieren
 - [ ] Tooltips und Hilfetexte hinzufügen
 
@@ -120,7 +144,7 @@
 - [ ] Unit-Tests für kritische Funktionen schreiben
 - [ ] Automatisierte Tests in CI integrieren
 - [ ] Code-Review-Prozess etablieren
-- [ ] TypeScript strict mode feinjustieren
+- ✅ TypeScript strict mode feinjustieren
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] End-to-End-Tests implementieren
@@ -155,9 +179,9 @@
 
 ### 🛠️ DevOps & Performance
 #### Kurzfristige Ziele (Q2-Q3 2025)
-- [ ] Automatisierte Code-Review-Tools einrichten
-- [ ] IDE-Konfiguration für Team standardisieren
-- [ ] Deployment-Prozess weiter automatisieren
+- ✅ Automatisierte Code-Review-Tools einrichten
+- ✅ IDE-Konfiguration für Team standardisieren
+- ✅ Deployment-Prozess weiter automatisieren
 - [ ] VSCode-Extensions empfehlen
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
@@ -174,10 +198,10 @@
 
 ### 📝 Dokumentation
 #### Kurzfristige Ziele (Q2-Q3 2025)
-- [ ] API-Dokumentation aktualisieren
-- [ ] Architektur-Dokumentation erweitern
+- ✅ API-Dokumentation aktualisieren
+- ✅ Architektur-Dokumentation erweitern
 - [ ] JSDoc für wichtige Funktionen ergänzen
-- [ ] Entwicklungsrichtlinien dokumentieren
+- ✅ Entwicklungsrichtlinien dokumentieren
 
 #### Mittelfristige Ziele (Q3 2025-Q1 2026)
 - [ ] Komponenten-Dokumentation erstellen
@@ -188,8 +212,8 @@
 ## 🐞 Bekannte Probleme & Technische Schulden
 
 ### Dringende Bugs (Q2 2025)
-- [ ] PWA-Installation auf iOS zuverlässiger machen
-- [ ] Safari-spezifische Probleme beheben
+- ✅ PWA-Installation auf iOS zuverlässiger machen
+- ✅ Safari-spezifische Probleme beheben
 - [ ] LocalStorage-Limits berücksichtigen
 - [ ] Offline-Modus robuster machen
 
@@ -200,8 +224,8 @@
 - [ ] Extreme Bildschirmgrößen testen
 
 ### Technische Schulden (fortlaufend)
-- [ ] API-Konsistenz weiter verbessern
+- ✅ API-Konsistenz weiter verbessern
 - [ ] Unnötige Abhängigkeiten identifizieren und entfernen
-- [ ] Build-Prozess weiter optimieren
+- ✅ Build-Prozess weiter optimieren
 - [ ] Browser-Kompatibilität verbessern
-- [ ] Responsives Design weiter optimieren
+- ✅ Responsives Design weiter optimieren
