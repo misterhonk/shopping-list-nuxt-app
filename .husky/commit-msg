@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Überprüfen, ob die Commit-Nachricht den Konventionen entspricht
+# Folgt den Conventional Commits (https://www.conventionalcommits.org/)
+# Format: <type>(<optional scope>): <description>
+# Beispiel: feat(ui): Füge neue Sidebar-Komponente hinzu
+
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# Überspringen von Merge-Commits
+if echo "$commit_msg" | grep -q "^Merge branch"; then
+  exit 0
+fi
+
+# Einfache Überprüfung für Conventional Commits Format
+if ! echo "$commit_msg" | grep -qE "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9-]+\))?: .+$"; then
+  echo "❌ Ungültiges Commit-Message-Format."
+  echo "✅ Bitte verwende das Format: <type>(<optional scope>): <description>"
+  echo "📝 Erlaubte Typen: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test"
+  echo "📝 Beispiel: feat(ui): Füge neue Sidebar-Komponente hinzu"
+  exit 1
+fi
