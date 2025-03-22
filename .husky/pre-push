@@ -3,3 +3,10 @@
 
 echo "🔍 Führe Tests vor dem Push durch..."
 npm run validate
+
+echo "🔒 Führe Sicherheitsüberprüfungen durch..."
+npm run audit:security || {
+  echo "⚠️ Sicherheitslücken gefunden. Bitte überprüfen Sie den npm audit-Bericht."
+  echo "⚠️ Wenn Sie trotzdem pushen möchten, verwenden Sie 'git push --no-verify'"
+  exit 1
+}
