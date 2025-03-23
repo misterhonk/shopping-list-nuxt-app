@@ -1,11 +1,12 @@
 /**
  * Default-Laufwege für verschiedene Markttypen
- * 
+ *
  * Diese Datei definiert die Standard-Reihenfolge der Kategorien basierend auf
  * typischen Laufwegen in verschiedenen Geschäftstypen.
  */
 
-import type { CategoryTemplate, TemplateCollection } from '~/composables/types';
+import type { TemplateCollection } from '~/composables/types';
+import type { CategoryTemplate } from '~/types/app-types';
 
 /**
  * Supermarkt-Laufweg:
@@ -14,20 +15,20 @@ import type { CategoryTemplate, TemplateCollection } from '~/composables/types';
  * Tiefkühlprodukten und schließlich zu Getränken und Haushaltswaren gelangt.
  */
 export const supermarketPath = [
-  'obst_gemuese',       // Obst & Gemüse (typischerweise am Eingang)
-  'backwaren',          // Backwaren (oft in der Nähe des Eingangs)
-  'fleisch_fisch',      // Fleisch & Fisch (Frischetheke)
-  'milchprodukte',      // Milchprodukte
+  'obst_gemuese', // Obst & Gemüse (typischerweise am Eingang)
+  'backwaren', // Backwaren (oft in der Nähe des Eingangs)
+  'fleisch_fisch', // Fleisch & Fisch (Frischetheke)
+  'milchprodukte', // Milchprodukte
   'grundnahrungsmittel', // Grundnahrungsmittel (Nudeln, Reis, Mehl)
-  'gewuerze_backen',    // Gewürze & Backen
-  'konserven',          // Konserven
+  'gewuerze_backen', // Gewürze & Backen
+  'konserven', // Konserven
   'internationale_kueche', // Internationale Küche
   'snacks_suessigkeiten', // Snacks & Süßigkeiten
-  'getraenke',          // Getränke
-  'tiefkuehlwaren',     // Tiefkühlwaren (oft an der Peripherie)
-  'bio_produkte',       // Bio-Produkte (je nach Markt unterschiedlich)
-  'fertiggerichte',     // Fertiggerichte
-  'sonstiges',          // Sonstiges
+  'getraenke', // Getränke
+  'tiefkuehlwaren', // Tiefkühlwaren (oft an der Peripherie)
+  'bio_produkte', // Bio-Produkte (je nach Markt unterschiedlich)
+  'fertiggerichte', // Fertiggerichte
+  'sonstiges', // Sonstiges
 ];
 
 /**
@@ -36,18 +37,18 @@ export const supermarketPath = [
  * gefolgt von Gesundheitsprodukten, Haushaltswaren und schließlich Babyartikeln.
  */
 export const drugstorePath = [
-  'gesicht_makeup',     // Gesicht & Make-up (oft vorne/Eingangsbereich)
-  'koerperpflege',      // Körperpflege
-  'haarpflege',         // Haarpflege
-  'mundpflege',         // Mundpflege
-  'hygieneartikel',     // Hygieneartikel
-  'gesundheit',         // Gesundheit
+  'gesicht_makeup', // Gesicht & Make-up (oft vorne/Eingangsbereich)
+  'koerperpflege', // Körperpflege
+  'haarpflege', // Haarpflege
+  'mundpflege', // Mundpflege
+  'hygieneartikel', // Hygieneartikel
+  'gesundheit', // Gesundheit
   'nahrungsergaenzung', // Nahrungsergänzung
-  'waschmittel',        // Waschmittel
-  'reinigungsmittel',   // Reinigungsmittel
-  'haushaltswaren',     // Haushaltswaren
-  'baby_kind',          // Baby & Kind (oft hinten im Laden)
-  'sonstiges',          // Sonstiges
+  'waschmittel', // Waschmittel
+  'reinigungsmittel', // Reinigungsmittel
+  'haushaltswaren', // Haushaltswaren
+  'baby_kind', // Baby & Kind (oft hinten im Laden)
+  'sonstiges', // Sonstiges
 ];
 
 /**
@@ -56,20 +57,20 @@ export const drugstorePath = [
  * Werkzeugen, dann Baustoffe, Farben, Garten und schließlich Einrichtung.
  */
 export const hardwarePath = [
-  'werkzeuge',          // Werkzeuge (oft vorne im Laden)
-  'eisenwaren',         // Eisenwaren
-  'elektro',            // Elektro
-  'sanitaer',           // Sanitär
-  'bauen',              // Bauen
-  'holz',               // Holz
-  'farben_lacke',       // Farben & Lacke
-  'bodenbelaege',       // Bodenbeläge
-  'heimwerken',         // Heimwerken
-  'maschinen',          // Maschinen
-  'beleuchtung',        // Beleuchtung
-  'garten',             // Garten (oft in einem separaten Bereich/Außenbereich)
-  'auto_fahrrad',       // Auto & Fahrrad
-  'sonstiges',          // Sonstiges
+  'werkzeuge', // Werkzeuge (oft vorne im Laden)
+  'eisenwaren', // Eisenwaren
+  'elektro', // Elektro
+  'sanitaer', // Sanitär
+  'bauen', // Bauen
+  'holz', // Holz
+  'farben_lacke', // Farben & Lacke
+  'bodenbelaege', // Bodenbeläge
+  'heimwerken', // Heimwerken
+  'maschinen', // Maschinen
+  'beleuchtung', // Beleuchtung
+  'garten', // Garten (oft in einem separaten Bereich/Außenbereich)
+  'auto_fahrrad', // Auto & Fahrrad
+  'sonstiges', // Sonstiges
 ];
 
 /**
@@ -80,17 +81,17 @@ export const hardwarePath = [
  */
 export const electronicsPath = [
   'smartphones_tablets', // Smartphones & Tablets (oft vorne im Laden)
-  'computer_zubehoer',   // Computer & Zubehör
-  'tv_audio',            // TV & Audio
-  'foto_video',          // Foto & Video
-  'gaming',              // Gaming
+  'computer_zubehoer', // Computer & Zubehör
+  'tv_audio', // TV & Audio
+  'foto_video', // Foto & Video
+  'gaming', // Gaming
   'haushaltselektronik', // Haushaltselektronik
-  'smart_home',          // Smart Home
-  'kabel_adapter',       // Kabel & Adapter
-  'netzwerk',            // Netzwerk
-  'speichermedien',      // Speichermedien
-  'software',            // Software
-  'sonstiges',           // Sonstiges
+  'smart_home', // Smart Home
+  'kabel_adapter', // Kabel & Adapter
+  'netzwerk', // Netzwerk
+  'speichermedien', // Speichermedien
+  'software', // Software
+  'sonstiges', // Sonstiges
 ];
 
 /**

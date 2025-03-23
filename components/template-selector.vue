@@ -23,10 +23,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 
-import { useCategoryStore } from '../stores/categoryStore';
-import { createLogger } from '../utils/logger';
+import { useCategoryStore } from '~/stores/categoryStore';
+import { createLogger } from '~/utils/logger';
 
-import type { CategoryTemplate } from '../composables/types';
+import type { CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('TemplateSelector');
@@ -48,7 +48,7 @@ const emit = defineEmits<{
 // Lokaler Zustand
 const categoryStore = ref(null);
 const currentTemplateId = ref(props.listTemplateId);
-const templatesList = computed<CategoryTemplate[]>(() => categoryStore.value?.templatesList || []);
+const templatesList = computed<CategoryTemplate[]>(() => categoryStore.value?.templatesList ?? []);
 
 // Kategorie-Store initialisieren (mit Fehlerbehandlung)
 try {

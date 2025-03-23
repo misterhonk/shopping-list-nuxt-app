@@ -1,13 +1,12 @@
 import { ref, computed, onMounted } from 'vue';
 
+import { sortListsByFavorites, determineTemplateId } from '~/composables/utils/listUtils';
 import { initializeServices } from '~/services';
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList } from '~/types/app-types';
-import type { CreateListOptions } from '~/composables/types';
 import type { Ref } from 'vue';
-
-import { sortListsByFavorites, determineTemplateId } from '~/composables/utils/listUtils';
+import type { CreateListOptions } from '~/composables/types';
+import type { ShoppingList } from '~/types/app-types';
 
 // Services initialisieren
 const { shoppingListService, categoryService } = initializeServices();

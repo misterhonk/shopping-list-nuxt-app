@@ -1,11 +1,11 @@
 /**
  * UI-Typen für die Shopping-List-App
- * 
+ *
  * Diese Datei enthält spezifische Typdefinitionen für UI-Elemente und -Zustände,
  * die in der Benutzeroberfläche der App verwendet werden.
  */
 
-import type { ShoppingItem, Category, ShoppingList } from '~/composables/types';
+import type { ShoppingItem, Category, ShoppingList } from '~/types/app-types';
 
 /**
  * Status für Formular-Zustände

@@ -1,5 +1,116 @@
-import type { CategoryTemplate, TemplateCollection } from '~/composables/types';
-import { addDefaultPathsToTemplates } from '../templates/defaultPaths';
+import type { TemplateCollection } from '~/composables/types';
+import type { CategoryTemplate } from '~/types/app-types';
+
+// Supermarkt-Laufweg
+const supermarketPath = [
+  'obst_gemuese',
+  'backwaren',
+  'fleisch_fisch',
+  'milchprodukte',
+  'grundnahrungsmittel',
+  'gewuerze_backen',
+  'konserven',
+  'internationale_kueche',
+  'snacks_suessigkeiten',
+  'getraenke',
+  'tiefkuehlwaren',
+  'bio_produkte',
+  'fertiggerichte',
+  'sonstiges',
+];
+
+// Drogerie-Laufweg
+const drugstorePath = [
+  'gesicht_makeup',
+  'koerperpflege',
+  'haarpflege',
+  'mundpflege',
+  'hygieneartikel',
+  'gesundheit',
+  'nahrungsergaenzung',
+  'waschmittel',
+  'reinigungsmittel',
+  'haushaltswaren',
+  'baby_kind',
+  'sonstiges',
+];
+
+// Baumarkt-Laufweg
+const hardwarePath = [
+  'werkzeuge',
+  'eisenwaren',
+  'elektro',
+  'sanitaer',
+  'bauen',
+  'holz',
+  'farben_lacke',
+  'bodenbelaege',
+  'heimwerken',
+  'maschinen',
+  'beleuchtung',
+  'garten',
+  'auto_fahrrad',
+  'sonstiges',
+];
+
+// Elektronikmarkt-Laufweg
+const electronicsPath = [
+  'smartphones_tablets',
+  'computer_zubehoer',
+  'tv_audio',
+  'foto_video',
+  'gaming',
+  'haushaltselektronik',
+  'smart_home',
+  'kabel_adapter',
+  'netzwerk',
+  'speichermedien',
+  'software',
+  'sonstiges',
+];
+
+/**
+ * Fügt Standardreihenfolgen zu den Templates hinzu
+ * @param templates Die zu aktualisierenden Templates
+ * @returns Aktualisierte Templates mit defaultCategoryOrder
+ */
+const addDefaultPathsToTemplates = (templates: TemplateCollection): TemplateCollection => {
+  const updatedTemplates = { ...templates };
+
+  // Supermarkt-Laufweg hinzufügen
+  if (updatedTemplates.supermarket) {
+    updatedTemplates.supermarket = {
+      ...updatedTemplates.supermarket,
+      defaultCategoryOrder: supermarketPath,
+    };
+  }
+
+  // Drogeriemarkt-Laufweg hinzufügen
+  if (updatedTemplates.drugstore) {
+    updatedTemplates.drugstore = {
+      ...updatedTemplates.drugstore,
+      defaultCategoryOrder: drugstorePath,
+    };
+  }
+
+  // Baumarkt-Laufweg hinzufügen
+  if (updatedTemplates.hardware) {
+    updatedTemplates.hardware = {
+      ...updatedTemplates.hardware,
+      defaultCategoryOrder: hardwarePath,
+    };
+  }
+
+  // Elektronikmarkt-Laufweg hinzufügen
+  if (updatedTemplates.electronics) {
+    updatedTemplates.electronics = {
+      ...updatedTemplates.electronics,
+      defaultCategoryOrder: electronicsPath,
+    };
+  }
+
+  return updatedTemplates;
+};
 
 /**
  * Standard-Template-ID

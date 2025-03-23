@@ -1,5 +1,5 @@
-import type { Category, CategoryTemplate } from '~/types/app-types';
 import type { TemplateCollection } from '~/composables/types';
+import type { Category, CategoryTemplate } from '~/types/app-types';
 
 /**
  * Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID

@@ -1,12 +1,7 @@
 import { createLogger } from '~/utils/logger';
 
-import type {
-  ShoppingList,
-  ShoppingItem,
-  ImportOptions,
-  ExportedList,
-  CreateListOptions,
-} from '~/composables/types';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
+import type { ImportOptions, ExportedList, CreateListOptions } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('useListImport');
@@ -35,7 +30,7 @@ interface ImportServices {
 /**
  * Composable für den Import von Einkaufslisten
  */
-export function useListImport() {
+export function useListImport(): void {
   /**
    * Lädt eine Datei und zeigt Optionen an
    * @param callback - Callback für geladene Daten
@@ -51,7 +46,7 @@ export function useListImport() {
     // Event-Handler für Dateiauswahl
     fileInput.onchange = event => {
       const target = event.target as HTMLInputElement;
-      if (!target.files || target.files.length === 0) {
+      if (!target.files ?? target.files.length === 0) {
         logger.info('Keine Datei ausgewählt');
         document.body.removeChild(fileInput);
         return;
@@ -68,14 +63,14 @@ export function useListImport() {
 
       reader.onload = readerEvent => {
         try {
-          if (!readerEvent.target || typeof readerEvent.target.result !== 'string') {
+          if (!readerEvent.target ?? typeof readerEvent.target.result !== 'string') {
             throw new Error('Fehler beim Lesen der Datei');
           }
 
           const parsedData = JSON.parse(readerEvent.target.result);
 
           // Validiere die Daten
-          if (!parsedData.name || !Array.isArray(parsedData.items)) {
+          if (!parsedData.name ?? !Array.isArray(parsedData.items)) {
             alert('Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.');
             document.body.removeChild(fileInput);
             return;
@@ -83,11 +78,11 @@ export function useListImport() {
 
           // Prüfe, ob es ein gültiges Format ist
           const importData: ExportedList = {
-            name: parsedData.name || '',
+            name: parsedData.name ?? '',
             items: Array.isArray(parsedData.items) ? parsedData.items : [],
-            format: parsedData.format || 'shopping-list-app',
-            version: parsedData.version || '1.0',
-            exportedAt: parsedData.exportedAt || Date.now(),
+            format: parsedData.format ?? 'shopping-list-app',
+            version: parsedData.version ?? '1.0',
+            exportedAt: parsedData.exportedAt ?? Date.now(),
             templateId: parsedData.templateId,
           };
 
@@ -126,7 +121,7 @@ export function useListImport() {
     services: ImportServices
   ): ImportResult => {
     try {
-      if (!data || !data.name || !Array.isArray(data.items)) {
+      if (!data.name ?? !Array.isArray(data.items)) {
         return {
           success: false,
           message: 'Ungültige Import-Daten',
@@ -186,7 +181,7 @@ export function useListImport() {
   const importAsNewList = (data: ExportedList, services: ImportServices): ImportResult => {
     // Erstelle eine neue Liste
     const newList = services.createList(data.name, {
-      templateId: data.templateId || 'supermarket',
+      templateId: data.templateId ?? 'supermarket',
       isFavorite: false,
     });
 
@@ -204,9 +199,9 @@ export function useListImport() {
       for (const item of data.items) {
         const itemData = {
           name: item.name,
-          quantity: item.quantity || 1,
-          category: item.category || 'Sonstiges',
-          price: item.price || 0,
+          quantity: item.quantity ?? 1,
+          category: item.category ?? 'Sonstiges',
+          price: item.price ?? 0,
           checked: !!item.checked,
         };
 
@@ -269,9 +264,9 @@ export function useListImport() {
       for (const item of data.items) {
         const itemData = {
           name: item.name,
-          quantity: item.quantity || 1,
-          category: item.category || 'Sonstiges',
-          price: item.price || 0,
+          quantity: item.quantity ?? 1,
+          category: item.category ?? 'Sonstiges',
+          price: item.price ?? 0,
           checked: !!item.checked,
         };
 
@@ -317,13 +312,13 @@ export function useListImport() {
     const updateSuccess = services.updateList({
       id: targetListId,
       name: data.name,
-      templateId: data.templateId || 'supermarket',
+      templateId: data.templateId ?? 'supermarket',
       items: data.items.map((item: ShoppingItem) => ({
         id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name,
-        quantity: item.quantity || 1,
-        category: item.category || 'Sonstiges',
-        price: item.price || 0,
+        quantity: item.quantity ?? 1,
+        category: item.category ?? 'Sonstiges',
+        price: item.price ?? 0,
         checked: !!item.checked,
       })),
     });
@@ -359,7 +354,7 @@ export function useListImport() {
   ): ImportResult => {
     try {
       // Validiere die Daten
-      if (!importData.name || !Array.isArray(importData.items)) {
+      if (!importData.name ?? !Array.isArray(importData.items)) {
         return {
           success: false,
           message: 'Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.',
@@ -368,7 +363,7 @@ export function useListImport() {
 
       // Erstelle eine neue Liste
       const newList = createList(importData.name, {
-        templateId: importData.templateId || 'supermarket',
+        templateId: importData.templateId ?? 'supermarket',
         isFavorite: false,
       });
 
@@ -386,9 +381,9 @@ export function useListImport() {
         for (const item of importData.items) {
           const itemData = {
             name: item.name,
-            quantity: item.quantity || 1,
-            category: item.category || 'Sonstiges',
-            price: item.price || 0,
+            quantity: item.quantity ?? 1,
+            category: item.category ?? 'Sonstiges',
+            price: item.price ?? 0,
           };
 
           try {

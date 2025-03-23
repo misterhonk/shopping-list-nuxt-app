@@ -1,4 +1,6 @@
-import type { ShoppingList, Category, ShoppingItem } from '../../composables/types';
+import { createLogger } from '~/utils/logger';
+
+import type { ShoppingList, Category, ShoppingItem } from '~/types/app-types';
 
 /**
  * Diese Hilfsfunktion ermöglicht einen direkten Zugriff auf den Kategorie-Store
@@ -33,12 +35,12 @@ interface CategoryUsage {
 /**
  * Lädt und prüft die benötigten Daten aus dem Local Storage
  */
-const loadDiagnosticData = () => {
+const loadDiagnosticData = (): void => {
   // Kategoriedaten aus localStorage abrufen
   const categoryData = localStorage.getItem('categoryTemplates');
   const listData = localStorage.getItem('shoppingLists');
 
-  if (!categoryData || !listData) {
+  if (!categoryData ?? !listData) {
     logger.error('[Diagnose] Keine Daten gefunden');
     return null;
   }
@@ -55,10 +57,9 @@ const loadDiagnosticData = () => {
 /**
  * Ermittelt das aktive Template
  */
-const getActiveTemplate = (parsedCategories: CategoryData) => {
+const getActiveTemplate = (parsedCategories: CategoryData): void => {
   if (
-    !parsedCategories.activeTemplateId ||
-    !parsedCategories.customTemplates ||
+    !parsedCategories.activeTemplateId ??
     !parsedCategories.customTemplates[parsedCategories.activeTemplateId]
   ) {
     return null;
@@ -158,7 +159,7 @@ export function diagnoseCategories():
       lists: ShoppingList[],
       categoryId: string,
       newName: string
-    ) => {
+    ): void => {
       let updatedCount = 0;
 
       const newLists = lists.map(list => {

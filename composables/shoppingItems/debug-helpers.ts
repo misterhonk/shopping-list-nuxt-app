@@ -1,7 +1,7 @@
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
-import type { ShoppingList, ShoppingItem } from '~/composables/types';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('debug-helpers');
@@ -20,7 +20,7 @@ export function logListsState(lists: ShoppingList[], currentListId: string | nul
     lists.map(l => ({
       id: l.id,
       name: l.name,
-      itemCount: l.items?.length || 0,
+      itemCount: l.items.length ?? 0,
     }))
   );
   logger.info('Aktuelle Listen-ID:', currentListId);
@@ -61,7 +61,7 @@ export function createDebuggedRemoveItem(
     logger.info('Liste vor Entfernen:', {
       id: currentList.id,
       name: currentList.name,
-      itemCount: currentList.items?.length || 0,
+      itemCount: currentList.items.length ?? 0,
     });
 
     if (!Array.isArray(currentList.items)) {
@@ -103,7 +103,7 @@ export function createDebuggedRemoveItem(
       newLists.map((l: ShoppingList) => ({
         id: l.id,
         name: l.name,
-        itemCount: l.items?.length || 0,
+        itemCount: l.items.length ?? 0,
       }))
     );
     logger.info('=== DEBUG: removeItem Ende ===');

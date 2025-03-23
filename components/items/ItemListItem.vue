@@ -1,15 +1,25 @@
 <template>
-  <li class="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+  <li
+    class="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
+  >
     <div class="flex items-center flex-1" @click="handleToggle">
       <div class="custom-checkbox mr-3 cursor-pointer" @click.stop="handleToggle">
-        <input
-          type="checkbox"
-          :checked="item.checked"
-          class="custom-checkbox-input"
-        />
+        <input type="checkbox" :checked="item.checked" class="custom-checkbox-input" />
         <div class="custom-checkbox-mark relative">
-          <svg v-if="item.checked" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+          <svg
+            v-if="item.checked"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         </div>
       </div>
@@ -48,8 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { ShoppingItem, Category } from '~/composables/types';
+import type { ShoppingItem } from '~/types/app-types';
 
 interface Props {
   item: ShoppingItem;

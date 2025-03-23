@@ -1,12 +1,13 @@
 /**
  * Service für die Verwaltung von Kategorien
- * 
+ *
  * Dieser Service enthält die Geschäftslogik für die Verwaltung von Kategorien
  * und ist unabhängig von der Vue-spezifischen UI-Logik.
  */
 
 import { BaseService } from './base/BaseService';
-import type { Category, CategoryTemplate } from '~/composables/types';
+
+import type { Category, CategoryTemplate } from '~/types/app-types';
 import type { StorageRepository } from '~/repositories/StorageRepository';
 
 /**
@@ -31,12 +32,12 @@ export class CategoryService extends BaseService {
   /**
    * Das Repository für den Datenzugriff
    */
-  private repository: StorageRepository;
+  private readonly repository: StorageRepository;
 
   /**
    * Vordefinierte Kategorievorlagen
    */
-  private templates: Record<string, CategoryTemplate> = {
+  private readonly templates: Record<string, CategoryTemplate> = {
     supermarket: {
       id: 'supermarket',
       name: 'Supermarkt',
@@ -109,15 +110,17 @@ export class CategoryService extends BaseService {
    * @returns Ein Objekt mit allen Vorlagen
    */
   public getAllTemplates(): Record<string, CategoryTemplate> {
-    return this.safeOperation(() => {
-      // Vordefinierte Templates mit benutzerdefinierten Templates kombinieren
-      const customTemplates = this.getCustomTemplates();
-      
-      return {
-        ...this.templates,
-        ...customTemplates,
-      };
-    }, 'Fehler beim Abrufen aller Kategorievorlagen') ?? { ...this.templates };
+    return (
+      this.safeOperation(() => {
+        // Vordefinierte Templates mit benutzerdefinierten Templates kombinieren
+        const customTemplates = this.getCustomTemplates();
+
+        return {
+          ...this.templates,
+          ...customTemplates,
+        };
+      }, 'Fehler beim Abrufen aller Kategorievorlagen') ?? { ...this.templates }
+    );
   }
 
   /**
@@ -130,7 +133,7 @@ export class CategoryService extends BaseService {
       if (!templateId) {
         throw new Error('TemplateId darf nicht leer sein');
       }
-      
+
       const templates = this.getAllTemplates();
       return templates[templateId] || null;
     }, `Fehler beim Abrufen der Vorlage mit ID ${templateId}`);
@@ -142,15 +145,17 @@ export class CategoryService extends BaseService {
    * @returns Array aller Kategorien oder leeres Array bei Fehler
    */
   public getCategoriesByTemplateId(templateId: string): Category[] {
-    return this.safeOperation(() => {
-      const template = this.getTemplateById(templateId);
-      
-      if (!template) {
-        throw new Error(`Vorlage mit ID ${templateId} nicht gefunden`);
-      }
-      
-      return [...template.categories];
-    }, `Fehler beim Abrufen der Kategorien für Vorlage ${templateId}`) ?? [];
+    return (
+      this.safeOperation(() => {
+        const template = this.getTemplateById(templateId);
+
+        if (!template) {
+          throw new Error(`Vorlage mit ID ${templateId} nicht gefunden`);
+        }
+
+        return [...template.categories];
+      }, `Fehler beim Abrufen der Kategorien für Vorlage ${templateId}`) ?? []
+    );
   }
 
   /**
@@ -158,10 +163,12 @@ export class CategoryService extends BaseService {
    * @returns Die ID der aktiven Vorlage oder 'supermarket' als Fallback
    */
   public getActiveTemplateId(): string {
-    return this.safeOperation(() => {
-      const activeId = this.repository.getItem<string>(this.ACTIVE_TEMPLATE_KEY);
-      return activeId || 'supermarket';
-    }, 'Fehler beim Abrufen der aktiven Vorlagen-ID') ?? 'supermarket';
+    return (
+      this.safeOperation(() => {
+        const activeId = this.repository.getItem<string>(this.ACTIVE_TEMPLATE_KEY);
+        return activeId ?? 'supermarket';
+      }, 'Fehler beim Abrufen der aktiven Vorlagen-ID') ?? 'supermarket'
+    );
   }
 
   /**
@@ -170,19 +177,21 @@ export class CategoryService extends BaseService {
    * @returns true bei Erfolg, false bei Fehler
    */
   public setActiveTemplate(templateId: string): boolean {
-    return this.safeOperation(() => {
-      if (!templateId) {
-        throw new Error('TemplateId darf nicht leer sein');
-      }
-      
-      const template = this.getTemplateById(templateId);
-      
-      if (!template) {
-        throw new Error(`Vorlage mit ID ${templateId} nicht gefunden`);
-      }
-      
-      return this.repository.setItem(this.ACTIVE_TEMPLATE_KEY, templateId);
-    }, `Fehler beim Setzen der aktiven Vorlage ${templateId}`) ?? false;
+    return (
+      this.safeOperation(() => {
+        if (!templateId) {
+          throw new Error('TemplateId darf nicht leer sein');
+        }
+
+        const template = this.getTemplateById(templateId);
+
+        if (!template) {
+          throw new Error(`Vorlage mit ID ${templateId} nicht gefunden`);
+        }
+
+        return this.repository.setItem(this.ACTIVE_TEMPLATE_KEY, templateId);
+      }, `Fehler beim Setzen der aktiven Vorlage ${templateId}`) ?? false
+    );
   }
 
   /**
@@ -190,10 +199,12 @@ export class CategoryService extends BaseService {
    * @returns Array aller Kategorien der aktiven Vorlage
    */
   public getActiveCategories(): Category[] {
-    return this.safeOperation(() => {
-      const activeTemplateId = this.getActiveTemplateId();
-      return this.getCategoriesByTemplateId(activeTemplateId);
-    }, 'Fehler beim Abrufen der aktiven Kategorien') ?? [];
+    return (
+      this.safeOperation(() => {
+        const activeTemplateId = this.getActiveTemplateId();
+        return this.getCategoriesByTemplateId(activeTemplateId);
+      }, 'Fehler beim Abrufen der aktiven Kategorien') ?? []
+    );
   }
 
   /**
@@ -203,40 +214,40 @@ export class CategoryService extends BaseService {
    */
   public createCustomTemplate(template: Partial<CategoryTemplate>): CategoryTemplate | null {
     return this.safeOperation(() => {
-      if (!template.name || template.name.trim() === '') {
+      if (!template.name ?? template.name.trim() === '') {
         throw new Error('Vorlagenname darf nicht leer sein');
       }
-      
+
       if (!template.id) {
         template.id = `custom_${Date.now()}`;
       }
-      
+
       if (!Array.isArray(template.categories) || template.categories.length === 0) {
         throw new Error('Vorlage muss mindestens eine Kategorie enthalten');
       }
-      
+
       const customTemplate: CategoryTemplate = {
         id: template.id,
         name: template.name.trim(),
-        description: template.description || 'Benutzerdefinierte Vorlage',
+        description: template.description ?? 'Benutzerdefinierte Vorlage',
         categories: template.categories.map(cat => ({
-          id: cat.id || `cat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          id: cat.id ?? `cat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           name: cat.name,
-          color: cat.color || '#9c27b0',
+          color: cat.color ?? '#9c27b0',
           icon: cat.icon,
         })),
         isCustom: true,
       };
-      
+
       // Bestehende benutzerdefinierte Vorlagen abrufen
       const customTemplates = this.getCustomTemplates();
-      
+
       // Neue Vorlage hinzufügen
       customTemplates[customTemplate.id] = customTemplate;
-      
+
       // Speichern
       const success = this.repository.setItem(this.CUSTOM_CATEGORIES_KEY, customTemplates);
-      
+
       return success ? customTemplate : null;
     }, 'Fehler beim Erstellen einer benutzerdefinierten Kategorienvorlage');
   }
@@ -254,42 +265,44 @@ export class CategoryService extends BaseService {
     updates: Partial<Category>
   ): Category | null {
     return this.safeOperation(() => {
-      if (!templateId || !categoryId) {
+      if (!templateId ?? !categoryId) {
         throw new Error('TemplateId und CategoryId dürfen nicht leer sein');
       }
-      
+
       // Nur benutzerdefinierte Vorlagen können bearbeitet werden
       const customTemplates = this.getCustomTemplates();
       const template = customTemplates[templateId];
-      
+
       if (!template) {
-        throw new Error(`Benutzerdefinierte Vorlage mit ID ${templateId} nicht gefunden oder keine benutzerdefinierte Vorlage`);
+        throw new Error(
+          `Benutzerdefinierte Vorlage mit ID ${templateId} nicht gefunden oder keine benutzerdefinierte Vorlage`
+        );
       }
-      
+
       const categoryIndex = template.categories.findIndex(cat => cat.id === categoryId);
-      
+
       if (categoryIndex === -1) {
         throw new Error(`Kategorie mit ID ${categoryId} nicht gefunden`);
       }
-      
+
       // Kategorie aktualisieren
       const updatedCategory: Category = {
         ...template.categories[categoryIndex],
         ...updates,
         id: categoryId, // ID darf nicht überschrieben werden
       };
-      
+
       // Template aktualisieren
       template.categories[categoryIndex] = updatedCategory;
-      
+
       // Speichern
       const success = this.repository.setItem(this.CUSTOM_CATEGORIES_KEY, customTemplates);
-      
+
       if (success) {
         // Event auslösen für Aktualisierung von Artikeln
         this.triggerCategoryUpdateEvent(categoryId, updatedCategory.name);
       }
-      
+
       return success ? updatedCategory : null;
     }, `Fehler beim Aktualisieren der Kategorie mit ID ${categoryId} in Vorlage ${templateId}`);
   }
@@ -314,11 +327,13 @@ export class CategoryService extends BaseService {
    * @returns Ein Objekt mit allen benutzerdefinierten Vorlagen
    */
   private getCustomTemplates(): Record<string, CategoryTemplate> {
-    return this.safeOperation(() => {
-      const customTemplates = this.repository.getItem<Record<string, CategoryTemplate>>(
-        this.CUSTOM_CATEGORIES_KEY
-      );
-      return customTemplates || {};
-    }, 'Fehler beim Abrufen der benutzerdefinierten Vorlagen') ?? {};
+    return (
+      this.safeOperation(() => {
+        const customTemplates = this.repository.getItem<Record<string, CategoryTemplate>>(
+          this.CUSTOM_CATEGORIES_KEY
+        );
+        return customTemplates ?? {};
+      }, 'Fehler beim Abrufen der benutzerdefinierten Vorlagen') ?? {}
+    );
   }
 }

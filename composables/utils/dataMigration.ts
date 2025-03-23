@@ -1,4 +1,4 @@
-import type { ShoppingItem, ShoppingList, Category } from '~/composables/types';
+import type { ShoppingItem, ShoppingList, Category } from '~/types/app-types';
 
 /**
  * Typdefinitionen für die Migration
@@ -42,7 +42,7 @@ export const migrateCategoriesToObjects = (
     }
 
     // Ansonsten konvertieren wir den String in ein Objekt
-    const categoryName = item.category as string;
+    const categoryName = item.category;
     const category = categoriesMap[categoryName] || {
       id: `category_${categoryName.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`,
       name: categoryName,
@@ -61,13 +61,13 @@ export const migrateCategoriesToObjects = (
  */
 export const migrateShoppingLists = (lists: LegacyList[]): ShoppingList[] =>
   lists.map(list => ({
-    id: list.id || `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-    name: list.name || 'Unbenannte Liste',
+    id: list.id ?? `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    name: list.name ?? 'Unbenannte Liste',
     items: Array.isArray(list.items) ? list.items : [],
-    templateId: list.templateId || 'supermarket',
+    templateId: list.templateId ?? 'supermarket',
     isFavorite: !!list.isFavorite,
-    createdAt: list.createdAt || Date.now(),
-    modifiedAt: list.modifiedAt || Date.now(),
+    createdAt: list.createdAt ?? Date.now(),
+    modifiedAt: list.modifiedAt ?? Date.now(),
   }));
 
 /**
@@ -97,27 +97,27 @@ export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
   return lists.map(list => {
     // Stelle sicher, dass die Liste die notwendigen Eigenschaften hat
     const migratedList: ShoppingList = {
-      id: list.id || `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-      name: list.name || 'Unbenannte Liste',
+      id: list.id ?? `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      name: list.name ?? 'Unbenannte Liste',
       items: [],
-      templateId: list.templateId || 'supermarket',
+      templateId: list.templateId ?? 'supermarket',
       isFavorite: !!list.isFavorite,
-      createdAt: list.createdAt || Date.now(),
-      modifiedAt: list.modifiedAt || Date.now(),
+      createdAt: list.createdAt ?? Date.now(),
+      modifiedAt: list.modifiedAt ?? Date.now(),
     };
 
     // Migriere die Items, falls vorhanden
     if (Array.isArray(list.items)) {
       migratedList.items = list.items.map((item: LegacyItem) => ({
-        id: item.id || `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        name: item.name || 'Unbenannter Artikel',
+        id: item.id ?? `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        name: item.name ?? 'Unbenannter Artikel',
         quantity: typeof item.quantity === 'number' ? item.quantity : 1,
-        category: item.category || 'Sonstiges',
+        category: item.category ?? 'Sonstiges',
         checked: !!item.checked,
         price: typeof item.price === 'number' ? item.price : 0,
-        note: item.note || '',
-        addedAt: item.addedAt || Date.now(),
-        modifiedAt: item.modifiedAt || Date.now(),
+        note: item.note ?? '',
+        addedAt: item.addedAt ?? Date.now(),
+        modifiedAt: item.modifiedAt ?? Date.now(),
       }));
     }
 
@@ -131,7 +131,7 @@ export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
  * @returns true, wenn die Liste gültig ist, sonst false
  */
 export const validateList = (list: unknown): boolean => {
-  if (!list || typeof list !== 'object') {
+  if (!list ?? typeof list !== 'object') {
     return false;
   }
 
@@ -139,13 +139,13 @@ export const validateList = (list: unknown): boolean => {
   const typedList = list as LegacyList;
 
   // Prüfe, ob die Liste die notwendigen Eigenschaften hat
-  if (!typedList.id || typeof typedList.name !== 'string' || !Array.isArray(typedList.items)) {
+  if (!typedList.id ?? (typeof typedList.name !== 'string' || !Array.isArray(typedList.items))) {
     return false;
   }
 
   // Prüfe die Items
-  for (const item of typedList.items || []) {
-    if (!item.id || typeof item.name !== 'string' || typeof item.quantity !== 'number') {
+  for (const item of typedList.items ?? []) {
+    if (!item.id ?? (typeof item.name !== 'string' || typeof item.quantity !== 'number')) {
       return false;
     }
   }

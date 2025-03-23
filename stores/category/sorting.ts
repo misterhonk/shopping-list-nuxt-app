@@ -1,12 +1,14 @@
 /**
  * Sortierungslogik für Kategorien in Einkaufslisten
- * 
+ *
  * Diese Datei enthält Funktionen zum Sortieren von Kategorien basierend auf
  * Standard-Laufwegen oder benutzerdefinierten Sortierreihenfolgen.
  */
 
 import { createLogger } from '~/utils/logger';
-import type { Category, CategorySortConfig, CategoryTemplate } from '~/composables/types';
+
+import type { CategorySortConfig } from '~/composables/types';
+import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('sorting');
@@ -57,7 +59,7 @@ export const getSortConfigForTemplate = (
   if (configs[templateId]) {
     return configs[templateId];
   }
-  
+
   // Default-Konfiguration erstellen
   return {
     templateId,
@@ -75,12 +77,10 @@ export const getSortConfigForTemplate = (
 export const updateSortConfig = (
   config: CategorySortConfig,
   configs: Record<string, CategorySortConfig>
-): Record<string, CategorySortConfig> => {
-  return {
-    ...configs,
-    [config.templateId]: config,
-  };
-};
+): Record<string, CategorySortConfig> => ({
+  ...configs,
+  [config.templateId]: config,
+});
 
 /**
  * Sortiert Kategorien basierend auf der angegebenen Sortierungskonfiguration
@@ -98,12 +98,12 @@ export const sortCategories = (
   if (sortConfig.useCustomSort && sortConfig.customOrder.length > 0) {
     return sortCategoriesByCustomOrder(categories, sortConfig.customOrder);
   }
-  
+
   // Wenn das Template eine Standard-Reihenfolge definiert
   if (template.defaultCategoryOrder && template.defaultCategoryOrder.length > 0) {
     return sortCategoriesByDefaultOrder(categories, template.defaultCategoryOrder);
   }
-  
+
   // Fallback: Alphabetisch nach Namen sortieren
   return sortCategoriesAlphabetically(categories);
 };
@@ -123,20 +123,20 @@ export const sortCategoriesByCustomOrder = (
   customOrder.forEach((id, index) => {
     orderMap.set(id, index);
   });
-  
+
   // Kopiere die Kategorien, um das Original nicht zu verändern
   const sortedCategories = [...categories];
-  
+
   // Sortiere basierend auf der benutzerdefinierten Reihenfolge
   return sortedCategories.sort((a, b) => {
     const posA = orderMap.has(a.id) ? orderMap.get(a.id)! : Number.MAX_SAFE_INTEGER;
     const posB = orderMap.has(b.id) ? orderMap.get(b.id)! : Number.MAX_SAFE_INTEGER;
-    
+
     // Wenn beide Positionen definiert sind, nach Position sortieren
     if (posA !== Number.MAX_SAFE_INTEGER && posB !== Number.MAX_SAFE_INTEGER) {
       return posA - posB;
     }
-    
+
     // Wenn nur eine Position definiert ist, diese nach vorne stellen
     if (posA !== Number.MAX_SAFE_INTEGER) {
       return -1;
@@ -144,7 +144,7 @@ export const sortCategoriesByCustomOrder = (
     if (posB !== Number.MAX_SAFE_INTEGER) {
       return 1;
     }
-    
+
     // Fallback: Alphabetisch sortieren
     return a.name.localeCompare(b.name);
   });
@@ -159,16 +159,14 @@ export const sortCategoriesByCustomOrder = (
 export const sortCategoriesByDefaultOrder = (
   categories: Category[],
   defaultOrder: string[]
-): Category[] => {
+): Category[] =>
   // Identische Implementierung wie bei benutzerdefinierter Reihenfolge
-  return sortCategoriesByCustomOrder(categories, defaultOrder);
-};
+  sortCategoriesByCustomOrder(categories, defaultOrder);
 
 /**
  * Sortiert Kategorien alphabetisch nach Namen
  * @param categories Die zu sortierenden Kategorien
  * @returns Alphabetisch sortierte Kategorien
  */
-export const sortCategoriesAlphabetically = (categories: Category[]): Category[] => {
-  return [...categories].sort((a, b) => a.name.localeCompare(b.name));
-};
+export const sortCategoriesAlphabetically = (categories: Category[]): Category[] =>
+  [...categories].sort((a, b) => a.name.localeCompare(b.name));

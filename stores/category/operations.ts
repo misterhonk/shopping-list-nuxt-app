@@ -2,8 +2,8 @@ import { createLogger } from '~/utils/logger';
 
 import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
 
-import type { Category, CategoryTemplate } from '~/types/app-types';
 import type { TemplateCollection } from '~/composables/types';
+import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('operations');

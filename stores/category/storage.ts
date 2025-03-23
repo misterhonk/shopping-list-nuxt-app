@@ -4,6 +4,7 @@ import { createLogger } from '~/utils/logger';
 import { sanitizeTemplate } from './utils';
 
 import type { TemplateCollection } from '~/composables/types';
+import type { CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('storage');
@@ -72,8 +73,8 @@ export const loadCategoryData = (): StoredCategoryData | null => {
     logger.info('Geladene Daten:', parsedData);
 
     return {
-      activeTemplateId: parsedData.activeTemplateId || '',
-      customTemplates: parsedData.customTemplates || {},
+      activeTemplateId: parsedData.activeTemplateId ?? '',
+      customTemplates: parsedData.customTemplates ?? {},
     };
   } catch (error) {
     logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);

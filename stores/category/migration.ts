@@ -3,6 +3,7 @@ import { createLogger } from '~/utils/logger';
 import { generateCategoryId, deepCopy } from './utils';
 
 import type { TemplateCollection } from '~/composables/types';
+import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('migration');
@@ -48,7 +49,7 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
 export const needsMigration = (customTemplates: TemplateCollection): boolean => {
   for (const templateId in customTemplates) {
     const template = customTemplates[templateId];
-    if (template.categories?.length > 0 && typeof template.categories[0] === 'string') {
+    if (template.categories.length > 0 && typeof template.categories[0] === 'string') {
       return true;
     }
   }

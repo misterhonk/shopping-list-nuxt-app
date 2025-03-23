@@ -86,15 +86,15 @@
           <div class="flex items-center">
             <button
               v-if="hasDefaultOrder"
-              @click="toggleSortMode"
               class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 mr-2"
+              @click="toggleSortMode"
             >
               {{ isCustomSortActive ? 'Zum Standard-Laufweg' : 'Individuell sortieren' }}
             </button>
             <button
               v-if="isCustomSortActive"
-              @click="resetToDefaultSort"
               class="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600"
+              @click="resetToDefaultSort"
             >
               Zurücksetzen
             </button>
@@ -269,7 +269,7 @@
     </div>
 
     <!-- Modals -->
-    <CategoryModals 
+    <CategoryModals
       v-model:new-category-modal="showNewCategoryModal"
       v-model:edit-category-modal="showEditCategoryModal"
       v-model:new-template-modal="showNewTemplateModal"
@@ -291,8 +291,8 @@
   </div>
 </template>
 
-<script>
-import script from './CategoryManager.script.js';
+<script lang="ts">
+import script from './CategoryManager.ts';
 export default script;
 </script>
 

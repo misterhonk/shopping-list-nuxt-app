@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingItem } from '~/composables/types';
+import type { ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useListExport');
@@ -19,7 +19,7 @@ interface ExportData {
 /**
  * Composable für den Export von Einkaufslisten
  */
-export function useListExport() {
+export function useListExport(): void {
   /**
    * Exportiert eine Liste als JSON-Datei
    * @param exportData - Basisdaten für den Export
@@ -36,7 +36,7 @@ export function useListExport() {
       // Bereite die Daten für den Export vor
       const fullExportData: ExportData = {
         name: exportData.name,
-        items: items || [],
+        items: items ?? [],
         templateId: exportData.templateId,
         exportDate: new Date().toISOString(),
         exportVersion: '1.0.0',
