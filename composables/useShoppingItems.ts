@@ -299,7 +299,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
    * @param newName - Der neue Name für die Kategorie
    */
   const updateCategoryInItems = (categoryId: string, newName: string): void => {
-    if (!categoryId ?? !newName) {
+    if (!categoryId || !newName) {
       return;
     }
 

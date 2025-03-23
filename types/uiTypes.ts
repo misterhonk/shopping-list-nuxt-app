@@ -15,7 +15,7 @@ export type FormStatus = 'idle' | 'editing' | 'submitting' | 'error' | 'success'
 /**
  * Allgemeiner Typ für UI-Fehler
  */
-export interface UIError {
+export interface IUIError {
   code: string;
   message: string;
   field?: string;
@@ -40,7 +40,7 @@ export interface ItemFormState {
 /**
  * Interface für den Zustand des Listen-Formulars
  */
-export interface ListFormState {
+export interface IListFormState {
   /** Aktueller Status des Formulars */
   status: FormStatus;
   /** Die Listen-Daten, die bearbeitet werden */
@@ -56,7 +56,7 @@ export interface ListFormState {
 /**
  * Interface für Filter-Optionen
  */
-export interface ListFilterOptions {
+export interface IListFilterOptions {
   /** Ob erledigte Artikel angezeigt werden sollen */
   showChecked: boolean;
   /** Nach welcher Kategorie gefiltert werden soll (null = alle) */
@@ -75,7 +75,7 @@ export type SortOrder = 'name' | 'category' | 'price' | 'added' | 'custom';
 /**
  * Interface für UI-Einstellungen
  */
-export interface UISettings {
+export interface IUISettings {
   /** Dunkelmodus-Einstellung */
   darkMode: 'light' | 'dark' | 'system';
   /** Schriftgröße für die UI */
@@ -107,7 +107,7 @@ export interface ItemStatusDisplay {
 /**
  * Interface für die Komponente zur Anzeige des Listenstatus
  */
-export interface ListStatusDisplay {
+export interface IListStatusDisplay {
   /** Die anzuzeigende Liste */
   list: ShoppingList;
   /** Ob die Liste aktuell bearbeitet wird */
@@ -123,7 +123,7 @@ export interface ListStatusDisplay {
 /**
  * Interface für Toast-Benachrichtigungen
  */
-export interface ToastNotification {
+export interface IToastNotification {
   /** Eindeutige ID der Benachrichtigung */
   id: string;
   /** Typ der Benachrichtigung */
@@ -143,7 +143,7 @@ export interface ToastNotification {
 /**
  * Interface für Dialog-Optionen
  */
-export interface DialogOptions {
+export interface IDialogOptions {
   /** Titel des Dialogs */
   title: string;
   /** Nachricht/Inhalt des Dialogs */
@@ -165,7 +165,7 @@ export interface DialogOptions {
 /**
  * Interface für den Drag-and-Drop-Status
  */
-export interface DragDropState {
+export interface IDragDropState {
   /** Ob aktuell ein Drag-Vorgang stattfindet */
   isDragging: boolean;
   /** Typ des gezogenen Elements */
@@ -181,7 +181,7 @@ export interface DragDropState {
 /**
  * Interface für den Such-Status
  */
-export interface SearchState {
+export interface ISearchState {
   /** Aktueller Suchbegriff */
   query: string;
   /** Ob eine Suche aktiv ist */
@@ -197,7 +197,7 @@ export interface SearchState {
 /**
  * Interface für die dynamischen Eigenschaften einer Kategorieanzeige
  */
-export interface CategoryDisplayProps {
+export interface ICategoryDisplayProps {
   /** Die anzuzeigende Kategorie */
   category: Category;
   /** Ob die Kategorie aktuell ausgewählt ist */

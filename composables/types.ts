@@ -15,14 +15,14 @@ export type { Category, CategoryTemplate, ShoppingItem, ShoppingList };
  * Interface für die Template-Listen
  * @deprecated Bitte stattdessen TemplateCategories aus app-types.ts verwenden
  */
-export interface TemplateCollection {
+export interface ITemplateCollection {
   [key: string]: CategoryTemplate;
 }
 
 /**
  * Interface für die Sortierungskonfiguration von Kategorien
  */
-export interface CategorySortConfig {
+export interface ICategorySortConfig {
   templateId: string; // ID der Vorlage, zu der diese Konfiguration gehört
   useCustomSort: boolean; // Ob benutzerdefinierte Sortierung verwendet werden soll
   customOrder: string[]; // Array von Category-IDs in benutzerdefinierter Reihenfolge
@@ -31,7 +31,7 @@ export interface CategorySortConfig {
 /**
  * Optionen für das Erstellen einer neuen Liste
  */
-export interface CreateListOptions {
+export interface ICreateListOptions {
   templateId?: string;
   isFavorite?: boolean;
   items?: ShoppingItem[];
@@ -49,7 +49,7 @@ export interface ImportOptions {
 /**
  * Format für den Export/Import von Listen
  */
-export interface ExportedList {
+export interface IExportedList {
   name: string;
   items: ShoppingItem[];
   format: string;
@@ -61,7 +61,7 @@ export interface ExportedList {
 /**
  * Interface für Verfügbare Listen im Import-Dialog
  */
-export interface AvailableListInfo {
+export interface IAvailableListInfo {
   id: string;
   name: string;
   itemCount: number;
@@ -70,7 +70,7 @@ export interface AvailableListInfo {
 /**
  * Interface für den Eventbus
  */
-export interface CategoryEventBus {
+export interface ICategoryEventBus {
   on: (callback: (categoryId: string, newName: string) => void) => () => void;
   emit: (categoryId: string, newName: string) => void;
 }

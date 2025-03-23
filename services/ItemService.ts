@@ -64,7 +64,7 @@ export class ItemService extends BaseService {
    */
   public getItemById(listId: string, itemId: string): ShoppingItem | null {
     return this.safeOperation(() => {
-      if (!listId ?? !itemId) {
+      if (!listId || !itemId) {
         throw new Error('ListId und ItemId dürfen nicht leer sein');
       }
 
@@ -85,7 +85,7 @@ export class ItemService extends BaseService {
         throw new Error('ListId darf nicht leer sein');
       }
 
-      if (!item.name ?? item.name.trim() === '') {
+      if (!item.name || item.name.trim() === '') {
         throw new Error('Artikel muss einen Namen haben');
       }
 
@@ -136,7 +136,7 @@ export class ItemService extends BaseService {
     updates: Partial<ShoppingItem>
   ): ShoppingItem | null {
     return this.safeOperation(() => {
-      if (!listId ?? !itemId) {
+      if (!listId || !itemId) {
         throw new Error('ListId und ItemId dürfen nicht leer sein');
       }
 
@@ -191,7 +191,7 @@ export class ItemService extends BaseService {
   public removeItem(listId: string, itemId: string): boolean {
     return (
       this.safeOperation(() => {
-        if (!listId ?? !itemId) {
+        if (!listId || !itemId) {
           throw new Error('ListId und ItemId dürfen nicht leer sein');
         }
 

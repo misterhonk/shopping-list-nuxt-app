@@ -58,7 +58,7 @@ const buildTime = new Date().toISOString();
 // Zustandsverwaltung
 const isExpanded = ref(false);
 
-onMounted(() => {
+onMounted((): void => {
   // Hostname ermitteln
   hostname.value = window.location.hostname;
 

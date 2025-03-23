@@ -9,9 +9,9 @@ import { isShoppingList, isShoppingListArray } from '~/utils/validation';
 
 import { BaseService } from './base/BaseService';
 
-import type { ShoppingList } from '~/types/app-types';
 import type { CreateListOptions } from '~/composables/types';
 import type { StorageRepository } from '~/repositories/StorageRepository';
+import type { ShoppingList } from '~/types/app-types';
 
 /**
  * Service für die Verwaltung von Einkaufslisten
@@ -108,7 +108,7 @@ export class ShoppingListService extends BaseService {
    */
   public createList(name: string, options: CreateListOptions = {}): ShoppingList | null {
     return this.safeOperation(() => {
-      if (!name ?? name.trim() === '') {
+      if (!name || name.trim() === '') {
         throw new Error('Listenname darf nicht leer sein');
       }
 

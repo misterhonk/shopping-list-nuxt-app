@@ -15,7 +15,7 @@ const logger = createLogger('formValidation');
 /**
  * Interface für Validierungsergebnisse
  */
-export interface ValidationResult {
+export interface IValidationResult {
   isValid: boolean;
   errors: Record<string, string>;
 }
@@ -23,7 +23,7 @@ export interface ValidationResult {
 /**
  * Interface für Validierungsregeln
  */
-export interface ValidationRules {
+export interface IValidationRules {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -40,7 +40,7 @@ export interface ValidationRules {
  * @param rules - Die anzuwendenden Validierungsregeln
  * @returns Ein Fehlerstring oder null, wenn keine Fehler aufgetreten sind
  */
-export function validateValue(value: unknown, rules: ValidationRules): string | null {
+export function validateValue(value: unknown, rules: IValidationRules): string | null {
   // Erforderlich-Prüfung
   if (rules.required && (value === undefined || value === null || value === '')) {
     return rules.errorMessage ?? 'Dieses Feld ist erforderlich';
@@ -90,7 +90,7 @@ export function validateValue(value: unknown, rules: ValidationRules): string | 
  * @param item - Das zu validierende Artikel-Objekt
  * @returns Das Validierungsergebnis
  */
-export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationResult {
+export function validateShoppingItem(item: Partial<ShoppingItem>): IValidationResult {
   const errors: Record<string, string> = {};
 
   // Name validieren
@@ -145,7 +145,7 @@ export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationRes
  * @param list - Das zu validierende Listen-Objekt
  * @returns Das Validierungsergebnis
  */
-export function validateShoppingList(list: Partial<ShoppingList>): ValidationResult {
+export function validateShoppingList(list: Partial<ShoppingList>): IValidationResult {
   const errors: Record<string, string> = {};
 
   // Name validieren
@@ -189,7 +189,7 @@ export function validateTextLength(
   text: string,
   minLength = 0,
   maxLength = Number.POSITIVE_INFINITY
-): ValidationResult {
+): IValidationResult {
   const errors: Record<string, string> = {};
 
   if (text.length < minLength) {
@@ -215,7 +215,7 @@ export function validateNumericValue(
   value: number,
   min = Number.NEGATIVE_INFINITY,
   max = Number.POSITIVE_INFINITY
-): ValidationResult {
+): IValidationResult {
   const errors: Record<string, string> = {};
 
   if (isNaN(value)) {

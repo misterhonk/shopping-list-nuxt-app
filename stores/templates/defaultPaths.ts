@@ -6,7 +6,6 @@
  */
 
 import type { TemplateCollection } from '~/composables/types';
-import type { CategoryTemplate } from '~/types/app-types';
 
 /**
  * Supermarkt-Laufweg:

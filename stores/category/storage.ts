@@ -4,7 +4,6 @@ import { createLogger } from '~/utils/logger';
 import { sanitizeTemplate } from './utils';
 
 import type { TemplateCollection } from '~/composables/types';
-import type { CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('storage');

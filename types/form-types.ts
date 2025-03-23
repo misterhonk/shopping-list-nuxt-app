@@ -10,7 +10,7 @@ import type { ShoppingItem, ShoppingList } from './app-types';
 /**
  * Allgemeiner Formularstatus
  */
-export interface FormState {
+export interface IFormState {
   /** Status des Formulars: 'idle' | 'editing' | 'submitting' | 'success' | 'error' */
   status: string;
   /** Gibt an, ob das Formular gültig ist */
@@ -24,7 +24,7 @@ export interface FormState {
 /**
  * Formularstatus für Artikel-Formulare
  */
-export interface ItemFormState extends FormState {
+export interface ItemFormState extends IFormState {
   /** Der Artikel, der bearbeitet wird */
   item: Partial<ShoppingItem>;
 }
@@ -32,7 +32,7 @@ export interface ItemFormState extends FormState {
 /**
  * Formularstatus für Listen-Formulare
  */
-export interface ListFormState extends FormState {
+export interface IListFormState extends IFormState {
   /** Die Liste, die bearbeitet wird */
   list: Partial<ShoppingList>;
 }

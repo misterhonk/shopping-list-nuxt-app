@@ -196,7 +196,7 @@ export function useShoppingLists(): void {
       const { lists: storedLists, currentId } = loadData();
 
       // Prüfe ob gültige Listen vorhanden sind
-      if (!storedLists ?? !Array.isArray(storedLists)) {
+      if (!storedLists || !Array.isArray(storedLists)) {
         createDefaultList();
         return false;
       }
@@ -263,7 +263,7 @@ export function useShoppingLists(): void {
    * @return Die erstellte Liste
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
-    if (!name ?? name.trim() === '') {
+    if (!name || name.trim() === '') {
       return null;
     }
 
@@ -392,7 +392,7 @@ export function useShoppingLists(): void {
    * @param newName - Der neue Name der Liste
    */
   const updateListName = (newName: string): void => {
-    if (!newName ?? newName.trim() === '') {
+    if (!newName || newName.trim() === '') {
       return;
     }
 

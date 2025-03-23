@@ -1,7 +1,7 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 import type { ImportOptions, ExportedList, CreateListOptions } from '~/composables/types';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useListImport');
@@ -46,7 +46,7 @@ export function useListImport(): void {
     // Event-Handler für Dateiauswahl
     fileInput.onchange = event => {
       const target = event.target as HTMLInputElement;
-      if (!target.files ?? target.files.length === 0) {
+      if (!target.files || target.files.length === 0) {
         logger.info('Keine Datei ausgewählt');
         document.body.removeChild(fileInput);
         return;
@@ -63,14 +63,14 @@ export function useListImport(): void {
 
       reader.onload = readerEvent => {
         try {
-          if (!readerEvent.target ?? typeof readerEvent.target.result !== 'string') {
+          if (!readerEvent.target || typeof readerEvent.target.result !== 'string') {
             throw new Error('Fehler beim Lesen der Datei');
           }
 
           const parsedData = JSON.parse(readerEvent.target.result);
 
           // Validiere die Daten
-          if (!parsedData.name ?? !Array.isArray(parsedData.items)) {
+          if (!parsedData.name || !Array.isArray(parsedData.items)) {
             alert('Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.');
             document.body.removeChild(fileInput);
             return;
@@ -121,7 +121,7 @@ export function useListImport(): void {
     services: ImportServices
   ): ImportResult => {
     try {
-      if (!data.name ?? !Array.isArray(data.items)) {
+      if (!data.name || !Array.isArray(data.items)) {
         return {
           success: false,
           message: 'Ungültige Import-Daten',
@@ -354,7 +354,7 @@ export function useListImport(): void {
   ): ImportResult => {
     try {
       // Validiere die Daten
-      if (!importData.name ?? !Array.isArray(importData.items)) {
+      if (!importData.name || !Array.isArray(importData.items)) {
         return {
           success: false,
           message: 'Ungültiges Dateiformat. Die Datei enthält keine gültige Einkaufsliste.',

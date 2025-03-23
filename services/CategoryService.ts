@@ -7,8 +7,8 @@
 
 import { BaseService } from './base/BaseService';
 
-import type { Category, CategoryTemplate } from '~/types/app-types';
 import type { StorageRepository } from '~/repositories/StorageRepository';
+import type { Category, CategoryTemplate } from '~/types/app-types';
 
 /**
  * Service für die Verwaltung von Kategorien
@@ -214,7 +214,7 @@ export class CategoryService extends BaseService {
    */
   public createCustomTemplate(template: Partial<CategoryTemplate>): CategoryTemplate | null {
     return this.safeOperation(() => {
-      if (!template.name ?? template.name.trim() === '') {
+      if (!template.name || template.name.trim() === '') {
         throw new Error('Vorlagenname darf nicht leer sein');
       }
 
@@ -265,7 +265,7 @@ export class CategoryService extends BaseService {
     updates: Partial<Category>
   ): Category | null {
     return this.safeOperation(() => {
-      if (!templateId ?? !categoryId) {
+      if (!templateId || !categoryId) {
         throw new Error('TemplateId und CategoryId dürfen nicht leer sein');
       }
 

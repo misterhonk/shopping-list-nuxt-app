@@ -12,13 +12,13 @@ export enum LogLevel {
 }
 
 // Configuration for the logger
-export interface LoggerConfig {
+export interface ILoggerConfig {
   minLevel: LogLevel;
   enableConsole: boolean;
 }
 
 // Default configuration
-const defaultConfig: LoggerConfig = {
+const defaultConfig: ILoggerConfig = {
   minLevel: LogLevel.DEBUG,
   enableConsole: true,
 };
@@ -29,14 +29,14 @@ let currentConfig = { ...defaultConfig };
 /**
  * Configure the global logger behavior
  */
-export function configureLogger(config: Partial<LoggerConfig>): void {
+export function configureLogger(config: Partial<ILoggerConfig>): void {
   currentConfig = { ...currentConfig, ...config };
 }
 
 /**
- * Logger interface defining available methods
+ * ILogger interface defining available methods
  */
-export interface Logger {
+export interface ILogger {
   debug: (message: string, ...data: unknown[]) => void;
   info: (message: string, ...data: unknown[]) => void;
   warn: (message: string, ...data: unknown[]) => void;
@@ -49,7 +49,7 @@ export interface Logger {
  * @param module The name of the module using the logger
  * @returns A logger instance
  */
-export function createLogger(module: string): Logger {
+export function createLogger(module: string): ILogger {
   return {
     debug(message: string, ...data: unknown[]): void {
       log(LogLevel.DEBUG, module, message, data);

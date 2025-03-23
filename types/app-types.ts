@@ -8,7 +8,7 @@
 /**
  * Kategorie-Typ
  */
-export interface Category {
+export interface ICategory {
   /** Eindeutige Kategorie-ID (kann vom Namen abgeleitet sein) */
   id: string;
   /** Anzeigename der Kategorie */
@@ -26,7 +26,7 @@ export interface Category {
 /**
  * Vorlage (Template) für Kategorien und Shop-Typen
  */
-export interface CategoryTemplate {
+export interface ICategoryTemplate {
   /** Eindeutige Template-ID */
   id: string;
   /** Anzeigename des Templates */
@@ -34,7 +34,7 @@ export interface CategoryTemplate {
   /** Optionale Beschreibung des Templates */
   description?: string;
   /** Kategorien, die in diesem Template enthalten sind */
-  categories: Category[];
+  categories: ICategory[];
   /** Standardreihenfolge der Kategorien (ids) */
   defaultCategoryOrder?: string[];
 }
@@ -42,15 +42,15 @@ export interface CategoryTemplate {
 /**
  * Einkaufsartikel
  */
-export interface ShoppingItem {
+export interface IShoppingItem {
   /** Eindeutige Artikel-ID */
   id: string;
   /** Name des Artikels */
   name: string;
   /** Menge des Artikels */
   quantity: number;
-  /** Kategorie des Artikels - kann eine ID (string) oder ein Category-Objekt sein */
-  category: string | Category;
+  /** Kategorie des Artikels - kann eine ID (string) oder ein ICategory-Objekt sein */
+  category: string | ICategory;
   /** Ob der Artikel bereits abgehakt ist */
   checked: boolean;
   /** Optionaler Preis des Artikels */
@@ -70,7 +70,7 @@ export interface ShoppingItem {
 /**
  * Einkaufsliste
  */
-export interface ShoppingList {
+export interface IShoppingList {
   /** Eindeutige Listen-ID */
   id: string;
   /** Name der Liste */
@@ -80,7 +80,7 @@ export interface ShoppingList {
   /** ID des verwendeten Templates */
   templateId?: string;
   /** Artikel in der Liste */
-  items: ShoppingItem[];
+  items: IShoppingItem[];
   /** Zeitstempel der Erstellung */
   createdAt?: number;
   /** Zeitstempel der letzten Änderung */
@@ -115,7 +115,7 @@ export interface ItemSuggestion {
   /** Optionaler Zusatztext (z.B. Kategorie) */
   subtext?: string;
   /** Kategorie-Information */
-  category?: Category;
+  category?: ICategory;
   /** Zuletzt verwendeter Preis */
   price?: number;
 }
@@ -123,7 +123,7 @@ export interface ItemSuggestion {
 /**
  * Update-Informationen
  */
-export interface UpdateInfo {
+export interface IUpdateInfo {
   /** Ob ein Update verfügbar ist */
   hasUpdate: boolean;
   /** Die neue Version (falls ein Update verfügbar) */
@@ -133,9 +133,9 @@ export interface UpdateInfo {
 /**
  * Typ für Template-Kategorien-Zuordnung
  */
-export type TemplateCategories = Record<string, Category[]>;
+export type TemplateCategories = Record<string, ICategory[]>;
 
 /**
  * Typ für benutzerdefinierte Templates
  */
-export type CustomTemplates = Record<string, CategoryTemplate>;
+export type CustomTemplates = Record<string, ICategoryTemplate>;

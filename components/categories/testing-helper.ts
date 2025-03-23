@@ -40,7 +40,7 @@ const loadDiagnosticData = (): void => {
   const categoryData = localStorage.getItem('categoryTemplates');
   const listData = localStorage.getItem('shoppingLists');
 
-  if (!categoryData ?? !listData) {
+  if (!categoryData || !listData) {
     logger.error('[Diagnose] Keine Daten gefunden');
     return null;
   }
@@ -59,7 +59,7 @@ const loadDiagnosticData = (): void => {
  */
 const getActiveTemplate = (parsedCategories: CategoryData): void => {
   if (
-    !parsedCategories.activeTemplateId ??
+    !parsedCategories.activeTemplateId ||
     !parsedCategories.customTemplates[parsedCategories.activeTemplateId]
   ) {
     return null;

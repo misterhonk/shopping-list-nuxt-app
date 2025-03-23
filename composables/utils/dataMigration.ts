@@ -131,7 +131,7 @@ export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
  * @returns true, wenn die Liste gültig ist, sonst false
  */
 export const validateList = (list: unknown): boolean => {
-  if (!list ?? typeof list !== 'object') {
+  if (!list || typeof list !== 'object') {
     return false;
   }
 
@@ -139,13 +139,13 @@ export const validateList = (list: unknown): boolean => {
   const typedList = list as LegacyList;
 
   // Prüfe, ob die Liste die notwendigen Eigenschaften hat
-  if (!typedList.id ?? (typeof typedList.name !== 'string' || !Array.isArray(typedList.items))) {
+  if (!typedList.id || typeof typedList.name !== 'string' || !Array.isArray(typedList.items)) {
     return false;
   }
 
   // Prüfe die Items
   for (const item of typedList.items ?? []) {
-    if (!item.id ?? (typeof item.name !== 'string' || typeof item.quantity !== 'number')) {
+    if (!item.id || typeof item.name !== 'string' || typeof item.quantity !== 'number') {
       return false;
     }
   }

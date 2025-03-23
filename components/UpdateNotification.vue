@@ -46,7 +46,7 @@ import {
 const showUpdateNotification = ref(false);
 const updateInfo = ref<UpdateInfo>({ hasUpdate: false });
 
-onMounted(() => {
+onMounted((): void => {
   // Prüfe auf App-Version Updates
   const result = checkForUpdates();
   updateInfo.value = result;
@@ -69,7 +69,7 @@ onMounted(() => {
 
   // Registriere Event-Listener für Service Worker-Aktualisierungen
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
+    navigator.serviceWorker.addEventListener('controllerchange', (): void => {
       // Service Worker wurde aktualisiert
       if (!document.hidden) {
         window.location.reload();
@@ -78,7 +78,7 @@ onMounted(() => {
   }
 
   // Regelmäßige Check-Intervalle für iOS
-  const checkInterval = setInterval(() => {
+  const checkInterval = setInterval((): void => {
     const result = checkForUpdates();
     if (result.hasUpdate && !showUpdateNotification.value) {
       updateInfo.value = result;
@@ -87,7 +87,7 @@ onMounted(() => {
   }, 60 * 1000); // Jede Minute prüfen
 
   // Cleanup bei Komponenten-Unmount
-  onBeforeUnmount(() => {
+  onBeforeUnmount((): void => {
     clearInterval(checkInterval);
   });
 });

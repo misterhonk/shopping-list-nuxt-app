@@ -132,7 +132,7 @@ export function useListUpdate(
     options: { replace?: boolean; uniqueCheck?: boolean } = {}
   ): boolean => {
     try {
-      if (!items ?? (!Array.isArray(items) || items.length === 0)) {
+      if (!items || !Array.isArray(items) || items.length === 0) {
         return false;
       }
 
