@@ -93,7 +93,7 @@ export function useItemManagement(
     const updatedLists = createImmutableCopy(shoppingListsRef.value);
 
     // Sicherstellen, dass items existiert
-    if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex].items)) {
+    if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
       // Sicherstellen, dass listIndex existiert
       if (updatedLists[listIndex]) {
         updatedLists[listIndex].items = [];
@@ -103,7 +103,7 @@ export function useItemManagement(
     }
 
     // Item hinzufügen
-    if (updatedLists[listIndex] && Array.isArray(updatedLists[listIndex].items)) {
+    if (updatedLists[listIndex] && Array.isArray(updatedLists[listIndex]?.items)) {
       updatedLists[listIndex].items.push(newItemObj);
       updatedLists[listIndex].modifiedAt = Date.now();
     } else {
@@ -134,16 +134,16 @@ export function useItemManagement(
         return false;
       }
 
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex].items)) {
+      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
         return false;
       }
 
       // Prüfen, ob das Item existiert
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex].items)) {
+      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
         return false;
       }
       
-      const itemExists = shoppingListsRef.value[listIndex].items.some(item => item.id === itemId);
+      const itemExists = shoppingListsRef.value[listIndex]?.items.some(item => item.id === itemId);
       if (!itemExists) {
         return false;
       }
@@ -152,11 +152,11 @@ export function useItemManagement(
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
       
       // Sicherstellen, dass Liste und items existieren
-      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex].items)) {
+      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
         return false;
       }
       
-      updatedLists[listIndex].items = updatedLists[listIndex].items.filter(
+      updatedLists[listIndex].items = updatedLists[listIndex]?.items.filter(
         item => item.id !== itemId
       );
       updatedLists[listIndex].modifiedAt = Date.now();
@@ -189,7 +189,7 @@ export function useItemManagement(
         return false;
       }
 
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex].items)) {
+      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
         return false;
       }
 
@@ -198,7 +198,7 @@ export function useItemManagement(
         return false;
       }
       
-      const itemIndex = shoppingListsRef.value[listIndex].items.findIndex(
+      const itemIndex = shoppingListsRef.value[listIndex]?.items.findIndex(
         item => item.id === itemId
       );
       if (itemIndex === -1) {
@@ -209,12 +209,12 @@ export function useItemManagement(
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
 
       // Sicherstellen, dass Liste und items existieren
-      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex].items)) {
+      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
         return false;
       }
 
       // Nur das betroffene Item aktualisieren
-      updatedLists[listIndex].items = updatedLists[listIndex].items.map((item, index) => {
+      updatedLists[listIndex].items = updatedLists[listIndex]?.items.map((item, index) => {
         if (index === itemIndex) {
           return {
             ...item,
@@ -251,7 +251,7 @@ export function useItemManagement(
         return false;
       }
 
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex].items)) {
+      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
         return false;
       }
 
@@ -259,12 +259,12 @@ export function useItemManagement(
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
 
       // Sicherstellen, dass Liste und items existieren
-      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex].items)) {
+      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
         return false;
       }
 
       // Filter auf die Items anwenden
-      updatedLists[listIndex].items = updatedLists[listIndex].items.filter(item => !item.checked);
+      updatedLists[listIndex].items = updatedLists[listIndex]?.items.filter(item => !item.checked);
       updatedLists[listIndex].modifiedAt = Date.now();
 
       // Update und Speichern
@@ -297,7 +297,7 @@ export function useItemManagement(
 
       // Jede Liste durchgehen und Items aktualisieren
       updatedLists.forEach((list, listIndex) => {
-        if (!Array.isArray(list.items) || !updatedLists[listIndex]) {
+        if (!Array.isArray(list.items) || !updatedLists[listIndex] || typeof list !== 'object') {
           return;
         }
 
@@ -305,7 +305,7 @@ export function useItemManagement(
         const originalItems = list.items;
 
         // Alle Items in der Liste durchgehen
-        if (updatedLists[listIndex]) {
+        if (updatedLists[listIndex] && Array.isArray(list.items)) {
           updatedLists[listIndex].items = list.items.map(item => {
             const matchFound = itemBelongsToCategory(item, categoryId);
 
@@ -319,7 +319,7 @@ export function useItemManagement(
           });
 
           // Nur die Liste als geändert markieren, wenn Items geändert wurden
-          if (updatedLists[listIndex].items !== originalItems) {
+          if (updatedLists[listIndex]?.items !== originalItems) {
             updatedLists[listIndex].modifiedAt = Date.now();
           }
         }

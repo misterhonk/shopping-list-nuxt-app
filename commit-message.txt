@@ -1,8 +1,7 @@
-fix(typescript): Verbessere Null-Checks in useItemManagement.ts
+fix(typescript): Optimiere Null-Checks in useItemManagement.ts
 
-- Füge explizite Null-Checks für Listen und ihre Items hinzu
-- Sichere den Zugriff auf Array-Indizes mit zusätzlichen if-Statements
-- Ersetze falschen Nullish Coalescing Operator (??) durch logisches ODER (||)
-- Prüfe updatedLists[listIndex] auf Existenz bevor Eigenschaften geändert werden
-- Verbessere Fehlerbehandlung mit frühen Rückgaben bei undefiniertem Zustand
-- Wende konsistentes Muster für Null-Checks in allen Funktionen an
+- Verwende optional chaining (?.) für sicheren Zugriff auf Array-Eigenschaften
+- Füge zusätzliche Typprüfungen für Objekte hinzu
+- Stelle sicher, dass Eigenschaften existieren, bevor auf sie zugegriffen wird
+- Behandle weitere Edge-Cases bei potenziell undefinierten Werten
+- Schütze alle Map/Filter-Operationen auf Arrays mit Existenzprüfungen
