@@ -1,7 +1,8 @@
-fix(typescript): Implementiere korrekte Return-Typen und Null-Checks in useItemSuggestions.ts
+fix(typescript): Behebe Null-Checks und korrekte Return-Typen in useListProperties.ts
 
-- Ersetze void Rückgabetyp durch spezifisches Interface ItemSuggestionsComposable
-- Korrigiere Zugriff auf Kategorie-ID mit expliziter Typprüfung
-- Ersetze falschen Nullish Coalescing Operator (??) durch logisches ODER (||)
-- Füge fehlende Vue-Typ-Importe für Ref und ComputedRef hinzu
-- Importiere Typen direkt aus types/app-types.ts anstelle von composables/types.ts
+- Definiere explizites Interface ListPropertiesComposable für den Rückgabetyp
+- Ersetze void Rückgabetyp durch konkretes Interface
+- Füge Null-Checks für Listenzugriffe hinzu
+- Überprüfe die Existenz von Listen-Objekten, bevor auf Eigenschaften zugegriffen wird
+- Korrigiere falsche Verwendung des Nullish-Coalescing-Operators
+- Wechsle Import-Pfad von composables/types zu types/app-types

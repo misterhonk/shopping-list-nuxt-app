@@ -3,10 +3,19 @@ import { getItemsCount, getCheckedItemsCount } from '~/composables/utils/listUti
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
-import type { ShoppingList } from '~/composables/types';
+import type { ShoppingList } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useListProperties');
+
+// Interface für den Rückgabetyp des Composables
+interface ListPropertiesComposable {
+  getItemsCount: (list: ShoppingList) => number;
+  getCheckedItemsCount: () => number;
+  getTotalItemsCount: () => number;
+  updateListName: (newName: string) => boolean;
+  updateListFavorite: (isFavorite: boolean) => boolean;
+}
 
 /**
  * Composable für die Verwaltung von Listeneigenschaften
@@ -15,7 +24,7 @@ const logger = createLogger('useListProperties');
 export function useListProperties(
   listsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
-) {
+): ListPropertiesComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
@@ -54,6 +63,11 @@ export function useListProperties(
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
+      
+      if (!updatedLists[listIndex]) {
+        return false;
+      }
+      
       updatedLists[listIndex].name = newName.trim();
       updatedLists[listIndex].modifiedAt = Date.now();
 
@@ -81,6 +95,11 @@ export function useListProperties(
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
+      
+      if (!updatedLists[listIndex]) {
+        return false;
+      }
+      
       updatedLists[listIndex].isFavorite = isFavorite;
       updatedLists[listIndex].modifiedAt = Date.now();
 
