@@ -1,0 +1,158 @@
+/**
+ * Typ-Definitionen für Composables in der Shopping-List-App
+ *
+ * Diese Datei enthält Rückgabetypen für Composables, um TypeScript-Fehler
+ * bei den Return-Statements zu vermeiden.
+ */
+
+import type { Ref, ComputedRef } from 'vue';
+import type { 
+  ShoppingItem, 
+  ShoppingList, 
+  Category, 
+  CategoryTemplate,
+  ItemSuggestion,
+  ItemHistoryEntry 
+} from './app-types';
+
+/**
+ * Schnittstelle für das useShoppingItems-Composable
+ */
+export interface IUseShoppingItems {
+  // Zustände
+  isAddingItem: Ref<boolean>;
+  itemNameInput: Ref<HTMLInputElement | null>;
+  newItem: {
+    name: string;
+    quantity: number;
+    category: string | Category;
+    price: number;
+  };
+  
+  // Getter und berechnete Eigenschaften
+  allItems: ComputedRef<ShoppingItem[]>;
+  
+  // Methoden
+  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
+  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
+  removeItem: (item: string | ShoppingItem) => boolean;
+  toggleItemChecked: (item: string | ShoppingItem) => boolean;
+  clearCheckedItems: () => boolean;
+  updateCategoryInItems: (categoryId: string, newName: string) => void;
+  
+  // Formular-Methoden
+  showItemForm: () => void;
+  hideItemForm: () => void;
+  submitItemForm: () => void;
+  resetItemForm: () => void;
+}
+
+/**
+ * Schnittstelle für das useShoppingLists-Composable
+ */
+export interface IUseShoppingLists {
+  // Zustände
+  lists: Ref<ShoppingList[]>;
+  currentListId: Ref<string | null>;
+  
+  // Getter und berechnete Eigenschaften
+  currentList: ComputedRef<ShoppingList>;
+  
+  // Methoden
+  loadLists: () => boolean;
+  createList: (name: string, options?: {
+    isFavorite?: boolean;
+    templateId?: string;
+  }) => ShoppingList | null;
+  selectList: (id: string) => boolean;
+  deleteList: (id: string) => boolean;
+  updateTemplateId: (templateId: string) => boolean;
+  updateListName: (newName: string) => boolean;
+  updateListFavorite: (isFavorite: boolean) => boolean;
+  saveLists: () => boolean;
+}
+
+/**
+ * Schnittstelle für das useListProperties-Composable
+ */
+export interface IUseListProperties {
+  getItemsCount: (list: ShoppingList) => number;
+  getCheckedItemsCount: () => number;
+  getTotalItemsCount: () => number;
+  updateListName: (newName: string) => boolean;
+  updateListFavorite: (isFavorite: boolean) => boolean;
+}
+
+/**
+ * Schnittstelle für das useListUpdate-Composable
+ */
+export interface IUseListUpdate {
+  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
+  clearList: (listId?: string) => boolean;
+  addItemsToList: (
+    listId: string,
+    items: ShoppingItem[],
+    options?: { skipDuplicates?: boolean }
+  ) => boolean;
+}
+
+/**
+ * Schnittstelle für das useItemForm-Composable
+ */
+export interface IUseItemForm {
+  isAddingItem: Ref<boolean>;
+  itemNameInput: Ref<HTMLInputElement | null>;
+  focusItemNameInput: () => void;
+  clearItemNameInput: () => void;
+  showItemForm: () => void;
+  hideItemForm: () => void;
+  closeItemForm: () => void;
+}
+
+/**
+ * Schnittstelle für das useItemManagement-Composable
+ */
+export interface IUseItemManagement {
+  allItems: ComputedRef<ShoppingItem[]>;
+  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
+  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
+  removeItem: (item: string | ShoppingItem) => boolean;
+  toggleItemChecked: (item: string | ShoppingItem) => boolean;
+  clearCheckedItems: () => boolean;
+  updateCategoriesInItems: (categoryId: string, newName: string) => boolean;
+}
+
+/**
+ * Schnittstelle für das useItemSuggestions-Composable
+ */
+export interface IUseItemSuggestions {
+  itemHistory: Ref<Record<string, ItemHistoryEntry>>;
+  getSuggestions: (term?: string) => ItemSuggestion[];
+  addToHistory: (item: ShoppingItem) => void;
+  initializeHistory: () => void;
+  historyStats: ComputedRef<{
+    totalItems: number;
+    uniqueItems: number;
+    topCategories: { name: string; count: number }[];
+  }>;
+}
+
+/**
+ * Schnittstelle für das useLocalStorage-Composable
+ */
+export interface IUseLocalStorage {
+  saveItem: <T>(key: string, data: T) => boolean;
+  loadItem: <T>(key: string, defaultValue?: T) => T | null;
+  removeItem: (key: string) => boolean;
+  clear: () => boolean;
+}
+
+/**
+ * Schnittstelle für das useDarkMode-Composable
+ */
+export interface IUseDarkMode {
+  isDarkMode: Ref<boolean>;
+  toggleDarkMode: () => void;
+  enableDarkMode: () => void;
+  disableDarkMode: () => void;
+}

@@ -1,12 +1,13 @@
 import { reactive, ref, computed } from 'vue';
 
-import type { Category } from '../types';
+import type { Category } from '~/types/app-types';
+import type { IUseItemForm } from '~/types/composable-types';
 
 /**
  * Composable für die Verwaltung des Artikelformulars
  * Bietet Funktionen zum Hinzufügen und Bearbeiten von Artikeln
  */
-export function useItemForm() {
+export function useItemForm(): IUseItemForm {
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
   const itemNameInput = ref<HTMLInputElement | null>(null);
@@ -54,7 +55,7 @@ export function useItemForm() {
   /**
    * Öffnet das Formular für ein neues Item
    */
-  const openItemForm = (): void => {
+  const showItemForm = (): void => {
     isAddingItem.value = true;
     focusItemNameInput();
   };
@@ -62,21 +63,28 @@ export function useItemForm() {
   /**
    * Schließt das Formular für ein neues Item
    */
-  const closeItemForm = (): void => {
+  const hideItemForm = (): void => {
     isAddingItem.value = false;
   };
 
+  /**
+   * Schließt das Formular für ein neues Item (Alias für hideItemForm)
+   */
+  const closeItemForm = (): void => {
+    hideItemForm();
+  };
+
   return {
-    // Status und Daten
     isAddingItem,
     itemNameInput,
-    newItem,
-    isFormValid,
-
-    // Aktionen
-    resetItemForm,
     focusItemNameInput,
-    openItemForm,
-    closeItemForm,
+    clearItemNameInput: () => {
+      if (itemNameInput.value) {
+        itemNameInput.value.value = '';
+      }
+    },
+    showItemForm,
+    hideItemForm,
+    closeItemForm
   };
 }
