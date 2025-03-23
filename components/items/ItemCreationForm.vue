@@ -87,7 +87,7 @@ import type { Category } from '~/types/app-types';
 const logger = createLogger('ItemCreationForm');
 
 type CategoryInput = Category | string;
-interface NewItem {
+interface INewItem {
   name: string;
   quantity: number;
   category: Category | null;
@@ -113,7 +113,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'add', item: NewItem): void;
+  (e: 'add', item: INewItem): void;
   (e: 'cancel'): void;
 }>();
 
@@ -138,7 +138,7 @@ const normalizedCategories = computed<Category[]>(() =>
   })
 );
 
-const item = reactive<NewItem>({
+const item = reactive<INewItem>({
   name: '',
   quantity: 1,
   category: null,
@@ -156,7 +156,7 @@ const nameInput = ref<HTMLInputElement | null>(null);
 
 const isValid = computed<boolean>(() => item.name && item.name.trim() !== '' && item.quantity > 0);
 
-interface ItemHistory {
+interface IItemHistory {
   [key: string]: {
     count: number;
     lastUsed: string | null;
@@ -185,11 +185,11 @@ const onSubmit = (): void => {
 
   // Zum Verlauf hinzufügen - vereinfachte Version ohne Speichern
   try {
-    const itemHistory = JSON.parse(localStorage.getItem('itemHistory') || '{}') as ItemHistory;
+    const itemHistory = JSON.parse(localStorage.getItem('itemHistory') ?? '{}') as IItemHistory;
     const normalizedName = item.name.toLowerCase().trim();
     const now = new Date().toISOString();
 
-    const existingItem = itemHistory[normalizedName] || {
+    const existingItem = itemHistory[normalizedName] ?? {
       count: 0,
       lastUsed: null,
       categories: {},
@@ -200,7 +200,7 @@ const onSubmit = (): void => {
     existingItem.lastUsed = now;
 
     const categoryId = item.category?.id ?? 'sonstiges';
-    existingItem.categories[categoryId] = (existingItem.categories[categoryId] || 0) + 1;
+    existingItem.categories[categoryId] = (existingItem.categories[categoryId] ?? 0) + 1;
 
     if (item.price && item.price > 0) {
       existingItem.prices.push({

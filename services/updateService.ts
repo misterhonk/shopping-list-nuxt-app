@@ -13,7 +13,7 @@ const LAST_CHECK_KEY = 'last_update_check';
 /**
  * Interface für Update-Informationen
  */
-export interface UpdateInfo {
+export interface IUpdateInfo {
   hasUpdate: boolean;
   oldVersion?: string;
   newVersion?: string;
@@ -36,7 +36,7 @@ export function storeVersion(version: string): void {
 /**
  * Prüft, ob ein Update verfügbar ist und erzwingt regelmäßige Cache-Invalidierung für iOS
  */
-export function checkForUpdates(): UpdateInfo {
+export function checkForUpdates(): IUpdateInfo {
   const storedVersion = getStoredVersion();
   const now = Date.now();
   const lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) || '0');
@@ -57,7 +57,7 @@ export function checkForUpdates(): UpdateInfo {
   }
 
   // Normale Versionsprüfung
-  if (!storedVersion ?? storedVersion !== APP_VERSION) {
+  if (!storedVersion || storedVersion !== APP_VERSION) {
     // Update erkannt
     return {
       hasUpdate: true,
@@ -204,7 +204,6 @@ function isIOS(): boolean {
  */
 function isStandalone(): boolean {
   return (
-    window.matchMedia('(display-mode: standalone)').matches ??
-    (window.navigator as any).standalone === true
+    window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true
   );
 }

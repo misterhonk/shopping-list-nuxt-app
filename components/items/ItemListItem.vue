@@ -64,7 +64,7 @@ interface Props {
   item: ShoppingItem;
 }
 
-const props = defineProps<Props>();
+const _props = defineProps<Props>();
 const emit = defineEmits<{
   (e: 'toggle'): void;
   (e: 'remove'): void;
