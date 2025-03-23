@@ -2,18 +2,18 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import draggable from 'vuedraggable';
 
-import { diagnoseCategories } from './testing-helper';
-import { useCategoryStore } from '../../stores/category';
-import { defaultTemplateId } from '../../stores/category/templates';
-import { generateCategoryId } from '../../stores/category/utils';
-import { createLogger } from '../../utils/logger';
 import CategoryModals from './modals/CategoryModals.vue';
+import { diagnoseCategories } from '~/components/categories/testing-helper';
+import { useCategoryStore } from '~/stores/category';
+import { defaultTemplateId } from '~/stores/category/templates';
+import { generateCategoryId } from '~/stores/category/utils';
+import { createLogger } from '~/utils/logger';
 
 export default {
   name: 'CategoryManager',
   components: {
     draggable,
-    CategoryModals
+    CategoryModals,
   },
   setup() {
     const logger = createLogger('CategoryManager');
@@ -27,9 +27,9 @@ export default {
     }
 
     // Daten aus dem Store
-    const templatesList = computed(() => categoryStore?.templatesList || []);
+    const templatesList = computed(() => categoryStore?.templatesList ?? []);
     const currentTemplate = computed(
-      () => categoryStore?.currentTemplate || { name: 'Standard', categories: [] }
+      () => categoryStore?.currentTemplate ?? { name: 'Standard', categories: [] }
     );
 
     // Explizites Template mit direktem Zugriff auf den Store
@@ -44,8 +44,8 @@ export default {
     });
 
     // Sortierungsbezogene Computed-Properties
-    const isCustomSortActive = computed(() => categoryStore?.isCustomSortActive || false);
-    const hasDefaultOrder = computed(() => 
+    const isCustomSortActive = computed(() => categoryStore?.isCustomSortActive ?? false);
+    const hasDefaultOrder = computed(() =>
       Boolean(currentTemplate.value.defaultCategoryOrder?.length)
     );
 
@@ -58,17 +58,17 @@ export default {
         }
         return [...currentCategoriesArray.value];
       },
-      set: (newOrder) => {
+      set: newOrder => {
         if (categoryStore && Array.isArray(newOrder)) {
           // IDs der neu sortierten Kategorien an den Store senden
           const categoryIds = newOrder.map(cat => cat.id);
           categoryStore.updateCustomSortOrder(categoryIds);
           // Das setzt auch automatisch useCustomSort auf true
         }
-      }
+      },
     });
 
-    const activeTemplateId = computed(() => categoryStore?.activeTemplateId || '');
+    const activeTemplateId = computed(() => categoryStore?.activeTemplateId ?? '');
     const isTemplateCustom = computed(
       () =>
         categoryStore?.customTemplates &&
@@ -112,15 +112,13 @@ export default {
     });
 
     // Drag & Drop Konfiguration
-    const dragOptions = computed(() => {
-      return {
-        animation: 200,
-        group: "categories",
-        disabled: !isCustomSortActive.value,
-        ghostClass: "ghost",
-        dragClass: "dragging"
-      };
-    });
+    const dragOptions = computed(() => ({
+      animation: 200,
+      group: 'categories',
+      disabled: !isCustomSortActive.value,
+      ghostClass: 'ghost',
+      dragClass: 'dragging',
+    }));
 
     // Debug-Watcher für Kategorieänderungen
     watch(currentCategories, newVal => {
@@ -128,13 +126,13 @@ export default {
       // Force Component Re-render
       componentKey.value += 1;
     });
-    
+
     const newTemplate = ref({
       name: '',
       description: '',
       baseTemplateId: '',
     });
-    
+
     const editTemplate = ref({
       name: '',
       description: '',
@@ -160,7 +158,7 @@ export default {
     });
 
     // Methoden
-    const activateTemplate = templateId => {
+    const activateTemplate = (templateId) => {
       if (!categoryStore) {
         return;
       }
@@ -169,12 +167,16 @@ export default {
 
     // Sortierungsmethoden
     const toggleSortMode = () => {
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
       categoryStore.toggleSortMode();
     };
 
     const resetToDefaultSort = () => {
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
       categoryStore.resetToDefaultSort();
     };
 
@@ -197,7 +199,7 @@ export default {
       }
     };
 
-    const editCategory = category => {
+    const editCategory = (category) => {
       currentEditingCategory.value = category;
       editCategoryName.value = category.name;
       showEditCategoryModal.value = true;
@@ -265,7 +267,7 @@ export default {
       }
     };
 
-    const deleteCategory = category => {
+    const deleteCategory = (category) => {
       if (!categoryStore) {
         return;
       }
@@ -293,7 +295,7 @@ export default {
         categoryStore.createTemplate(
           newTemplate.value.name.trim(),
           newTemplate.value.description.trim(),
-          newTemplate.value.baseTemplateId || null
+          newTemplate.value.baseTemplateId ?? null
         );
 
         newTemplate.value = {
@@ -380,7 +382,7 @@ export default {
       confirmDeleteTemplate,
       deleteCurrentTemplate,
       saveEditedTemplate,
-      resetToDefaults
+      resetToDefaults,
     };
-  }
+  },
 };

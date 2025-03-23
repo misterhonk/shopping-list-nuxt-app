@@ -1,0 +1,150 @@
+{
+  "TypeScript Vue Component": {
+    "prefix": "vue-ts-component",
+    "body": [
+      "<template>",
+      "  <div>$1</div>",
+      "</template>",
+      "",
+      "<script setup lang=\"ts\">",
+      "import type { $2 } from '~/types/app-types'",
+      "",
+      "const props = withDefaults(defineProps<{",
+      "  $3",
+      "}>(), {",
+      "  $4",
+      "})",
+      "",
+      "const emit = defineEmits<{",
+      "  $5",
+      "}>()",
+      "",
+      "$0",
+      "</script>"
+    ],
+    "description": "TypeScript Vue Component with script setup"
+  },
+  "TypeScript defineProps": {
+    "prefix": "ts-define-props",
+    "body": [
+      "const props = withDefaults(defineProps<{",
+      "  $1: $2",
+      "  $3?: $4",
+      "}>(), {",
+      "  $3: $5",
+      "})"
+    ],
+    "description": "TypeScript defineProps with withDefaults"
+  },
+  "TypeScript defineEmits": {
+    "prefix": "ts-define-emits",
+    "body": [
+      "const emit = defineEmits<{",
+      "  '$1': [$2]",
+      "  '$3': [$4]",
+      "}>()"
+    ],
+    "description": "TypeScript defineEmits with typed events"
+  },
+  "TypeScript Typed Ref": {
+    "prefix": "ts-ref",
+    "body": [
+      "const $1 = ref<$2>($3)"
+    ],
+    "description": "TypeScript typed ref"
+  },
+  "TypeScript Reactive Object": {
+    "prefix": "ts-reactive",
+    "body": [
+      "const $1 = reactive<{",
+      "  $2: $3",
+      "  $4: $5",
+      "}>({",
+      "  $2: $6,",
+      "  $4: $7",
+      "})"
+    ],
+    "description": "TypeScript typed reactive object"
+  },
+  "TypeScript Computed": {
+    "prefix": "ts-computed",
+    "body": [
+      "const $1 = computed<$2>(() => {",
+      "  $0",
+      "  return $3",
+      "})"
+    ],
+    "description": "TypeScript typed computed property"
+  },
+  "TypeScript Function": {
+    "prefix": "ts-function",
+    "body": [
+      "function $1($2): $3 {",
+      "  $0",
+      "  return $4",
+      "}"
+    ],
+    "description": "TypeScript function with return type"
+  },
+  "TypeScript Arrow Function": {
+    "prefix": "ts-arrow",
+    "body": [
+      "const $1 = ($2): $3 => {",
+      "  $0",
+      "  return $4",
+      "}"
+    ],
+    "description": "TypeScript arrow function with return type"
+  },
+  "TypeScript Interface": {
+    "prefix": "ts-interface",
+    "body": [
+      "interface I$1 {",
+      "  $2: $3",
+      "  $4?: $5",
+      "  $0",
+      "}"
+    ],
+    "description": "TypeScript interface definition"
+  },
+  "TypeScript Type": {
+    "prefix": "ts-type",
+    "body": [
+      "type $1 = {",
+      "  $2: $3",
+      "  $4?: $5",
+      "  $0",
+      "}"
+    ],
+    "description": "TypeScript type definition"
+  },
+  "TypeScript Try-Catch": {
+    "prefix": "ts-try-catch",
+    "body": [
+      "try {",
+      "  $1",
+      "} catch (error: unknown) {",
+      "  console.error('$2', error)",
+      "  $0",
+      "}"
+    ],
+    "description": "TypeScript try-catch with unknown error type"
+  },
+  "TypeScript Import Type": {
+    "prefix": "ts-import-type",
+    "body": [
+      "import type { $1 } from '$2'"
+    ],
+    "description": "TypeScript type import"
+  },
+  "TypeScript Async Function": {
+    "prefix": "ts-async",
+    "body": [
+      "async function $1($2): Promise<$3> {",
+      "  $0",
+      "  return $4",
+      "}"
+    ],
+    "description": "TypeScript async function with Promise return type"
+  }
+}

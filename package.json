@@ -13,10 +13,17 @@
     "format:check": "prettier --check .",
     "lint": "eslint --ext .js,.ts,.vue --ignore-path .eslintignore .",
     "lint:fix": "eslint --ext .js,.ts,.vue --fix --ignore-path .eslintignore .",
+    "lint:auto-fix": "node scripts/eslint-fixer.mjs",
+    "lint:fix-props": "node scripts/fix-props.mjs",
+    "convert:ts": "node scripts/convert-to-typescript.mjs",
+    "convert:ts:dry": "node scripts/convert-to-typescript.mjs --dry-run",
     "typecheck": "tsc --noEmit",
     "validate": "npm run lint && npm run format:check && npm run typecheck",
     "audit:security": "npm audit --audit-level=moderate",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
@@ -48,7 +55,6 @@
     "typescript": "~5.3.3",
     "vue-eslint-parser": "^9.3.2"
   },
-
   "lint-staged": {
     "*.{js,ts,vue}": [
       "eslint --fix",

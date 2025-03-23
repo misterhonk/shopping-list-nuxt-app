@@ -17,6 +17,8 @@
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitOverride": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "paths": {

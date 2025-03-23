@@ -1,18 +1,24 @@
 {
   "recommendations": [
-    "vue.volar",
-    "vue.vscode-typescript-vue-plugin",
+    "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "christian-kohler.path-intellisense",
+    "naumovs.color-highlight",
     "bradlc.vscode-tailwindcss",
     "mikestead.dotenv",
-    "github.vscode-github-actions",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-rename-tag",
+    "steoates.autoimport",
+    "visualstudioexptteam.vscodeintellicode",
+    "hbenl.vscode-test-explorer",
+    "kisstkondoros.vscode-codemetrics",
     "ms-azuretools.vscode-docker",
-    "pflannery.vscode-versionlens",
-    "usernamehw.errorlens",
-    "streetsidesoftware.code-spell-checker",
-    "stylelint.vscode-stylelint",
-    "redhat.vscode-yaml",
-    "editorconfig.editorconfig"
+    "aaron-bond.better-comments",
+    "gruntfuggly.todo-tree",
+    "yoavbls.pretty-ts-errors",
+    "zixuanchen.vitest-explorer"
   ]
 }
