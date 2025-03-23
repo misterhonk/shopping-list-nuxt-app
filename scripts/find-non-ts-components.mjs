@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Dieses Skript durchsucht alle Vue-Komponenten und prüft, 
+ * Dieses Skript durchsucht alle Vue-Komponenten und prüft,
  * welche noch nicht auf TypeScript umgestellt wurden
  */
 
@@ -21,17 +21,13 @@ const showAll = args.includes('--all');
 const showDetails = args.includes('--details');
 
 // Verzeichnisse für Vue-Dateien
-const srcPaths = [
-  'components',
-  'layouts',
-  'pages'
-];
+const srcPaths = ['components', 'layouts', 'pages'];
 
 // Statistik
 const stats = {
   totalFiles: 0,
   tsFiles: 0,
-  nonTsFiles: 0
+  nonTsFiles: 0,
 };
 
 /**
@@ -39,7 +35,7 @@ const stats = {
  */
 function isTypeScriptComponent(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Prüft, ob die Komponente <script setup lang="ts"> oder <script lang="ts"> verwendet
   return content.includes('<script setup lang="ts">') || content.includes('<script lang="ts">');
 }
@@ -50,17 +46,17 @@ function isTypeScriptComponent(filePath) {
 function analyzeVueFile(filePath) {
   const relativePath = path.relative(rootDir, filePath);
   const isTS = isTypeScriptComponent(filePath);
-  
+
   stats.totalFiles++;
   if (isTS) {
     stats.tsFiles++;
   } else {
     stats.nonTsFiles++;
   }
-  
+
   return {
     path: relativePath,
-    isTypeScript: isTS
+    isTypeScript: isTS,
   };
 }
 
@@ -69,21 +65,21 @@ function analyzeVueFile(filePath) {
  */
 function run() {
   console.log(`Vue-Komponenten TypeScript-Prüfung`);
-  
+
   // Alle Vue-Dateien sammeln
   let files = [];
-  
+
   srcPaths.forEach(dir => {
     const dirPattern = path.join(dir, '**/*.vue');
     const foundFiles = globSync(dirPattern, { cwd: rootDir, ignore: 'node_modules/**' });
     files = [...files, ...foundFiles.map(f => path.join(rootDir, f))];
   });
-  
+
   console.log(`Gefunden: ${files.length} Vue-Dateien\n`);
-  
+
   // Alle Dateien analysieren
   const fileInfos = files.map(analyzeVueFile);
-  
+
   // Nach nicht-TypeScript-Dateien filtern und sortieren
   const nonTsFiles = fileInfos
     .filter(info => !info.isTypeScript)
@@ -91,14 +87,14 @@ function run() {
       // Sortierung nach Pfadtiefe (einfachere Komponenten zuerst)
       const aDepth = a.path.split('/').length;
       const bDepth = b.path.split('/').length;
-      
+
       if (aDepth === bDepth) {
         return a.path.localeCompare(b.path);
       }
-      
+
       return aDepth - bDepth;
     });
-  
+
   // Ausgabe
   if (showAll) {
     console.log('Alle Vue-Komponenten:');
@@ -108,23 +104,23 @@ function run() {
     });
   } else {
     console.log('Noch zu konvertierende Komponenten:');
-    
+
     if (nonTsFiles.length === 0) {
       console.log('Alle Komponenten sind bereits auf TypeScript umgestellt! 🎉');
     } else {
       nonTsFiles.forEach((info, index) => {
         console.log(`${index + 1}. ${info.path}`);
-        
+
         if (showDetails) {
           // Mehr Details über die Komponente anzeigen
           const filePath = path.join(rootDir, info.path);
           const content = fs.readFileSync(filePath, 'utf8');
-          
+
           // Einfache Analyse
           const hasProps = content.includes('defineProps(') || content.includes('props:');
           const hasEmits = content.includes('defineEmits(') || content.includes('emits:');
           const hasRefs = content.includes('ref(') || content.includes('reactive(');
-          
+
           console.log(`   - Props: ${hasProps ? 'Ja' : 'Nein'}`);
           console.log(`   - Emits: ${hasEmits ? 'Ja' : 'Nein'}`);
           console.log(`   - Refs/Reactive: ${hasRefs ? 'Ja' : 'Nein'}`);
@@ -133,18 +129,26 @@ function run() {
       });
     }
   }
-  
+
   // Statistik
   console.log('\nStatistik:');
   console.log(`- Gesamtanzahl Vue-Dateien: ${stats.totalFiles}`);
-  console.log(`- Mit TypeScript: ${stats.tsFiles} (${Math.round(stats.tsFiles / stats.totalFiles * 100)}%)`);
-  console.log(`- Ohne TypeScript: ${stats.nonTsFiles} (${Math.round(stats.nonTsFiles / stats.totalFiles * 100)}%)`);
-  
+  console.log(
+    `- Mit TypeScript: ${stats.tsFiles} (${Math.round((stats.tsFiles / stats.totalFiles) * 100)}%)`
+  );
+  console.log(
+    `- Ohne TypeScript: ${stats.nonTsFiles} (${Math.round((stats.nonTsFiles / stats.totalFiles) * 100)}%)`
+  );
+
   console.log(`\nEmpfehlung für die nächste Konvertierung: ${nonTsFiles[0]?.path || 'Keine'}`);
   console.log('\nVerwendung:');
-  console.log('- node scripts/find-non-ts-components.mjs          # Zeigt nicht konvertierte Komponenten');
+  console.log(
+    '- node scripts/find-non-ts-components.mjs          # Zeigt nicht konvertierte Komponenten'
+  );
   console.log('- node scripts/find-non-ts-components.mjs --all    # Zeigt alle Komponenten');
-  console.log('- node scripts/find-non-ts-components.mjs --details # Zeigt Details zu den Komponenten');
+  console.log(
+    '- node scripts/find-non-ts-components.mjs --details # Zeigt Details zu den Komponenten'
+  );
 }
 
 // Skript ausführen

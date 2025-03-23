@@ -65,18 +65,21 @@ Alle Komponenten sollten das folgende Format verwenden:
 import type { ICategory, ShoppingItem } from '~/types/app-types';
 
 // Props mit TypeScript-Interface definieren
-const props = withDefaults(defineProps<{
-  item: ShoppingItem;
-  category?: ICategory;
-  disabled?: boolean;
-}>(), {
-  disabled: false
-});
+const props = withDefaults(
+  defineProps<{
+    item: ShoppingItem;
+    category?: ICategory;
+    disabled?: boolean;
+  }>(),
+  {
+    disabled: false,
+  }
+);
 
 // Emits mit TypeScript-Interface definieren
 const emit = defineEmits<{
   'update:item': [item: ShoppingItem];
-  'delete': [id: string];
+  delete: [id: string];
 }>();
 
 // Typisierte Refs verwenden
@@ -88,7 +91,7 @@ const state = reactive<{
   loading: boolean;
 }>({
   count: 0,
-  loading: false
+  loading: false,
 });
 
 // Rückgabetypen für Funktionen angeben
@@ -182,7 +185,7 @@ function createTestItem(overrides?: Partial<ShoppingItem>): ShoppingItem {
     name: 'Test Item',
     quantity: 1,
     // ... andere erforderliche Eigenschaften
-    ...overrides
+    ...overrides,
   };
 }
 

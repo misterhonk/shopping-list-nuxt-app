@@ -16,7 +16,7 @@ In diesem Dokument werden die aktuellen Fortschritte bei der TypeScript-Optimier
 
 ### 2. Verbesserung der TypeScript-Validierung
 
-- **TypeGuards-Korrekturen**: 
+- **TypeGuards-Korrekturen**:
   - Verwendung von Bracket-Notation (`obj['property']`) statt Punkt-Notation
   - Verbesserte logische Operatoren (`||` statt `??` für Bedingungen)
   - Explizite Typprüfungen vor Eigenschaftszugriffen
@@ -46,14 +46,17 @@ In diesem Dokument werden die aktuellen Fortschritte bei der TypeScript-Optimier
 Bei der TypeScript-Typprüfung (`npm run typecheck`) wurden noch etwa 180 Fehler identifiziert, die in die folgenden Hauptkategorien fallen:
 
 1. **Void Return Type Errors (ca. 40)**:
+
    - Composables geben Objekte zurück, sind aber als `void` deklariert
    - Diese können mit dem `composable-types.ts`-Ansatz behoben werden
 
 2. **Missing Null Checks (ca. 50)**:
+
    - Array- und Objektzugriffe ohne ausreichende Null-Checks
    - Verwendung von optionalem Verketten (`?.`) und Nullish Coalescing (`??`) erforderlich
 
 3. **Index Signature Errors (ca. 60)**:
+
    - Direkter Zugriff auf Objekteigenschaften mit Punkt-Notation
    - Umstellung auf Bracket-Notation (`['property']`) erforderlich
 
@@ -64,15 +67,18 @@ Bei der TypeScript-Typprüfung (`npm run typecheck`) wurden noch etwa 180 Fehler
 ## Nächste Schritte
 
 1. **Weitere Composables korrigieren**:
+
    - Systematische Aktualisierung aller Composables auf Interface-basierte Rückgabetypen
    - Implementierung der fehlenden Methoden, wenn nötig
 
 2. **Null-Checks hinzufügen**:
+
    - Sicheres Array-Indexing mit Hilfsfunktionen
    - Sicherer Objektzugriff mit optionalem Verketten
    - Standardwerte für potentiell undefined-Werte
 
 3. **Tests erweitern**:
+
    - Tests für weitere Komponenten und Services
    - Integration in den Entwicklungsworkflow
 

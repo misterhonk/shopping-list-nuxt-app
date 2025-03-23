@@ -7,18 +7,22 @@ Dieses Dokument beschreibt den systematischen Ansatz zur Behebung der TypeScript
 Nach der Analyse wurden folgende Hauptproblemkategorien identifiziert:
 
 1. **Void Return Type Errors** (~40)
+
    - Funktionen mit deklariertem `void`-Rückgabetyp geben tatsächlich Objekte zurück
    - Betrifft hauptsächlich Composables
 
 2. **Null/Undefined Checks** (~50)
+
    - Falsche Verwendung des `??`-Operators (Nullish Coalescing) anstelle des `||`-Operators
    - Zugriff auf Eigenschaften ohne vorherige Überprüfung auf `null` oder `undefined`
 
 3. **Import-Probleme** (~15)
+
    - Doppelte Typdefinition in verschiedenen Dateien
    - Verwendung veralteter Import-Pfade
 
 4. **Index Signature Errors** (~60)
+
    - Direkter Zugriff auf Eigenschaften von Objekten mit Index-Signaturen
 
 5. **Optional Properties** (~40)
@@ -76,10 +80,10 @@ Für Type Guards wurden explizite Null-Checks hinzugefügt, bevor auf Objekteige
 
 ```typescript
 // Vorher
-typeof formState['item'] === 'object'
+typeof formState['item'] === 'object';
 
 // Nachher
-formState['item'] !== undefined && typeof formState['item'] === 'object'
+formState['item'] !== undefined && typeof formState['item'] === 'object';
 ```
 
 ## Kritische Dateien
@@ -96,14 +100,17 @@ Die folgenden Dateien wurden als kritisch identifiziert und priorisiert korrigie
 Nach den initialen Korrekturen sollten folgende Schritte durchgeführt werden:
 
 1. **Weitere Composables korrigieren**
+
    - Explizite Return-Types für alle Composables definieren
    - Typdefinitionen in React-Komponenten überprüfen
 
 2. **Index Signature Errors beheben**
+
    - Bracket-Notation für Index-Zugriffe verwenden
    - Korrektes Fehlerhandling für fehlende Eigenschaften
 
 3. **Automatisierung**
+
    - ESLint-Regeln für häufige TypeScript-Fehler konfigurieren
    - CI-Tests erweitern, um TypeScript-Fehler zu prüfen
 

@@ -23,6 +23,7 @@ Die folgenden Änderungen wurden vorgenommen:
 ## Dateien
 
 Folgende Dateien wurden angepasst:
+
 - components/items/ItemListItem.vue
 - components/categories/CategoryManager.vue
 - components/template-selector.vue

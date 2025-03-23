@@ -158,7 +158,7 @@ export default {
     });
 
     // Methoden
-    const activateTemplate = (templateId) => {
+    const activateTemplate = templateId => {
       if (!categoryStore) {
         return;
       }
@@ -199,7 +199,7 @@ export default {
       }
     };
 
-    const editCategory = (category) => {
+    const editCategory = category => {
       currentEditingCategory.value = category;
       editCategoryName.value = category.name;
       showEditCategoryModal.value = true;
@@ -267,7 +267,7 @@ export default {
       }
     };
 
-    const deleteCategory = (category) => {
+    const deleteCategory = category => {
       if (!categoryStore) {
         return;
       }

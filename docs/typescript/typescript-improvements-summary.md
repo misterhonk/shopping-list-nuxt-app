@@ -94,22 +94,27 @@ Zur Verbesserung der Testabdeckung wurden folgende Maßnahmen ergriffen:
 Für die weitere Verbesserung der TypeScript-Integration werden folgende Schritte empfohlen:
 
 1. **Testen und Fehlerbeseitigung**:
+
    - Ausführen der Typprüfung (`npm run typecheck`) und Behebung von Fehlern
    - Durchführen von Tests (`npm run test`) und Behebung von Fehlern
 
 2. **Erweiterte Typdefinitionen**:
+
    - Erstellung von Hilfsfunktionen zur Typableitung für häufig verwendete Muster
    - Verwendung von benutzerdefinierten Typgarden für komplexe Datenstrukturen
 
 3. **Performance-Optimierung**:
+
    - Überwachung der TypeScript-Kompilierungszeit
    - Optimierung von Typimports zur Reduzierung von Zyklusabhängigkeiten
 
 4. **Dokumentation und Schulung**:
+
    - Regelmäßige Aktualisierung der TypeScript-Dokumentation
    - Schulung der Teammitglieder zu TypeScript-Best-Practices
 
 5. **Kontinuierliche Integration**:
+
    - Einbindung von TypeScript-Prüfungen in CI/CD-Pipelines
    - Automatisierte Tests mit TypeScript-Coverage-Metriken
 

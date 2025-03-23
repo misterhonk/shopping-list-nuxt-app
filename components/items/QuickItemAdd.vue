@@ -201,7 +201,7 @@ watch(
       const currentCategoryExists =
         itemCategory.value &&
         newCategories.some(
-        cat => cat.id === itemCategory.value.id || cat.name === itemCategory.value.name
+          cat => cat.id === itemCategory.value.id || cat.name === itemCategory.value.name
         );
 
       if (!currentCategoryExists) {

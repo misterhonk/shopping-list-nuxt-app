@@ -5,6 +5,7 @@ Dieses Dokument beschreibt die systematische Herangehensweise zum Beheben von Nu
 ## Grundlegende Probleme
 
 1. **Falsche Verwendung des Nullish Coalescing Operators (`??`)**
+
    - Der `??` Operator sollte verwendet werden, um einen Standardwert anzugeben, wenn der linke Operand `null` oder `undefined` ist
    - Er sollte NICHT in Bedingungen mit `!` verwendet werden
 
@@ -17,6 +18,7 @@ Dieses Dokument beschreibt die systematische Herangehensweise zum Beheben von Nu
 ### 1. Korrekte Verwendung von `??` vs. `||`
 
 **Falsch:**
+
 ```typescript
 if (!value ?? otherValue === 'test') {
   // Code
@@ -24,6 +26,7 @@ if (!value ?? otherValue === 'test') {
 ```
 
 **Richtig:**
+
 ```typescript
 // Für Bedingungen mit logischen ODER
 if (!value || otherValue === 'test') {
@@ -37,6 +40,7 @@ const safeValue = value ?? defaultValue;
 ### 2. Sicherer Eigenschaftszugriff
 
 **Falsch:**
+
 ```typescript
 function doSomething(obj: SomeType | undefined) {
   return obj.property; // Fehler: Object is possibly 'undefined'
@@ -46,6 +50,7 @@ function doSomething(obj: SomeType | undefined) {
 **Richtige Ansätze:**
 
 a) **Early Return**:
+
 ```typescript
 function doSomething(obj: SomeType | undefined) {
   if (!obj) {
@@ -56,6 +61,7 @@ function doSomething(obj: SomeType | undefined) {
 ```
 
 b) **Optional Chaining**:
+
 ```typescript
 function doSomething(obj: SomeType | undefined) {
   return obj?.property; // Liefert undefined, wenn obj undefined ist
@@ -63,6 +69,7 @@ function doSomething(obj: SomeType | undefined) {
 ```
 
 c) **Non-null Assertion (nur wenn sicher!)**:
+
 ```typescript
 function doSomething(obj: SomeType | undefined) {
   // Nur verwenden, wenn wir 100% sicher sind, dass obj definiert ist!
@@ -73,12 +80,14 @@ function doSomething(obj: SomeType | undefined) {
 ### 3. Array-Zugriffe absichern
 
 **Falsch:**
+
 ```typescript
 const item = array[index]; // Warnung mit noUncheckedIndexedAccess
-item.property // Fehler: Object is possibly 'undefined'
+item.property; // Fehler: Object is possibly 'undefined'
 ```
 
 **Richtig:**
+
 ```typescript
 const item = array[index];
 if (item) {
@@ -92,40 +101,48 @@ array[index]?.property; // Liefert undefined, wenn item undefined ist
 ### 4. Index-Zugriffe in Listen und Maps
 
 **Falsch:**
+
 ```typescript
 const element = lists[listIndex].items[0]; // Mehrere mögliche undefined Zugriffe
 ```
 
 **Richtig:**
+
 ```typescript
 // Prüfen, ob das Objekt existiert
-if (listIndex !== undefined && 
-    lists[listIndex] !== undefined &&
-    Array.isArray(lists[listIndex].items) && 
-    lists[listIndex].items.length > 0) {
+if (
+  listIndex !== undefined &&
+  lists[listIndex] !== undefined &&
+  Array.isArray(lists[listIndex].items) &&
+  lists[listIndex].items.length > 0
+) {
   const element = lists[listIndex].items[0];
 }
 
-// Oder mit Optional Chaining 
+// Oder mit Optional Chaining
 const element = lists[listIndex]?.items?.[0];
 ```
 
 ## Systematischer Ansatz zur Codeverbesserung
 
 1. **Identifizieren Sie Stellen mit Null/Undefined-Checks**
+
    - Suchen nach TypeScript-Fehlern wie "Object is possibly 'undefined'"
    - Suchen nach fehlerhafter Verwendung von `??` in Bedingungen
 
 2. **Analysieren Sie den Kontext**
+
    - Bestimmen Sie, ob frühe Rückgabe, optional chaining oder nicht-null-Assertion am besten geeignet ist
    - Berücksichtigen Sie Standardwerte oder Fehlerbehandlung
 
 3. **Verwenden Sie konsistente Muster**
+
    - Bevorzugen Sie Early Return wo möglich
    - Nutzen Sie Optional Chaining für kürzere Ketten
    - Vermeiden Sie nicht-null-Assertions außer bei 100% Sicherheit
 
 4. **Hinzufügen von Guard Clauses**
+
    - Vor allem in Funktionen, die mit Arrays oder Maps arbeiten
    - Fügen Sie explizite Prüfungen am Anfang von Funktionen ein
 
