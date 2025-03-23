@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingItem } from '../types';
+import type { ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('itemUtils');
@@ -55,12 +55,12 @@ export const updateItemCategory = (
  * @returns Das neue Item-Objekt
  */
 export const createItemObject = (itemData: Partial<ShoppingItem>): ShoppingItem => ({
-  id: itemData.id || Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
-  name: itemData.name || '',
-  quantity: itemData.quantity || 1,
-  category: itemData.category || 'Sonstiges',
-  checked: itemData.checked || false,
-  price: itemData.price || 0,
+  id: itemData.id ?? Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
+  name: itemData.name ?? '',
+  quantity: itemData.quantity ?? 1,
+  category: itemData.category ?? 'Sonstiges',
+  checked: itemData.checked ?? false,
+  price: itemData.price ?? 0,
   addedAt: Date.now(),
   modifiedAt: Date.now(),
 });
@@ -84,17 +84,17 @@ export const groupItemsByCategory = (
 
   // Dann Elemente in die entsprechenden Kategorien einsortieren
   items.forEach(item => {
-    const category = item.category || 'Sonstiges';
+    const category = item.category ?? 'Sonstiges';
     const categoryName = typeof category === 'object' ? category.name : category;
 
     if (grouped[categoryName]) {
       grouped[categoryName].push(item);
     } else {
       // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
-      if (!grouped.Sonstiges) {
-        grouped.Sonstiges = [];
+      if (!grouped['Sonstiges']) {
+        grouped['Sonstiges'] = [];
       }
-      grouped.Sonstiges.push(item);
+      grouped['Sonstiges'].push(item);
     }
   });
 
@@ -112,8 +112,8 @@ export const calculateTotalPrice = (items: ShoppingItem[]): number => {
   }
 
   return items.reduce((total, item) => {
-    const itemPrice = item.price || 0;
-    const itemQuantity = item.quantity || 1;
+    const itemPrice = item.price ?? 0;
+    const itemQuantity = item.quantity ?? 1;
     return total + itemPrice * itemQuantity;
   }, 0);
 };
@@ -132,8 +132,8 @@ export const calculateCategoryPrice = (items: ShoppingItem[], categoryId: string
   return items
     .filter(item => itemBelongsToCategory(item, categoryId))
     .reduce((total, item) => {
-      const itemPrice = item.price || 0;
-      const itemQuantity = item.quantity || 1;
+      const itemPrice = item.price ?? 0;
+      const itemQuantity = item.quantity ?? 1;
       return total + itemPrice * itemQuantity;
     }, 0);
 };

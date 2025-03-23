@@ -1,14 +1,13 @@
 import { ref, computed, onMounted } from 'vue';
 
-import { createLogger } from '~/utils/logger';
 import { initializeServices } from '~/services';
-import {
-  sortListsByFavorites,
-  determineTemplateId,
-} from '../utils/listUtils';
+import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, CreateListOptions } from '../types';
+import type { ShoppingList } from '~/types/app-types';
+import type { CreateListOptions } from '~/composables/types';
 import type { Ref } from 'vue';
+
+import { sortListsByFavorites, determineTemplateId } from '~/composables/utils/listUtils';
 
 // Services initialisieren
 const { shoppingListService, categoryService } = initializeServices();
@@ -19,6 +18,26 @@ const logger = createLogger('useListManagement');
 // Typendefinition für den CategoryStore-Service
 interface CategoryStoreService {
   activateTemplate: (templateId: string) => void;
+}
+
+// Typendefinition für den Rückgabewert des Composables
+interface ListManagementComposable {
+  // Reaktive Daten
+  lists: Ref<ShoppingList[]>;
+  currentListId: Ref<string | null>;
+  currentList: Ref<ShoppingList>;
+  initialized: Ref<boolean>;
+  currentListTemplateId: Ref<string>;
+
+  // Funktionen
+  loadLists: () => boolean;
+  refreshLists: () => void;
+  createList: (name: string, options?: CreateListOptions) => ShoppingList | null;
+  createDefaultList: () => ShoppingList;
+  selectList: (listId: string) => boolean;
+  deleteList: (listId: string) => boolean;
+  updateListTemplate: (templateId: string) => boolean;
+  saveLists: () => boolean;
 }
 
 /**
@@ -36,7 +55,7 @@ interface CategoryStoreService {
  *   deleteList
  * } = useListManagement(categoryStore);
  */
-export function useListManagement(categoryStore?: CategoryStoreService) {
+export function useListManagement(categoryStore?: CategoryStoreService): ListManagementComposable {
   // Reaktive Daten
   const lists: Ref<ShoppingList[]> = ref([]);
   const currentListId: Ref<string | null> = ref(null);
@@ -44,13 +63,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
 
   // Berechnete Werte
   const currentList = computed<ShoppingList>(() => {
-    const id = currentListId.value || '';
+    const id = currentListId.value ?? '';
     const list = shoppingListService.getListById(id);
-    
+
     if (list) {
       return list;
     }
-    
+
     return {
       id: '',
       name: '',
@@ -61,7 +80,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
   });
 
   const currentListTemplateId = computed({
-    get: () => currentList.value.templateId || 'supermarket',
+    get: () => currentList.value.templateId ?? 'supermarket',
     set: (value: string) => updateListTemplate(value),
   });
 
@@ -70,7 +89,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const refreshLists = (): void => {
     lists.value = shoppingListService.getAllLists();
-    
+
     // Sortieren
     lists.value = sortListsByFavorites(lists.value);
   };
@@ -95,13 +114,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     try {
       refreshLists();
       refreshCurrentListId();
-      
+
       // Wenn keine Listen vorhanden sind, eine Standardliste erstellen
       if (lists.value.length === 0) {
         createDefaultList();
         return false;
       }
-      
+
       initialized.value = true;
       return true;
     } catch (error) {
@@ -119,7 +138,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
    */
   const createListObject = (name: string, options: CreateListOptions = {}): ShoppingList => {
     // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
-    let templateId = options.templateId || 'supermarket';
+    let templateId = options.templateId ?? 'supermarket';
 
     // Nur automatisch aus dem Namen schließen, wenn keine templateId gesetzt wurde
     if (!options.templateId) {
@@ -130,9 +149,9 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     return {
       id: timestamp.toString(),
       name: name.trim(),
-      items: options.items || [],
+      items: options.items ?? [],
       templateId,
-      isFavorite: options.isFavorite || false,
+      isFavorite: options.isFavorite ?? false,
       createdAt: timestamp,
       modifiedAt: timestamp,
     };
@@ -153,23 +172,23 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
     try {
       // Neue Liste mit dem Service erstellen
       const newList = shoppingListService.createList(name, options);
-      
+
       if (newList) {
         // Listen aktualisieren
         refreshLists();
-        
+
         // Als aktuelle Liste setzen
         currentListId.value = newList.id;
-        
+
         // Template aktivieren
         if (categoryStore && newList.templateId) {
           categoryStore.activateTemplate(newList.templateId);
         } else {
           // Fallback auf den CategoryService
-          categoryService.setActiveTemplate(newList.templateId || 'supermarket');
+          categoryService.setActiveTemplate(newList.templateId ?? 'supermarket');
         }
       }
-      
+
       return newList;
     } catch (error) {
       logger.error('Fehler beim Erstellen einer neuen Liste:', error);
@@ -186,11 +205,11 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
       templateId: 'supermarket',
       isFavorite: false,
     });
-    
+
     if (defaultList) {
       // Listen aktualisieren
       refreshLists();
-      
+
       // Als aktuelle Liste setzen
       currentListId.value = defaultList.id;
     } else {
@@ -205,13 +224,13 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         createdAt: timestamp,
         modifiedAt: timestamp,
       };
-      
+
       lists.value = [newDefaultList];
       currentListId.value = newDefaultList.id;
     }
-    
+
     initialized.value = true;
-    return defaultList || lists.value[0];
+    return defaultList ?? lists.value[0];
   };
 
   /**
@@ -225,18 +244,18 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         logger.error('Keine Listen-ID zum Auswählen angegeben');
         return false;
       }
-      
+
       // Liste mit dem Service auswählen
       const success = shoppingListService.setCurrentListId(listId);
-      
+
       if (success) {
         // Lokalen Zustand aktualisieren
         currentListId.value = listId;
-        
+
         // Template aktivieren
         const list = shoppingListService.getListById(listId);
-        
-        if (list && list.templateId) {
+
+        if (list?.templateId) {
           if (categoryStore) {
             categoryStore.activateTemplate(list.templateId);
           } else {
@@ -245,7 +264,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           }
         }
       }
-      
+
       return success;
     } catch (error) {
       logger.error('Fehler beim Auswählen einer Liste:', error);
@@ -264,18 +283,18 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         logger.error('Keine Listen-ID zum Löschen angegeben');
         return false;
       }
-      
+
       // Liste mit dem Service löschen
       const success = shoppingListService.deleteList(listId);
-      
+
       if (success) {
         // Listen aktualisieren
         refreshLists();
-        
+
         // Aktuelle Listen-ID aktualisieren
         refreshCurrentListId();
       }
-      
+
       return success;
     } catch (error) {
       logger.error('Fehler beim Löschen einer Liste:', error);
@@ -294,34 +313,34 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
         logger.error('Keine aktuelle Liste ausgewählt');
         return false;
       }
-      
+
       if (!templateId) {
         logger.error('Keine Template-ID angegeben');
         return false;
       }
-      
+
       // Aktuelle Liste laden
       const currentList = shoppingListService.getListById(currentListId.value);
-      
+
       if (!currentList) {
         logger.error(`Liste mit ID ${currentListId.value} nicht gefunden`);
         return false;
       }
-      
+
       // Liste aktualisieren
       const updatedList = {
         ...currentList,
-        templateId: templateId,
+        templateId,
         modifiedAt: Date.now(),
       };
-      
+
       // Mit dem Service aktualisieren
       const success = shoppingListService.updateList(updatedList) !== null;
-      
+
       if (success) {
         // Listen aktualisieren
         refreshLists();
-        
+
         // Template aktivieren
         if (categoryStore) {
           categoryStore.activateTemplate(templateId);
@@ -330,7 +349,7 @@ export function useListManagement(categoryStore?: CategoryStoreService) {
           categoryService.setActiveTemplate(templateId);
         }
       }
-      
+
       return success;
     } catch (error) {
       logger.error('Fehler beim Aktualisieren der Template-ID:', error);

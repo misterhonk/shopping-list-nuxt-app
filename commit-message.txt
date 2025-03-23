@@ -1,12 +1,17 @@
-fix(typescript): Konsolidiere Typdefinitionen und behebe Null-Check-Fehler
+fix(typescript): Korrigiere Import-Pfade und Rückgabetypen in weiteren Komponenten
 
-- Zentrale Typdefinitionen konsolidiert (app-types.ts als Hauptquelle)
-- composables/types.ts auf Re-Exports umgestellt für Abwärtskompatibilität
-- Korrekte Null-Checks in kritischen Dateien implementiert:
-  * utils/validation/typeGuards.ts
-  * composables/shoppingItems/useItemManagement.ts
-  * composables/utils/operations/listOperations.ts
-  * stores/category/operations.ts
-- Falsche Verwendung von ?? (Nullish Coalescing) durch || (logisches ODER) ersetzt
-- Rückgabetyp für useItemManagement-Composable definiert
-- Dokumentation zum Fehlerbehebungsansatz in docs/typescript/typescript-error-corrections.md erstellt
+- Aktualisiere Import-Pfade für zentrale Typdefinitionen in mehreren Dateien:
+  * composables/utils/itemUtils.ts
+  * composables/utils/listUtils.ts
+  * composables/shoppingList/useListManagement.ts
+  * stores/category/utils.ts
+
+- Korrigiere Null-Checks und Bedingungen:
+  * Ersetze falsche Verwendung von ?? durch || in mehreren Bedingungen
+  * Verbessere Fehlerbehandlung in createList-Funktion
+
+- Füge explizite Rückgabetypen für wichtige Composables hinzu:
+  * ListManagementComposable für useListManagement
+
+- Trenne importierte Typen nach Herkunft für bessere Wartbarkeit:
+  * Unterscheide zwischen app-types und composables/types

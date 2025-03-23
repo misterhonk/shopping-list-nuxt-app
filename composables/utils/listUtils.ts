@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList } from '../types';
+import type { ShoppingList } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('listUtils');
@@ -88,7 +88,7 @@ export const activateTemplateInStore = (store: CategoryStore | null, templateId:
  * @returns Die Anzahl der Artikel
  */
 export const getItemsCount = (list: ShoppingList): number =>
-  Array.isArray(list?.items) ? list.items.length : 0;
+  Array.isArray(list.items) ? list.items.length : 0;
 
 /**
  * Gibt die Anzahl der erledigten Artikel in einer Liste zurück
@@ -96,4 +96,4 @@ export const getItemsCount = (list: ShoppingList): number =>
  * @returns Die Anzahl der erledigten Artikel
  */
 export const getCheckedItemsCount = (list: ShoppingList): number =>
-  Array.isArray(list?.items) ? list.items.filter(item => item.checked).length : 0;
+  Array.isArray(list.items) ? list.items.filter(item => item.checked).length : 0;

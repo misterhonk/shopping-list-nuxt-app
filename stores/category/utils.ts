@@ -1,4 +1,5 @@
-import type { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
+import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { TemplateCollection } from '~/composables/types';
 
 /**
  * Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID
@@ -79,8 +80,8 @@ export const updateTemplateInCollection = (
  * @returns Das korrigierte Template
  */
 export const sanitizeTemplate = (template: Partial<CategoryTemplate>): CategoryTemplate => ({
-  id: template.id || `template_${Date.now()}`,
-  name: template.name || 'Unbenanntes Template',
-  description: template.description || '',
+  id: template.id ?? `template_${Date.now()}`,
+  name: template.name ?? 'Unbenanntes Template',
+  description: template.description ?? '',
   categories: Array.isArray(template.categories) ? template.categories : [],
 });
