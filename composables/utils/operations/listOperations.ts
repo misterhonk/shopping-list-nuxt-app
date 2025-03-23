@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, ShoppingItem } from '../../types';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('listOperations');
@@ -76,30 +76,28 @@ export const updateItemInList = <T extends ShoppingItem>(
     logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
-  
+
   const list = lists[listIndex];
   if (!Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
-  
+
   const itemIndex = findItemIndex(list, itemId);
   if (itemIndex === -1) {
     logger.error(`Item mit ID ${itemId} nicht gefunden.`);
     return null;
   }
-  
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
     updatedLists[listIndex] = {
       ...list,
-      items: list.items.map((item, index) => 
-        index === itemIndex ? updateFn(item as T) : item
-      ),
-      modifiedAt: Date.now()
+      items: list.items.map((item, index) => (index === itemIndex ? updateFn(item as T) : item)),
+      modifiedAt: Date.now(),
     };
-    
+
     return updatedLists;
   } catch (error) {
     logger.error(`Fehler beim Aktualisieren des Items mit ID ${itemId}:`, error);
@@ -124,28 +122,28 @@ export const removeItemFromList = (
     logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
-  
+
   const list = lists[listIndex];
   if (!Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
-  
+
   // Prüfen, ob das Item existiert
   if (!list.items.some(item => item.id === itemId)) {
     logger.error(`Item mit ID ${itemId} nicht gefunden.`);
     return null;
   }
-  
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
     updatedLists[listIndex] = {
       ...list,
       items: list.items.filter(item => item.id !== itemId),
-      modifiedAt: Date.now()
+      modifiedAt: Date.now(),
     };
-    
+
     return updatedLists;
   } catch (error) {
     logger.error(`Fehler beim Entfernen des Items mit ID ${itemId}:`, error);
@@ -170,18 +168,18 @@ export const addItemToList = (
     logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
-  
+
   const list = lists[listIndex];
-  
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
     updatedLists[listIndex] = {
       ...list,
       items: Array.isArray(list.items) ? [...list.items, item] : [item],
-      modifiedAt: Date.now()
+      modifiedAt: Date.now(),
     };
-    
+
     return updatedLists;
   } catch (error) {
     logger.error(`Fehler beim Hinzufügen eines Items zur Liste mit ID ${listId}:`, error);
@@ -206,15 +204,15 @@ export const updateList = (
     logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
-  
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
     updatedLists[listIndex] = updateFn({
       ...lists[listIndex],
-      modifiedAt: Date.now()
+      modifiedAt: Date.now(),
     });
-    
+
     return updatedLists;
   } catch (error) {
     logger.error(`Fehler beim Aktualisieren der Liste mit ID ${listId}:`, error);
@@ -241,24 +239,22 @@ export const updateItemsInList = <T extends ShoppingItem>(
     logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
-  
+
   const list = lists[listIndex];
   if (!Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
-  
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
     updatedLists[listIndex] = {
       ...list,
-      items: list.items.map(item => 
-        filterFn(item as T) ? updateFn(item as T) : item
-      ),
-      modifiedAt: Date.now()
+      items: list.items.map(item => (filterFn(item as T) ? updateFn(item as T) : item)),
+      modifiedAt: Date.now(),
     };
-    
+
     return updatedLists;
   } catch (error) {
     logger.error(`Fehler beim Aktualisieren mehrerer Items in der Liste mit ID ${listId}:`, error);
@@ -283,22 +279,22 @@ export const removeItemsFromList = <T extends ShoppingItem>(
     logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
-  
+
   const list = lists[listIndex];
   if (!Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
-  
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
     updatedLists[listIndex] = {
       ...list,
       items: list.items.filter(item => !filterFn(item as T)),
-      modifiedAt: Date.now()
+      modifiedAt: Date.now(),
     };
-    
+
     return updatedLists;
   } catch (error) {
     logger.error(`Fehler beim Entfernen mehrerer Items aus der Liste mit ID ${listId}:`, error);

@@ -10,10 +10,21 @@ import {
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
-import type { ShoppingList, ShoppingItem } from '~/composables/types';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useItemManagement');
+
+// Definieren der Return-Type für useItemManagement
+interface ItemManagementComposable {
+  allItems: Ref<ShoppingItem[]>;
+  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
+  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
+  removeItem: (item: ShoppingItem | string) => boolean;
+  toggleItemChecked: (item: ShoppingItem | string) => boolean;
+  clearCheckedItems: () => boolean;
+  updateCategoryInItems: (categoryId: string, newName: string) => boolean;
+}
 
 /**
  * Composable für die Verwaltung von Artikeln
@@ -22,7 +33,7 @@ const logger = createLogger('useItemManagement');
 export function useItemManagement(
   shoppingListsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
-) {
+): ItemManagementComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
@@ -30,7 +41,7 @@ export function useItemManagement(
    */
   const allItems = computed<ShoppingItem[]>(() => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
-    if (!currentList || !Array.isArray(currentList.items)) {
+    if (!currentList ?? !Array.isArray(currentList.items)) {
       return [];
     }
     return currentList.items;
@@ -64,9 +75,9 @@ export function useItemManagement(
   const addItem = (itemData: Partial<ShoppingItem>): ShoppingItem | null => {
     // Prüfen, ob die Daten gültig sind
     if (
-      !itemData.name ||
-      itemData.name.trim() === '' ||
-      !(itemData.quantity && itemData.quantity > 0)
+      !itemData.name || 
+      itemData.name.trim() === '' || 
+      !(itemData.quantity !== undefined && itemData.quantity > 0)
     ) {
       return null;
     }
@@ -303,4 +314,5 @@ export function useItemManagement(
     clearCheckedItems,
     updateCategoryInItems,
   };
+}
 }

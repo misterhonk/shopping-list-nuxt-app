@@ -1,13 +1,12 @@
-feat: Implementiere strukturiertes Logging und fixe ESLint-Fehler
+fix(typescript): Konsolidiere Typdefinitionen und behebe Null-Check-Fehler
 
-- ESLint-Regeln optimiert und Konfiguration angepasst
-- Fehler mit direkten hasOwnProperty-Aufrufen behoben
-- Einfaches strukturiertes Logging in der Index-Komponente implementiert
-- Entferne komplexe Logger-Implementierung
-- Ersetze Logger-System in category-debugger.js und pinia.ts
-- Console.log-Aufrufe durch log-Funktionen mit Kontextinformationen ersetzt
-- Nicht benötigtes async-Keyword aus testMigration.js entfernt
-- Roadmap aktualisiert für erledigte Tasks
-
-Diese Änderungen verbessern die Codequalität und Lesbarkeit der Logs
-während der Entwicklung und im Produktionsbetrieb.
+- Zentrale Typdefinitionen konsolidiert (app-types.ts als Hauptquelle)
+- composables/types.ts auf Re-Exports umgestellt für Abwärtskompatibilität
+- Korrekte Null-Checks in kritischen Dateien implementiert:
+  * utils/validation/typeGuards.ts
+  * composables/shoppingItems/useItemManagement.ts
+  * composables/utils/operations/listOperations.ts
+  * stores/category/operations.ts
+- Falsche Verwendung von ?? (Nullish Coalescing) durch || (logisches ODER) ersetzt
+- Rückgabetyp für useItemManagement-Composable definiert
+- Dokumentation zum Fehlerbehebungsansatz in docs/typescript/typescript-error-corrections.md erstellt

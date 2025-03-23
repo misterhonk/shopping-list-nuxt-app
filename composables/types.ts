@@ -1,33 +1,29 @@
 /**
  * Typdefinitionen für die Shopping-List-App
- * Zentrale Sammlung aller verwendeten Typen für die App
+ * Re-Exports aus der zentralen Typdatei
+ * 
+ * WICHTIG: Diese Datei ist veraltet und bleibt nur aus Kompatibilitätsgründen.
+ * Bitte verwende direkt die Typen aus '~/types/app-types' und '~/types/form-types'.
  */
 
-/**
- * Repräsentiert eine Kategorie in der Anwendung
- */
-export interface Category {
-  id: string;
-  name: string;
-  color?: string;
-  icon?: string;
-  position?: number; // Position für die Sortierung nach Laufweg
-}
+import type { 
+  Category, 
+  CategoryTemplate, 
+  ShoppingItem, 
+  ShoppingList,
+} from '~/types/app-types';
 
-/**
- * Interface für eine Kategorie-Vorlage
- */
-export interface CategoryTemplate {
-  id: string;
-  name: string;
-  description: string;
-  categories: Category[];
-  defaultCategoryOrder?: string[]; // Array von Category-IDs in der Standard-Laufweg-Reihenfolge
-  isCustom?: boolean;
-}
+// Re-Exports der Basis-Typen zur Abwärtskompatibilität
+export type { 
+  Category, 
+  CategoryTemplate, 
+  ShoppingItem, 
+  ShoppingList 
+};
 
 /**
  * Interface für die Template-Listen
+ * @deprecated Bitte stattdessen TemplateCategories aus app-types.ts verwenden
  */
 export interface TemplateCollection {
   [key: string]: CategoryTemplate;
@@ -37,38 +33,9 @@ export interface TemplateCollection {
  * Interface für die Sortierungskonfiguration von Kategorien
  */
 export interface CategorySortConfig {
-  templateId: string;        // ID der Vorlage, zu der diese Konfiguration gehört
-  useCustomSort: boolean;    // Ob benutzerdefinierte Sortierung verwendet werden soll
-  customOrder: string[];     // Array von Category-IDs in benutzerdefinierter Reihenfolge
-}
-
-/**
- * Repräsentiert einen einzelnen Einkaufsartikel
- */
-export interface ShoppingItem {
-  id: string;
-  name: string;
-  quantity: number;
-  category: Category | string;
-  checked: boolean;
-  price: number;
-  note?: string;
-  addedAt?: number;
-  modifiedAt?: number;
-  listId?: string; // Die ID der Liste, zu der dieser Artikel gehört
-}
-
-/**
- * Repräsentiert eine Einkaufsliste
- */
-export interface ShoppingList {
-  id: string;
-  name: string;
-  items: ShoppingItem[];
-  templateId?: string;
-  isFavorite: boolean;
-  createdAt?: number;
-  modifiedAt?: number;
+  templateId: string; // ID der Vorlage, zu der diese Konfiguration gehört
+  useCustomSort: boolean; // Ob benutzerdefinierte Sortierung verwendet werden soll
+  customOrder: string[]; // Array von Category-IDs in benutzerdefinierter Reihenfolge
 }
 
 /**

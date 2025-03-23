@@ -141,9 +141,9 @@ export function isItemFormState(value: unknown): value is ItemFormState {
   // Erforderliche Eigenschaften prüfen
   return (
     typeof formState['status'] === 'string' &&
-    typeof formState['item'] === 'object' &&
-    typeof formState['errors'] === 'object' &&
-    typeof formState['touched'] === 'object' &&
+    formState['item'] !== undefined && typeof formState['item'] === 'object' &&
+    formState['errors'] !== undefined && typeof formState['errors'] === 'object' &&
+    formState['touched'] !== undefined && typeof formState['touched'] === 'object' &&
     typeof formState['isValid'] === 'boolean'
   );
 }
@@ -163,9 +163,9 @@ export function isListFormState(value: unknown): value is ListFormState {
   // Erforderliche Eigenschaften prüfen
   return (
     typeof formState['status'] === 'string' &&
-    typeof formState['list'] === 'object' &&
-    typeof formState['errors'] === 'object' &&
-    typeof formState['touched'] === 'object' &&
+    formState['list'] !== undefined && typeof formState['list'] === 'object' &&
+    formState['errors'] !== undefined && typeof formState['errors'] === 'object' &&
+    formState['touched'] !== undefined && typeof formState['touched'] === 'object' &&
     typeof formState['isValid'] === 'boolean'
   );
 }

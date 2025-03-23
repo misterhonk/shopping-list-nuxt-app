@@ -2,7 +2,8 @@ import { createLogger } from '~/utils/logger';
 
 import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
 
-import type { Category, CategoryTemplate, TemplateCollection } from '~/composables/types';
+import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { TemplateCollection } from '~/composables/types';
 
 // Logger initialisieren
 const logger = createLogger('operations');
@@ -271,8 +272,8 @@ export const updateTemplate = (
     ...customTemplates,
     [templateId]: {
       ...customTemplates[templateId],
-      name: name || customTemplates[templateId].name,
-      description: description || customTemplates[templateId].description,
+      name: name ?? customTemplates[templateId].name,
+      description: description ?? customTemplates[templateId].description,
     },
   };
 };
