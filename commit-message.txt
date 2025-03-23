@@ -1,17 +1,7 @@
-fix(typescript): Korrigiere Import-Pfade und Rückgabetypen in weiteren Komponenten
+fix(typescript): Verbessere Null-Checks in listOperations.ts
 
-- Aktualisiere Import-Pfade für zentrale Typdefinitionen in mehreren Dateien:
-  * composables/utils/itemUtils.ts
-  * composables/utils/listUtils.ts
-  * composables/shoppingList/useListManagement.ts
-  * stores/category/utils.ts
-
-- Korrigiere Null-Checks und Bedingungen:
-  * Ersetze falsche Verwendung von ?? durch || in mehreren Bedingungen
-  * Verbessere Fehlerbehandlung in createList-Funktion
-
-- Füge explizite Rückgabetypen für wichtige Composables hinzu:
-  * ListManagementComposable für useListManagement
-
-- Trenne importierte Typen nach Herkunft für bessere Wartbarkeit:
-  * Unterscheide zwischen app-types und composables/types
+- Füge explizite Null-Checks für Listen und ihre Items hinzu, bevor auf ihre Eigenschaften zugegriffen wird
+- Füge zusätzliche Existenz-Checks vor dem Zugriff auf Array-Indizes ein
+- Stelle sicher, dass updatedLists[listIndex] existiert, bevor darauf zugegriffen wird
+- Schütze kritische Operationen mit if-Statements, um TypeScript-Fehler zu vermeiden
+- Behandle Situationen, in denen Liste oder Items null oder undefined sein könnten

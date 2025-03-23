@@ -78,7 +78,7 @@ export const updateItemInList = <T extends ShoppingItem>(
   }
 
   const list = lists[listIndex];
-  if (!Array.isArray(list.items)) {
+  if (!list || !Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
@@ -92,11 +92,14 @@ export const updateItemInList = <T extends ShoppingItem>(
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    updatedLists[listIndex] = {
-      ...list,
-      items: list.items.map((item, index) => (index === itemIndex ? updateFn(item as T) : item)),
-      modifiedAt: Date.now(),
-    };
+    
+    if (updatedLists[listIndex]) {
+      updatedLists[listIndex] = {
+        ...list,
+        items: list.items.map((item, index) => (index === itemIndex ? updateFn(item as T) : item)),
+        modifiedAt: Date.now(),
+      };
+    }
 
     return updatedLists;
   } catch (error) {
@@ -124,13 +127,13 @@ export const removeItemFromList = (
   }
 
   const list = lists[listIndex];
-  if (!Array.isArray(list.items)) {
+  if (!list || !Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
 
   // Prüfen, ob das Item existiert
-  if (!list.items.some(item => item.id === itemId)) {
+  if (!list || !list.items.some(item => item.id === itemId)) {
     logger.error(`Item mit ID ${itemId} nicht gefunden.`);
     return null;
   }
@@ -138,11 +141,14 @@ export const removeItemFromList = (
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    updatedLists[listIndex] = {
-      ...list,
-      items: list.items.filter(item => item.id !== itemId),
-      modifiedAt: Date.now(),
-    };
+    
+    if (updatedLists[listIndex]) {
+      updatedLists[listIndex] = {
+        ...list,
+        items: list.items.filter(item => item.id !== itemId),
+        modifiedAt: Date.now(),
+      };
+    }
 
     return updatedLists;
   } catch (error) {
@@ -170,15 +176,22 @@ export const addItemToList = (
   }
 
   const list = lists[listIndex];
+  if (!list) {
+    logger.error(`Liste mit Index ${listIndex} ist undefiniert.`);
+    return null;
+  }
 
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    updatedLists[listIndex] = {
-      ...list,
-      items: Array.isArray(list.items) ? [...list.items, item] : [item],
-      modifiedAt: Date.now(),
-    };
+    
+    if (updatedLists[listIndex]) {
+      updatedLists[listIndex] = {
+        ...list,
+        items: Array.isArray(list.items) ? [...list.items, item] : [item],
+        modifiedAt: Date.now(),
+      };
+    }
 
     return updatedLists;
   } catch (error) {
@@ -205,13 +218,24 @@ export const updateList = (
     return null;
   }
 
+  if (!lists[listIndex]) {
+    logger.error(`Liste mit Index ${listIndex} ist undefiniert.`);
+    return null;
+  }
+
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    updatedLists[listIndex] = updateFn({
-      ...lists[listIndex],
-      modifiedAt: Date.now(),
-    });
+    
+    if (updatedLists[listIndex]) {
+      const listToUpdate = lists[listIndex];
+      if (listToUpdate) {
+        updatedLists[listIndex] = updateFn({
+          ...listToUpdate,
+          modifiedAt: Date.now(),
+        });
+      }
+    }
 
     return updatedLists;
   } catch (error) {
@@ -241,7 +265,7 @@ export const updateItemsInList = <T extends ShoppingItem>(
   }
 
   const list = lists[listIndex];
-  if (!Array.isArray(list.items)) {
+  if (!list || !Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
@@ -249,11 +273,14 @@ export const updateItemsInList = <T extends ShoppingItem>(
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    updatedLists[listIndex] = {
-      ...list,
-      items: list.items.map(item => (filterFn(item as T) ? updateFn(item as T) : item)),
-      modifiedAt: Date.now(),
-    };
+    
+    if (updatedLists[listIndex]) {
+      updatedLists[listIndex] = {
+        ...list,
+        items: list.items.map(item => (filterFn(item as T) ? updateFn(item as T) : item)),
+        modifiedAt: Date.now(),
+      };
+    }
 
     return updatedLists;
   } catch (error) {
@@ -281,7 +308,7 @@ export const removeItemsFromList = <T extends ShoppingItem>(
   }
 
   const list = lists[listIndex];
-  if (!Array.isArray(list.items)) {
+  if (!list || !Array.isArray(list.items)) {
     logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
@@ -289,11 +316,14 @@ export const removeItemsFromList = <T extends ShoppingItem>(
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    updatedLists[listIndex] = {
-      ...list,
-      items: list.items.filter(item => !filterFn(item as T)),
-      modifiedAt: Date.now(),
-    };
+    
+    if (updatedLists[listIndex]) {
+      updatedLists[listIndex] = {
+        ...list,
+        items: list.items.filter(item => !filterFn(item as T)),
+        modifiedAt: Date.now(),
+      };
+    }
 
     return updatedLists;
   } catch (error) {
