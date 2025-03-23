@@ -235,17 +235,17 @@ const formState = ref<ItemFormState>({
 function validateForm(): boolean {
   formState.value.errors = {};
   let isValid = true;
-  
+
   if (!formState.value.item.name) {
     formState.value.errors.name = 'Name ist erforderlich';
     isValid = false;
   }
-  
+
   if (!formState.value.item.quantity || formState.value.item.quantity < 1) {
     formState.value.errors.quantity = 'Menge muss mindestens 1 sein';
     isValid = false;
   }
-  
+
   formState.value.isValid = isValid;
   return isValid;
 }
@@ -271,9 +271,9 @@ export function useItemForm() {
     touched: {},
     isValid: false,
   });
-  
+
   // Rest des Composables...
-  
+
   return {
     state,
     // Weitere Rückgabewerte...

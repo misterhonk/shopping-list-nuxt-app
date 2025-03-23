@@ -5,7 +5,7 @@
   >
     <div class="flex justify-between items-center">
       <h3 class="font-bold">Neue Version verfügbar!</h3>
-      <button @click="dismissUpdate" class="ml-4 text-white">
+      <button class="ml-4 text-white" @click="dismissUpdate">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5"
@@ -23,8 +23,8 @@
     <p class="mt-2">Version {{ updateInfo.newVersion }} ist jetzt verfügbar.</p>
     <div class="flex justify-end mt-3">
       <button
-        @click="applyAppUpdate"
         class="bg-white text-orange-500 px-4 py-2 rounded-md font-medium"
+        @click="applyAppUpdate"
       >
         Jetzt aktualisieren
       </button>
@@ -35,12 +35,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-import { 
-  checkForUpdates, 
-  applyUpdate, 
-  checkForWaitingServiceWorker, 
+import {
+  checkForUpdates,
+  applyUpdate,
+  checkForWaitingServiceWorker,
   forceServiceWorkerUpdate,
-  type UpdateInfo 
+  type UpdateInfo,
 } from '~/services/updateService';
 
 const showUpdateNotification = ref(false);
@@ -50,7 +50,7 @@ onMounted(() => {
   // Prüfe auf App-Version Updates
   const result = checkForUpdates();
   updateInfo.value = result;
-  
+
   if (result.hasUpdate) {
     showUpdateNotification.value = true;
   } else {
@@ -60,13 +60,13 @@ onMounted(() => {
         // Service Worker wartet auf Update
         updateInfo.value = {
           hasUpdate: true,
-          newVersion: 'neue Version'
+          newVersion: 'neue Version',
         };
         showUpdateNotification.value = true;
       }
     });
   }
-  
+
   // Registriere Event-Listener für Service Worker-Aktualisierungen
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -76,7 +76,7 @@ onMounted(() => {
       }
     });
   }
-  
+
   // Regelmäßige Check-Intervalle für iOS
   const checkInterval = setInterval(() => {
     const result = checkForUpdates();
@@ -85,7 +85,7 @@ onMounted(() => {
       showUpdateNotification.value = true;
     }
   }, 60 * 1000); // Jede Minute prüfen
-  
+
   // Cleanup bei Komponenten-Unmount
   onBeforeUnmount(() => {
     clearInterval(checkInterval);
@@ -95,7 +95,7 @@ onMounted(() => {
 function applyAppUpdate(): void {
   // Versuche zuerst, einen wartenden Service Worker zu aktivieren
   forceServiceWorkerUpdate();
-  
+
   // Aktualisiere gespeicherte App-Version und lade neu
   applyUpdate();
 }

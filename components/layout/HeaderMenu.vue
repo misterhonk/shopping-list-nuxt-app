@@ -3,14 +3,25 @@
     <!-- Home Link / Logo -->
     <NuxtLink to="/" class="text-orange-500 font-medium">
       <div class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 mr-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+          />
         </svg>
       </div>
     </NuxtLink>
 
     <!-- Menu Button -->
-    <div class="relative" ref="menuRef">
+    <div ref="menuRef" class="relative">
       <button
         class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700"
         aria-label="Menü öffnen"
@@ -201,6 +212,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+
 import { useDarkMode } from '~/composables/useDarkMode';
 
 // Dark Mode Store
@@ -211,17 +223,17 @@ const isMenuOpen = ref(false);
 const menuRef = ref<HTMLElement | null>(null);
 
 // Toggle menu
-const toggleMenu = () => {
+const toggleMenu = (): void => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
 // Close menu
-const closeMenu = () => {
+const closeMenu = (): void => {
   isMenuOpen.value = false;
 };
 
 // Close menu if clicked outside
-const handleClickOutside = (event: MouseEvent) => {
+const handleClickOutside = (event: MouseEvent): void => {
   if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
     isMenuOpen.value = false;
   }

@@ -34,12 +34,22 @@ export function configureLogger(config: Partial<LoggerConfig>): void {
 }
 
 /**
+ * Logger interface defining available methods
+ */
+export interface Logger {
+  debug: (message: string, ...data: unknown[]) => void;
+  info: (message: string, ...data: unknown[]) => void;
+  warn: (message: string, ...data: unknown[]) => void;
+  error: (message: string, ...data: unknown[]) => void;
+}
+
+/**
  * Creates a logger for a specific module
  *
  * @param module The name of the module using the logger
  * @returns A logger instance
  */
-export function createLogger(module: string) {
+export function createLogger(module: string): Logger {
   return {
     debug(message: string, ...data: unknown[]): void {
       log(LogLevel.DEBUG, module, message, data);

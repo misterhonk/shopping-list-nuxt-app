@@ -5,6 +5,7 @@ Nach der Analyse der aktuellen PWA-Konfiguration wurde ein umfassender Plan zur 
 ## Problemdiagnose
 
 1. **PWA-Konfiguration**:
+
    - Die App verwendet das `@vite-pwa/nuxt` Modul für PWA-Funktionalität
    - Service Worker hat einfache Standardkonfiguration ohne expliziten Update-Mechanismus
    - Es fehlen skipWaiting() und clients.claim() Aufrufe im Worker-Aktivierungszyklus
@@ -32,7 +33,7 @@ Optimierung der Nuxt-PWA-Konfiguration in `nuxt.config.ts`:
 // nuxt.config.ts
 export default defineNuxtConfig({
   // ... bestehende Konfiguration
-  
+
   // Optimierte PWA-Konfiguration
   pwa: {
     manifest: {
@@ -69,9 +70,9 @@ export default defineNuxtConfig({
             cacheName: 'images',
             expiration: {
               maxEntries: 60,
-              maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Tage
-            }
-          }
+              maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Tage
+            },
+          },
         },
         {
           urlPattern: /\.(?:js|css)$/,
@@ -80,9 +81,9 @@ export default defineNuxtConfig({
             cacheName: 'static-resources',
             expiration: {
               maxEntries: 60,
-              maxAgeSeconds: 60 * 60 * 24 // 1 Tag
-            }
-          }
+              maxAgeSeconds: 60 * 60 * 24, // 1 Tag
+            },
+          },
         },
         {
           urlPattern: /\/_nuxt\//,
@@ -91,10 +92,10 @@ export default defineNuxtConfig({
             cacheName: 'nuxt-resources',
             expiration: {
               maxEntries: 100,
-              maxAgeSeconds: 60 * 60 * 24 // 1 Tag
-            }
-          }
-        }
+              maxAgeSeconds: 60 * 60 * 24, // 1 Tag
+            },
+          },
+        },
       ],
       // Generiere eine SW nach BuildEnd
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
@@ -109,43 +110,43 @@ Implementierung eines Services für Version-Prüfung und Update-Management:
 
 ```typescript
 // services/updateService.ts
-export const APP_VERSION = '2.0.1'
-const VERSION_STORAGE_KEY = 'app_version'
+export const APP_VERSION = '2.0.1';
+const VERSION_STORAGE_KEY = 'app_version';
 
 export interface UpdateInfo {
-  hasUpdate: boolean
-  oldVersion?: string
-  newVersion?: string
+  hasUpdate: boolean;
+  oldVersion?: string;
+  newVersion?: string;
 }
 
 export function getStoredVersion(): string | null {
-  return localStorage.getItem(VERSION_STORAGE_KEY)
+  return localStorage.getItem(VERSION_STORAGE_KEY);
 }
 
 export function storeVersion(version: string): void {
-  localStorage.setItem(VERSION_STORAGE_KEY, version)
+  localStorage.setItem(VERSION_STORAGE_KEY, version);
 }
 
 export function checkForUpdates(): UpdateInfo {
-  const storedVersion = getStoredVersion()
-  
-  // Wenn keine Version gespeichert ist oder die gespeicherte Version 
+  const storedVersion = getStoredVersion();
+
+  // Wenn keine Version gespeichert ist oder die gespeicherte Version
   // nicht der aktuellen Version entspricht
   if (!storedVersion || storedVersion !== APP_VERSION) {
     // Update erkannt
     return {
       hasUpdate: true,
       oldVersion: storedVersion || 'unbekannt',
-      newVersion: APP_VERSION
-    }
+      newVersion: APP_VERSION,
+    };
   }
-  
-  return { hasUpdate: false }
+
+  return { hasUpdate: false };
 }
 
 export function applyUpdate(): void {
-  storeVersion(APP_VERSION)
-  window.location.reload()
+  storeVersion(APP_VERSION);
+  window.location.reload();
 }
 
 export function registerServiceWorkerUpdateHandler(): void {
@@ -153,9 +154,9 @@ export function registerServiceWorkerUpdateHandler(): void {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       // Service Worker wurde aktualisiert
-      console.log('Service Worker wurde aktualisiert. Seite wird neu geladen...')
-      window.location.reload()
-    })
+      console.log('Service Worker wurde aktualisiert. Seite wird neu geladen...');
+      window.location.reload();
+    });
   }
 }
 ```
@@ -167,18 +168,33 @@ Implementierung einer Komponente zur Benachrichtigung über verfügbare Updates:
 ```vue
 <!-- components/UpdateNotification.vue -->
 <template>
-  <div v-if="showUpdateNotification" class="fixed bottom-4 right-4 bg-orange-500 text-white p-4 rounded-lg shadow-lg z-50 flex flex-col">
+  <div
+    v-if="showUpdateNotification"
+    class="fixed bottom-4 right-4 bg-orange-500 text-white p-4 rounded-lg shadow-lg z-50 flex flex-col"
+  >
     <div class="flex justify-between items-center">
       <h3 class="font-bold">Neue Version verfügbar!</h3>
       <button @click="dismissUpdate" class="ml-4 text-white">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+            clip-rule="evenodd"
+          />
         </svg>
       </button>
     </div>
     <p class="mt-2">Version {{ updateInfo.newVersion }} jetzt verfügbar.</p>
     <div class="flex justify-end mt-3">
-      <button @click="applyAppUpdate" class="bg-white text-orange-500 px-4 py-2 rounded-md font-medium">
+      <button
+        @click="applyAppUpdate"
+        class="bg-white text-orange-500 px-4 py-2 rounded-md font-medium"
+      >
         Jetzt aktualisieren
       </button>
     </div>
@@ -186,28 +202,28 @@ Implementierung einer Komponente zur Benachrichtigung über verfügbare Updates:
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { checkForUpdates, applyUpdate, UpdateInfo } from '~/services/updateService'
+import { ref, onMounted } from 'vue';
+import { checkForUpdates, applyUpdate, UpdateInfo } from '~/services/updateService';
 
-const showUpdateNotification = ref(false)
-const updateInfo = ref<UpdateInfo>({ hasUpdate: false })
+const showUpdateNotification = ref(false);
+const updateInfo = ref<UpdateInfo>({ hasUpdate: false });
 
 onMounted(() => {
   // Prüfe auf Updates beim App-Start
-  checkForUpdates()
-  
+  checkForUpdates();
+
   // Prüfe die Version und zeige Benachrichtigung, wenn nötig
-  const result = checkForUpdates()
-  updateInfo.value = result
-  showUpdateNotification.value = result.hasUpdate
-})
+  const result = checkForUpdates();
+  updateInfo.value = result;
+  showUpdateNotification.value = result.hasUpdate;
+});
 
 function applyAppUpdate() {
-  applyUpdate()
+  applyUpdate();
 }
 
 function dismissUpdate() {
-  showUpdateNotification.value = false
+  showUpdateNotification.value = false;
 }
 </script>
 ```
@@ -222,20 +238,20 @@ Integration der Update-Komponente und des Update-Services in die App:
   <div>
     <!-- Bestehender App-Inhalt -->
     <NuxtPage />
-    
+
     <!-- Update-Benachrichtigung einbinden -->
     <UpdateNotification />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { registerServiceWorkerUpdateHandler } from '~/services/updateService'
+import { onMounted } from 'vue';
+import { registerServiceWorkerUpdateHandler } from '~/services/updateService';
 
 onMounted(() => {
   // Service Worker Update-Handler registrieren
-  registerServiceWorkerUpdateHandler()
-})
+  registerServiceWorkerUpdateHandler();
+});
 </script>
 ```
 
@@ -245,31 +261,33 @@ Ein Nuxt-Plugin zur Initialisierung der Version beim App-Start:
 
 ```typescript
 // plugins/version-check.ts
-import { defineNuxtPlugin } from 'nuxt/app'
-import { APP_VERSION, getStoredVersion, storeVersion } from '~/services/updateService'
+import { defineNuxtPlugin } from 'nuxt/app';
+import { APP_VERSION, getStoredVersion, storeVersion } from '~/services/updateService';
 
 export default defineNuxtPlugin(() => {
-  const storedVersion = getStoredVersion()
-  
+  const storedVersion = getStoredVersion();
+
   // Wenn keine Version gespeichert ist, aktuell laufende Version speichern
   if (!storedVersion) {
-    storeVersion(APP_VERSION)
-    console.log(`App-Version ${APP_VERSION} initialisiert`)
+    storeVersion(APP_VERSION);
+    console.log(`App-Version ${APP_VERSION} initialisiert`);
   } else if (storedVersion !== APP_VERSION) {
-    console.log(`App-Update erkannt: ${storedVersion} -> ${APP_VERSION}`)
+    console.log(`App-Update erkannt: ${storedVersion} -> ${APP_VERSION}`);
   }
-})
+});
 ```
 
 ## Tests und Validierung
 
 Nach der Implementierung sind folgende Tests durchzuführen:
 
-1. **Update-Erkennung**: 
+1. **Update-Erkennung**:
+
    - Manuelles Ändern der gespeicherten Version und Prüfen, ob Update-Benachrichtigung erscheint
    - Testen mit verschiedenen Versionssprüngen (Patch, Minor, Major)
 
 2. **Service Worker Update**:
+
    - Ändern einer App-Datei und Neubauen der App
    - Überprüfen, ob der neue Service Worker korrekt aktiviert wird
    - Testen, ob die Seite nach Service Worker Update korrekt neu geladen wird

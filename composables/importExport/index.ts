@@ -72,7 +72,7 @@ export function useListImportExport(
     const availableLists = lists.value.map(list => ({
       id: list.id,
       name: list.name,
-      itemCount: list.items?.length || 0,
+      itemCount: list.items.length ?? 0,
     }));
 
     // Datei laden und dann Optionen anzeigen

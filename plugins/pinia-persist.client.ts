@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from '#app';
+import { defineNuxtPlugin } from 'nuxt/app';
 
 /**
  * Plugin für die Persistenz von Pinia-Stores

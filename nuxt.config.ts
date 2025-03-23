@@ -66,20 +66,20 @@ export default defineNuxtConfig({
             cacheName: 'images',
             expiration: {
               maxEntries: 60,
-              maxAgeSeconds: 60 * 60 * 24 // 1 Tag (kürzer als zuvor)
-            }
-          }
+              maxAgeSeconds: 60 * 60 * 24, // 1 Tag (kürzer als zuvor)
+            },
+          },
         },
         {
           urlPattern: /\.(?:js|css)$/,
-          handler: 'NetworkFirst', 
+          handler: 'NetworkFirst',
           options: {
             cacheName: 'static-resources',
             expiration: {
               maxEntries: 60,
-              maxAgeSeconds: 60 * 60 * 12 // 12 Stunden
-            }
-          }
+              maxAgeSeconds: 60 * 60 * 12, // 12 Stunden
+            },
+          },
         },
         {
           urlPattern: /\/_nuxt\//,
@@ -88,18 +88,18 @@ export default defineNuxtConfig({
             cacheName: 'nuxt-resources',
             expiration: {
               maxEntries: 100,
-              maxAgeSeconds: 60 * 60 * 6 // 6 Stunden (noch kürzer für häufigere Updates)
-            }
-          }
-        }
+              maxAgeSeconds: 60 * 60 * 6, // 6 Stunden (noch kürzer für häufigere Updates)
+            },
+          },
+        },
       ],
     },
     devOptions: {
       enabled: true,
       type: 'module',
-    }
+    },
   },
-  
+
   // Vite Konfiguration für PWA auf iOS
   vite: {
     build: {
@@ -116,18 +116,18 @@ export default defineNuxtConfig({
         output: {
           entryFileNames: `[name].[hash].js`,
           chunkFileNames: `[name].[hash].js`,
-          assetFileNames: `[name].[hash].[ext]`
-        }
-      }
+          assetFileNames: `[name].[hash].[ext]`,
+        },
+      },
     },
     // Spezielle Header für bessere Cache-Kontrolle
     server: {
       headers: {
         'Service-Worker-Allowed': '/',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
     },
     optimizeDeps: {
       include: [],
@@ -157,13 +157,13 @@ export default defineNuxtConfig({
     // Cache-Kontrolle über HTTP-Header
     pageTransition: false, // Verbessert das Reload-Verhalten
     // Hash im Dateinamen für Cache-Busting
-    buildAssetsDir: `_nuxt_${Date.now()}/`
+    buildAssetsDir: `_nuxt_${Date.now()}/`,
   },
 
   // Server-Konfiguration für Testing
   server: {
     host: '0.0.0.0', // Auf allen Interfaces hören
-    port: 3000 // Standard-Port
+    port: 3000, // Standard-Port
   },
 
   // Stellen Sie sicher, dass client-seitige Navigation aktiviert ist

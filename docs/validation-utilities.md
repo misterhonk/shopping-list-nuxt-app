@@ -38,7 +38,7 @@ function loadLists(): ShoppingList[] {
     }
 
     const parsedData = JSON.parse(storedData);
-    
+
     // Type Guard anwenden
     if (isShoppingListArray(parsedData)) {
       return parsedData;
@@ -99,7 +99,7 @@ Die Validierungsfunktionen können verwendet werden, um Benutzereingaben zu vali
 // Beispiel: Validierung eines Artikel-Formulars
 function validateForm(formData: Partial<ShoppingItem>): boolean {
   const validationResult = validateShoppingItem(formData);
-  
+
   if (!validationResult.isValid) {
     // Fehler im Formular anzeigen
     Object.entries(validationResult.errors).forEach(([field, error]) => {
@@ -107,7 +107,7 @@ function validateForm(formData: Partial<ShoppingItem>): boolean {
     });
     return false;
   }
-  
+
   return true;
 }
 ```
@@ -129,57 +129,57 @@ export function useItemForm() {
       quantity: 1,
       category: 'Sonstiges',
       checked: false,
-      price: 0
+      price: 0,
     },
     errors: {},
     touched: {},
-    isValid: false
+    isValid: false,
   });
-  
+
   function validateForm(): boolean {
     const result = validateShoppingItem(state.item);
     state.errors = result.errors;
     state.isValid = result.isValid;
     return result.isValid;
   }
-  
+
   function touchField(field: string): void {
     state.touched[field] = true;
     // Validieren, wenn das Feld berührt wurde
     validateForm();
   }
-  
+
   function submitForm(): boolean {
     // Alle Felder als berührt markieren
     Object.keys(state.item).forEach(key => {
       state.touched[key] = true;
     });
-    
+
     // Formular validieren
     const isValid = validateForm();
-    
+
     if (isValid) {
       state.status = 'submitting';
       // Hier Logik zum Speichern des Artikels
       return true;
     }
-    
+
     return false;
   }
-  
+
   // Berechneter Wert für die Anzeige von Feldfehlern
   const shouldShowError = computed(() => {
     return (field: string) => {
       return state.touched[field] && state.errors[field];
     };
   });
-  
+
   return {
     state,
     validateForm,
     touchField,
     submitForm,
-    shouldShowError
+    shouldShowError,
   };
 }
 ```
@@ -198,15 +198,15 @@ function loadFromStorage<T>(key: string): T | null {
     if (!value) {
       return null;
     }
-    
+
     const parsed = JSON.parse(value);
-    
+
     // Typspezifische Validierung
     if (key === 'shoppingLists' && !isShoppingListArray(parsed)) {
       console.error('Ungültiges Format der gespeicherten Listen');
       return null;
     }
-    
+
     return parsed as T;
   } catch (error) {
     console.error(`Fehler beim Laden aus dem localStorage (Schlüssel: ${key}):`, error);
@@ -233,7 +233,7 @@ function loadFromStorage<T>(key: string): T | null {
         {{ form.state.errors.name }}
       </div>
     </div>
-    
+
     <div class="form-group">
       <label for="quantity">Menge</label>
       <input
@@ -248,10 +248,8 @@ function loadFromStorage<T>(key: string): T | null {
         {{ form.state.errors.quantity }}
       </div>
     </div>
-    
-    <button type="submit" :disabled="!form.state.isValid">
-      Speichern
-    </button>
+
+    <button type="submit" :disabled="!form.state.isValid">Speichern</button>
   </form>
 </template>
 

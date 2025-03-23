@@ -29,9 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { APP_VERSION } from '~/services/updateService';
-
 import HeaderMenu from '~/components/layout/HeaderMenu.vue';
+import { APP_VERSION } from '~/services/updateService';
 
 // App-Version aus dem zentralen Service importieren
 const appVersion: string = APP_VERSION;

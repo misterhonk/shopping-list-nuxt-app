@@ -1,9 +1,9 @@
 import { ref, computed, watch } from 'vue';
-import type { Ref, ComputedRef } from 'vue';
 
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, ShoppingItem, Category } from '~/types/app-types';
+import type { Ref, ComputedRef } from 'vue';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useItemSuggestions');
@@ -101,7 +101,7 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSugg
 
     // Kategorie zählen
     let categoryId: string = 'sonstiges';
-    
+
     if (item.category) {
       if (typeof item.category === 'string') {
         categoryId = item.category;

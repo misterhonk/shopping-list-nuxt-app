@@ -28,10 +28,10 @@
         </button>
       </div>
     </div>
-    
+
     <!-- Update-Benachrichtigung für neue App-Versionen -->
     <UpdateNotification />
-    
+
     <!-- Version-Checker für Debugging -->
     <VersionChecker />
   </div>
@@ -39,6 +39,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+
 import { registerServiceWorkerUpdateHandler } from '~/services/updateService';
 
 // PWA Installation
@@ -53,7 +54,7 @@ onMounted(() => {
   setTimeout(() => {
     showPwaNotice.value = !isPwaInstalled && pwaNoticeDisabled !== 'true';
   }, 3000);
-  
+
   // Service Worker Update-Handler registrieren
   registerServiceWorkerUpdateHandler();
 });

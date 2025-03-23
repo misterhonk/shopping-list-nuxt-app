@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from '#app';
+import { defineNuxtPlugin } from 'nuxt/app';
 
 /**
  * Plugin zur Initialisierung von Pinia

@@ -5,9 +5,9 @@
  * in Formularen und anderen Eingabefeldern.
  */
 
-import type { ShoppingItem, ShoppingList } from '~/types/app-types';
-
 import { createLogger } from '~/utils/logger';
+
+import type { ShoppingItem, ShoppingList } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('formValidation');
@@ -102,7 +102,7 @@ export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationRes
   });
 
   if (nameError) {
-    errors['name'] = nameError;
+    errors.name = nameError;
   }
 
   // Menge validieren
@@ -114,12 +114,12 @@ export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationRes
   });
 
   if (quantityError) {
-    errors['quantity'] = quantityError;
+    errors.quantity = quantityError;
   }
 
   // Kategorie validieren
   if (!item.category) {
-    errors['category'] = 'Eine Kategorie muss ausgewählt werden';
+    errors.category = 'Eine Kategorie muss ausgewählt werden';
   }
 
   // Preis validieren (optional)
@@ -130,7 +130,7 @@ export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationRes
     });
 
     if (priceError) {
-      errors['price'] = priceError;
+      errors.price = priceError;
     }
   }
 
@@ -157,7 +157,7 @@ export function validateShoppingList(list: Partial<ShoppingList>): ValidationRes
   });
 
   if (nameError) {
-    errors['name'] = nameError;
+    errors.name = nameError;
   }
 
   // Artikel validieren (wenn vorhanden)
@@ -193,9 +193,9 @@ export function validateTextLength(
   const errors: Record<string, string> = {};
 
   if (text.length < minLength) {
-    errors['text'] = `Text muss mindestens ${minLength} Zeichen enthalten`;
+    errors.text = `Text muss mindestens ${minLength} Zeichen enthalten`;
   } else if (text.length > maxLength) {
-    errors['text'] = `Text darf höchstens ${maxLength} Zeichen enthalten`;
+    errors.text = `Text darf höchstens ${maxLength} Zeichen enthalten`;
   }
 
   return {
@@ -219,11 +219,11 @@ export function validateNumericValue(
   const errors: Record<string, string> = {};
 
   if (isNaN(value)) {
-    errors['value'] = 'Wert muss eine Zahl sein';
+    errors.value = 'Wert muss eine Zahl sein';
   } else if (value < min) {
-    errors['value'] = `Wert muss mindestens ${min} sein`;
+    errors.value = `Wert muss mindestens ${min} sein`;
   } else if (value > max) {
-    errors['value'] = `Wert darf höchstens ${max} sein`;
+    errors.value = `Wert darf höchstens ${max} sein`;
   }
 
   return {

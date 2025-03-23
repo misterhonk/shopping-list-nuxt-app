@@ -7,6 +7,7 @@ Der Debug-Version-Checker wurde überarbeitet, um die Benutzeroberfläche der Ap
 ## Problembeschreibung
 
 Der ursprüngliche Version-Checker hatte folgende Probleme:
+
 - Position in der oberen rechten Ecke störte wichtige UI-Elemente
 - Dauerhaft sichtbar und nahm zu viel Platz ein
 - Zeigte zu viele Informationen auf einmal
@@ -17,6 +18,7 @@ Der ursprüngliche Version-Checker hatte folgende Probleme:
 ### 1. Positionierung
 
 Der Version-Checker wurde von der oberen rechten Ecke (wo er die Hauptfunktionalität der App störte) in die untere rechte Ecke verschoben, direkt über dem Footer. Dies sorgt für:
+
 - Weniger Überlagerung der Hauptfunktionen
 - Besser integriertes Erscheinungsbild
 - Konsistente Platzierung mit anderen Benachrichtigungen
@@ -26,11 +28,13 @@ Neue Position: `fixed bottom-14 right-4`
 ### 2. Kollabierbare Ansicht
 
 Der Checker ist jetzt standardmäßig minimiert und kann bei Bedarf erweitert werden:
+
 - Im minimierten Zustand zeigt er nur "Debug-Info"
 - Ein Toggle-Button ermöglicht das Aus- und Einklappen
 - Die ausführlichen Informationen werden nur bei Bedarf angezeigt
 
 Implementierung:
+
 ```vue
 <div v-if="isExpanded">
   <p><strong>Version:</strong> {{ appVersion }}</p>
@@ -44,6 +48,7 @@ Implementierung:
 ### 3. Kompakteres Design
 
 Die Anzeige wurde kompakter gestaltet:
+
 - Kleinere Schriftgröße (`text-xs`)
 - Kürzere Bezeichnungen
 - Optimiertes Datumsformat (nur Datum, keine Uhrzeit)
@@ -52,6 +57,7 @@ Die Anzeige wurde kompakter gestaltet:
 ### 4. Verwendung der zentralen Versionsverwaltung
 
 Der Version-Checker verwendet jetzt die zentrale Version aus dem updateService, wodurch:
+
 - Konsistenz in der gesamten Anwendung gewährleistet wird
 - Bei Updates nur eine Stelle geändert werden muss
 - Die korrekte aktuelle Version angezeigt wird

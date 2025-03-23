@@ -27,13 +27,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Logger initialisieren
 import { onMounted } from 'vue';
 
 import CategoryManager from '~/components/categories/CategoryManager.vue';
-
-import { createLogger } from '../utils/logger';
+import { createLogger } from '~/utils/logger';
 
 const logger = createLogger('categories');
 

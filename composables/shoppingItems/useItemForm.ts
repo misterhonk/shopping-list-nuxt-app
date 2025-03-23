@@ -85,6 +85,6 @@ export function useItemForm(): IUseItemForm {
     },
     showItemForm,
     hideItemForm,
-    closeItemForm
+    closeItemForm,
   };
 }

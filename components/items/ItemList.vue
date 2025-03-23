@@ -44,16 +44,20 @@
 import { computed, onMounted } from 'vue';
 
 import { useCategoryStore } from '~/stores/category';
-import type { ShoppingItem, Category } from '~/types/app-types';
 
 import EmptyState from './EmptyState.vue';
 import ItemListItem from './ItemListItem.vue';
 
-const props = withDefaults(defineProps<{
-  items: ShoppingItem[];
-}>(), {
-  items: () => []
-});
+import type { ShoppingItem } from '~/types/app-types';
+
+const props = withDefaults(
+  defineProps<{
+    items: ShoppingItem[];
+  }>(),
+  {
+    items: () => [],
+  }
+);
 
 const emit = defineEmits<{
   (e: 'toggle', item: ShoppingItem): void;
@@ -91,8 +95,8 @@ const groupedItems = computed<GroupedItems>(() => {
   const groups: GroupedItems = {};
 
   props.items.forEach(item => {
-    const categoryId = item.category?.id ?? 'sonstiges';
-    const categoryName = item.category?.name ?? 'Sonstiges';
+    const categoryId = item.category.id ?? 'sonstiges';
+    const categoryName = item.category.name ?? 'Sonstiges';
 
     if (!groups[categoryId]) {
       groups[categoryId] = {

@@ -268,54 +268,49 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 
-const props = defineProps({
-  listName: {
-    type: String,
-    required: true,
-  },
-  templateId: {
-    type: String,
-    default: 'supermarket',
-  },
-  templates: {
-    type: Array,
-    default: () => [],
-  },
-  hasCheckedItems: {
-    type: Boolean,
-    default: false,
-  },
-  isFavorite: {
-    type: Boolean,
-    default: false,
-  },
-});
+import type { CategoryTemplate } from '~/types/app-types';
 
-const emit = defineEmits([
-  'add-item',
-  'clear-checked',
-  'update:name',
-  'update:template-id',
-  'update:favorite',
-  'export-list',
-  'import-list',
-]);
+const props = withDefaults(
+  defineProps<{
+    listName: string;
+    templateId: string;
+    templates: CategoryTemplate[];
+    hasCheckedItems: boolean;
+    isFavorite: boolean;
+  }>(),
+  {
+    templateId: 'supermarket',
+    templates: () => [],
+    hasCheckedItems: false,
+    isFavorite: false,
+  }
+);
+
+const emit = defineEmits<{
+  (e: 'add-item'): void;
+  (e: 'clear-checked'): void;
+  (e: 'update:name', name: string): void;
+  (e: 'update:template-id', templateId: string): void;
+  (e: 'update:favorite', isFavorite: boolean): void;
+  (e: 'export-list'): void;
+  (e: 'import-list'): void;
+}>();
 
 // Menüstatus
-const isMenuOpen = ref(false);
+const isMenuOpen = ref<boolean>(false);
 
 // Umbenennungs-Dialog
-const isRenaming = ref(false);
-const newListName = ref(props.listName);
-const renameInput = ref(null);
+const isRenaming = ref<boolean>(false);
+const newListName = ref<string>(props.listName);
+const renameInput = ref<HTMLInputElement | null>(null);
 
 // Menü öffnen/schließen beim Klick außerhalb
-const handleClickOutside = event => {
+const handleClickOutside = (event: MouseEvent): void => {
   // Prüfen, ob der Klick außerhalb des Menüs war
-  if (isMenuOpen.value && !event.target.closest('.relative')) {
+  if (isMenuOpen.value && !(event.target as HTMLElement).closest('.relative')) {
     isMenuOpen.value = false;
   }
 };
@@ -326,7 +321,7 @@ onMounted(() => {
 });
 
 // Umbenennungs-Dialog öffnen
-const openRenameDialog = () => {
+const openRenameDialog = (): void => {
   // Menü schließen
   isMenuOpen.value = false;
 
@@ -343,7 +338,7 @@ const openRenameDialog = () => {
 };
 
 // Neuen Namen speichern
-const saveNewName = () => {
+const saveNewName = (): void => {
   // Prüfen, ob der Name nicht leer ist
   if (newListName.value.trim() !== '') {
     emit('update:name', newListName.value.trim());
@@ -354,35 +349,35 @@ const saveNewName = () => {
 };
 
 // Umbenennung abbrechen
-const cancelRename = () => {
+const cancelRename = (): void => {
   isRenaming.value = false;
 };
 
 // Vorlage aktualisieren
-const updateTemplateId = id => {
+const updateTemplateId = (id: string): void => {
   emit('update:template-id', id);
   isMenuOpen.value = false;
 };
 
 // Favoriten-Status umschalten
-const toggleFavorite = () => {
+const toggleFavorite = (): void => {
   emit('update:favorite', !props.isFavorite);
 };
 
 // Abgehakte Artikel löschen
-const clearChecked = () => {
+const clearChecked = (): void => {
   isMenuOpen.value = false;
   emit('clear-checked');
 };
 
 // Liste exportieren
-const exportList = () => {
+const exportList = (): void => {
   isMenuOpen.value = false;
   emit('export-list');
 };
 
 // Liste importieren
-const importList = () => {
+const importList = (): void => {
   isMenuOpen.value = false;
   emit('import-list');
 };

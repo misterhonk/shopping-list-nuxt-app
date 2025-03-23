@@ -1,31 +1,3 @@
-<script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useCategoryStore } from '~/stores/category';
-import CategorySortingList from '~/components/category-sorting/CategorySortingList.vue';
-
-// Store-Instanz erzeugen
-const categoryStore = useCategoryStore();
-
-// Lokale Variablen
-const isLoading = ref(true);
-
-// Computed-Eigenschaften
-const activeTemplate = computed(() => categoryStore.currentTemplate);
-const isCustomSortActive = computed(() => categoryStore.isCustomSortActive);
-
-// Templates laden
-onMounted(() => {
-  // Store aus dem lokalen Speicher laden
-  categoryStore.loadFromLocalStorage();
-  isLoading.value = false;
-});
-
-// Event-Handler für Änderungen der Sortierung
-const handleSortingChanged = () => {
-  // Optional: Feedback an den Benutzer geben
-};
-</script>
-
 <template>
   <div class="page-container">
     <div class="container mx-auto px-4 py-6">
@@ -65,7 +37,11 @@ const handleSortingChanged = () => {
                 </div>
                 <div class="ml-3">
                   <p class="text-sm text-blue-700 dark:text-blue-300">
-                    {{ isCustomSortActive ? 'Im individuellen Sortiermodus können Sie die Reihenfolge per Drag & Drop anpassen.' : 'Aktuell wird die Standard-Reihenfolge verwendet. Wechseln Sie zum individuellen Sortiermodus, um Änderungen vorzunehmen.' }}
+                    {{
+                      isCustomSortActive
+                        ? 'Im individuellen Sortiermodus können Sie die Reihenfolge per Drag & Drop anpassen.'
+                        : 'Aktuell wird die Standard-Reihenfolge verwendet. Wechseln Sie zum individuellen Sortiermodus, um Änderungen vorzunehmen.'
+                    }}
                   </p>
                 </div>
               </div>
@@ -83,18 +59,43 @@ const handleSortingChanged = () => {
             <li>
               Die Sortierung wirkt sich auf die Anzeige der Kategorien in Ihrer Einkaufsliste aus.
             </li>
-            <li>
-              Sie können zwischen Standard-Laufweg und individueller Sortierung wechseln.
-            </li>
+            <li>Sie können zwischen Standard-Laufweg und individueller Sortierung wechseln.</li>
             <li>
               Der Standard-Laufweg entspricht dem typischen Aufbau des ausgewählten Markttyps.
             </li>
-            <li>
-              Die individuelle Sortierung bleibt auch nach Schließen der App erhalten.
-            </li>
+            <li>Die individuelle Sortierung bleibt auch nach Schließen der App erhalten.</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
+
+import CategorySortingList from '~/components/category-sorting/CategorySortingList.vue';
+import { useCategoryStore } from '~/stores/category';
+
+// Store-Instanz erzeugen
+const categoryStore = useCategoryStore();
+
+// Lokale Variablen
+const isLoading = ref(true);
+
+// Computed-Eigenschaften
+const activeTemplate = computed(() => categoryStore.currentTemplate);
+const isCustomSortActive = computed(() => categoryStore.isCustomSortActive);
+
+// Templates laden
+onMounted(() => {
+  // Store aus dem lokalen Speicher laden
+  categoryStore.loadFromLocalStorage();
+  isLoading.value = false;
+});
+
+// Event-Handler für Änderungen der Sortierung
+const handleSortingChanged = (): void => {
+  // Optional: Feedback an den Benutzer geben
+};
+</script>

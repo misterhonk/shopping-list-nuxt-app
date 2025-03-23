@@ -7,21 +7,25 @@ Das Phase 2 Refactoring der Shopping-List-App wurde am 20. März 2025 erfolgreic
 ## Wichtigste Errungenschaften
 
 ### 1. Vereinfachung komplexer Funktionen
+
 - **Basisfunktionen für Listenoperationen**: Gemeinsame Operationen wurden in zentrale Hilfsfunktionen extrahiert, um Code-Duplizierung zu reduzieren und die Konsistenz zu verbessern.
 - **Verbesserte Fehlerbehandlung**: Durchgängige Implementierung frühzeitiger Rückgaben und robuster Fehlerbehandlung.
 - **Immutable Updates**: Konsistente Anwendung von Immutability-Prinzipien für vorhersehbares Verhalten.
 
 ### 2. Verbesserte TypeScript-Integration
+
 - **Strengere TypeScript-Konfiguration**: Aktivierung zusätzlicher Compiler-Optionen für höhere Typsicherheit.
 - **Erweiterte ESLint-Regeln**: Konfiguration spezifischer TypeScript-Regeln für konsistenten Code.
 - **Einheitliche Import-Strukturen**: Standardisierung von Typ-Imports und Import-Ordnung.
 
 ### 3. Umfassende Interface-Definitionen
+
 - **UI-Status-Interfaces**: Typisierung von UI-Zuständen für bessere IDE-Unterstützung und weniger Fehler.
 - **Validierungs-Utilities**: Type Guards und Validierungsfunktionen für robuste Datenvalidierung.
 - **Zentrale Typexporte**: Einheitlicher Importpunkt für alle Typdefinitionen.
 
 ### 4. Service-orientierte Architektur
+
 - **Service-Layer**: Geschäftslogik wurde aus UI-Komponenten in Services extrahiert.
 - **Repository-Pattern**: Abstraktion des Datenzugriffs für bessere Testbarkeit und potenzielle Backend-Anbindung.
 - **Dependency Injection**: Zentrale Initialisierung von Services mit klaren Abhängigkeiten.
@@ -29,38 +33,43 @@ Das Phase 2 Refactoring der Shopping-List-App wurde am 20. März 2025 erfolgreic
 ## Vorteile der neuen Architektur
 
 ### Verbesserte Wartbarkeit
+
 - **Klare Zuständigkeitstrennung**: UI-Logik in Composables, Geschäftslogik in Services, Datenzugriff in Repositories.
 - **Konsistente Fehlerbehandlung**: Einheitliche Fehlerbehandlung mit zentralem Logging.
 - **Reduzierte Duplizierung**: Gemeinsame Funktionalität ist nun in zentralen Orten definiert.
 
 ### Erhöhte Testbarkeit
+
 - **Isolierte Services**: Geschäftslogik kann unabhängig von der UI getestet werden.
 - **Mock-fähige Repositories**: Datenzugriffsschicht kann für Tests einfach gemockt werden.
 - **Klare Abhängigkeiten**: Services deklarieren explizit ihre Abhängigkeiten.
 
 ### Bessere Erweiterbarkeit
+
 - **Service-orientierte Struktur**: Neue Features können als eigenständige Services implementiert werden.
 - **Klare API-Grenzen**: Services bieten klar definierte Schnittstellen für die Interaktion.
 - **Flexible Datenzugriffsschicht**: Einfacher Austausch der Storage-Implementierung möglich.
 
 ## Erreichte Meilensteine
 
-| Aufgabenbereich | Status | Wichtigste Änderungen |
-|-----------------|--------|------------------------|
-| Vereinfachung komplexer Funktionen | ✅ Abgeschlossen | Basisfunktionen in `listOperations.ts`, refaktorierte Composables |
-| TypeScript strenger konfigurieren | ✅ Abgeschlossen | Strikte Compiler-Optionen, erweiterte ESLint-Regeln |
-| Interfaces für alle Datenstrukturen | ✅ Abgeschlossen | UI-Status-Interfaces, Validierungs-Utilities |
-| Core-Funktionalität klarer isolieren | ✅ Abgeschlossen | Service-Layer, Repository-Pattern, umgestellte Composables |
+| Aufgabenbereich                      | Status           | Wichtigste Änderungen                                             |
+| ------------------------------------ | ---------------- | ----------------------------------------------------------------- |
+| Vereinfachung komplexer Funktionen   | ✅ Abgeschlossen | Basisfunktionen in `listOperations.ts`, refaktorierte Composables |
+| TypeScript strenger konfigurieren    | ✅ Abgeschlossen | Strikte Compiler-Optionen, erweiterte ESLint-Regeln               |
+| Interfaces für alle Datenstrukturen  | ✅ Abgeschlossen | UI-Status-Interfaces, Validierungs-Utilities                      |
+| Core-Funktionalität klarer isolieren | ✅ Abgeschlossen | Service-Layer, Repository-Pattern, umgestellte Composables        |
 
 ## Code-Qualitätsverbesserungen
 
 ### Vor dem Refactoring:
+
 - Komplexe, duplizierte Logik in Composables
 - Direkte Abhängigkeit zu localStorage
 - Vermischung von UI-Logik und Geschäftslogik
 - Uneinheitliche Fehlerbehandlung
 
 ### Nach dem Refactoring:
+
 - Klare Trennung von Verantwortlichkeiten
 - Typsichere Interfaces für alle Komponenten
 - Zentralisierte, wiederverwendbare Geschäftslogik

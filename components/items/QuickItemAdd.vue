@@ -128,22 +128,26 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+
 import type { Category } from '~/types/app-types';
 
 type CategoryInput = Category | string;
 
-const props = withDefaults(defineProps<{
-  categories: CategoryInput[];
-}>(), {
-  categories: () => [
-    'Obst & Gemüse',
-    'Fleisch & Fisch',
-    'Backwaren',
-    'Milchprodukte',
-    'Getränke',
-    'Sonstiges',
-  ]
-});
+const props = withDefaults(
+  defineProps<{
+    categories: CategoryInput[];
+  }>(),
+  {
+    categories: () => [
+      'Obst & Gemüse',
+      'Fleisch & Fisch',
+      'Backwaren',
+      'Milchprodukte',
+      'Getränke',
+      'Sonstiges',
+    ],
+  }
+);
 
 interface NewItem {
   name: string;
@@ -170,7 +174,7 @@ const nameInput = ref<HTMLInputElement | null>(null);
 const normalizedCategories = computed(() =>
   props.categories.map(category => {
     // Wenn es bereits ein Objekt mit id und name ist
-    if (typeof category === 'object' && category?.id && category.name) {
+    if (typeof category === 'object' && category.id && category.name) {
       return category;
     }
     // Wenn es ein String ist, konvertiere es zu einem Objekt

@@ -13,9 +13,9 @@ interface CategoryStore {
 /**
  * Pinia-Plugin zur Synchronisierung von Kategorieänderungen mit Einkaufselementen
  */
-export function createCategorySyncPlugin() {
+export function createCategorySyncPlugin(): void {
   // Für die Kommunikation zwischen Store und Komponenten
-  const categoryUpdateEvents: Array<(categoryId: string, newName: string) => void> = [];
+  const categoryUpdateEvents: ((categoryId: string, newName: string) => void)[] = [];
 
   // Event-Bus für Kategorieänderungen
   const categoryEventBus: CategoryEventBus = {

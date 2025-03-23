@@ -91,10 +91,10 @@ export const groupItemsByCategory = (
       grouped[categoryName].push(item);
     } else {
       // Wenn die Kategorie nicht mehr existiert, zum Punkt "Sonstiges" hinzufügen
-      if (!grouped['Sonstiges']) {
-        grouped['Sonstiges'] = [];
+      if (!grouped.Sonstiges) {
+        grouped.Sonstiges = [];
       }
-      grouped['Sonstiges'].push(item);
+      grouped.Sonstiges.push(item);
     }
   });
 

@@ -54,16 +54,19 @@ Die folgenden Git-Hooks sind mit Husky konfiguriert:
 ### pre-commit
 
 Führt `lint-staged` aus, das:
+
 - ESLint zur Fehlererkennung und -behebung für JS/TS/Vue-Dateien ausführt
 - Prettier zur Formatierung für Code-Dateien verwendet
 
 ### commit-msg
 
 Überprüft, ob die Commit-Nachricht dem Conventional Commits Standard folgt:
+
 - Format: `<type>(<optional scope>): <description>`
 - Typen: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
 
 Beispiele:
+
 - `feat(ui): Füge neue Sidebar-Komponente hinzu`
 - `fix: Behebe Fehler bei der Kategoriesortierung`
 - `docs: Aktualisiere README mit Installationsanleitung`
@@ -71,6 +74,7 @@ Beispiele:
 ### pre-push
 
 Führt vor dem Push alle Validierungen aus:
+
 - ESLint-Prüfung
 - Prettier-Formatkontrolle
 - TypeScript-Typüberprüfung
@@ -90,6 +94,7 @@ Die GitHub Actions CI-Pipeline führt bei jedem Push oder Pull Request folgende 
 ### ESLint
 
 Die ESLint-Konfiguration beinhaltet:
+
 - TypeScript-Integration
 - Vue 3 spezifische Regeln
 - Import-Regeln für konsistente Modul-Importe
@@ -99,6 +104,7 @@ Die ESLint-Konfiguration beinhaltet:
 ### Prettier
 
 Prettier ist für konsistente Formatierung konfiguriert:
+
 - Einzelne Anführungszeichen
 - 2-Zeichen-Einrückung
 - Zeilenbreite von 100 Zeichen

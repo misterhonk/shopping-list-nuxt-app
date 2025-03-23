@@ -51,6 +51,6 @@
 
 <script setup lang="ts">
 const emit = defineEmits<{
-  (e: 'add'): void
+  (e: 'add'): void;
 }>();
 </script>

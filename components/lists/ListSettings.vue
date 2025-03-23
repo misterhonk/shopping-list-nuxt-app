@@ -46,15 +46,19 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+
 import type { CategoryTemplate } from '~/types/app-types';
 
-const props = withDefaults(defineProps<{
-  templateId: string;
-  templates: CategoryTemplate[];
-}>(), {
-  templateId: 'supermarket',
-  templates: () => [],
-});
+const props = withDefaults(
+  defineProps<{
+    templateId: string;
+    templates: CategoryTemplate[];
+  }>(),
+  {
+    templateId: 'supermarket',
+    templates: () => [],
+  }
+);
 
 const emit = defineEmits<{
   (e: 'update:templateId', templateId: string): void;

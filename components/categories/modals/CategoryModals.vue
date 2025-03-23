@@ -220,83 +220,119 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
+import type { Category, CategoryTemplate } from '~/types/app-types';
+
+interface NewTemplate {
+  name: string;
+  description: string;
+  baseTemplateId: string;
+}
+
+interface EditTemplate {
+  name: string;
+  description: string;
+}
+
 // Eigenschaften, die von außen übergeben werden
-const props = defineProps({
-  newCategoryModal: Boolean,
-  editCategoryModal: Boolean,
-  newTemplateModal: Boolean,
-  editTemplateModal: Boolean,
-  deleteTemplateModal: Boolean,
-  newCategoryName: String,
-  editCategoryName: String,
-  newTemplate: Object,
-  editTemplate: Object,
-  currentEditingCategory: Object,
-  currentTemplate: Object,
-  templatesList: Array,
-});
+const props = withDefaults(
+  defineProps<{
+    newCategoryModal: boolean;
+    editCategoryModal: boolean;
+    newTemplateModal: boolean;
+    editTemplateModal: boolean;
+    deleteTemplateModal: boolean;
+    newCategoryName: string;
+    editCategoryName: string;
+    newTemplate: NewTemplate;
+    editTemplate: EditTemplate;
+    currentEditingCategory: Category | null;
+    currentTemplate: CategoryTemplate;
+    templatesList: CategoryTemplate[];
+  }>(),
+  {
+    newCategoryName: '',
+    editCategoryName: '',
+    newTemplate: () => ({ name: '', description: '', baseTemplateId: '' }),
+    editTemplate: () => ({ name: '', description: '' }),
+    currentEditingCategory: null,
+    currentTemplate: () => ({ id: '', name: '', categories: [] }),
+    templatesList: () => [],
+  }
+);
 
 // Emits für Ereignisse
-const emit = defineEmits([
-  'update:newCategoryModal',
-  'update:editCategoryModal',
-  'update:newTemplateModal',
-  'update:editTemplateModal',
-  'update:deleteTemplateModal',
-  'update:newCategoryName',
-  'update:editCategoryName',
-  'update:newTemplate',
-  'update:editTemplate',
-  'update:currentEditingCategory',
-  'addCategory',
-  'saveEditedCategory',
-  'createTemplate',
-  'saveEditedTemplate',
-  'deleteTemplate',
-]);
+const emit = defineEmits<{
+  (e: 'update:newCategoryModal', value: boolean): void;
+  (e: 'update:editCategoryModal', value: boolean): void;
+  (e: 'update:newTemplateModal', value: boolean): void;
+  (e: 'update:editTemplateModal', value: boolean): void;
+  (e: 'update:deleteTemplateModal', value: boolean): void;
+  (e: 'update:newCategoryName', value: string): void;
+  (e: 'update:editCategoryName', value: string): void;
+  (e: 'update:newTemplate', value: NewTemplate): void;
+  (e: 'update:editTemplate', value: EditTemplate): void;
+  (e: 'update:currentEditingCategory', value: Category | null): void;
+  (e: 'addCategory'): void;
+  (e: 'saveEditedCategory'): void;
+  (e: 'createTemplate'): void;
+  (e: 'saveEditedTemplate'): void;
+  (e: 'deleteTemplate'): void;
+}>();
 
 // Lokale berechnete Eigenschaften mit Zwei-Wege-Bindung
-const localNewCategoryName = computed({
+const localNewCategoryName = computed<{
+  get: () => string;
+  set: (value: string) => void;
+}>({
   get: () => props.newCategoryName,
-  set: (value) => emit('update:newCategoryName', value),
+  set: value => emit('update:newCategoryName', value),
 });
 
-const localEditCategoryName = computed({
+const localEditCategoryName = computed<{
+  get: () => string;
+  set: (value: string) => void;
+}>({
   get: () => props.editCategoryName,
-  set: (value) => emit('update:editCategoryName', value),
+  set: value => emit('update:editCategoryName', value),
 });
 
-const localNewTemplate = computed({
+const localNewTemplate = computed<{
+  get: () => NewTemplate;
+  set: (value: NewTemplate) => void;
+}>({
   get: () => props.newTemplate,
-  set: (value) => emit('update:newTemplate', value),
+  set: value => emit('update:newTemplate', value),
 });
 
-const localEditTemplate = computed({
+const localEditTemplate = computed<{
+  get: () => EditTemplate;
+  set: (value: EditTemplate) => void;
+}>({
   get: () => props.editTemplate,
-  set: (value) => emit('update:editTemplate', value),
+  set: value => emit('update:editTemplate', value),
 });
 
 // Hilfsmethoden für die Aktualisierung der Modals
-const updateNewCategoryModal = (value) => {
+const updateNewCategoryModal = (value: boolean): void => {
   emit('update:newCategoryModal', value);
 };
 
-const updateEditCategoryModal = (value) => {
+const updateEditCategoryModal = (value: boolean): void => {
   emit('update:editCategoryModal', value);
 };
 
-const updateNewTemplateModal = (value) => {
+const updateNewTemplateModal = (value: boolean): void => {
   emit('update:newTemplateModal', value);
 };
 
-const updateEditTemplateModal = (value) => {
+const updateEditTemplateModal = (value: boolean): void => {
   emit('update:editTemplateModal', value);
 };
 
-const updateDeleteTemplateModal = (value) => {
+const updateDeleteTemplateModal = (value: boolean): void => {
   emit('update:deleteTemplateModal', value);
 };
 </script>

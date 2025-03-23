@@ -79,9 +79,10 @@
 <script setup lang="ts">
 // Logger initialisieren
 import { reactive, computed, ref, onMounted } from 'vue';
-import type { Category, ShoppingItem } from '~/types/app-types';
 
 import { createLogger } from '~/utils/logger';
+
+import type { Category } from '~/types/app-types';
 
 const logger = createLogger('ItemCreationForm');
 
@@ -93,20 +94,23 @@ interface NewItem {
   price: number;
 }
 
-const props = withDefaults(defineProps<{
-  categories: CategoryInput[];
-  allLists: any[];
-}>(), {
-  categories: () => [
-    'Obst & Gemüse',
-    'Fleisch & Fisch',
-    'Backwaren',
-    'Milchprodukte',
-    'Getränke',
-    'Sonstiges',
-  ],
-  allLists: () => [],
-});
+const props = withDefaults(
+  defineProps<{
+    categories: CategoryInput[];
+    allLists: any[];
+  }>(),
+  {
+    categories: () => [
+      'Obst & Gemüse',
+      'Fleisch & Fisch',
+      'Backwaren',
+      'Milchprodukte',
+      'Getränke',
+      'Sonstiges',
+    ],
+    allLists: () => [],
+  }
+);
 
 const emit = defineEmits<{
   (e: 'add', item: NewItem): void;
@@ -116,7 +120,7 @@ const emit = defineEmits<{
 const normalizedCategories = computed<Category[]>(() =>
   props.categories.map(category => {
     // Wenn es bereits ein Objekt mit id und name ist
-    if (typeof category === 'object' && category?.id && category.name) {
+    if (typeof category === 'object' && category.id && category.name) {
       return category;
     }
     // Wenn es ein String ist, konvertiere es zu einem Objekt
@@ -157,8 +161,8 @@ interface ItemHistory {
     count: number;
     lastUsed: string | null;
     categories: Record<string, number>;
-    prices: Array<{price: number, date: string}>;
-  }
+    prices: { price: number; date: string }[];
+  };
 }
 
 const onSubmit = (): void => {

@@ -1,7 +1,8 @@
 import { reactive, ref, computed, onMounted, watch } from 'vue';
 
-import { createLogger } from '~/utils/logger';
 import { initializeServices } from '~/services';
+import { createLogger } from '~/utils/logger';
+
 import type { ShoppingItem, Category } from './types';
 import type { Ref, ComputedRef } from 'vue';
 
@@ -14,17 +15,17 @@ const logger = createLogger('useShoppingItems');
 /**
  * Composable für die Verwaltung von Artikeln in Einkaufslisten
  * Bietet Funktionen zum Hinzufügen, Bearbeiten, Löschen und Markieren von Artikeln
- * 
+ *
  * @param providedCurrentListId - Optional: Eine Ref auf die aktuelle Listen-ID von außen
  */
-export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
+export function useShoppingItems(providedCurrentListId?: Ref<string | null>): void {
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
   const itemNameInput = ref<HTMLInputElement | null>(null);
-  
+
   // Entweder providedCurrentListId verwenden oder eine neue Ref erstellen
-  const currentListId = providedCurrentListId || ref<string | null>(null);
-  
+  const currentListId = providedCurrentListId ?? ref<string | null>(null);
+
   const items = ref<ShoppingItem[]>([]);
 
   // Neues Item Formular
@@ -61,17 +62,17 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
     // Get all items from all lists
     const allLists = shoppingListService.getAllLists();
     const allItemsFromAllLists: ShoppingItem[] = [];
-    
+
     allLists.forEach(list => {
       // Get items from this list and make sure they have the listId
       const listItems = list.items.map(item => ({
         ...item,
-        listId: list.id
+        listId: list.id,
       }));
-      
+
       allItemsFromAllLists.push(...listItems);
     });
-    
+
     items.value = allItemsFromAllLists;
   };
 
@@ -121,9 +122,9 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
       logger.error('Keine Liste ausgewählt.');
       return null;
     }
-    
+
     // Wenn itemData übergeben wurde, verwenden wir das, ansonsten das newItem
-    const itemToAdd = itemData || newItem;
+    const itemToAdd = itemData ?? newItem;
 
     // Artikel hinzufügen
     const addedItem = itemService.addItem(currentListId.value, itemToAdd);
@@ -131,7 +132,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
     // Wenn erfolgreich, Artikel aktualisieren
     if (addedItem) {
       refreshItems();
-      
+
       // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
       if (!itemData) {
         resetItemForm();
@@ -168,25 +169,25 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
   const removeItem = (item: ShoppingItem | string): boolean => {
     // Item-Objekt und Liste-ID extrahieren
     const itemObj = typeof item === 'object' ? item : null;
-    const listId = itemObj?.listId || currentListId.value;
-    
+    const listId = itemObj?.listId ?? currentListId.value;
+
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!listId) {
       logger.error('Keine Liste ausgewählt.');
       return false;
     }
-    
+
     // Item-ID aus dem Parameter extrahieren
     const itemId = typeof item === 'object' ? item.id : item;
-    
+
     // Item entfernen
     const success = itemService.removeItem(listId, itemId);
-    
+
     // Bei Erfolg Artikel aktualisieren
     if (success) {
       refreshItems();
     }
-    
+
     return success;
   };
 
@@ -198,26 +199,26 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
   const toggleItemChecked = (item: ShoppingItem | string): boolean => {
     // Item-Objekt und Liste-ID extrahieren
     const itemObj = typeof item === 'object' ? item : null;
-    const listId = itemObj?.listId || currentListId.value;
-    
+    const listId = itemObj?.listId ?? currentListId.value;
+
     // Wenn keine Liste ausgewählt ist und das Item kein listId hat, frühzeitig beenden
     if (!listId) {
       logger.error('Keine Liste ausgewählt oder keine listId im Item gefunden.');
       return false;
     }
-    
+
     // Item-ID aus dem Parameter extrahieren
     const itemId = typeof item === 'object' ? item.id : item;
-    
+
     // Status ändern
     const updatedItem = itemService.toggleItemChecked(listId, itemId);
-    
+
     // Bei Erfolg Artikel aktualisieren
     const success = updatedItem !== null;
     if (success) {
       refreshItems();
     }
-    
+
     return success;
   };
 
@@ -231,15 +232,15 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
       logger.error('Keine Liste ausgewählt.');
       return false;
     }
-    
+
     // Erledigte Artikel entfernen
     const success = itemService.clearCheckedItems(currentListId.value);
-    
+
     // Bei Erfolg Artikel aktualisieren
     if (success) {
       refreshItems();
     }
-    
+
     return success;
   };
 
@@ -298,7 +299,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
    * @param newName - Der neue Name für die Kategorie
    */
   const updateCategoryInItems = (categoryId: string, newName: string): void => {
-    if (!categoryId || !newName) {
+    if (!categoryId ?? !newName) {
       return;
     }
 
@@ -310,20 +311,20 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>) {
       for (const item of list.items) {
         // Prüfen, ob das Item diese Kategorie verwendet
         let needsUpdate = false;
-        
+
         if (typeof item.category === 'object' && item.category && item.category.id === categoryId) {
           needsUpdate = true;
         } else if (typeof item.category === 'string' && item.category === categoryId) {
           needsUpdate = true;
         }
-        
+
         if (needsUpdate) {
           // Item aktualisieren
           itemService.updateItem(list.id, item.id, {
             category: {
               id: categoryId,
               name: newName,
-            }
+            },
           });
           hasChanges = true;
         }

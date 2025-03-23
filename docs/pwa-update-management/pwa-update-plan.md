@@ -5,11 +5,13 @@
 Die Shopping-List-App zeigt auf einem Smartphone eine veraltete Version an, selbst nach dem Aktualisieren der Browser-Seite. Dieses Problem ist typisch für Progressive Web Apps (PWAs) und kann durch verschiedene Caching-Mechanismen verursacht werden, die für die Offline-Funktionalität und Performance der App notwendig sind.
 
 ### Symptome des Problems:
+
 - Veraltete Version der App wird auf dem Smartphone angezeigt
 - Aktualisierung des Browsers lädt nicht die neue Version
 - Änderungen an der App sind nicht sichtbar
 
 ### Technischer Hintergrund:
+
 PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um offline zu funktionieren und schneller zu laden. Diese Mechanismen können jedoch dazu führen, dass Updates nicht sofort erkannt und angewendet werden.
 
 ## Mögliche Ursachen
@@ -25,11 +27,13 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
 ### Phase 1: Diagnostik
 
 1. **Überprüfung der aktuellen PWA-Konfiguration**:
+
    - Analyse der Nuxt PWA-Modulkonfiguration
    - Überprüfung der Service Worker Einstellungen
    - Untersuchung der aktuellen Cache-Strategien
 
 2. **Service Worker Analyse**:
+
    - Überprüfung der Service Worker Registrierung
    - Analyse des Update-Verhaltens
    - Identifizierung von Verbesserungsmöglichkeiten
@@ -42,6 +46,7 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
 ### Phase 2: Implementierung
 
 1. **Service Worker Optimierung**:
+
    - Implementierung von `skipWaiting()` und `clients.claim()`
    - Einrichtung eines Update-Erkennungsmechanismus
    - Verbesserung der Workbox-Konfiguration
@@ -58,6 +63,7 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
    ```
 
 2. **App-Version-Management**:
+
    - Einführung einer expliziten App-Version
    - Speicherung und Vergleich der Versionen
    - Implementierung einer Update-Erkennung
@@ -67,22 +73,23 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
    export const checkForUpdates = async () => {
      const currentVersion = '2.0.1'; // Aktuelle Version der App
      const storedVersion = localStorage.getItem('app_version');
-     
+
      if (storedVersion !== currentVersion) {
        // Update erkannt
        localStorage.setItem('app_version', currentVersion);
        return {
          hasUpdate: true,
          oldVersion: storedVersion,
-         newVersion: currentVersion
+         newVersion: currentVersion,
        };
      }
-     
+
      return { hasUpdate: false };
    };
    ```
 
 3. **Cache-Busting für Assets**:
+
    - Sicherstellen von Content-Hashes für statische Assets
    - Konfiguration von optimalen Cache-Headern
    - Überprüfung der Nuxt-Build-Einstellungen
@@ -92,15 +99,16 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
    export default {
      build: {
        filenames: {
-         app: ({ isDev }) => isDev ? '[name].js' : '[name].[contenthash].js',
-         chunk: ({ isDev }) => isDev ? '[name].js' : '[name].[contenthash].js',
-         css: ({ isDev }) => isDev ? '[name].css' : '[name].[contenthash].css',
-       }
-     }
+         app: ({ isDev }) => (isDev ? '[name].js' : '[name].[contenthash].js'),
+         chunk: ({ isDev }) => (isDev ? '[name].js' : '[name].[contenthash].js'),
+         css: ({ isDev }) => (isDev ? '[name].css' : '[name].[contenthash].css'),
+       },
+     },
    };
    ```
 
 4. **PWA-Manifest Optimierung**:
+
    - Update des Manifests mit neuer Version
    - Optimierung der Cache-Kontrolle für das Manifest
 
@@ -114,12 +122,13 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
          version: '2.0.1', // Aktuelle Version
          background_color: '#ffffff',
          // weitere Eigenschaften...
-       }
-     }
+       },
+     },
    };
    ```
 
 5. **Update-Benachrichtigung für Benutzer**:
+
    - Implementierung einer Benutzeroberfläche für Update-Benachrichtigungen
    - Erstellung eines Reload-Mechanismus
 
@@ -152,6 +161,7 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
 ### Phase 3: Nuxt PWA-Modul Konfiguration
 
 1. **Workbox-Strategien anpassen**:
+
    - Optimierung der Caching-Strategien
    - Konfiguration der Update-Frequenz
 
@@ -171,9 +181,9 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
                cacheName: 'google-fonts',
                expiration: {
                  maxEntries: 10,
-                 maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Tage
-               }
-             }
+                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Tage
+               },
+             },
            },
            {
              urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/,
@@ -182,9 +192,9 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
                cacheName: 'images',
                expiration: {
                  maxEntries: 60,
-                 maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Tage
-               }
-             }
+                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Tage
+               },
+             },
            },
            {
              urlPattern: /\.(?:js|css)$/,
@@ -193,9 +203,9 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
                cacheName: 'static-resources',
                expiration: {
                  maxEntries: 60,
-                 maxAgeSeconds: 60 * 60 * 24 // 1 Tag
-               }
-             }
+                 maxAgeSeconds: 60 * 60 * 24, // 1 Tag
+               },
+             },
            },
            {
              urlPattern: /\/_nuxt\//,
@@ -204,17 +214,18 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
                cacheName: 'nuxt-resources',
                expiration: {
                  maxEntries: 100,
-                 maxAgeSeconds: 60 * 60 * 24 // 1 Tag
-               }
-             }
-           }
-         ]
-       }
-     }
+                 maxAgeSeconds: 60 * 60 * 24, // 1 Tag
+               },
+             },
+           },
+         ],
+       },
+     },
    };
    ```
 
 2. **Meta-Tags und HTTP-Header**:
+
    - Konfiguration von Cache-Control-Headern
    - Optimierung von Meta-Tags für PWA
 
@@ -226,10 +237,10 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
          mobileAppIOS: true,
          appleStatusBarStyle: 'black-translucent',
          viewport: 'width=device-width, initial-scale=1, user-scalable=no',
-         theme_color: '#4DBA87'
-       }
+         theme_color: '#4DBA87',
+       },
      },
-     
+
      // Weitere Header können über Middleware hinzugefügt werden
      serverMiddleware: [
        (req, res, next) => {
@@ -238,14 +249,15 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
          res.setHeader('Pragma', 'no-cache');
          res.setHeader('Expires', '0');
          next();
-       }
-     ]
+       },
+     ],
    };
    ```
 
 ### Phase 4: Testing
 
 1. **Validierung des Update-Verhaltens**:
+
    - Tests auf verschiedenen Geräten und Browsern
    - Überprüfung der Update-Benachrichtigung
    - Verifizierung der Cache-Invalidierung
@@ -257,6 +269,7 @@ PWAs nutzen verschiedene Caching-Strategien, insbesondere Service Worker, um off
 ### Phase 5: Dokumentation und zukünftige Richtlinien
 
 1. **Update-Prozess-Dokumentation**:
+
    - Schritt-für-Schritt-Anleitung für zukünftige Updates
    - Checkliste für Deployment
 

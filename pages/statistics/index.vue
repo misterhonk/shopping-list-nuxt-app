@@ -180,11 +180,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import type { ShoppingItem, Category } from '~/types/app-types';
 
 import PageHeader from '~/components/layout/PageHeader.vue';
 import { useShoppingItems } from '~/composables/useShoppingItems';
 import { useShoppingLists } from '~/composables/useShoppingLists';
+
+import type { ShoppingItem } from '~/types/app-types';
 
 // Schnittstelle für Kategorie-Ausgaben
 interface CategoryExpense {
@@ -257,7 +258,7 @@ const categoryExpenses = computed<CategoryExpense[]>(() => {
 
     const categoryId = typeof item.category === 'object' ? item.category.id : 'sonstiges';
     const categoryName =
-      typeof item.category === 'object' ? item.category.name : item.category ?? 'Sonstiges';
+      typeof item.category === 'object' ? item.category.name : (item.category ?? 'Sonstiges');
     const itemAmount = (item.price ?? 0) * (item.quantity ?? 1);
 
     if (!categories[categoryId]) {
@@ -265,7 +266,7 @@ const categoryExpenses = computed<CategoryExpense[]>(() => {
         id: categoryId,
         name: categoryName,
         amount: 0,
-        percentage: 0
+        percentage: 0,
       };
     }
 

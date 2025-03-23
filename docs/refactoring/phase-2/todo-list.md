@@ -5,12 +5,14 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## 1. Vereinfachung komplexer Funktionen
 
 - [x] **1.1 Erstellung von `utils/listOperations.ts`**
+
   - [x] Gemeinsame Basisfunktionen für Listen- und Item-Operationen implementieren
   - [x] Funktionen für immutable Updates erstellen
   - [x] JSDoc-Dokumentation für alle Funktionen
   - [x] Commit: `refactor: Basisfunktionen für Listenoperationen erstellt`
 
 - [x] **1.2 Refaktorierung von `useShoppingItems.ts`**
+
   - [x] Funktionen wie `addItem`, `removeItem`, `toggleItemChecked` vereinfachen
   - [x] Gemeinsame Logik durch Basisfunktionen ersetzen
   - [x] Prüfung und Verbesserung der Fehlerbehandlung
@@ -25,6 +27,7 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## 2. TypeScript strenger konfigurieren
 
 - [x] **2.1 Erweiterte ESLint-Regeln für TypeScript**
+
   - [x] Konfiguration von `no-explicit-any` und anderen TypeScript-spezifischen Regeln
   - [x] Konfiguration von `explicit-function-return-type`
   - [x] Anpassung der ESLint-Konfiguration für bessere TypeScript-Unterstützung
@@ -39,6 +42,7 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## 3. Interfaces für alle Datenstrukturen definieren
 
 - [x] **3.1 UI-Status-Interfaces definieren**
+
   - [x] Erstellung von `types/uiTypes.ts` für UI-spezifische Interfaces
   - [x] Definition von Interfaces für Formular-Zustände
   - [x] Definition von Interfaces für Filter-Optionen
@@ -52,13 +56,15 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 ## 4. Core-Funktionalität klarer isolieren
 
 - [x] **4.1 Service-Layer einführen**
+
   - [x] Verzeichnisstruktur für Services erstellen
   - [x] `ShoppingListService` implementieren
-  - [x] `ItemService` implementieren 
+  - [x] `ItemService` implementieren
   - [x] `CategoryService` implementieren
   - [x] Commit: `feat: Service-Layer für Geschäftslogik eingeführt`
 
 - [x] **4.2 Storage-Repository implementieren**
+
   - [x] Interface für `StorageRepository` definieren
   - [x] `LocalStorageRepository` als Implementierung erstellen
   - [x] Tests für Storage-Funktionalität schreiben
@@ -83,7 +89,7 @@ Diese Liste enthält die geplanten Aufgaben für Phase 2 des Refactorings der Sh
 - **Startdatum Phase 2.1**: 20.03.2025
 - **Aktueller Status**: Phase 2 vollständig abgeschlossen! ✅
 - **Nächste Phase**: Core-Funktionalität im Service-Layer weiter verbessern
-- **Abgeschlossen**: 
+- **Abgeschlossen**:
   - Vereinfachung komplexer Funktionen (1.1 - 1.3)
   - TypeScript strenger konfigurieren (2.1 - 2.2)
   - UI-Status-Interfaces definieren (3.1)

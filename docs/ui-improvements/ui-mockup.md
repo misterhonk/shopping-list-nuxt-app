@@ -93,11 +93,13 @@
 ## Vorteile der neuen UI
 
 1. **Mehr nutzbarer Bildschirmraum**
+
    - Reduzierung unnötiger Elemente (Header, Überschriften, Padding)
    - Mehr Platz für das Anzeigen der eigentlichen Listen
    - Optimierte Nutzung der verfügbaren Bildschirmfläche
 
 2. **Intuitivere Bedienung**
+
    - Funktionen im Menü logisch gruppiert
    - Swipe-Gesten für schnelle Aktionen auf mobilen Geräten
    - Floating-Action-Button für "Neue Liste" ist immer gut sichtbar
@@ -106,7 +108,6 @@
    - Aufgeräumtere Oberfläche
    - Fokus auf den Inhalt statt auf strukturelle Elemente
    - Konsistentere Benutzeroberfläche
-   
 4. **Mobiloptimierung**
    - Besondere Berücksichtigung der Touchbedienung
    - Swipe-Gesten sparen Platz (keine zusätzlichen Buttons erforderlich)

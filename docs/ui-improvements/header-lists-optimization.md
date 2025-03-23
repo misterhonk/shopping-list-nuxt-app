@@ -17,6 +17,7 @@ Die aktuelle UI benötigt Optimierungen für eine kompaktere und benutzerfreundl
 - Das Menü sollte aufklappbar sein und die bisherigen Funktionen enthalten
 
 #### Technische Umsetzung
+
 - Erstellen einer Menü-Komponente (`HeaderMenu.vue`)
 - Integration eines Icon-Buttons (z.B. mit drei Punkten oder Hamburger-Menü)
 - Implementierung eines Dropdown-Menüs mit den bestehenden Funktionen
@@ -29,6 +30,7 @@ Die aktuelle UI benötigt Optimierungen für eine kompaktere und benutzerfreundl
 - Listen-Elemente direkt anzeigen ohne überflüssige Container-Elemente
 
 #### Technische Umsetzung
+
 - Überarbeitung des CSS für den Listen-Container
 - Entfernung oder Minimierung der Überschrift
 - Optimierung des Paddings und Margins
@@ -40,6 +42,7 @@ Die aktuelle UI benötigt Optimierungen für eine kompaktere und benutzerfreundl
 - Bei Swipe rechts: Bearbeiten der Liste oder andere Funktionen
 
 #### Technische Umsetzung
+
 - Installation und Integration einer Touch-Gesten-Bibliothek (z.B. `vue-touch` oder `hammer.js`)
 - Implementierung der Swipe-Erkennung für Listen-Elemente
 - Gestaltung der visuellen Rückmeldung bei Swipe-Aktionen
@@ -55,12 +58,14 @@ Die aktuelle UI benötigt Optimierungen für eine kompaktere und benutzerfreundl
 ## Priorisierte Tasks
 
 1. **Header-Optimierung**
+
    - [ ] Erstellen einer `HeaderMenu.vue` Komponente mit Dropdown-Funktionalität
    - [ ] Integration des Menü-Icons in den bestehenden Header
    - [ ] Verschieben der bestehenden Funktionen (Dark Mode, Statistik) ins Dropdown-Menü
    - [ ] Verringerung der Header-Höhe und Anpassung des Stylings
 
 2. **Listen-Container Verschlankung**
+
    - [ ] CSS-Anpassungen zur Entfernung/Minimierung der Überschrift
    - [ ] Reduzierung des Paddings und der Margins
    - [ ] Optimierung der Listen-Element-Darstellung

@@ -9,7 +9,9 @@ VS Code wird automatisch empfohlene Erweiterungen vorschlagen, wenn Sie den Proj
 ## Kernempfehlungen
 
 ### Vue.js Entwicklung
+
 - **Vue Language Features (Volar)** (`vue.volar`)
+
   - Offizielle Vue.js Erweiterung für VS Code
   - Syntax-Hervorhebung, Intellisense und mehr
   - Ersetzt die ältere Vetur-Erweiterung
@@ -19,17 +21,21 @@ VS Code wird automatisch empfohlene Erweiterungen vorschlagen, wenn Sie den Proj
   - Ergänzt Volar für die Arbeit mit Vue und TypeScript
 
 ### Code-Qualität
+
 - **ESLint** (`dbaeumer.vscode-eslint`)
+
   - Zeigt ESLint-Fehler und -Warnungen direkt im Editor an
   - Integriert sich in unsere ESLint-Konfiguration
   - Kann Probleme automatisch beim Speichern korrigieren
 
 - **Prettier** (`esbenp.prettier-vscode`)
+
   - Formatiert Code automatisch gemäß unserer Prettier-Konfiguration
   - Unterstützt alle im Projekt verwendeten Dateitypen
   - Empfohlen mit Format-On-Save aktiviert
 
 - **Error Lens** (`usernamehw.errorlens`)
+
   - Zeigt Fehler und Warnungen direkt im Code an
   - Verbessert die Sichtbarkeit von Problemen
 
@@ -38,7 +44,9 @@ VS Code wird automatisch empfohlene Erweiterungen vorschlagen, wenn Sie den Proj
   - Reduziert die Anzahl der Rechtschreibfehler im Code
 
 ### CSS und Styling
+
 - **Tailwind CSS IntelliSense** (`bradlc.vscode-tailwindcss`)
+
   - Autovervollständigung für Tailwind CSS-Klassen
   - Linting und Hover-Vorschau für Tailwind
   - Speziell für unser Tailwind-Setup konfiguriert
@@ -49,11 +57,14 @@ VS Code wird automatisch empfohlene Erweiterungen vorschlagen, wenn Sie den Proj
   - Kann Probleme automatisch korrigieren
 
 ### Umgebungskonfiguration
+
 - **.ENV** (`mikestead.dotenv`)
+
   - Syntax-Hervorhebung für .env-Dateien
   - Unterstützt die verschiedenen Umgebungskonfigurationen
 
 - **YAML** (`redhat.vscode-yaml`)
+
   - Unterstützung für YAML-Dateien
   - Besonders nützlich für GitHub Actions und Docker-Konfigurationen
 
@@ -62,7 +73,9 @@ VS Code wird automatisch empfohlene Erweiterungen vorschlagen, wenn Sie den Proj
   - Verwendet die .editorconfig-Datei des Projekts
 
 ### DevOps
+
 - **GitHub Actions** (`github.vscode-github-actions`)
+
   - Syntax-Hervorhebung für GitHub Actions Workflows
   - IntelliSense für YAML-basierende GitHub Actions
 
@@ -72,6 +85,7 @@ VS Code wird automatisch empfohlene Erweiterungen vorschlagen, wenn Sie den Proj
   - Container-Management direkt aus VS Code
 
 ### Zusätzliche Hilfsmittel
+
 - **Version Lens** (`pflannery.vscode-versionlens`)
   - Zeigt Versionsinformationen für Abhängigkeiten an
   - Erleichtert das Aktualisieren von npm-Paketen
@@ -98,11 +112,7 @@ Für eine optimale Entwicklungserfahrung empfehlen wir folgende Einstellungen in
     "source.organizeImports": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "vue"
-  ],
+  "eslint.validate": ["javascript", "typescript", "vue"],
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true
 }

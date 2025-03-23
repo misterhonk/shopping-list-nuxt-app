@@ -24,18 +24,22 @@
 <script setup lang="ts">
 // Logger initialisieren
 import { ref, computed, watch } from 'vue';
-import type { CategoryTemplate } from '~/types/app-types';
 
 import { useCategoryStore } from '~/stores/categoryStore';
 import { createLogger } from '~/utils/logger';
 
+import type { CategoryTemplate } from '~/types/app-types';
+
 const logger = createLogger('TemplateSelector');
 
-const props = withDefaults(defineProps<{
-  listTemplateId: string;
-}>(), {
-  listTemplateId: 'supermarket',
-});
+const props = withDefaults(
+  defineProps<{
+    listTemplateId: string;
+  }>(),
+  {
+    listTemplateId: 'supermarket',
+  }
+);
 
 // Emits
 const emit = defineEmits<{

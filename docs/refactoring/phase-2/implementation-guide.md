@@ -52,23 +52,21 @@ export const updateItemInList = <T extends ShoppingItem>(
 ): ShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) return null;
-  
+
   const list = lists[listIndex];
   if (!Array.isArray(list.items)) return null;
-  
+
   const itemIndex = findItemIndex(list, itemId);
   if (itemIndex === -1) return null;
-  
+
   // Immutable Update
   const updatedLists = [...lists];
   updatedLists[listIndex] = {
     ...list,
-    items: list.items.map((item, index) => 
-      index === itemIndex ? updateFn(item as T) : item
-    ),
-    modifiedAt: Date.now()
+    items: list.items.map((item, index) => (index === itemIndex ? updateFn(item as T) : item)),
+    modifiedAt: Date.now(),
   };
-  
+
   return updatedLists;
 };
 
@@ -86,21 +84,21 @@ export const removeItemFromList = (
 ): ShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) return null;
-  
+
   const list = lists[listIndex];
   if (!Array.isArray(list.items)) return null;
-  
+
   // Prüfen, ob das Item existiert
   if (!list.items.some(item => item.id === itemId)) return null;
-  
+
   // Immutable Update
   const updatedLists = [...lists];
   updatedLists[listIndex] = {
     ...list,
     items: list.items.filter(item => item.id !== itemId),
-    modifiedAt: Date.now()
+    modifiedAt: Date.now(),
   };
-  
+
   return updatedLists;
 };
 
@@ -118,17 +116,17 @@ export const addItemToList = (
 ): ShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) return null;
-  
+
   const list = lists[listIndex];
-  
+
   // Immutable Update
   const updatedLists = [...lists];
   updatedLists[listIndex] = {
     ...list,
     items: Array.isArray(list.items) ? [...list.items, item] : [item],
-    modifiedAt: Date.now()
+    modifiedAt: Date.now(),
   };
-  
+
   return updatedLists;
 };
 
@@ -146,11 +144,11 @@ export const updateList = (
 ): ShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) return null;
-  
+
   // Immutable Update
   const updatedLists = [...lists];
   updatedLists[listIndex] = updateFn(lists[listIndex]);
-  
+
   return updatedLists;
 };
 ```
@@ -175,17 +173,26 @@ Die `.eslintrc.json`-Datei sollte mit folgenden Regeln erweitert werden:
 {
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/explicit-function-return-type": ["warn", {
-      "allowExpressions": true,
-      "allowTypedFunctionExpressions": true
-    }],
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_"
-    }],
-    "@typescript-eslint/consistent-type-imports": ["error", {
-      "prefer": "type-imports"
-    }]
+    "@typescript-eslint/explicit-function-return-type": [
+      "warn",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": true
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ]
   }
 }
 ```
@@ -245,11 +252,11 @@ import type { StorageRepository } from '../repositories/StorageRepository';
  */
 export class ShoppingListService {
   private repository: StorageRepository;
-  
+
   constructor(repository: StorageRepository) {
     this.repository = repository;
   }
-  
+
   /**
    * Lädt alle Listen aus dem Speicher
    */
@@ -257,16 +264,16 @@ export class ShoppingListService {
     const lists = this.repository.getItem<ShoppingList[]>('shoppingLists') || [];
     return lists.map(this.normalizeList);
   }
-  
+
   /**
    * Erstellt eine neue Liste
    */
   public createList(name: string, options: CreateListOptions = {}): ShoppingList {
     // Implementierung...
   }
-  
+
   // Weitere Methoden...
-  
+
   /**
    * Normalisiert eine Liste
    */
@@ -293,14 +300,14 @@ export interface StorageRepository {
    * @returns Das geladene Element oder null
    */
   getItem<T>(key: string): T | null;
-  
+
   /**
    * Speichert ein Element im Speicher
    * @param key - Schlüssel des Elements
    * @param value - Das zu speichernde Element
    */
   setItem<T>(key: string, value: T): void;
-  
+
   /**
    * Entfernt ein Element aus dem Speicher
    * @param key - Schlüssel des Elements
@@ -326,13 +333,13 @@ export class LocalStorageRepository implements StorageRepository {
   public getItem<T>(key: string): T | null {
     try {
       const value = localStorage.getItem(key);
-      return value ? JSON.parse(value) as T : null;
+      return value ? (JSON.parse(value) as T) : null;
     } catch (error) {
       console.error(`Fehler beim Laden aus dem localStorage (Schlüssel: ${key}):`, error);
       return null;
     }
   }
-  
+
   /**
    * Speichert ein Element im localStorage
    * @param key - Schlüssel des Elements
@@ -345,7 +352,7 @@ export class LocalStorageRepository implements StorageRepository {
       console.error(`Fehler beim Speichern im localStorage (Schlüssel: ${key}):`, error);
     }
   }
-  
+
   /**
    * Entfernt ein Element aus dem localStorage
    * @param key - Schlüssel des Elements

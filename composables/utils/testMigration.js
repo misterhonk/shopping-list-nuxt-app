@@ -59,13 +59,13 @@ function testMigration() {
       category: item.category
         ? {
             id:
-              (item.category || '').toString().toLowerCase().replace(/[\s&]/g, '_') || 'sonstiges',
-            name: item.category || 'Sonstiges',
+              (item.category ?? '').toString().toLowerCase().replace(/[\s&]/g, '_') || 'sonstiges',
+            name: item.category ?? 'Sonstiges',
           }
         : { id: 'sonstiges', name: 'Sonstiges' },
-      quantity: item.quantity || 1,
+      quantity: item.quantity ?? 1,
       checked: !!item.checked,
-      price: item.price || 0,
+      price: item.price ?? 0,
       addedAt: Date.now(),
       modifiedAt: Date.now(),
     })),

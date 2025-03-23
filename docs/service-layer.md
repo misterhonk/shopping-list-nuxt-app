@@ -111,17 +111,17 @@ import { initializeServices } from '~/services';
 
 export function useShoppingLists() {
   const { shoppingListService } = initializeServices();
-  
+
   // Reaktive Daten
   const lists = ref(shoppingListService.getAllLists());
   const currentListId = ref(shoppingListService.getCurrentListId());
-  
+
   // Berechnete Eigenschaften
   const currentList = computed(() => {
     const id = currentListId.value;
     return id ? shoppingListService.getListById(id) : null;
   });
-  
+
   // Funktionen
   function createList(name, options) {
     const newList = shoppingListService.createList(name, options);
@@ -131,7 +131,7 @@ export function useShoppingLists() {
     }
     return null;
   }
-  
+
   function deleteList(listId) {
     const success = shoppingListService.deleteList(listId);
     if (success) {
@@ -139,7 +139,7 @@ export function useShoppingLists() {
     }
     return success;
   }
-  
+
   function selectList(listId) {
     const success = shoppingListService.setCurrentListId(listId);
     if (success) {
@@ -147,7 +147,7 @@ export function useShoppingLists() {
     }
     return success;
   }
-  
+
   return {
     lists,
     currentListId,
@@ -162,20 +162,24 @@ export function useShoppingLists() {
 ## Vorteile des Service-Layers
 
 1. **Klare Trennung von Zuständigkeiten**:
+
    - UI-Logik ist in Composables und Komponenten enthalten.
    - Geschäftslogik ist in Services gekapselt.
    - Datenzugriff ist in Repositories abstrahiert.
 
 2. **Verbesserte Testbarkeit**:
+
    - Services können isoliert getestet werden.
    - Mocks können für Repository-Zugriffe verwendet werden.
    - UI-Tests können Services mocken und sich auf UI-Logik konzentrieren.
 
 3. **Wiederverwendbarkeit**:
+
    - Geschäftslogik kann in verschiedenen Teilen der App konsistent verwendet werden.
    - Änderungen an der Geschäftslogik betreffen nicht die UI und umgekehrt.
 
 4. **Flexibilität**:
+
    - Austausch der Datenzugriffsschicht ohne Änderungen an der Geschäftslogik möglich.
    - Einfache Migration zu anderen Backends (z.B. REST-API, IndexedDB) durch Austausch des Repositories.
 

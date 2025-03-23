@@ -3,16 +3,30 @@ import { sortListsByFavorites } from '~/composables/utils/listUtils';
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
-import type { ShoppingList, ShoppingItem } from '~/composables/types';
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useListUpdate');
+
+// Interface für den Rückgabetyp des Composables
+interface ListUpdateComposable {
+  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
+  clearList: (listId?: string) => boolean;
+  addItemsToList: (
+    listId: string,
+    items: ShoppingItem[],
+    options?: { replace?: boolean; uniqueCheck?: boolean }
+  ) => boolean;
+}
 
 /**
  * Composable für das Aktualisieren von Einkaufslisten
  * Bietet Funktionen zum Bearbeiten, Import und Export von Listen
  */
-export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: Ref<string | null>) {
+export function useListUpdate(
+  listsRef: Ref<ShoppingList[]>,
+  currentListIdRef: Ref<string | null>
+): ListUpdateComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
@@ -32,6 +46,10 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
 
       // Alle übergebenen Eigenschaften einzeln aktualisieren
       const currentList = updatedLists[listIndex];
+
+      if (!currentList) {
+        return false;
+      }
 
       if (listData.name !== undefined) {
         currentList.name = listData.name;
@@ -76,7 +94,7 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
    */
   const clearList = (listId?: string): boolean => {
     try {
-      const targetListId = listId || currentListIdRef.value;
+      const targetListId = listId ?? currentListIdRef.value;
       if (!targetListId) {
         return false;
       }
@@ -114,7 +132,7 @@ export function useListUpdate(listsRef: Ref<ShoppingList[]>, currentListIdRef: R
     options: { replace?: boolean; uniqueCheck?: boolean } = {}
   ): boolean => {
     try {
-      if (!items || !Array.isArray(items) || items.length === 0) {
+      if (!items ?? (!Array.isArray(items) || items.length === 0)) {
         return false;
       }
 

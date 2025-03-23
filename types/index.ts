@@ -1,6 +1,6 @@
 /**
  * Zentrale Exportdatei für alle Typen der App
- * 
+ *
  * Diese Datei reexportiert alle Typdefinitionen aus den verschiedenen Typendateien,
  * um einen zentralen Importpunkt für Typen zu bieten.
  */

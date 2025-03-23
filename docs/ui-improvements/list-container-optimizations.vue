@@ -1,5 +1,59 @@
+<template>
+  <!-- Optimized list container without unnecessary elements -->
+  <div class="shopping-lists-container">
+    <!-- Lists rendered directly without additional padding or headers -->
+    <div
+      v-for="list in shoppingListsStore.lists"
+      :id="`list-${list.id}`"
+      :key="list.id"
+      class="list-item"
+      @touchstart="e => handleTouchStart(e, list.id)"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+      @touchcancel="handleTouchCancel"
+    >
+      <!-- List content -->
+      <div class="list-content" @click="navigateToList(list.id)">
+        <div class="list-title">{{ list.name }}</div>
+        <div class="list-info">
+          <span>{{ list.items.length }} Artikel</span>
+          <span v-if="list.lastModified">Bearbeitet: {{ formatDate(list.lastModified) }}</span>
+        </div>
+      </div>
+
+      <!-- Swipe action indicators (only visible during swipe) -->
+      <div class="swipe-action-left">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+        </svg>
+        <span>Löschen</span>
+      </div>
+
+      <div class="swipe-action-right">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+          />
+        </svg>
+        <span>Bearbeiten</span>
+      </div>
+    </div>
+
+    <!-- Add new list button - Floating action button style -->
+    <button class="add-list-button" @click="showNewListDialog">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <path fill="none" d="M0 0h24v24H0z" />
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+      </svg>
+    </button>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+
 import { useShoppingListsStore } from '@/stores/shoppingLists';
 
 // Store
@@ -18,20 +72,24 @@ const handleTouchStart = (event: TouchEvent, listId: string) => {
 };
 
 const handleTouchMove = (event: TouchEvent) => {
-  if (!currentSwipedListId.value) return;
+  if (!currentSwipedListId.value) {
+    return;
+  }
   touchEndX.value = event.touches[0].clientX;
-  
+
   // Get the element being swiped
   const listElement = document.getElementById(`list-${currentSwipedListId.value}`);
-  if (!listElement) return;
-  
+  if (!listElement) {
+    return;
+  }
+
   // Calculate swipe distance
   const swipeDistance = touchEndX.value - touchStartX.value;
-  
+
   // Apply transform during swipe for visual feedback (with limits)
   if (Math.abs(swipeDistance) < 150) {
     listElement.style.transform = `translateX(${swipeDistance}px)`;
-    
+
     // Show action indicators based on swipe direction
     if (swipeDistance > 20) {
       listElement.classList.add('swiping-right');
@@ -46,15 +104,19 @@ const handleTouchMove = (event: TouchEvent) => {
 };
 
 const handleTouchEnd = () => {
-  if (!currentSwipedListId.value) return;
-  
+  if (!currentSwipedListId.value) {
+    return;
+  }
+
   // Get the element
   const listElement = document.getElementById(`list-${currentSwipedListId.value}`);
-  if (!listElement) return;
-  
+  if (!listElement) {
+    return;
+  }
+
   // Calculate the final swipe distance
   const swipeDistance = touchEndX.value - touchStartX.value;
-  
+
   // Determine the action based on swipe direction and distance
   if (swipeDistance < -swipeThreshold) {
     // Swiped left (Delete action)
@@ -63,12 +125,12 @@ const handleTouchEnd = () => {
     // Swiped right (Edit action)
     performEditAction(currentSwipedListId.value);
   }
-  
+
   // Reset the element position with animation
   listElement.style.transition = 'transform 0.3s ease';
   listElement.style.transform = 'translateX(0)';
   listElement.classList.remove('swiping-left', 'swiping-right');
-  
+
   // Reset state after animation completes
   setTimeout(() => {
     if (listElement) {
@@ -98,65 +160,18 @@ const handleTouchCancel = () => {
 
 onMounted(() => {
   // Add passive listeners for better performance on mobile
-  document.addEventListener('touchmove', (e) => {
-    // Prevent default only when swiping a list item to avoid interfering with page scrolling
-    if (currentSwipedListId.value) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+  document.addEventListener(
+    'touchmove',
+    e => {
+      // Prevent default only when swiping a list item to avoid interfering with page scrolling
+      if (currentSwipedListId.value) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
 });
 </script>
-
-<template>
-  <!-- Optimized list container without unnecessary elements -->
-  <div class="shopping-lists-container">
-    <!-- Lists rendered directly without additional padding or headers -->
-    <div 
-      v-for="list in shoppingListsStore.lists" 
-      :key="list.id"
-      :id="`list-${list.id}`"
-      class="list-item"
-      @touchstart="(e) => handleTouchStart(e, list.id)"
-      @touchmove="handleTouchMove"
-      @touchend="handleTouchEnd"
-      @touchcancel="handleTouchCancel"
-    >
-      <!-- List content -->
-      <div class="list-content" @click="navigateToList(list.id)">
-        <div class="list-title">{{ list.name }}</div>
-        <div class="list-info">
-          <span>{{ list.items.length }} Artikel</span>
-          <span v-if="list.lastModified">Bearbeitet: {{ formatDate(list.lastModified) }}</span>
-        </div>
-      </div>
-      
-      <!-- Swipe action indicators (only visible during swipe) -->
-      <div class="swipe-action-left">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-          <path fill="none" d="M0 0h24v24H0z"/>
-          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-        </svg>
-        <span>Löschen</span>
-      </div>
-      
-      <div class="swipe-action-right">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-          <path fill="none" d="M0 0h24v24H0z"/>
-          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-        </svg>
-        <span>Bearbeiten</span>
-      </div>
-    </div>
-    
-    <!-- Add new list button - Floating action button style -->
-    <button class="add-list-button" @click="showNewListDialog">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-        <path fill="none" d="M0 0h24v24H0z"/>
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-      </svg>
-    </button>
-  </div>
-</template>
 
 <style scoped>
 .shopping-lists-container {
@@ -266,7 +281,9 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
   z-index: 10;
 }
 
@@ -289,19 +306,19 @@ onMounted(() => {
     padding: 0 12px; /* Add minimal padding on larger screens */
     gap: 12px; /* Slightly larger gap on desktop */
   }
-  
+
   .list-item {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   .list-content {
     padding: 16px 20px;
   }
-  
+
   .list-title {
     font-size: 18px;
   }
-  
+
   .list-info {
     font-size: 14px;
   }

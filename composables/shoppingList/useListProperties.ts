@@ -63,11 +63,11 @@ export function useListProperties(
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
-      
+
       if (!updatedLists[listIndex]) {
         return false;
       }
-      
+
       updatedLists[listIndex].name = newName.trim();
       updatedLists[listIndex].modifiedAt = Date.now();
 
@@ -95,11 +95,11 @@ export function useListProperties(
 
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
-      
+
       if (!updatedLists[listIndex]) {
         return false;
       }
-      
+
       updatedLists[listIndex].isFavorite = isFavorite;
       updatedLists[listIndex].modifiedAt = Date.now();
 

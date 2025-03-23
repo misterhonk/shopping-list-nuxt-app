@@ -26,7 +26,7 @@ export function isCategory(value: unknown): value is Category {
   }
 
   const obj = value as Record<string, unknown>;
-  return typeof obj['id'] === 'string' && typeof obj['name'] === 'string';
+  return typeof obj.id === 'string' && typeof obj.name === 'string';
 }
 
 /**
@@ -42,11 +42,11 @@ export function isShoppingItem(value: unknown): value is ShoppingItem {
 
   const obj = value as Record<string, unknown>;
   return (
-    typeof obj['id'] === 'string' &&
-    typeof obj['name'] === 'string' &&
-    typeof obj['quantity'] === 'number' &&
-    (typeof obj['category'] === 'string' || isCategory(obj['category'])) &&
-    typeof obj['checked'] === 'boolean'
+    typeof obj.id === 'string' &&
+    typeof obj.name === 'string' &&
+    typeof obj.quantity === 'number' &&
+    (typeof obj.category === 'string' || isCategory(obj.category)) &&
+    typeof obj.checked === 'boolean'
   );
 }
 
@@ -63,10 +63,10 @@ export function isShoppingList(value: unknown): value is ShoppingList {
 
   const obj = value as Record<string, unknown>;
   return (
-    typeof obj['id'] === 'string' &&
-    typeof obj['name'] === 'string' &&
-    typeof obj['isFavorite'] === 'boolean' &&
-    Array.isArray(obj['items'])
+    typeof obj.id === 'string' &&
+    typeof obj.name === 'string' &&
+    typeof obj.isFavorite === 'boolean' &&
+    Array.isArray(obj.items)
   );
 }
 

@@ -1,25 +1,15 @@
 /**
  * Typdefinitionen für die Shopping-List-App
  * Re-Exports aus der zentralen Typdatei
- * 
+ *
  * WICHTIG: Diese Datei ist veraltet und bleibt nur aus Kompatibilitätsgründen.
  * Bitte verwende direkt die Typen aus '~/types/app-types' und '~/types/form-types'.
  */
 
-import type { 
-  Category, 
-  CategoryTemplate, 
-  ShoppingItem, 
-  ShoppingList,
-} from '~/types/app-types';
+import type { Category, CategoryTemplate, ShoppingItem, ShoppingList } from '~/types/app-types';
 
 // Re-Exports der Basis-Typen zur Abwärtskompatibilität
-export type { 
-  Category, 
-  CategoryTemplate, 
-  ShoppingItem, 
-  ShoppingList 
-};
+export type { Category, CategoryTemplate, ShoppingItem, ShoppingList };
 
 /**
  * Interface für die Template-Listen

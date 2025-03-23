@@ -21,14 +21,14 @@ PWAs auf iOS (besonders solche, die zum Homescreen hinzugefügt wurden) haben ei
 ```typescript
 // Regelmäßige Cache-Invalidierung (alle 24 Stunden)
 if (now - lastCheck > 24 * 60 * 60 * 1000) {
-  localStorage.setItem(LAST_CHECK_KEY, now.toString())
-  
+  localStorage.setItem(LAST_CHECK_KEY, now.toString());
+
   // Für iOS: Hard Reload bei längerem Nichtbenutzen der App
   if (isIOS() && isStandalone()) {
-    console.log('Regelmäßige Cache-Invalidierung für iOS PWA...')
+    console.log('Regelmäßige Cache-Invalidierung für iOS PWA...');
     setTimeout(() => {
-      window.location.reload()
-    }, 100)
+      window.location.reload();
+    }, 100);
   }
 }
 ```
@@ -38,11 +38,10 @@ if (now - lastCheck > 24 * 60 * 60 * 1000) {
 ```typescript
 // Für iOS: Hard-Reload verwenden mit Cache-Busting
 if (isIOS()) {
-  window.location.href = window.location.href.split('#')[0] + 
-    '?t=' + Date.now() + 
-    (window.location.hash || '')
+  window.location.href =
+    window.location.href.split('#')[0] + '?t=' + Date.now() + (window.location.hash || '');
 } else {
-  window.location.reload()
+  window.location.reload();
 }
 ```
 
@@ -51,13 +50,16 @@ if (isIOS()) {
 ```typescript
 // Für iOS: Service Worker regelmäßig neu registrieren
 if (isIOS() && isStandalone()) {
-  setInterval(() => {
-    navigator.serviceWorker.getRegistration().then(registration => {
-      if (registration) {
-        registration.update()
-      }
-    })
-  }, 1000 * 60 * 60) // Stündlich
+  setInterval(
+    () => {
+      navigator.serviceWorker.getRegistration().then(registration => {
+        if (registration) {
+          registration.update();
+        }
+      });
+    },
+    1000 * 60 * 60
+  ); // Stündlich
 }
 ```
 
@@ -102,7 +104,7 @@ meta: [
   { 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' },
   { 'http-equiv': 'Pragma', content: 'no-cache' },
   { 'http-equiv': 'Expires', content: '0' },
-]
+];
 ```
 
 ## Testen der App auf verschiedenen Ports
@@ -117,6 +119,7 @@ server: {
 ```
 
 Dies ermöglicht:
+
 1. Vergleichstests zwischen der alten und neuen Version
 2. Einfaches Testen auf iOS-Geräten ohne Konflikte mit der installierten Version
 

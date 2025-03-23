@@ -75,8 +75,8 @@ export function useItemManagement(
   const addItem = (itemData: Partial<ShoppingItem>): ShoppingItem | null => {
     // Prüfen, ob die Daten gültig sind
     if (
-      !itemData.name || 
-      itemData.name.trim() === '' || 
+      !itemData.name ||
+      itemData.name.trim() === '' ||
       !(itemData.quantity !== undefined && itemData.quantity > 0)
     ) {
       return null;
@@ -134,15 +134,21 @@ export function useItemManagement(
         return false;
       }
 
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
+      if (
+        !shoppingListsRef.value[listIndex] ||
+        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
+      ) {
         return false;
       }
 
       // Prüfen, ob das Item existiert
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
+      if (
+        !shoppingListsRef.value[listIndex] ||
+        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
+      ) {
         return false;
       }
-      
+
       const itemExists = shoppingListsRef.value[listIndex]?.items.some(item => item.id === itemId);
       if (!itemExists) {
         return false;
@@ -150,12 +156,12 @@ export function useItemManagement(
 
       // Immutable Update mit Filter
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-      
+
       // Sicherstellen, dass Liste und items existieren
       if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
         return false;
       }
-      
+
       updatedLists[listIndex].items = updatedLists[listIndex]?.items.filter(
         item => item.id !== itemId
       );
@@ -189,7 +195,10 @@ export function useItemManagement(
         return false;
       }
 
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
+      if (
+        !shoppingListsRef.value[listIndex] ||
+        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
+      ) {
         return false;
       }
 
@@ -197,7 +206,7 @@ export function useItemManagement(
       if (!shoppingListsRef.value[listIndex]) {
         return false;
       }
-      
+
       const itemIndex = shoppingListsRef.value[listIndex]?.items.findIndex(
         item => item.id === itemId
       );
@@ -251,7 +260,10 @@ export function useItemManagement(
         return false;
       }
 
-      if (!shoppingListsRef.value[listIndex] || !Array.isArray(shoppingListsRef.value[listIndex]?.items)) {
+      if (
+        !shoppingListsRef.value[listIndex] ||
+        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
+      ) {
         return false;
       }
 

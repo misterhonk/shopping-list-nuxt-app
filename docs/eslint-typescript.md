@@ -12,7 +12,8 @@ Die ESLint-Konfiguration wurde aktualisiert, um eine stärkere Typsicherheit dur
 
 ```typescript
 // @typescript-eslint/explicit-function-return-type: warn
-function getUserName() { // Warnung: Funktionsrückgabetyp fehlt
+function getUserName() {
+  // Warnung: Funktionsrückgabetyp fehlt
   return 'John';
 }
 
@@ -23,6 +24,7 @@ function getUserName(): string {
 ```
 
 Diese Regel kann in bestimmten Situationen deaktiviert werden, wenn der Typ selbsterklärend ist:
+
 - Bei Ausdrücken wie Arrow-Functions in Callbacks
 - Bei Higher-Order-Functions
 - Bei typisierten Funktionsausdrücken

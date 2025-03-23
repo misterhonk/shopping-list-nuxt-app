@@ -68,12 +68,8 @@
     />
 
     <div v-if="currentListId && initialized">
-
       <!-- Schnelle Artikeleingabe -->
-      <QuickItemAdd
-        :categories="categories"
-        @add-item="addNewItem"
-      />
+      <QuickItemAdd :categories="categories" @add-item="addNewItem" />
 
       <!-- Alte Artikel-Hinzufügen-Formular (auskommentiert) -->
       <!--
@@ -87,11 +83,7 @@
       -->
 
       <!-- Artikelliste -->
-      <ItemList
-        :items="currentListItems"
-        @toggle="toggleItemChecked"
-        @remove="removeItem"
-      />
+      <ItemList :items="currentListItems" @toggle="toggleItemChecked" @remove="removeItem" />
     </div>
 
     <!-- Import-Optionen-Dialog -->
@@ -107,24 +99,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 // Layout-Komponenten
-import ItemCreationForm from '../components/items/ItemCreationForm.vue';
-import ItemList from '../components/items/ItemList.vue';
-import QuickItemAdd from '../components/items/QuickItemAdd.vue';
-import PageHeader from '../components/layout/PageHeader.vue';
+import ItemList from '~/components/items/ItemList.vue';
+import QuickItemAdd from '~/components/items/QuickItemAdd.vue';
+import PageHeader from '~/components/layout/PageHeader.vue';
 // Listen-Komponenten
-import ImportOptionsModal from '../components/lists/ImportOptionsModal.vue';
-import ListCreationForm from '../components/lists/ListCreationForm.vue';
-// import ListHeader from '../components/lists/ListHeader.vue'; // Aktuell nicht verwendet
-import ListSelector from '../components/lists/ListSelector.vue';
+import ImportOptionsModal from '~/components/lists/ImportOptionsModal.vue';
+import ListCreationForm from '~/components/lists/ListCreationForm.vue';
+// import ListHeader from '~/components/lists/ListHeader.vue'; // Aktuell nicht verwendet
+import ListSelector from '~/components/lists/ListSelector.vue';
 // Artikel-Komponenten
-import { useListImportExport } from '../composables/importExport';
-import { useShoppingItems } from '../composables/useShoppingItems';
-import { useShoppingLists } from '../composables/useShoppingLists';
-import { useCategoryStore } from '../stores/category';
-import { createLogger } from '../utils/logger';
+import { useListImportExport } from '~/composables/importExport';
+import { useShoppingItems } from '~/composables/useShoppingItems';
+import { useShoppingLists } from '~/composables/useShoppingLists';
+import { useCategoryStore } from '~/stores/category';
+import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
 const logger = createLogger('IndexPage');
@@ -149,7 +140,7 @@ try {
   categories = computed(() => {
     try {
       return (
-        categoryStore?.currentCategories || [
+        categoryStore?.currentCategories ?? [
           'Obst & Gemüse',
           'Fleisch & Fisch',
           'Backwaren',
@@ -175,7 +166,7 @@ try {
 }
 
 // Templates aus dem CategoryStore
-const templatesList = computed(() => categoryStore?.templatesList || []);
+const templatesList = computed(() => categoryStore?.templatesList ?? []);
 
 // Einkaufslisten verwalten
 const {
@@ -197,15 +188,23 @@ const {
 } = useShoppingLists();
 
 // Artikel verwalten - Die currentListId wird hier übergeben
-const { allItems, addNewItem, removeItem, toggleItemChecked, clearCheckedItems, updateCategoryInItems } =
-  useShoppingItems(currentListId);
+const {
+  allItems,
+  addNewItem,
+  removeItem,
+  toggleItemChecked,
+  clearCheckedItems,
+  updateCategoryInItems,
+} = useShoppingItems(currentListId);
 
 // Berechne eine gefilterte Liste mit nur den Artikeln der aktuell ausgewählten Liste
 const currentListItems = computed(() => {
-  if (!currentListId.value) return [];
-  
+  if (!currentListId.value) {
+    return [];
+  }
+
   return allItems.value.filter(item => {
-    const listId = item.listId || (currentList.value?.id || null);
+    const listId = item.listId ?? currentList.value.id ?? null;
     return listId === currentListId.value;
   });
 });
@@ -221,7 +220,7 @@ const {
 } = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
 
 // Neue Liste erstellen
-const createNewList = (name: string, options: any) => {
+const createNewList = (name: string, options: any): void => {
   createList(name, options);
   isCreatingList.value = false;
 };
@@ -230,7 +229,7 @@ const createNewList = (name: string, options: any) => {
  * Exportiert die aktuelle Liste
  * Nimmt die aktuelle Liste und leitet sie an handleExportList weiter
  */
-const exportCurrentList = () => {
+const exportCurrentList = (): void => {
   logger.info('Exportiere aktuelle Liste:', currentList.value.name);
   handleExportList(currentList.value);
 };
@@ -239,14 +238,14 @@ const exportCurrentList = () => {
  * Starter-Funktion für den Importprozess
  * Öffnet die Dateiauswahl und zeigt dann den Optionsdialog
  */
-const startImport = () => {
+const startImport = (): void => {
   openImportDialog(onImportOptionsLoaded);
 };
 
 /**
  * Handler für die Bestätigung des Imports durch den Benutzer
  */
-const handleImportConfirm = (options: any) => {
+const handleImportConfirm = (options: any): void => {
   logger.info('Import-Optionen bestätigt:', options);
 
   // Import mit den gewählten Optionen durchführen
@@ -259,10 +258,10 @@ const handleImportConfirm = (options: any) => {
 /**
  * Callback-Funktion für geladene Import-Daten
  */
-const onImportOptionsLoaded = (data: any, availableLists: any[]) => {
+const onImportOptionsLoaded = (data: any, availableLists: any[]): void => {
   logger.info('Import-Daten geladen, zeige Optionen:', {
     listName: data.name,
-    itemCount: data.items?.length || 0,
+    itemCount: data.items?.length ?? 0,
     availableListsCount: availableLists.length,
   });
 
@@ -290,7 +289,7 @@ onMounted(() => {
         parsedLists.map((l: any) => ({
           id: l.id,
           name: l.name,
-          itemCount: l.items?.length || 0,
+          itemCount: l.items?.length ?? 0,
         }))
       );
     } catch (e) {
@@ -306,7 +305,7 @@ onMounted(() => {
       categoryStore.loadFromLocalStorage();
 
       // Aktiviere die passende Kategorie-Vorlage für die aktuelle Liste
-      if (currentList.value && currentList.value.templateId) {
+      if (currentList.value.templateId) {
         categoryStore.activateTemplate(currentList.value.templateId);
       }
 

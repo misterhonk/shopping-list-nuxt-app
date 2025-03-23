@@ -1,8 +1,7 @@
+import { defineNuxtPlugin } from 'nuxt/app';
+
 import { useCategoryStore } from '~/stores/category';
-
-import { createLogger } from '../utils/logger';
-
-import { defineNuxtPlugin } from '#app';
+import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
 const logger = createLogger('category-sync');
@@ -13,7 +12,7 @@ const logger = createLogger('category-sync');
  */
 export default defineNuxtPlugin(_nuxtApp => {
   // Einfacher Event-Bus für Kategorieänderungen
-  const callbacks: Array<(categoryId: string, newName: string) => void> = [];
+  const callbacks: ((categoryId: string, newName: string) => void)[] = [];
 
   const categoryEventBus = {
     on(callback: (categoryId: string, newName: string) => void) {

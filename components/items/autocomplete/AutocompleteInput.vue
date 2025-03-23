@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
+
 import type { ItemSuggestion } from '~/types/app-types';
 
 interface TextPart {
@@ -55,19 +56,22 @@ interface TextPart {
 
 type SuggestionInput = string | ItemSuggestion;
 
-const props = withDefaults(defineProps<{
-  modelValue: string;
-  suggestions: SuggestionInput[];
-  minChars?: number;
-  placeholder?: string;
-  maxSuggestions?: number;
-}>(), {
-  modelValue: '',
-  suggestions: () => [],
-  minChars: 1,
-  placeholder: '',
-  maxSuggestions: 6
-});
+const props = withDefaults(
+  defineProps<{
+    modelValue: string;
+    suggestions: SuggestionInput[];
+    minChars?: number;
+    placeholder?: string;
+    maxSuggestions?: number;
+  }>(),
+  {
+    modelValue: '',
+    suggestions: () => [],
+    minChars: 1,
+    placeholder: '',
+    maxSuggestions: 6,
+  }
+);
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
@@ -100,7 +104,7 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
     .map(suggestion => {
       // Normalisiere das Ausgabeformat
       if (typeof suggestion === 'object' && suggestion.text) {
-        return suggestion as ItemSuggestion;
+        return suggestion;
       }
       return { text: String(suggestion) };
     })

@@ -145,6 +145,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
+
 import type { CategoryTemplate } from '~/types/app-types';
 
 const props = defineProps<{

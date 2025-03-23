@@ -6,10 +6,10 @@
  * nützlich für externe Daten wie localStorage-Einträge oder API-Responses.
  */
 
+import { createLogger } from '~/utils/logger';
+
 import type { ShoppingItem, ShoppingList, Category } from '~/types/app-types';
 import type { ItemFormState, ListFormState } from '~/types/form-types';
-
-import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
 const logger = createLogger('typeGuards');
@@ -27,23 +27,23 @@ export function isShoppingItem(value: unknown): value is ShoppingItem {
   const item = value as Record<string, unknown>;
 
   const hasRequiredProps =
-    typeof item['id'] === 'string' &&
-    typeof item['name'] === 'string' &&
-    typeof item['quantity'] === 'number' &&
-    (typeof item['category'] === 'string' || (item['category'] && typeof item['category'] === 'object')) &&
-    typeof item['checked'] === 'boolean';
+    typeof item.id === 'string' &&
+    typeof item.name === 'string' &&
+    typeof item.quantity === 'number' &&
+    (typeof item.category === 'string' || (item.category && typeof item.category === 'object')) &&
+    typeof item.checked === 'boolean';
 
   if (!hasRequiredProps) {
     return false;
   }
 
   // Weitere Validierungen für spezifische Werte
-  if (typeof item['quantity'] === 'number' && item['quantity'] <= 0) {
+  if (typeof item.quantity === 'number' && item.quantity <= 0) {
     logger.warn('Invalid shopping item: quantity must be greater than 0');
     return false;
   }
 
-  if (typeof item['name'] === 'string' && item['name'].trim() === '') {
+  if (typeof item.name === 'string' && item.name.trim() === '') {
     logger.warn('Invalid shopping item: name cannot be empty');
     return false;
   }
@@ -63,18 +63,18 @@ export function isCategory(value: unknown): value is Category {
 
   const category = value as Record<string, unknown>;
 
-  const hasRequiredProps = typeof category['id'] === 'string' && typeof category['name'] === 'string';
+  const hasRequiredProps = typeof category.id === 'string' && typeof category.name === 'string';
 
   if (!hasRequiredProps) {
     return false;
   }
 
   // Optionale Eigenschaften prüfen
-  if (category['color'] !== undefined && typeof category['color'] !== 'string') {
+  if (category.color !== undefined && typeof category.color !== 'string') {
     return false;
   }
 
-  if (category['icon'] !== undefined && typeof category['icon'] !== 'string') {
+  if (category.icon !== undefined && typeof category.icon !== 'string') {
     return false;
   }
 
@@ -94,32 +94,32 @@ export function isShoppingList(value: unknown): value is ShoppingList {
   const list = value as Record<string, unknown>;
 
   const hasRequiredProps =
-    typeof list['id'] === 'string' &&
-    typeof list['name'] === 'string' &&
-    Array.isArray(list['items']) &&
-    typeof list['isFavorite'] === 'boolean';
+    typeof list.id === 'string' &&
+    typeof list.name === 'string' &&
+    Array.isArray(list.items) &&
+    typeof list.isFavorite === 'boolean';
 
   if (!hasRequiredProps) {
     return false;
   }
 
   // Prüfe, ob alle Items in der Liste gültige ShoppingItems sind
-  const items = list['items'] as unknown[];
+  const items = list.items as unknown[];
   if (!items.every(item => isShoppingItem(item))) {
     logger.warn('Invalid shopping list: contains invalid items');
     return false;
   }
 
   // Optionale Eigenschaften prüfen
-  if (list['templateId'] !== undefined && typeof list['templateId'] !== 'string') {
+  if (list.templateId !== undefined && typeof list.templateId !== 'string') {
     return false;
   }
 
-  if (list['createdAt'] !== undefined && typeof list['createdAt'] !== 'number') {
+  if (list.createdAt !== undefined && typeof list.createdAt !== 'number') {
     return false;
   }
 
-  if (list['modifiedAt'] !== undefined && typeof list['modifiedAt'] !== 'number') {
+  if (list.modifiedAt !== undefined && typeof list.modifiedAt !== 'number') {
     return false;
   }
 
@@ -140,11 +140,14 @@ export function isItemFormState(value: unknown): value is ItemFormState {
 
   // Erforderliche Eigenschaften prüfen
   return (
-    typeof formState['status'] === 'string' &&
-    formState['item'] !== undefined && typeof formState['item'] === 'object' &&
-    formState['errors'] !== undefined && typeof formState['errors'] === 'object' &&
-    formState['touched'] !== undefined && typeof formState['touched'] === 'object' &&
-    typeof formState['isValid'] === 'boolean'
+    typeof formState.status === 'string' &&
+    formState.item !== undefined &&
+    typeof formState.item === 'object' &&
+    formState.errors !== undefined &&
+    typeof formState.errors === 'object' &&
+    formState.touched !== undefined &&
+    typeof formState.touched === 'object' &&
+    typeof formState.isValid === 'boolean'
   );
 }
 
@@ -162,11 +165,14 @@ export function isListFormState(value: unknown): value is ListFormState {
 
   // Erforderliche Eigenschaften prüfen
   return (
-    typeof formState['status'] === 'string' &&
-    formState['list'] !== undefined && typeof formState['list'] === 'object' &&
-    formState['errors'] !== undefined && typeof formState['errors'] === 'object' &&
-    formState['touched'] !== undefined && typeof formState['touched'] === 'object' &&
-    typeof formState['isValid'] === 'boolean'
+    typeof formState.status === 'string' &&
+    formState.list !== undefined &&
+    typeof formState.list === 'object' &&
+    formState.errors !== undefined &&
+    typeof formState.errors === 'object' &&
+    formState.touched !== undefined &&
+    typeof formState.touched === 'object' &&
+    typeof formState.isValid === 'boolean'
   );
 }
 

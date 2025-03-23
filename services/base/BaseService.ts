@@ -1,6 +1,6 @@
 /**
  * Basisservice für die Shopping-List-App
- * 
+ *
  * Diese Klasse dient als Basis für alle Service-Klassen und stellt
  * grundlegende Funktionalitäten wie Logging bereit.
  */

@@ -14,6 +14,7 @@ Dieses Dokument beschreibt den Plan zur Implementierung der marktspezifischen La
 ### Phase 1: Datenmodell und Standard-Sortierungen
 
 - [ ] **Erweiterung des Datenmodells**
+
   - [ ] `Category`-Interface um `position`-Feld erweitern
   - [ ] `Template`-Interface um `defaultCategoryOrder` erweitern
   - [ ] Neues Interface `CategorySortConfig` für Benutzereinstellungen
@@ -28,6 +29,7 @@ Dieses Dokument beschreibt den Plan zur Implementierung der marktspezifischen La
 ### Phase 2: State Management
 
 - [ ] **Pinia Store erweitern**
+
   - [ ] Erweiterung des Category/Template-Stores um Sortierungskonfiguration
   - [ ] Methoden zum Speichern/Laden benutzerdefinierter Sortierungen implementieren
   - [ ] Toggle-Funktion zwischen Standard- und individueller Sortierung hinzufügen
@@ -41,6 +43,7 @@ Dieses Dokument beschreibt den Plan zur Implementierung der marktspezifischen La
 ### Phase 3: Drag & Drop UI
 
 - [ ] **Integration von vue-draggable-next**
+
   - [ ] Bibliothek installieren und konfigurieren
   - [ ] Drag & Drop-Komponente für Kategoriensortierung erstellen
   - [ ] Styling der Drag & Drop-Elemente für konsistente UI
@@ -54,6 +57,7 @@ Dieses Dokument beschreibt den Plan zur Implementierung der marktspezifischen La
 ### Phase 4: Integration in die Einkaufsliste
 
 - [ ] **Sortierung in bestehenden Komponenten**
+
   - [ ] ListItem-Komponenten anpassen, um neue Sortierreihenfolge zu nutzen
   - [ ] Gruppierung nach Kategorien entsprechend der Sortierung anpassen
   - [ ] Performance-Optimierungen für größere Listen
@@ -66,6 +70,7 @@ Dieses Dokument beschreibt den Plan zur Implementierung der marktspezifischen La
 ### Phase 5: Testing und Dokumentation
 
 - [ ] **Tests**
+
   - [ ] Tests für Default-Sortierungen verschiedener Markttypen
   - [ ] Tests für Drag & Drop-Funktionalität
   - [ ] Tests für Persistenz der individuellen Sortierung
@@ -120,7 +125,7 @@ export const useCategoryStore = defineStore('category', {
       const config = this.sortConfigs[templateId] || {
         templateId,
         useCustomSort: false,
-        customOrder: []
+        customOrder: [],
       };
       config.useCustomSort = !config.useCustomSort;
       this.saveSortConfig(config);
@@ -129,20 +134,20 @@ export const useCategoryStore = defineStore('category', {
       const config = this.sortConfigs[templateId] || {
         templateId,
         useCustomSort: true,
-        customOrder: []
+        customOrder: [],
       };
       config.customOrder = newOrder;
       config.useCustomSort = true; // Automatisch auf benutzerdefiniert umstellen
       this.saveSortConfig(config);
-    }
+    },
   },
   getters: {
     // ... bestehende Getters
-    getCategoriesSorted: (state) => (templateId: string) => {
+    getCategoriesSorted: state => (templateId: string) => {
       // Logik zur Sortierung basierend auf Config
       // Falls keine Config, Default-Reihenfolge des Templates verwenden
       // Falls keine Default-Reihenfolge, alphabetisch sortieren
-    }
-  }
+    },
+  },
 });
 ```

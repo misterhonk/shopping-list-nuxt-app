@@ -1,8 +1,9 @@
 import { ref, computed } from 'vue';
 
-import { createLogger } from '../utils/logger';
+import { useCategoryStore } from '~/stores/category';
+import { createLogger } from '~/utils/logger';
+
 import { useLocalStorage } from './core/useLocalStorage';
-import { useCategoryStore } from '../stores/category';
 
 import type { ShoppingList, CreateListOptions } from './types';
 import type { ComputedRef } from 'vue';
@@ -79,7 +80,7 @@ const createCategoryStore = (): CategoryStore | null => {
 /**
  * Hilfsfunktionen zur Liste-Verwaltung
  */
-const listManagementHelpers = () => {
+const listManagementHelpers = (): void => {
   const { saveToStorage, loadFromStorage } = useLocalStorage();
 
   /**
@@ -101,7 +102,7 @@ const listManagementHelpers = () => {
   return { saveLists, loadData };
 };
 
-export function useShoppingLists() {
+export function useShoppingLists(): void {
   const { saveToStorage } = useLocalStorage();
   const { saveLists: saveListsToStorage, loadData } = listManagementHelpers();
 
@@ -126,7 +127,7 @@ export function useShoppingLists() {
   );
 
   const currentListTemplateId = computed({
-    get: () => currentList.value.templateId || 'supermarket',
+    get: () => currentList.value.templateId ?? 'supermarket',
     set: (value: string) => updateListTemplate(value),
   });
 
@@ -136,14 +137,14 @@ export function useShoppingLists() {
    * @return Die Anzahl der Artikel
    */
   const getItemsCount = (list: ShoppingList): number =>
-    Array.isArray(list?.items) ? list.items.length : 0;
+    Array.isArray(list.items) ? list.items.length : 0;
 
   /**
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
    * @return Die Anzahl der erledigten Artikel
    */
   const getCheckedItemsCount = (): number =>
-    Array.isArray(currentList.value?.items)
+    Array.isArray(currentList.value.items)
       ? currentList.value.items.filter(item => item.checked).length
       : 0;
 
@@ -152,7 +153,7 @@ export function useShoppingLists() {
    * @return Die Gesamtanzahl der Artikel
    */
   const getTotalItemsCount = (): number =>
-    Array.isArray(currentList.value?.items) ? currentList.value.items.length : 0;
+    Array.isArray(currentList.value.items) ? currentList.value.items.length : 0;
 
   /**
    * Bereitet die geladenen Listen für die Anwendung auf
@@ -163,8 +164,8 @@ export function useShoppingLists() {
       id: list.id,
       name: list.name,
       items: Array.isArray(list.items) ? list.items : [],
-      templateId: list.templateId || 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
-      isFavorite: list.isFavorite || false, // Fallback für ältere Listendaten
+      templateId: list.templateId ?? 'supermarket', // Fallback wenn keine Template-ID vorhanden ist
+      isFavorite: list.isFavorite ?? false, // Fallback für ältere Listendaten
     }));
 
     // Sortiere Listen - Favoriten zuerst
@@ -195,7 +196,7 @@ export function useShoppingLists() {
       const { lists: storedLists, currentId } = loadData();
 
       // Prüfe ob gültige Listen vorhanden sind
-      if (!storedLists || !Array.isArray(storedLists)) {
+      if (!storedLists ?? !Array.isArray(storedLists)) {
         createDefaultList();
         return false;
       }
@@ -262,19 +263,19 @@ export function useShoppingLists() {
    * @return Die erstellte Liste
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
-    if (!name || name.trim() === '') {
+    if (!name ?? name.trim() === '') {
       return null;
     }
 
     // Finde einen passenden Template-ID basierend auf dem Namen
-    const templateId = options.templateId || determineTemplateId(name);
+    const templateId = options.templateId ?? determineTemplateId(name);
 
     const newList: ShoppingList = {
       id: Date.now().toString(),
       name: name.trim(),
-      items: options.items || [],
+      items: options.items ?? [],
       templateId,
-      isFavorite: options.isFavorite || false,
+      isFavorite: options.isFavorite ?? false,
     };
 
     lists.value = [...lists.value, newList];
@@ -362,7 +363,7 @@ export function useShoppingLists() {
    * @param templateId - Die neue Template-ID
    */
   const updateListTemplate = (templateId: string): void => {
-    const listIndex = findListIndex(currentListId.value || '');
+    const listIndex = findListIndex(currentListId.value ?? '');
     if (listIndex === -1) {
       return;
     }
@@ -391,11 +392,11 @@ export function useShoppingLists() {
    * @param newName - Der neue Name der Liste
    */
   const updateListName = (newName: string): void => {
-    if (!newName || newName.trim() === '') {
+    if (!newName ?? newName.trim() === '') {
       return;
     }
 
-    const listIndex = findListIndex(currentListId.value || '');
+    const listIndex = findListIndex(currentListId.value ?? '');
     if (listIndex === -1) {
       return;
     }
@@ -413,7 +414,7 @@ export function useShoppingLists() {
    * @param isFavorite - Der neue Favoriten-Status
    */
   const updateListFavorite = (isFavorite: boolean): void => {
-    const listIndex = findListIndex(currentListId.value || '');
+    const listIndex = findListIndex(currentListId.value ?? '');
     if (listIndex === -1) {
       return;
     }
@@ -456,8 +457,8 @@ export function useShoppingLists() {
       id: list.id,
       name: list.name,
       items: Array.isArray(list.items) ? list.items : [],
-      templateId: list.templateId || 'supermarket',
-      isFavorite: list.isFavorite || false,
+      templateId: list.templateId ?? 'supermarket',
+      isFavorite: list.isFavorite ?? false,
     }));
 
     saveListsToStorage(cleanedLists, currentListId.value);

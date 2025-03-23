@@ -12,7 +12,7 @@
         </p>
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
           Importierte Liste: <span class="font-medium">{{ importData.name }}</span> mit
-          {{ importData.items?.length || 0 }} Artikeln
+          {{ importData.items?.length ?? 0 }} Artikeln
         </p>
 
         <div class="space-y-2">
@@ -59,7 +59,7 @@
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
                 >
                   <option v-for="list in availableLists" :key="list.id" :value="list.id">
-                    {{ list.name }} ({{ list.items?.length || 0 }} Artikel)
+                    {{ list.name }} ({{ list.items?.length ?? 0 }} Artikel)
                   </option>
                 </select>
 
@@ -118,32 +118,49 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Logger initialisieren
 import { ref, computed, watch } from 'vue';
 
-import { createLogger } from '../../utils/logger';
+import { createLogger } from '~/utils/logger';
+
+import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 const logger = createLogger('ImportOptionsModal');
 
-const props = defineProps({
-  isOpen: Boolean,
-  importData: {
-    type: Object,
-    default: () => ({ name: '', items: [] }),
-  },
-  availableLists: {
-    type: Array,
-    default: () => [],
-  },
-});
+interface ImportData {
+  name: string;
+  items: ShoppingItem[];
+}
 
-const emit = defineEmits(['confirm', 'cancel']);
+interface ImportOptions {
+  mode: 'create' | 'merge' | 'replace';
+  targetListId?: string;
+  keepExistingItems: boolean;
+}
+
+const props = withDefaults(
+  defineProps<{
+    isOpen: boolean;
+    importData: ImportData;
+    availableLists: ShoppingList[];
+  }>(),
+  {
+    isOpen: false,
+    importData: () => ({ name: '', items: [] }),
+    availableLists: () => [],
+  }
+);
+
+const emit = defineEmits<{
+  (e: 'confirm', options: ImportOptions): void;
+  (e: 'cancel'): void;
+}>();
 
 // Import-Option (neue Liste oder bestehende aktualisieren)
-const selectedOption = ref('create');
-const selectedListId = ref('');
-const updateMode = ref('merge'); // 'merge' oder 'replace'
+const selectedOption = ref<'create' | 'update'>('create');
+const selectedListId = ref<string>('');
+const updateMode = ref<'merge' | 'replace'>('merge'); // 'merge' oder 'replace'
 
 // Wenn sich die Optionen ändern, aktualisiere Sichtbarkeit
 watch(
@@ -156,8 +173,8 @@ watch(
 );
 
 // Vorselektieren der Liste, falls Name identisch
-const findMatchingList = () => {
-  if (props.importData?.name && props.availableLists.length > 0) {
+const findMatchingList = (): void => {
+  if (props.importData.name && props.availableLists.length > 0) {
     const matchingList = props.availableLists.find(
       list => list.name.toLowerCase() === props.importData.name.toLowerCase()
     );
@@ -170,7 +187,7 @@ const findMatchingList = () => {
 };
 
 // Prüfen, ob alle notwendigen Optionen ausgewählt sind
-const isValid = computed(() => {
+const isValid = computed<boolean>(() => {
   if (selectedOption.value === 'create') {
     return true;
   }
@@ -183,8 +200,8 @@ const isValid = computed(() => {
 });
 
 // Import bestätigen
-const confirmImport = () => {
-  const options = {
+const confirmImport = (): void => {
+  const options: ImportOptions = {
     mode: selectedOption.value === 'create' ? 'create' : updateMode.value,
     targetListId: selectedOption.value === 'update' ? selectedListId.value : undefined,
     keepExistingItems: updateMode.value === 'merge',

@@ -92,7 +92,7 @@ export const updateItemInList = <T extends ShoppingItem>(
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    
+
     if (updatedLists[listIndex]) {
       updatedLists[listIndex] = {
         ...list,
@@ -141,7 +141,7 @@ export const removeItemFromList = (
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    
+
     if (updatedLists[listIndex]) {
       updatedLists[listIndex] = {
         ...list,
@@ -184,7 +184,7 @@ export const addItemToList = (
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    
+
     if (updatedLists[listIndex]) {
       updatedLists[listIndex] = {
         ...list,
@@ -226,7 +226,7 @@ export const updateList = (
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    
+
     if (updatedLists[listIndex]) {
       const listToUpdate = lists[listIndex];
       if (listToUpdate) {
@@ -273,7 +273,7 @@ export const updateItemsInList = <T extends ShoppingItem>(
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    
+
     if (updatedLists[listIndex]) {
       updatedLists[listIndex] = {
         ...list,
@@ -316,7 +316,7 @@ export const removeItemsFromList = <T extends ShoppingItem>(
   try {
     // Immutable Update
     const updatedLists = [...lists];
-    
+
     if (updatedLists[listIndex]) {
       updatedLists[listIndex] = {
         ...list,

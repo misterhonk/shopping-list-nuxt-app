@@ -1,12 +1,13 @@
 /**
  * LocalStorage-Repository für die Shopping-List-App
- * 
+ *
  * Dieses Repository implementiert das StorageRepository-Interface mit
  * localStorage als Speichermethode.
  */
 
 import { createLogger } from '~/utils/logger';
 import { isShoppingListArray } from '~/utils/validation';
+
 import type { StorageRepository } from './StorageRepository';
 
 /**
@@ -16,7 +17,7 @@ export class LocalStorageRepository implements StorageRepository {
   /**
    * Der Logger für das Repository
    */
-  private logger;
+  private readonly logger;
 
   /**
    * Erstellt eine neue Instanz des LocalStorageRepository
@@ -33,19 +34,19 @@ export class LocalStorageRepository implements StorageRepository {
   public getItem<T>(key: string): T | null {
     try {
       const value = localStorage.getItem(key);
-      
+
       if (!value) {
         return null;
       }
-      
+
       const parsedValue = JSON.parse(value) as T;
-      
+
       // Validierung für bekannte Datentypen
       if (key === 'shoppingLists' && !isShoppingListArray(parsedValue)) {
         this.logger.error('Ungültiges Format der gespeicherten Listen');
         return null;
       }
-      
+
       return parsedValue;
     } catch (error) {
       this.logger.error(`Fehler beim Laden aus dem localStorage (Schlüssel: ${key}):`, error);
@@ -93,7 +94,10 @@ export class LocalStorageRepository implements StorageRepository {
     try {
       return localStorage.getItem(key) !== null;
     } catch (error) {
-      this.logger.error(`Fehler beim Prüfen auf Existenz im localStorage (Schlüssel: ${key}):`, error);
+      this.logger.error(
+        `Fehler beim Prüfen auf Existenz im localStorage (Schlüssel: ${key}):`,
+        error
+      );
       return false;
     }
   }

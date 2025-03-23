@@ -72,25 +72,32 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 
-defineProps({
-  templates: {
-    type: Array,
-    required: true,
-  },
-});
+import type { CategoryTemplate } from '~/types/app-types';
 
-const emit = defineEmits(['create', 'cancel']);
+interface ListOptions {
+  templateId: string;
+  isFavorite: boolean;
+}
 
-const listName = ref('');
-const selectedTemplateId = ref('supermarket'); // Default template
-const isFavorite = ref(false);
+const props = defineProps<{
+  templates: CategoryTemplate[];
+}>();
 
-const isValid = computed(() => listName.value.trim() !== '');
+const emit = defineEmits<{
+  (e: 'create', name: string, options: ListOptions): void;
+  (e: 'cancel'): void;
+}>();
 
-const onSubmit = () => {
+const listName = ref<string>('');
+const selectedTemplateId = ref<string>('supermarket'); // Default template
+const isFavorite = ref<boolean>(false);
+
+const isValid = computed<boolean>(() => listName.value.trim() !== '');
+
+const onSubmit = (): void => {
   if (!isValid.value) {
     return;
   }
@@ -106,7 +113,7 @@ const onSubmit = () => {
   isFavorite.value = false;
 };
 
-const onCancel = () => {
+const onCancel = (): void => {
   // Reset form
   listName.value = '';
   selectedTemplateId.value = 'supermarket';

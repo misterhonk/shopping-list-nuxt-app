@@ -1,6 +1,6 @@
-import { useDarkMode } from '~/composables/useDarkMode';
+import { defineNuxtPlugin } from 'nuxt/app';
 
-import { defineNuxtPlugin } from '#app';
+import { useDarkMode } from '~/composables/useDarkMode';
 
 /**
  * Plugin für die Initialisierung des Dark Mode

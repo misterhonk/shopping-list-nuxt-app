@@ -107,15 +107,19 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+
 import type { ShoppingList } from '~/types/app-types';
 
-const props = withDefaults(defineProps<{
-  lists: ShoppingList[];
-  currentListId: string | null;
-}>(), {
-  lists: () => [],
-  currentListId: null
-});
+const props = withDefaults(
+  defineProps<{
+    lists: ShoppingList[];
+    currentListId: string | null;
+  }>(),
+  {
+    lists: () => [],
+    currentListId: null,
+  }
+);
 
 const emit = defineEmits<{
   (e: 'select', listId: string): void;
@@ -123,7 +127,8 @@ const emit = defineEmits<{
   (e: 'add-item'): void;
 }>();
 
-const getItemsCount = (list: ShoppingList): number => (Array.isArray(list.items) ? list.items.length : 0);
+const getItemsCount = (list: ShoppingList): number =>
+  Array.isArray(list.items) ? list.items.length : 0;
 
 const selectList = (listId: string): void => {
   emit('select', listId);

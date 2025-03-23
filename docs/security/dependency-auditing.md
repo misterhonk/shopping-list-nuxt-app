@@ -17,6 +17,7 @@ Moderne Webanwendungen nutzen zahlreiche externe Abhängigkeiten, die potenziell
 Die Sicherheitsüberprüfung ist auf mehreren Ebenen integriert:
 
 1. **Manueller Check**:
+
    ```bash
    npm run audit:security
    ```
@@ -40,19 +41,24 @@ Die Sicherheitsüberprüfung ist mit folgenden Parametern konfiguriert:
 Bei einer Sicherheitsmeldung sind folgende Maßnahmen zu ergreifen:
 
 1. **Überprüfen der Meldung**:
+
    ```bash
    npm audit
    ```
+
    Dieser Befehl gibt detaillierte Informationen zu allen Sicherheitsproblemen aus.
 
 2. **Beheben der Sicherheitslücken**:
+
    ```bash
    npm audit fix
    ```
+
    Führt ein automatisches Update der betroffenen Abhängigkeiten durch, sofern möglich.
 
 3. **Manuelle Behebung**:
    Falls `npm audit fix` das Problem nicht lösen kann:
+
    - Aktualisieren Sie die direkten Abhängigkeiten manuell
    - Prüfen Sie, ob Abhängigkeiten mit bekannten Sicherheitslücken wirklich benötigt werden
 
@@ -68,15 +74,19 @@ Bei einer Sicherheitsmeldung sind folgende Maßnahmen zu ergreifen:
 Zusätzlich zu den automatisierten Checks sollten regelmäßig (z.B. monatlich) folgende manuelle Überprüfungen durchgeführt werden:
 
 1. **Vollständiger Audit**:
+
    ```bash
    npm audit --production
    ```
+
    Überprüft nur Produktionsabhängigkeiten, die in der tatsächlichen App verwendet werden.
 
 2. **Überprüfung auf veraltete Abhängigkeiten**:
+
    ```bash
    npm outdated
    ```
+
    Zeigt an, welche Pakete aktualisiert werden können.
 
 3. **Überprüfung der Lizenzen**:
@@ -89,11 +99,13 @@ Zusätzlich zu den automatisierten Checks sollten regelmäßig (z.B. monatlich) 
 
 Die Security-Checks sind in folgende Prozesse integriert:
 
-1. **Lokale Entwicklung**: 
+1. **Lokale Entwicklung**:
+
    - Vor jedem Push werden Sicherheitsprüfungen durchgeführt.
    - Entwickler erhalten sofort Feedback zu potenziellen Sicherheitsproblemen.
 
 2. **Continuous Integration**:
+
    - Bei jedem Pull Request werden Sicherheitsprüfungen automatisch durchgeführt.
    - Sicherheitsprobleme werden früh im Entwicklungsprozess erkannt.
 

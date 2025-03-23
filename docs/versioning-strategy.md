@@ -17,9 +17,10 @@ Die Versionsnummern folgen dem Format `MAJOR.MINOR.PATCH[-BEZEICHNER]`.
 
 ## Aktuelle Version
 
-Die aktuelle Version ist **2.0.0**. 
+Die aktuelle Version ist **2.0.0**.
 
 Diese Major-Version-Erhöhung spiegelt die umfangreichen Refactoring-Maßnahmen wider, insbesondere:
+
 - Die Umstellung auf eine service-orientierte Architektur
 - Die Implementierung des Repository-Patterns
 - Die verbesserte TypeScript-Integration
@@ -28,21 +29,27 @@ Diese Major-Version-Erhöhung spiegelt die umfangreichen Refactoring-Maßnahmen 
 ## Versionssprünge
 
 ### Major-Version (X.0.0)
+
 Eine Major-Version wird erhöht, wenn:
+
 - Breaking Changes in der API oder der Datenstruktur eingeführt werden
 - Eine umfassende Neugestaltung der Architektur erfolgt
 - Grundlegende Änderungen im Bedienkonzept eingeführt werden
 - Die Anwendung um fundamental neue Konzepte erweitert wird
 
 ### Minor-Version (0.X.0)
+
 Eine Minor-Version wird erhöht, wenn:
+
 - Neue Features hinzugefügt werden, die keine Breaking Changes verursachen
 - Bestehende Funktionalität erweitert wird
 - Öffentliche API-Funktionen als veraltet markiert werden
 - Substanzielle neue Funktionen hinzugefügt werden
 
 ### Patch-Version (0.0.X)
+
 Eine Patch-Version wird erhöht, wenn:
+
 - Bugfixes implementiert werden
 - Leistungsoptimierungen ohne Änderung des Verhaltens vorgenommen werden
 - Kleine UI-Anpassungen vorgenommen werden
@@ -77,6 +84,7 @@ Basierend auf unserer Roadmap sind folgende Versionssprünge geplant:
 ## Verwaltung der Versionsnummer
 
 Die Versionsnummer wird in folgenden Dateien gepflegt:
+
 - `package.json` (Hauptquelle)
 - `CHANGELOG.md` (Dokumentation der Änderungen)
 - Git-Tags für jede veröffentlichte Version

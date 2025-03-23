@@ -1,87 +1,3 @@
-<script setup lang="ts">
-import { computed, ref } from 'vue';
-import draggable from 'vuedraggable';
-import { useCategoryStore } from '~/stores/category';
-
-// Store-Instanz erzeugen
-const categoryStore = useCategoryStore();
-
-// Eigenschaften der Komponente
-const props = defineProps({
-  showControls: {
-    type: Boolean,
-    default: true,
-  },
-});
-
-// Emit für Ereignisse
-const emit = defineEmits(['sortingChanged']);
-
-// Lokale Variablen
-const enabled = ref(true);
-const isMounted = ref(false);
-
-// Stellen Sie sicher, dass der Store geladen wird
-categoryStore.loadFromLocalStorage();
-
-// Computed Properties für Kategorien und Sortierungsoptionen
-const categories = computed(() => categoryStore.currentCategories);
-const sortedCategories = computed(() => categoryStore.sortedCategories);
-const isCustomSortActive = computed(() => categoryStore.isCustomSortActive);
-const activeTemplate = computed(() => categoryStore.currentTemplate);
-const hasDefaultOrder = computed(() => Boolean(activeTemplate.value.defaultCategoryOrder?.length));
-
-// Sortierbare Kategorie-IDs
-const draggableCategories = computed({
-  get: () => {
-    // Ids der sortierten Kategorien zurückgeben
-    return sortedCategories.value.map(cat => cat.id);
-  },
-  set: (value: string[]) => {
-    // Wenn sich die Reihenfolge geändert hat, im Store aktualisieren
-    if (!Array.isArray(value)) return;
-    categoryStore.updateCustomSortOrder(value);
-    emit('sortingChanged', value);
-  },
-});
-
-// Kategorien-Map für schnelleren Zugriff
-const categoriesMap = computed(() => {
-  const map = new Map();
-  categories.value.forEach(cat => {
-    map.set(cat.id, cat);
-  });
-  return map;
-});
-
-// Methoden
-const toggleSortMode = () => {
-  categoryStore.toggleSortMode();
-  emit('sortingChanged', draggableCategories.value);
-};
-
-const resetToDefaultSort = () => {
-  categoryStore.resetToDefaultSort();
-  emit('sortingChanged', draggableCategories.value);
-};
-
-// Kategorie vom Namen anhand der ID erhalten
-const getCategoryById = (id: string) => {
-  return categoriesMap.value.get(id) || { name: id, id };
-};
-
-// Überprüfen, ob die draggable-Komponente korrekt geladen wurde
-const dragOptions = computed(() => {
-  return {
-    animation: 200,
-    group: "categories",
-    disabled: !isCustomSortActive.value,
-    ghostClass: "ghost",
-    dragClass: "dragging"
-  };
-});
-</script>
-
 <template>
   <div class="category-sorting-container">
     <!-- Sortierungssteuerung -->
@@ -95,15 +11,15 @@ const dragOptions = computed(() => {
         <div class="flex items-center">
           <button
             v-if="hasDefaultOrder"
-            @click="toggleSortMode"
             class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 mr-2"
+            @click="toggleSortMode"
           >
             {{ isCustomSortActive ? 'Zum Standard-Laufweg' : 'Individuell sortieren' }}
           </button>
           <button
             v-if="isCustomSortActive"
-            @click="resetToDefaultSort"
             class="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600"
+            @click="resetToDefaultSort"
           >
             Zurücksetzen
           </button>
@@ -152,6 +68,88 @@ const dragOptions = computed(() => {
     </draggable>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import draggable from 'vuedraggable';
+
+import { useCategoryStore } from '~/stores/category';
+
+// Store-Instanz erzeugen
+const categoryStore = useCategoryStore();
+
+// Eigenschaften der Komponente
+const { showControls } = defineProps({
+  showControls: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+// Emit für Ereignisse
+const emit = defineEmits(['sortingChanged']);
+
+// Lokale Variablen
+// Diese Variablen werden nicht verwendet und wurden entfernt (enabled, isMounted)
+
+// Stellen Sie sicher, dass der Store geladen wird
+categoryStore.loadFromLocalStorage();
+
+// Computed Properties für Kategorien und Sortierungsoptionen
+const categories = computed(() => categoryStore.currentCategories);
+const sortedCategories = computed(() => categoryStore.sortedCategories);
+const isCustomSortActive = computed(() => categoryStore.isCustomSortActive);
+const activeTemplate = computed(() => categoryStore.currentTemplate);
+const hasDefaultOrder = computed(() => Boolean(activeTemplate.value.defaultCategoryOrder?.length));
+
+// Sortierbare Kategorie-IDs
+const draggableCategories = computed({
+  get: () =>
+    // Ids der sortierten Kategorien zurückgeben
+    sortedCategories.value.map(cat => cat.id),
+  set: (value: string[]) => {
+    // Wenn sich die Reihenfolge geändert hat, im Store aktualisieren
+    if (!Array.isArray(value)) {
+      return;
+    }
+    categoryStore.updateCustomSortOrder(value);
+    emit('sortingChanged', value);
+  },
+});
+
+// Kategorien-Map für schnelleren Zugriff
+const categoriesMap = computed(() => {
+  const map = new Map();
+  categories.value.forEach(cat => {
+    map.set(cat.id, cat);
+  });
+  return map;
+});
+
+// Methoden
+const toggleSortMode = (): void => {
+  categoryStore.toggleSortMode();
+  emit('sortingChanged', draggableCategories.value);
+};
+
+const resetToDefaultSort = (): void => {
+  categoryStore.resetToDefaultSort();
+  emit('sortingChanged', draggableCategories.value);
+};
+
+// Kategorie vom Namen anhand der ID erhalten
+const getCategoryById = (id: string): { name: string; id: string } =>
+  categoriesMap.value.get(id) ?? { name: id, id };
+
+// Überprüfen, ob die draggable-Komponente korrekt geladen wurde
+const dragOptions = computed(() => ({
+  animation: 200,
+  group: 'categories',
+  disabled: !isCustomSortActive.value,
+  ghostClass: 'ghost',
+  dragClass: 'dragging',
+}));
+</script>
 
 <style scoped>
 .category-sorting-container {

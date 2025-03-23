@@ -5,15 +5,14 @@
  * bei den Return-Statements zu vermeiden.
  */
 
-import type { Ref, ComputedRef } from 'vue';
-import type { 
-  ShoppingItem, 
-  ShoppingList, 
-  Category, 
-  CategoryTemplate,
+import type {
+  ShoppingItem,
+  ShoppingList,
+  Category,
   ItemSuggestion,
-  ItemHistoryEntry 
+  ItemHistoryEntry,
 } from './app-types';
+import type { Ref, ComputedRef } from 'vue';
 
 /**
  * Schnittstelle für das useShoppingItems-Composable
@@ -28,10 +27,10 @@ export interface IUseShoppingItems {
     category: string | Category;
     price: number;
   };
-  
+
   // Getter und berechnete Eigenschaften
   allItems: ComputedRef<ShoppingItem[]>;
-  
+
   // Methoden
   getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
   addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
@@ -39,7 +38,7 @@ export interface IUseShoppingItems {
   toggleItemChecked: (item: string | ShoppingItem) => boolean;
   clearCheckedItems: () => boolean;
   updateCategoryInItems: (categoryId: string, newName: string) => void;
-  
+
   // Formular-Methoden
   showItemForm: () => void;
   hideItemForm: () => void;
@@ -54,16 +53,19 @@ export interface IUseShoppingLists {
   // Zustände
   lists: Ref<ShoppingList[]>;
   currentListId: Ref<string | null>;
-  
+
   // Getter und berechnete Eigenschaften
   currentList: ComputedRef<ShoppingList>;
-  
+
   // Methoden
   loadLists: () => boolean;
-  createList: (name: string, options?: {
-    isFavorite?: boolean;
-    templateId?: string;
-  }) => ShoppingList | null;
+  createList: (
+    name: string,
+    options?: {
+      isFavorite?: boolean;
+      templateId?: string;
+    }
+  ) => ShoppingList | null;
   selectList: (id: string) => boolean;
   deleteList: (id: string) => boolean;
   updateTemplateId: (templateId: string) => boolean;

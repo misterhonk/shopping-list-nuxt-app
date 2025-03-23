@@ -3,21 +3,22 @@
 ## Übersicht
 
 Dieser Plan beschreibt die schrittweise Implementierung der UI-Optimierungen für die Shopping-List-App, mit Fokus auf:
+
 1. Header-Optimierung mit Dropdown-Menü
 2. Listen-Container-Verschlankung
 3. Swipe-Funktionalität für Listen-Elemente
 
 ## Zeitplan
 
-| Phase | Aufgabe | Geschätzte Zeit | Abhängigkeiten |
-|-------|---------|-----------------|----------------|
-| 1 | Header-Menü-Komponente erstellen | 4h | - |
-| 1 | App-Header überarbeiten | 2h | Header-Menü-Komponente |
-| 2 | Listen-Container optimieren | 3h | - |
-| 3 | Touch-Bibliothek evaluieren & integrieren | 2h | - |
-| 3 | Swipe-Funktionalität implementieren | 6h | Touch-Bibliothek |
-| 4 | Testen & Optimieren auf Mobilgeräten | 4h | Alle vorherigen Phasen |
-| 5 | Dokumentation aktualisieren | 1h | Alle vorherigen Phasen |
+| Phase | Aufgabe                                   | Geschätzte Zeit | Abhängigkeiten         |
+| ----- | ----------------------------------------- | --------------- | ---------------------- |
+| 1     | Header-Menü-Komponente erstellen          | 4h              | -                      |
+| 1     | App-Header überarbeiten                   | 2h              | Header-Menü-Komponente |
+| 2     | Listen-Container optimieren               | 3h              | -                      |
+| 3     | Touch-Bibliothek evaluieren & integrieren | 2h              | -                      |
+| 3     | Swipe-Funktionalität implementieren       | 6h              | Touch-Bibliothek       |
+| 4     | Testen & Optimieren auf Mobilgeräten      | 4h              | Alle vorherigen Phasen |
+| 5     | Dokumentation aktualisieren               | 1h              | Alle vorherigen Phasen |
 
 Gesamtzeit: ~22 Stunden
 
@@ -26,11 +27,12 @@ Gesamtzeit: ~22 Stunden
 ### Phase 1: Header-Optimierung
 
 1. **Header-Menü-Komponente erstellen**
+
    ```bash
    # Komponente erstellen
    touch components/HeaderMenu.vue
    ```
-   
+
    - Implementiere die Komponente basierend auf dem Beispiel in `docs/ui-improvements/header-menu-example.vue`
    - Teste die Dropdown-Funktionalität
    - Stelle sicher, dass die bestehenden Funktionen (Dark Mode, Statistik) funktionieren
@@ -44,6 +46,7 @@ Gesamtzeit: ~22 Stunden
 ### Phase 2: Listen-Container-Verschlankung
 
 1. **CSS für Listen-Container optimieren**
+
    - Identifiziere und öffne die Hauptkomponente für die Listen-Darstellung
    - Entferne oder minimiere die "Meine Listen" Überschrift
    - Reduziere Padding und Margins auf das notwendige Minimum
@@ -57,6 +60,7 @@ Gesamtzeit: ~22 Stunden
 ### Phase 3: Swipe-Funktionalität
 
 1. **Touch-Bibliothek evaluieren & integrieren**
+
    ```bash
    # Füge eine Bibliothek für Touch-Gesten hinzu
    npm install @vueuse/gesture
@@ -73,6 +77,7 @@ Gesamtzeit: ~22 Stunden
 ### Phase 4: Testen & Optimieren
 
 1. **Mobile Tests**
+
    - Teste auf verschiedenen mobilen Geräten (iOS und Android)
    - Überprüfe die Performance der Swipe-Gesten
    - Stelle sicher, dass die Touch-Bereiche groß genug für die Fingerbedienung sind
@@ -92,14 +97,17 @@ Gesamtzeit: ~22 Stunden
 ## Technische Überlegungen
 
 ### Header-Menü
+
 - Verwende den Vue `Teleport`-Mechanismus, um das Dropdown-Menü außerhalb des Headers zu rendern und Z-Index-Probleme zu vermeiden
 - Implementiere ein Schließen des Menüs durch Klick außerhalb
 
 ### Listen-Container
+
 - Überlege, ob statt kompletter Entfernung der Überschrift ein visuelles "Separator"-Element sinnvoll sein könnte
 - Überlege die Implementierung eines virtuellen Scrolling für sehr lange Listen
 
 ### Swipe-Funktionalität
+
 - Implementiere passive Touch-Listener für bessere Performance
 - Setze Schwellenwerte für die Swipe-Erkennung, um versehentliche Aktionen zu vermeiden
 - Berücksichtige die Barrierefreiheit – stelle sicher, dass die Funktionen auch ohne Swipe zugänglich sind
@@ -107,14 +115,17 @@ Gesamtzeit: ~22 Stunden
 ## Risiken und Herausforderungen
 
 1. **Browser-Kompatibilität**
+
    - Nicht alle Mobilbrowser unterstützen Touch-Events gleichermaßen
    - Teste auf iOS Safari und Chrome für Android als Minimum
 
 2. **Nutzererfahrung**
+
    - Swipe-Gesten sind nicht immer offensichtlich für Benutzer
    - Überlege visuelle Hinweise bei erster Nutzung
 
 3. **Kollisionen mit Pull-to-Refresh**
+
    - Stelle sicher, dass die horizontale Swipe-Erkennung nicht mit vertikalen Scroll-Gesten kollidiert
    - Implementiere Touch-Start-Detection erst nach kleiner Bewegung
 

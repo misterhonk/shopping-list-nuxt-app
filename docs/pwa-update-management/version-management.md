@@ -9,6 +9,7 @@ Die Shopping-List-App implementiert ein zentralisiertes Versions-Management, um 
 Die aktuelle App-Version wird an folgenden zentralen Stellen definiert:
 
 1. **package.json**: Die offizielle Versionsnummer des Projekts:
+
    ```json
    {
      "name": "shopping-list-app",
@@ -19,7 +20,7 @@ Die aktuelle App-Version wird an folgenden zentralen Stellen definiert:
 
 2. **services/updateService.ts**: Die Version für den App-Update-Mechanismus:
    ```typescript
-   export const APP_VERSION = '2.0.1'
+   export const APP_VERSION = '2.0.1';
    ```
 
 **WICHTIG**: Bei jedem Update müssen die Versionsnummern an beiden Stellen synchron gehalten werden!
