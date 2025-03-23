@@ -1,12 +1,13 @@
 /**
  * Formular-Validierungsfunktionen für die Shopping-List-App
- * 
+ *
  * Diese Datei enthält Funktionen zur Validierung von Benutzereingaben
  * in Formularen und anderen Eingabefeldern.
  */
 
-import { createLogger } from '../logger';
-import type { ShoppingItem, ShoppingList } from '~/composables/types';
+import type { ShoppingItem, ShoppingList } from '~/types/app-types';
+
+import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
 const logger = createLogger('formValidation');
@@ -42,7 +43,7 @@ export interface ValidationRules {
 export function validateValue(value: unknown, rules: ValidationRules): string | null {
   // Erforderlich-Prüfung
   if (rules.required && (value === undefined || value === null || value === '')) {
-    return rules.errorMessage || 'Dieses Feld ist erforderlich';
+    return rules.errorMessage ?? 'Dieses Feld ist erforderlich';
   }
 
   // Wenn der Wert nicht erforderlich ist und leer ist, überspringen wir die weiteren Prüfungen
@@ -53,32 +54,32 @@ export function validateValue(value: unknown, rules: ValidationRules): string | 
   // String-basierte Validierungen
   if (typeof value === 'string') {
     if (rules.minLength !== undefined && value.length < rules.minLength) {
-      return rules.errorMessage || `Mindestens ${rules.minLength} Zeichen erforderlich`;
+      return rules.errorMessage ?? `Mindestens ${rules.minLength} Zeichen erforderlich`;
     }
-    
+
     if (rules.maxLength !== undefined && value.length > rules.maxLength) {
-      return rules.errorMessage || `Maximal ${rules.maxLength} Zeichen erlaubt`;
+      return rules.errorMessage ?? `Maximal ${rules.maxLength} Zeichen erlaubt`;
     }
-    
+
     if (rules.pattern && !rules.pattern.test(value)) {
-      return rules.errorMessage || 'Ungültiges Format';
+      return rules.errorMessage ?? 'Ungültiges Format';
     }
   }
 
   // Zahlen-basierte Validierungen
   if (typeof value === 'number') {
     if (rules.min !== undefined && value < rules.min) {
-      return rules.errorMessage || `Muss mindestens ${rules.min} sein`;
+      return rules.errorMessage ?? `Muss mindestens ${rules.min} sein`;
     }
-    
+
     if (rules.max !== undefined && value > rules.max) {
-      return rules.errorMessage || `Darf höchstens ${rules.max} sein`;
+      return rules.errorMessage ?? `Darf höchstens ${rules.max} sein`;
     }
   }
 
   // Benutzerdefinierte Validierung
   if (rules.customValidator && !rules.customValidator(value)) {
-    return rules.errorMessage || 'Ungültiger Wert';
+    return rules.errorMessage ?? 'Ungültiger Wert';
   }
 
   return null;
@@ -91,51 +92,51 @@ export function validateValue(value: unknown, rules: ValidationRules): string | 
  */
 export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationResult {
   const errors: Record<string, string> = {};
-  
+
   // Name validieren
   const nameError = validateValue(item.name, {
     required: true,
     minLength: 2,
     maxLength: 100,
-    errorMessage: 'Der Name muss zwischen 2 und 100 Zeichen lang sein'
+    errorMessage: 'Der Name muss zwischen 2 und 100 Zeichen lang sein',
   });
-  
+
   if (nameError) {
-    errors.name = nameError;
+    errors['name'] = nameError;
   }
-  
+
   // Menge validieren
   const quantityError = validateValue(item.quantity, {
     required: true,
     min: 1,
     max: 9999,
-    errorMessage: 'Die Menge muss zwischen 1 und 9999 liegen'
+    errorMessage: 'Die Menge muss zwischen 1 und 9999 liegen',
   });
-  
+
   if (quantityError) {
-    errors.quantity = quantityError;
+    errors['quantity'] = quantityError;
   }
-  
+
   // Kategorie validieren
   if (!item.category) {
-    errors.category = 'Eine Kategorie muss ausgewählt werden';
+    errors['category'] = 'Eine Kategorie muss ausgewählt werden';
   }
-  
+
   // Preis validieren (optional)
   if (item.price !== undefined) {
     const priceError = validateValue(item.price, {
       min: 0,
-      errorMessage: 'Der Preis darf nicht negativ sein'
+      errorMessage: 'Der Preis darf nicht negativ sein',
     });
-    
+
     if (priceError) {
-      errors.price = priceError;
+      errors['price'] = priceError;
     }
   }
-  
+
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 }
 
@@ -146,34 +147,34 @@ export function validateShoppingItem(item: Partial<ShoppingItem>): ValidationRes
  */
 export function validateShoppingList(list: Partial<ShoppingList>): ValidationResult {
   const errors: Record<string, string> = {};
-  
+
   // Name validieren
   const nameError = validateValue(list.name, {
     required: true,
     minLength: 2,
     maxLength: 100,
-    errorMessage: 'Der Listenname muss zwischen 2 und 100 Zeichen lang sein'
+    errorMessage: 'Der Listenname muss zwischen 2 und 100 Zeichen lang sein',
   });
-  
+
   if (nameError) {
-    errors.name = nameError;
+    errors['name'] = nameError;
   }
-  
+
   // Artikel validieren (wenn vorhanden)
   if (list.items && Array.isArray(list.items)) {
     for (let i = 0; i < list.items.length; i++) {
-      const itemValidation = validateShoppingItem(list.items[i]);
-      
+      const itemValidation = validateShoppingItem(list.items[i] || {});
+
       if (!itemValidation.isValid) {
         errors[`items[${i}]`] = 'Ungültiger Artikel';
         logger.warn(`Invalid item at index ${i}:`, itemValidation.errors);
       }
     }
   }
-  
+
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 }
 
@@ -185,21 +186,21 @@ export function validateShoppingList(list: Partial<ShoppingList>): ValidationRes
  * @returns Das Validierungsergebnis
  */
 export function validateTextLength(
-  text: string, 
-  minLength = 0, 
+  text: string,
+  minLength = 0,
   maxLength = Number.POSITIVE_INFINITY
 ): ValidationResult {
   const errors: Record<string, string> = {};
-  
+
   if (text.length < minLength) {
-    errors.text = `Text muss mindestens ${minLength} Zeichen enthalten`;
+    errors['text'] = `Text muss mindestens ${minLength} Zeichen enthalten`;
   } else if (text.length > maxLength) {
-    errors.text = `Text darf höchstens ${maxLength} Zeichen enthalten`;
+    errors['text'] = `Text darf höchstens ${maxLength} Zeichen enthalten`;
   }
-  
+
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 }
 
@@ -211,23 +212,23 @@ export function validateTextLength(
  * @returns Das Validierungsergebnis
  */
 export function validateNumericValue(
-  value: number, 
-  min = Number.NEGATIVE_INFINITY, 
+  value: number,
+  min = Number.NEGATIVE_INFINITY,
   max = Number.POSITIVE_INFINITY
 ): ValidationResult {
   const errors: Record<string, string> = {};
-  
+
   if (isNaN(value)) {
-    errors.value = 'Wert muss eine Zahl sein';
+    errors['value'] = 'Wert muss eine Zahl sein';
   } else if (value < min) {
-    errors.value = `Wert muss mindestens ${min} sein`;
+    errors['value'] = `Wert muss mindestens ${min} sein`;
   } else if (value > max) {
-    errors.value = `Wert darf höchstens ${max} sein`;
+    errors['value'] = `Wert darf höchstens ${max} sein`;
   }
-  
+
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 }
 
