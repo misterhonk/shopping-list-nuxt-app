@@ -1,8 +1,9 @@
 import { ref, computed, watch } from 'vue';
+import type { Ref, ComputedRef } from 'vue';
 
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, ShoppingItem } from '~/composables/types';
+import type { ShoppingList, ShoppingItem, Category } from '~/types/app-types';
 
 // Logger initialisieren
 const logger = createLogger('useItemSuggestions');
@@ -11,7 +12,7 @@ interface ItemHistoryEntry {
   count: number;
   lastUsed: string | null;
   categories: Record<string, number>;
-  prices: Array<{ price: number; date: string }>;
+  prices: { price: number; date: string }[];
 }
 
 interface ItemSuggestion {
@@ -23,10 +24,19 @@ interface ItemSuggestion {
   avgPrice?: number;
 }
 
+// Definieren der Return-Type für useItemSuggestions
+interface ItemSuggestionsComposable {
+  itemHistory: Ref<Record<string, ItemHistoryEntry>>;
+  getSuggestions: (term?: string) => ItemSuggestion[];
+  addToHistory: (item: ShoppingItem) => void;
+  initializeHistory: () => void;
+  historyStats: ComputedRef<{ uniqueItems: number; totalEntries: number; averageUsage: number }>;
+}
+
 /**
  * Composable für Artikelvorschläge basierend auf vergangenen Einkäufen
  */
-export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
+export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSuggestionsComposable {
   // Lokaler Speicher für die Artikelhistorie
   const getItem = (key: string): string | null => {
     try {
@@ -70,7 +80,7 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
 
   // Artikel zur Historie hinzufügen
   const addToHistory = (item: ShoppingItem): void => {
-    if (!item || !item.name) {
+    if (!item.name) {
       return;
     }
 
@@ -90,7 +100,15 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
     existingItem.lastUsed = now;
 
     // Kategorie zählen
-    const categoryId = item.category?.id || 'sonstiges';
+    let categoryId: string = 'sonstiges';
+    
+    if (item.category) {
+      if (typeof item.category === 'string') {
+        categoryId = item.category;
+      } else if (typeof item.category === 'object' && item.category.id) {
+        categoryId = item.category.id;
+      }
+    }
     existingItem.categories[categoryId] = (existingItem.categories[categoryId] || 0) + 1;
 
     // Preis hinzufügen, wenn vorhanden
@@ -131,7 +149,7 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
   /**
    * Berechnet den Durchschnittspreis eines Artikels
    */
-  const calculateAveragePrice = (prices: Array<{ price: number; date: string }>): number => {
+  const calculateAveragePrice = (prices: { price: number; date: string }[]): number => {
     if (!prices || prices.length === 0) {
       return 0;
     }
@@ -162,7 +180,7 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
           subtext: avgPrice > 0 ? `~${avgPrice.toFixed(2)} €` : '',
           count: data.count,
           lastUsed: data.lastUsed,
-          mostCommonCategory: mostCommonCategory || undefined,
+          mostCommonCategory: mostCommonCategory ?? undefined,
           avgPrice,
         });
       }
@@ -172,7 +190,7 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
     return results.sort((a, b) => {
       // Primär nach Häufigkeit
       if (b.count !== a.count) {
-        return (b.count || 0) - (a.count || 0);
+        return (b.count ?? 0) - (a.count ?? 0);
       }
       // Sekundär nach letzter Verwendung
       if (a.lastUsed && b.lastUsed) {
@@ -191,7 +209,7 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }) {
     lists.forEach(list => {
       if (list.items && Array.isArray(list.items)) {
         list.items.forEach((item: ShoppingItem) => {
-          if (item && item.name) {
+          if (item.name) {
             addToHistory(item);
           }
         });

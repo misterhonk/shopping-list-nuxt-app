@@ -1,7 +1,7 @@
-fix(typescript): Optimiere Null-Checks in useItemManagement.ts
+fix(typescript): Implementiere korrekte Return-Typen und Null-Checks in useItemSuggestions.ts
 
-- Verwende optional chaining (?.) für sicheren Zugriff auf Array-Eigenschaften
-- Füge zusätzliche Typprüfungen für Objekte hinzu
-- Stelle sicher, dass Eigenschaften existieren, bevor auf sie zugegriffen wird
-- Behandle weitere Edge-Cases bei potenziell undefinierten Werten
-- Schütze alle Map/Filter-Operationen auf Arrays mit Existenzprüfungen
+- Ersetze void Rückgabetyp durch spezifisches Interface ItemSuggestionsComposable
+- Korrigiere Zugriff auf Kategorie-ID mit expliziter Typprüfung
+- Ersetze falschen Nullish Coalescing Operator (??) durch logisches ODER (||)
+- Füge fehlende Vue-Typ-Importe für Ref und ComputedRef hinzu
+- Importiere Typen direkt aus types/app-types.ts anstelle von composables/types.ts
