@@ -17,12 +17,12 @@ const _logger = createLogger('useItemManagement');
 
 // Definieren der Return-Type für useItemManagement
 interface ItemManagementComposable {
-  allItems: Ref<IShoppingItem[]>;
-  getItemsGrouped: (categories: string[]) => Record<string, IShoppingItem[]>;
-  addItem: (itemData: Partial<IShoppingItem>) => ShoppingItem | null;
-  removeItem: (item: IShoppingItem | string) => boolean;
-  toggleItemChecked: (item: IShoppingItem | string) => boolean;
-  clearCheckedItems: () => boolean;
+  allItems: Ref<ShoppingItem[]>;
+  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
+  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
+  removeItem: (item: ShoppingItem | string) => boolean;
+  toggleItemChecked: (item: ShoppingItem | string) => boolean;
+  _clearCheckedItems: () => boolean;
   updateCategoryInItems: (categoryId: string, newName: string) => boolean;
 }
 
@@ -31,7 +31,7 @@ interface ItemManagementComposable {
  * Bietet Funktionen zum Hinzufügen, Entfernen und Markieren von Artikeln
  */
 export function useItemManagement(
-  shoppingListsRef: Ref<IShoppingList[]>,
+  shoppingListsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
 ): ItemManagementComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
@@ -39,7 +39,7 @@ export function useItemManagement(
   /**
    * Gibt alle Artikel der aktuellen Liste zurück
    */
-  const allItems = computed<IShoppingItem[]>(() => {
+  const allItems = computed<ShoppingItem[]>(() => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
     if (!currentList || !Array.isArray(currentList.items)) {
       return [];
@@ -50,7 +50,7 @@ export function useItemManagement(
   /**
    * Gruppiert Artikel nach Kategorien
    */
-  const getItemsGrouped = (categories: string[]): Record<string, IShoppingItem[]> => {
+  const getItemsGrouped = (categories: string[]): Record<string, ShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
 
     // Prüfen, ob items ein gültiges Array ist
@@ -60,7 +60,7 @@ export function useItemManagement(
           obj[cat] = [];
           return obj;
         },
-        {} as Record<string, IShoppingItem[]>
+        {} as Record<string, ShoppingItem[]>
       );
     }
 
@@ -72,7 +72,7 @@ export function useItemManagement(
    * @param itemData - Daten des neuen Artikels
    * @returns Das hinzugefügte Item oder null bei Fehler
    */
-  const addItem = (itemData: Partial<IShoppingItem>): IShoppingItem | null => {
+  const addItem = (itemData: Partial<ShoppingItem>): ShoppingItem | null => {
     // Prüfen, ob die Daten gültig sind
     if (
       !itemData.name ||
@@ -122,7 +122,7 @@ export function useItemManagement(
    * @param item - Das Item oder die ID des zu entfernenden Artikels
    * @returns true bei Erfolg, false bei Fehler
    */
-  const removeItem = (item: IShoppingItem | string): boolean => {
+  const removeItem = (item: ShoppingItem | string): boolean => {
     try {
       // Item-ID aus dem Parameter extrahieren
       const itemId = typeof item === 'object' ? item.id : item;
@@ -183,7 +183,7 @@ export function useItemManagement(
    * @param item - Das Item oder die ID des zu ändernden Artikels
    * @returns true bei Erfolg, false bei Fehler
    */
-  const toggleItemChecked = (item: IShoppingItem | string): boolean => {
+  const toggleItemChecked = (item: ShoppingItem | string): boolean => {
     try {
       // Item-ID aus dem Parameter extrahieren
       const itemId = typeof item === 'object' ? item.id : item;
@@ -229,7 +229,7 @@ export function useItemManagement(
             ...item,
             checked: !item.checked,
             modifiedAt: Date.now(),
-          } as const;
+          };
         }
         return item;
       });
@@ -361,5 +361,5 @@ export function useItemManagement(
     toggleItemChecked,
     _clearCheckedItems,
     updateCategoryInItems,
-  } as const;
+  };
 }
