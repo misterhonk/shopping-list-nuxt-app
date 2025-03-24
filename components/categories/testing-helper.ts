@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, Category, ShoppingItem } from '~/types/app-types';
+import type { IShoppingList, ICategory, IShoppingItem } from '~/types/app-types';
 
 /**
  * Diese Hilfsfunktion ermöglicht einen direkten Zugriff auf den Kategorie-Store
@@ -18,15 +18,16 @@ interface ICategoryData {
       id: string;
       name: string;
       description: string;
-      categories: Category[];
+      categories: ICategory[];
     }
   >;
 }
 
-interface ICategoryUsage {
-  count: number;
-  items: string[];
-}
+// Unused types can be removed in Phase 2
+// interface ICategoryUsage {
+//   count: number;
+//   items: string[];
+// }
 
 /**
  * Diagnose-Funktion für Kategoriedaten
@@ -35,21 +36,21 @@ interface ICategoryUsage {
 /**
  * Lädt und prüft die benötigten Daten aus dem Local Storage
  */
-const loadDiagnosticData = (): void => {
+const loadDiagnosticData = () => {
   // Kategoriedaten aus localStorage abrufen
   const categoryData = localStorage.getItem('categoryTemplates');
   const listData = localStorage.getItem('shoppingLists');
 
   if (!categoryData || !listData) {
     _logger.error('[Diagnose] Keine Daten gefunden');
-    return null;
+    return undefined;
   }
 
   const parsedCategories = JSON.parse(categoryData) as ICategoryData;
-  const parsedLists = JSON.parse(listData) as ShoppingList[];
+  const parsedLists = JSON.parse(listData) as IShoppingList[];
 
-  logger.info('[Diagnose] Kategorie-Daten:', parsedCategories);
-  logger.info('[Diagnose] Listen-Daten:', parsedLists);
+  _logger.info('[Diagnose] Kategorie-Daten:', parsedCategories);
+  _logger.info('[Diagnose] Listen-Daten:', parsedLists);
 
   return { parsedCategories, parsedLists };
 };
@@ -57,12 +58,12 @@ const loadDiagnosticData = (): void => {
 /**
  * Ermittelt das aktive Template
  */
-const getActiveTemplate = (parsedCategories: ICategoryData): void => {
+const getActiveTemplate = (parsedCategories: ICategoryData) => {
   if (
     !parsedCategories.activeTemplateId ||
     !parsedCategories.customTemplates[parsedCategories.activeTemplateId]
   ) {
-    return null;
+    return undefined;
   }
 
   return parsedCategories.customTemplates[parsedCategories.activeTemplateId];
@@ -71,8 +72,8 @@ const getActiveTemplate = (parsedCategories: ICategoryData): void => {
 /**
  * Sammelt Informationen über die verwendeten Kategorien
  */
-const collectCategoryUsage = (parsedLists: ShoppingList[]): Record<string, CategoryUsage> => {
-  const categoriesInUse: Record<string, CategoryUsage> = {};
+const collectCategoryUsage = (parsedLists: IShoppingList[]) => {
+  const categoriesInUse: Record<string, { count: number; items: string[] }> = {};
 
   parsedLists.forEach(list => {
     if (!Array.isArray(list.items)) {
@@ -119,26 +120,26 @@ export function diagnoseCategories():
 
     // Aktuelle Kategorien abrufen
     const activeTemplate = getActiveTemplate(parsedCategories);
-    logger.info('[Diagnose] Aktives Template:', activeTemplate);
+    _logger.info('[Diagnose] Aktives Template:', activeTemplate);
 
     // Kategorien-Nutzung analysieren
     const categoriesInUse = collectCategoryUsage(parsedLists);
-    logger.info('[Diagnose] Kategorien in Verwendung:', categoriesInUse);
+    _logger.info('[Diagnose] Kategorien in Verwendung:', categoriesInUse);
 
     /**
      * Prüft, ob eine Kategorie in einem Artikel verwendet wird
      */
-    const isCategoryMatch = (item: ShoppingItem, categoryId: string): boolean =>
+    const isCategoryMatch = (item: IShoppingItem, categoryId: string): boolean =>
       item.category && typeof item.category === 'object' && item.category.id === categoryId;
 
     /**
      * Aktualisiert einen Artikel mit dem neuen Kategorienamen
      */
     const updateItemCategory = (
-      item: ShoppingItem,
+      item: IShoppingItem,
       categoryId: string,
       newName: string
-    ): ShoppingItem => {
+    ): IShoppingItem => {
       if (!isCategoryMatch(item, categoryId)) {
         return item;
       }
@@ -156,10 +157,10 @@ export function diagnoseCategories():
      * Aktualisiert die Listen mit dem neuen Kategorienamen
      */
     const updateListsWithCategory = (
-      lists: ShoppingList[],
+      lists: IShoppingList[],
       categoryId: string,
       newName: string
-    ): void => {
+    ) => {
       let updatedCount = 0;
 
       const newLists = lists.map(list => {
@@ -199,7 +200,7 @@ export function diagnoseCategories():
         return true;
       }
 
-      logger.info(`[Diagnose] Keine Artikel mit Kategorie-ID "${categoryId}" gefunden`);
+      _logger.info(`[Diagnose] Keine Artikel mit Kategorie-ID "${categoryId}" gefunden`);
       return false;
     };
   } catch (error) {
