@@ -1,14 +1,14 @@
 /**
  * LocalStorage-Repository für die Shopping-List-App
  *
- * Dieses Repository implementiert das StorageRepository-Interface mit
+ * Dieses Repository implementiert das IStorageRepository-Interface mit
  * localStorage als Speichermethode.
  */
 
 import { createLogger } from '~/utils/logger';
 import { isShoppingListArray } from '~/utils/validation';
 
-import type { StorageRepository } from './StorageRepository';
+import type { IStorageRepository } from './StorageRepository';
 
 /**
  * LocalStorage-basierte Implementierung des StorageRepository
@@ -17,7 +17,7 @@ export class LocalStorageRepository implements StorageRepository {
   /**
    * Der Logger für das Repository
    */
-  private readonly logger;
+  private readonly _logger;
 
   /**
    * Erstellt eine neue Instanz des LocalStorageRepository
@@ -43,13 +43,13 @@ export class LocalStorageRepository implements StorageRepository {
 
       // Validierung für bekannte Datentypen
       if (key === 'shoppingLists' && !isShoppingListArray(parsedValue)) {
-        this.logger.error('Ungültiges Format der gespeicherten Listen');
+        this._logger.error('Ungültiges Format der gespeicherten Listen');
         return null;
       }
 
       return parsedValue;
     } catch (error) {
-      this.logger.error(`Fehler beim Laden aus dem localStorage (Schlüssel: ${key}):`, error);
+      this._logger.error(`Fehler beim Laden aus dem localStorage (Schlüssel: ${key}):`, error);
       return null;
     }
   }
@@ -65,7 +65,7 @@ export class LocalStorageRepository implements StorageRepository {
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (error) {
-      this.logger.error(`Fehler beim Speichern im localStorage (Schlüssel: ${key}):`, error);
+      this._logger.error(`Fehler beim Speichern im localStorage (Schlüssel: ${key}):`, error);
       return false;
     }
   }
@@ -80,7 +80,7 @@ export class LocalStorageRepository implements StorageRepository {
       localStorage.removeItem(key);
       return true;
     } catch (error) {
-      this.logger.error(`Fehler beim Entfernen aus dem localStorage (Schlüssel: ${key}):`, error);
+      this._logger.error(`Fehler beim Entfernen aus dem localStorage (Schlüssel: ${key}):`, error);
       return false;
     }
   }
@@ -94,7 +94,7 @@ export class LocalStorageRepository implements StorageRepository {
     try {
       return localStorage.getItem(key) !== null;
     } catch (error) {
-      this.logger.error(
+      this._logger.error(
         `Fehler beim Prüfen auf Existenz im localStorage (Schlüssel: ${key}):`,
         error
       );
@@ -111,7 +111,7 @@ export class LocalStorageRepository implements StorageRepository {
       localStorage.clear();
       return true;
     } catch (error) {
-      this.logger.error('Fehler beim Leeren des localStorage:', error);
+      this._logger.error('Fehler beim Leeren des localStorage:', error);
       return false;
     }
   }
@@ -131,7 +131,7 @@ export class LocalStorageRepository implements StorageRepository {
       }
       return keys;
     } catch (error) {
-      this.logger.error('Fehler beim Abrufen der localStorage-Schlüssel:', error);
+      this._logger.error('Fehler beim Abrufen der localStorage-Schlüssel:', error);
       return [];
     }
   }

@@ -66,12 +66,12 @@ const swipeThreshold = 80; // Minimum distance for swipe to trigger action
 const currentSwipedListId = ref<string | null>(null);
 
 // Methods for swipe actions
-const handleTouchStart = (event: TouchEvent, listId: string) => {
+const handleTouchStart = (event: TouchEvent, listId: string): void => {
   touchStartX.value = event.touches[0].clientX;
   currentSwipedListId.value = listId;
 };
 
-const handleTouchMove = (event: TouchEvent) => {
+const handleTouchMove = (event: TouchEvent): void => {
   if (!currentSwipedListId.value) {
     return;
   }
@@ -103,7 +103,7 @@ const handleTouchMove = (event: TouchEvent) => {
   }
 };
 
-const handleTouchEnd = () => {
+const handleTouchEnd = (): void => {
   if (!currentSwipedListId.value) {
     return;
   }
@@ -140,21 +140,21 @@ const handleTouchEnd = () => {
   }, 300);
 };
 
-const performDeleteAction = (listId: string) => {
+const performDeleteAction = (listId: string): void => {
   // Show confirmation dialog or directly delete
   if (confirm('Möchten Sie diese Liste wirklich löschen?')) {
     shoppingListsStore.deleteList(listId);
   }
 };
 
-const performEditAction = (listId: string) => {
+const performEditAction = (listId: string): void => {
   // Navigate to edit page or show edit dialog
   // Implementation depends on your app's navigation/editing logic
   console.log(`Edit list: ${listId}`);
 };
 
 // Cancel swipe if touch is canceled
-const handleTouchCancel = () => {
+const handleTouchCancel = (): void => {
   handleTouchEnd();
 };
 

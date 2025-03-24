@@ -11,7 +11,7 @@ import type { CategorySortConfig } from '~/composables/types';
 import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('sorting');
+const _logger = createLogger('sorting');
 
 /**
  * Schlüssel für die Speicherung der Sortierungskonfigurationen im localStorage
@@ -29,7 +29,7 @@ export const loadSortConfigs = (): Record<string, CategorySortConfig> => {
       return JSON.parse(storedConfigs);
     }
   } catch (error) {
-    logger.error('Fehler beim Laden der Sortierungskonfigurationen:', error);
+    _logger.error('Fehler beim Laden der Sortierungskonfigurationen:', error);
   }
   return {};
 };
@@ -42,7 +42,7 @@ export const saveSortConfigs = (configs: Record<string, CategorySortConfig>): vo
   try {
     localStorage.setItem(SORT_CONFIG_STORAGE_KEY, JSON.stringify(configs));
   } catch (error) {
-    logger.error('Fehler beim Speichern der Sortierungskonfigurationen:', error);
+    _logger.error('Fehler beim Speichern der Sortierungskonfigurationen:', error);
   }
 };
 

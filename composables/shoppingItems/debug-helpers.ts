@@ -4,7 +4,7 @@ import type { Ref } from 'vue';
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('debug-helpers');
+const _logger = createLogger('debug-helpers');
 
 /**
  * Debug-Helfer für Einkaufslisten und Artikel
@@ -13,9 +13,9 @@ const logger = createLogger('debug-helpers');
 /**
  * Protokolliert den Zustand der aktuellen Listen und die ID der aktuellen Liste
  */
-export function logListsState(lists: ShoppingList[], currentListId: string | null): void {
-  logger.info('=== DEBUG: Listen-Status ===');
-  logger.info(
+export function logListsState(lists: IIShoppingList[], currentListId: string | null): void {
+  __logger.info('=== DEBUG: Listen-Status ===');
+  _logger.info(
     'Aktuelle Listen:',
     lists.map(l => ({
       id: l.id,
@@ -23,33 +23,33 @@ export function logListsState(lists: ShoppingList[], currentListId: string | nul
       itemCount: l.items.length ?? 0,
     }))
   );
-  logger.info('Aktuelle Listen-ID:', currentListId);
-  logger.info(
+  _logger.info('Aktuelle Listen-ID:', currentListId);
+  _logger.info(
     'Aktuelle Liste gefunden:',
     lists.some(l => l.id === currentListId)
   );
-  logger.info('==========================');
+  _logger.info('==========================');
 }
 
 /**
  * Erweiterte Version der removeItem-Funktion mit Debug-Logging
  */
 export function createDebuggedRemoveItem(
-  originalRemoveItem: (item: ShoppingItem | string) => boolean,
-  shoppingListsRef: Ref<ShoppingList[]>,
+  originalRemoveItem: (item: IShoppingItem | string) => boolean,
+  shoppingListsRef: Ref<IShoppingList[]>,
   currentListIdRef: Ref<string | null>,
   saveToStorage: (key: string, value: unknown) => void
-): (item: ShoppingItem | string) => boolean {
-  return function debuggedRemoveItem(item: ShoppingItem | string): boolean {
+): (item: IShoppingItem | string) => boolean {
+  return function debuggedRemoveItem(item: IShoppingItem | string): boolean {
     // Item-ID aus dem Parameter extrahieren (falls ein Objekt übergeben wurde)
     const itemId = typeof item === 'object' ? item.id : item;
 
-    logger.info('=== DEBUG: removeItem aufgerufen ===');
-    logger.info('Zu entfernendes Item:', itemId);
+    __logger.info('=== DEBUG: removeItem aufgerufen ===');
+    _logger.info('Zu entfernendes Item:', itemId);
 
     const listIndex = shoppingListsRef.value.findIndex(list => list.id === currentListIdRef.value);
-    logger.info('Aktuelle Listen-ID:', currentListIdRef.value);
-    logger.info('Gefundener Listenindex:', listIndex);
+    _logger.info('Aktuelle Listen-ID:', currentListIdRef.value);
+    _logger.info('Gefundener Listenindex:', listIndex);
 
     if (listIndex === -1) {
       logger.error('FEHLER: Liste nicht gefunden!');
@@ -58,28 +58,28 @@ export function createDebuggedRemoveItem(
     }
 
     const currentList = shoppingListsRef.value[listIndex];
-    logger.info('Liste vor Entfernen:', {
+    _logger.info('Liste vor Entfernen:', {
       id: currentList.id,
       name: currentList.name,
       itemCount: currentList.items.length ?? 0,
     });
 
     if (!Array.isArray(currentList.items)) {
-      logger.error('FEHLER: Liste hat keine items Array!');
+      _logger.error('FEHLER: Liste hat keine items Array!');
       return false;
     }
 
     // Prüfen, ob das Item existiert
     const itemIndex = currentList.items.findIndex(item => item.id === itemId);
-    logger.info('Item-Index in Liste:', itemIndex);
+    _logger.info('Item-Index in Liste:', itemIndex);
 
     if (itemIndex === -1) {
-      logger.error('FEHLER: Item nicht in Liste gefunden!');
+      _logger.error('FEHLER: Item nicht in Liste gefunden!');
 
       // Alle Items der Liste anzeigen für Debugging
-      logger.info('Alle Items in der Liste:');
+      _logger.info('Alle Items in der Liste:');
       currentList.items.forEach((item, idx) => {
-        logger.info(`  [${idx}] ID: ${item.id}, Name: ${item.name}`);
+        _logger.info(`  [${idx}] ID: ${item.id}, Name: ${item.name}`);
       });
 
       return false;
@@ -87,10 +87,10 @@ export function createDebuggedRemoveItem(
 
     // Tiefe Kopie und Entfernen des Items
     const newLists = JSON.parse(JSON.stringify(shoppingListsRef.value));
-    const newItems = newLists[listIndex].items.filter((item: ShoppingItem) => item.id !== itemId);
+    const newItems = newLists[listIndex].items.filter((item: IShoppingItem) => item.id !== itemId);
 
-    logger.info('Items vorher:', newLists[listIndex].items.length);
-    logger.info('Items nachher:', newItems.length);
+    _logger.info('Items vorher:', newLists[listIndex].items.length);
+    _logger.info('Items nachher:', newItems.length);
 
     newLists[listIndex].items = newItems;
 
@@ -98,15 +98,15 @@ export function createDebuggedRemoveItem(
     shoppingListsRef.value = newLists;
     saveToStorage('shoppingLists', newLists);
 
-    logger.info(
+    _logger.info(
       'Listen nach Update:',
-      newLists.map((l: ShoppingList) => ({
+      newLists.map((l: IShoppingList) => ({
         id: l.id,
         name: l.name,
         itemCount: l.items.length ?? 0,
       }))
     );
-    logger.info('=== DEBUG: removeItem Ende ===');
+    _logger.info('=== DEBUG: removeItem Ende ===');
 
     return true;
   };

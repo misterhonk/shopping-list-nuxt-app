@@ -6,9 +6,9 @@
  */
 
 import type {
-  ShoppingItem,
-  ShoppingList,
-  Category,
+  IShoppingItem,
+  IShoppingList,
+  ICategory,
   ItemSuggestion,
   ItemHistoryEntry,
 } from './app-types';
@@ -24,18 +24,18 @@ export interface IUseShoppingItems {
   newItem: {
     name: string;
     quantity: number;
-    category: string | Category;
+    category: string | ICategory;
     price: number;
   };
 
   // Getter und berechnete Eigenschaften
-  allItems: ComputedRef<ShoppingItem[]>;
+  allItems: ComputedRef<IShoppingItem[]>;
 
   // Methoden
-  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
-  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
-  removeItem: (item: string | ShoppingItem) => boolean;
-  toggleItemChecked: (item: string | ShoppingItem) => boolean;
+  getItemsGrouped: (categories: string[]) => Record<string, IShoppingItem[]>;
+  addItem: (itemData: Partial<IShoppingItem>) => IShoppingItem | null;
+  removeItem: (item: string | IShoppingItem) => boolean;
+  toggleItemChecked: (item: string | IShoppingItem) => boolean;
   clearCheckedItems: () => boolean;
   updateCategoryInItems: (categoryId: string, newName: string) => void;
 
@@ -51,11 +51,11 @@ export interface IUseShoppingItems {
  */
 export interface IUseShoppingLists {
   // Zustände
-  lists: Ref<ShoppingList[]>;
+  lists: Ref<IShoppingList[]>;
   currentListId: Ref<string | null>;
 
   // Getter und berechnete Eigenschaften
-  currentList: ComputedRef<ShoppingList>;
+  currentList: ComputedRef<IShoppingList>;
 
   // Methoden
   loadLists: () => boolean;
@@ -65,7 +65,7 @@ export interface IUseShoppingLists {
       isFavorite?: boolean;
       templateId?: string;
     }
-  ) => ShoppingList | null;
+  ) => IShoppingList | null;
   selectList: (id: string) => boolean;
   deleteList: (id: string) => boolean;
   updateTemplateId: (templateId: string) => boolean;
@@ -78,7 +78,7 @@ export interface IUseShoppingLists {
  * Schnittstelle für das useListProperties-Composable
  */
 export interface IUseListProperties {
-  getItemsCount: (list: ShoppingList) => number;
+  getItemsCount: (list: IShoppingList) => number;
   getCheckedItemsCount: () => number;
   getTotalItemsCount: () => number;
   updateListName: (newName: string) => boolean;
@@ -89,11 +89,11 @@ export interface IUseListProperties {
  * Schnittstelle für das useListUpdate-Composable
  */
 export interface IUseListUpdate {
-  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
+  updateList: (listData: Partial<IShoppingList> & { id: string }) => boolean;
   clearList: (listId?: string) => boolean;
   addItemsToList: (
     listId: string,
-    items: ShoppingItem[],
+    items: IShoppingItem[],
     options?: { skipDuplicates?: boolean }
   ) => boolean;
 }
@@ -115,11 +115,11 @@ export interface IUseItemForm {
  * Schnittstelle für das useItemManagement-Composable
  */
 export interface IUseItemManagement {
-  allItems: ComputedRef<ShoppingItem[]>;
-  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
-  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
+  allItems: ComputedRef<IShoppingItem[]>;
+  getItemsGrouped: (categories: string[]) => Record<string, IShoppingItem[]>;
+  addItem: (itemData: Partial<IShoppingItem>) => IShoppingItem | null;
   removeItem: (item: string | ShoppingItem) => boolean;
-  toggleItemChecked: (item: string | ShoppingItem) => boolean;
+  toggleItemChecked: (item: string | IShoppingItem) => boolean;
   clearCheckedItems: () => boolean;
   updateCategoriesInItems: (categoryId: string, newName: string) => boolean;
 }
@@ -130,7 +130,7 @@ export interface IUseItemManagement {
 export interface IUseItemSuggestions {
   itemHistory: Ref<Record<string, ItemHistoryEntry>>;
   getSuggestions: (term?: string) => ItemSuggestion[];
-  addToHistory: (item: ShoppingItem) => void;
+  addToHistory: (item: IShoppingItem) => void;
   initializeHistory: () => void;
   historyStats: ComputedRef<{
     totalItems: number;

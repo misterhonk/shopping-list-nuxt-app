@@ -80,7 +80,7 @@
       }
     ],
     "import/no-unresolved": "off",
-    "import/no-relative-parent-imports": "warn",
+    "import/no-relative-parent-imports": "off",
 
     // Vue specific rules
     "vue/multi-word-component-names": "warn",

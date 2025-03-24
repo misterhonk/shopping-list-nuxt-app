@@ -50,7 +50,7 @@ import ItemListItem from './ItemListItem.vue';
 
 import type { ShoppingItem } from '~/types/app-types';
 
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     items: ShoppingItem[];
   }>(),
@@ -119,7 +119,7 @@ const categorySortOrder = computed(() =>
 );
 
 // Liste der gruppierten Kategorien, sortiert nach der Laufweg-Reihenfolge
-const sortedGroupedCategories = computed<GroupedCategory[]>(() => {
+const sortedGroupedCategories = computed<IGroupedCategory[]>(() => {
   const categories = Object.values(groupedItems.value);
 
   // Sortierungsfunktion basierend auf der Kategoriereihenfolge

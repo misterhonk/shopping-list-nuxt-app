@@ -6,7 +6,7 @@ import type { Ref } from 'vue';
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('useListUpdate');
+const _logger = createLogger('useListUpdate');
 
 // Interface für den Rückgabetyp des Composables
 interface IListUpdateComposable {
@@ -82,7 +82,7 @@ export function useListUpdate(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren der Liste:', error);
+      _logger.error('Fehler beim Aktualisieren der Liste:', error);
       return false;
     }
   };
@@ -114,7 +114,7 @@ export function useListUpdate(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Leeren der Liste:', error);
+      _logger.error('Fehler beim Leeren der Liste:', error);
       return false;
     }
   };
@@ -132,7 +132,7 @@ export function useListUpdate(
     options: { replace?: boolean; uniqueCheck?: boolean } = {}
   ): boolean => {
     try {
-      if (!items || (!Array.isArray(items) || items.length === 0)) {
+      if (!items || !Array.isArray(items) || items.length === 0) {
         return false;
       }
 
@@ -167,7 +167,7 @@ export function useListUpdate(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
+      _logger.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
       return false;
     }
   };

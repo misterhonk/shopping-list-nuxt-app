@@ -8,7 +8,7 @@ import type { ShoppingList, Category, ShoppingItem } from '~/types/app-types';
  */
 
 // Logger initialisieren
-const logger = createLogger('testing-helper');
+const _logger = createLogger('testing-helper');
 
 interface ICategoryData {
   activeTemplateId: string;
@@ -41,11 +41,11 @@ const loadDiagnosticData = (): void => {
   const listData = localStorage.getItem('shoppingLists');
 
   if (!categoryData || !listData) {
-    logger.error('[Diagnose] Keine Daten gefunden');
+    _logger.error('[Diagnose] Keine Daten gefunden');
     return null;
   }
 
-  const parsedCategories = JSON.parse(categoryData) as CategoryData;
+  const parsedCategories = JSON.parse(categoryData) as ICategoryData;
   const parsedLists = JSON.parse(listData) as ShoppingList[];
 
   logger.info('[Diagnose] Kategorie-Daten:', parsedCategories);
@@ -193,7 +193,7 @@ export function diagnoseCategories():
 
       if (updatedCount > 0) {
         localStorage.setItem('shoppingLists', JSON.stringify(newLists));
-        logger.info(
+        _logger.info(
           `[Diagnose] ${updatedCount} Artikel aktualisiert mit neuer Kategorie "${newName}"`
         );
         return true;
@@ -203,7 +203,7 @@ export function diagnoseCategories():
       return false;
     };
   } catch (error) {
-    logger.error('[Diagnose] Fehler:', error);
+    _logger.error('[Diagnose] Fehler:', error);
     return undefined;
   }
 }

@@ -8,7 +8,7 @@ export enum LogLevel {
   DEBUG = 'debug',
   INFO = 'info',
   WARN = 'warn',
-  ERROR = 'error',
+  ERROR = '_error',
 }
 
 // Configuration for the logger
@@ -24,23 +24,23 @@ const defaultConfig: ILoggerConfig = {
 };
 
 // Current configuration (can be updated at runtime)
-let currentConfig = { ...defaultConfig };
+let _currentConfig = { ...defaultConfig };
 
 /**
  * Configure the global logger behavior
  */
 export function configureLogger(config: Partial<ILoggerConfig>): void {
-  currentConfig = { ...currentConfig, ...config };
+  _currentConfig = { ...currentConfig, ...config };
 }
 
 /**
  * ILogger interface defining available methods
  */
 export interface ILogger {
-  debug: (message: string, ...data: unknown[]) => void;
-  info: (message: string, ...data: unknown[]) => void;
-  warn: (message: string, ...data: unknown[]) => void;
-  error: (message: string, ...data: unknown[]) => void;
+  debug: (message: string, ..._data: unknown[]) => void;
+  info: (message: string, ..._data: unknown[]) => void;
+  warn: (message: string, ..._data: unknown[]) => void;
+  error: (message: string, ..._data: unknown[]) => void;
 }
 
 /**
@@ -51,17 +51,17 @@ export interface ILogger {
  */
 export function createLogger(module: string): ILogger {
   return {
-    debug(message: string, ...data: unknown[]): void {
-      log(LogLevel.DEBUG, module, message, data);
+    debug(message: string, ..._data: unknown[]): void {
+      log(LogLevel.DEBUG, module, message, _data);
     },
-    info(message: string, ...data: unknown[]): void {
-      log(LogLevel.INFO, module, message, data);
+    info(message: string, ..._data: unknown[]): void {
+      log(LogLevel.INFO, module, message, _data);
     },
-    warn(message: string, ...data: unknown[]): void {
-      log(LogLevel.WARN, module, message, data);
+    warn(message: string, ..._data: unknown[]): void {
+      log(LogLevel.WARN, module, message, _data);
     },
-    error(message: string, ...data: unknown[]): void {
-      log(LogLevel.ERROR, module, message, data);
+    error(message: string, ..._data: unknown[]): void {
+      log(LogLevel.ERROR, module, message, _data);
     },
   };
 }
@@ -69,10 +69,10 @@ export function createLogger(module: string): ILogger {
 /**
  * Internal log function
  */
-function log(level: LogLevel, module: string, message: string, data: unknown[]): void {
+function log(level: LogLevel, module: string, message: string, _data: unknown[]): void {
   // Check if we should log based on minimum level
   const levels = Object.values(LogLevel);
-  if (levels.indexOf(level) < levels.indexOf(currentConfig.minLevel)) {
+  if (levels.indexOf(level) < levels.indexOf(_currentConfig.minLevel)) {
     return;
   }
 
@@ -80,20 +80,20 @@ function log(level: LogLevel, module: string, message: string, data: unknown[]):
   const formattedMessage = `[${timestamp}] [${level.toUpperCase()}] [${module}] ${message}`;
 
   // Console logging (browser environment)
-  if (currentConfig.enableConsole) {
-    switch (level) {
+  if (_currentConfig.enableConsole) {
+    switch(level) {
       case LogLevel.DEBUG:
         // eslint-disable-next-line no-console
-        console.debug(formattedMessage, ...data);
+        console.debug(formattedMessage, ..._data);
         break;
       case LogLevel.INFO:
-        console.info(formattedMessage, ...data);
+        console.info(formattedMessage, ..._data);
         break;
       case LogLevel.WARN:
-        console.warn(formattedMessage, ...data);
+        console.warn(formattedMessage, ..._data);
         break;
       case LogLevel.ERROR:
-        console.error(formattedMessage, ...data);
+        console._error(formattedMessage, ..._data);
         break;
     }
   }

@@ -10,7 +10,7 @@ import { isShoppingList, isShoppingListArray } from '~/utils/validation';
 import { BaseService } from './base/BaseService';
 
 import type { CreateListOptions } from '~/composables/types';
-import type { StorageRepository } from '~/repositories/StorageRepository';
+import type { IStorageRepository } from '~/repositories/StorageRepository';
 import type { ShoppingList } from '~/types/app-types';
 
 /**
@@ -30,13 +30,13 @@ export class ShoppingListService extends BaseService {
   /**
    * Das Repository für den Datenzugriff
    */
-  private readonly repository: StorageRepository;
+  private readonly repository: IStorageRepository;
 
   /**
    * Erstellt eine neue Instanz des ShoppingListService
    * @param repository - Das Repository für den Datenzugriff
    */
-  constructor(repository: StorageRepository) {
+  constructor(repository: IStorageRepository) {
     super('ShoppingListService');
     this.repository = repository;
   }
@@ -53,7 +53,7 @@ export class ShoppingListService extends BaseService {
     }
 
     if (!isShoppingListArray(lists)) {
-      this.logger.error('Ungültiges Format der gespeicherten Listen');
+      this._logger.error('Ungültiges Format der gespeicherten Listen');
       return [];
     }
 

@@ -3,7 +3,7 @@ import { createLogger } from '~/utils/logger';
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('listOperations');
+const _logger = createLogger('listOperations');
 
 /**
  * Findet den Index einer Liste in einem Array von Listen
@@ -11,7 +11,7 @@ const logger = createLogger('listOperations');
  * @param listId - ID der zu findenden Liste
  * @returns Index der Liste oder -1 wenn nicht gefunden
  */
-export const findListIndex = (lists: ShoppingList[], listId: string): number => {
+export const findListIndex = (lists: IIShoppingList[], listId: string): number => {
   if (!Array.isArray(lists) || !listId) {
     return -1;
   }
@@ -24,7 +24,7 @@ export const findListIndex = (lists: ShoppingList[], listId: string): number => 
  * @param listId - ID der zu findenden Liste
  * @returns Die gefundene Liste oder null wenn nicht gefunden
  */
-export const findListById = (lists: ShoppingList[], listId: string): ShoppingList | null => {
+export const findListById = (lists: IIShoppingList[], listId: string): IShoppingList | null => {
   if (!Array.isArray(lists) || !listId) {
     return null;
   }
@@ -37,8 +37,8 @@ export const findListById = (lists: ShoppingList[], listId: string): ShoppingLis
  * @param itemId - ID des zu findenden Items
  * @returns Index des Items oder -1 wenn nicht gefunden
  */
-export const findItemIndex = (list: ShoppingList, itemId: string): number => {
-  if (!list || (!Array.isArray(list.items) || !itemId)) {
+export const findItemIndex = (list: IShoppingList, itemId: string): number => {
+  if (!list || !Array.isArray(list.items) || !itemId) {
     return -1;
   }
   return list.items.findIndex(item => item.id === itemId);
@@ -50,8 +50,8 @@ export const findItemIndex = (list: ShoppingList, itemId: string): number => {
  * @param itemId - ID des zu findenden Items
  * @returns Das gefundene Item oder null wenn nicht gefunden
  */
-export const findItemById = (list: ShoppingList, itemId: string): ShoppingItem | null => {
-  if (!list || (!Array.isArray(list.items) || !itemId)) {
+export const findItemById = (list: IShoppingList, itemId: string): IShoppingItem | null => {
+  if (!list || !Array.isArray(list.items) || !itemId) {
     return null;
   }
   return list.items.find(item => item.id === itemId) || null;
@@ -66,26 +66,26 @@ export const findItemById = (list: ShoppingList, itemId: string): ShoppingItem |
  * @returns Neue Kopie der Listen mit aktualisiertem Item oder null bei Fehler
  */
 export const updateItemInList = <T extends ShoppingItem>(
-  lists: ShoppingList[],
+  lists: IIShoppingList[],
   listId: string,
   itemId: string,
   updateFn: (item: T) => T
-): ShoppingList[] | null => {
+): IIShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) {
-    logger.error(`Liste mit ID ${listId} nicht gefunden.`);
+    _logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
 
   const list = lists[listIndex];
   if (!list || !Array.isArray(list.items)) {
-    logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
+    _logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
 
   const itemIndex = findItemIndex(list, itemId);
   if (itemIndex === -1) {
-    logger.error(`Item mit ID ${itemId} nicht gefunden.`);
+    _logger.error(`Item mit ID ${itemId} nicht gefunden.`);
     return null;
   }
 
@@ -103,7 +103,7 @@ export const updateItemInList = <T extends ShoppingItem>(
 
     return updatedLists;
   } catch (error) {
-    logger.error(`Fehler beim Aktualisieren des Items mit ID ${itemId}:`, error);
+    _logger.error(`Fehler beim Aktualisieren des Items mit ID ${itemId}:`, error);
     return null;
   }
 };
@@ -116,25 +116,25 @@ export const updateItemInList = <T extends ShoppingItem>(
  * @returns Neue Kopie der Listen ohne das Item oder null bei Fehler
  */
 export const removeItemFromList = (
-  lists: ShoppingList[],
+  lists: IIShoppingList[],
   listId: string,
   itemId: string
-): ShoppingList[] | null => {
+): IIShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) {
-    logger.error(`Liste mit ID ${listId} nicht gefunden.`);
+    _logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
 
   const list = lists[listIndex];
   if (!list || !Array.isArray(list.items)) {
-    logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
+    _logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
 
   // Prüfen, ob das Item existiert
   if (!list || !list.items.some(item => item.id === itemId)) {
-    logger.error(`Item mit ID ${itemId} nicht gefunden.`);
+    _logger.error(`Item mit ID ${itemId} nicht gefunden.`);
     return null;
   }
 
@@ -152,7 +152,7 @@ export const removeItemFromList = (
 
     return updatedLists;
   } catch (error) {
-    logger.error(`Fehler beim Entfernen des Items mit ID ${itemId}:`, error);
+    _logger.error(`Fehler beim Entfernen des Items mit ID ${itemId}:`, error);
     return null;
   }
 };
@@ -165,19 +165,19 @@ export const removeItemFromList = (
  * @returns Neue Kopie der Listen mit dem neuen Item oder null bei Fehler
  */
 export const addItemToList = (
-  lists: ShoppingList[],
+  lists: IIShoppingList[],
   listId: string,
-  item: ShoppingItem
-): ShoppingList[] | null => {
+  item: IShoppingItem
+): IIShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) {
-    logger.error(`Liste mit ID ${listId} nicht gefunden.`);
+    _logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
 
   const list = lists[listIndex];
   if (!list) {
-    logger.error(`Liste mit Index ${listIndex} ist undefiniert.`);
+    _logger.error(`Liste mit Index ${listIndex} ist undefiniert.`);
     return null;
   }
 
@@ -195,7 +195,7 @@ export const addItemToList = (
 
     return updatedLists;
   } catch (error) {
-    logger.error(`Fehler beim Hinzufügen eines Items zur Liste mit ID ${listId}:`, error);
+    _logger.error(`Fehler beim Hinzufügen eines Items zur Liste mit ID ${listId}:`, error);
     return null;
   }
 };
@@ -208,18 +208,18 @@ export const addItemToList = (
  * @returns Neue Kopie der Listen mit der aktualisierten Liste oder null bei Fehler
  */
 export const updateList = (
-  lists: ShoppingList[],
+  lists: IIShoppingList[],
   listId: string,
-  updateFn: (list: ShoppingList) => ShoppingList
-): ShoppingList[] | null => {
+  updateFn: (list: IShoppingList) => ShoppingList
+): IIShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) {
-    logger.error(`Liste mit ID ${listId} nicht gefunden.`);
+    _logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
 
   if (!lists[listIndex]) {
-    logger.error(`Liste mit Index ${listIndex} ist undefiniert.`);
+    _logger.error(`Liste mit Index ${listIndex} ist undefiniert.`);
     return null;
   }
 
@@ -239,7 +239,7 @@ export const updateList = (
 
     return updatedLists;
   } catch (error) {
-    logger.error(`Fehler beim Aktualisieren der Liste mit ID ${listId}:`, error);
+    _logger.error(`Fehler beim Aktualisieren der Liste mit ID ${listId}:`, error);
     return null;
   }
 };
@@ -253,20 +253,20 @@ export const updateList = (
  * @returns Neue Kopie der Listen mit aktualisierten Items oder null bei Fehler
  */
 export const updateItemsInList = <T extends ShoppingItem>(
-  lists: ShoppingList[],
+  lists: IIShoppingList[],
   listId: string,
   filterFn: (item: T) => boolean,
   updateFn: (item: T) => T
-): ShoppingList[] | null => {
+): IIShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) {
-    logger.error(`Liste mit ID ${listId} nicht gefunden.`);
+    _logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
 
   const list = lists[listIndex];
   if (!list || !Array.isArray(list.items)) {
-    logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
+    _logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
 
@@ -284,7 +284,7 @@ export const updateItemsInList = <T extends ShoppingItem>(
 
     return updatedLists;
   } catch (error) {
-    logger.error(`Fehler beim Aktualisieren mehrerer Items in der Liste mit ID ${listId}:`, error);
+    _logger.error(`Fehler beim Aktualisieren mehrerer Items in der Liste mit ID ${listId}:`, error);
     return null;
   }
 };
@@ -297,19 +297,19 @@ export const updateItemsInList = <T extends ShoppingItem>(
  * @returns Neue Kopie der Listen ohne die gefilterten Items oder null bei Fehler
  */
 export const removeItemsFromList = <T extends ShoppingItem>(
-  lists: ShoppingList[],
+  lists: IIShoppingList[],
   listId: string,
   filterFn: (item: T) => boolean
-): ShoppingList[] | null => {
+): IIShoppingList[] | null => {
   const listIndex = findListIndex(lists, listId);
   if (listIndex === -1) {
-    logger.error(`Liste mit ID ${listId} nicht gefunden.`);
+    _logger.error(`Liste mit ID ${listId} nicht gefunden.`);
     return null;
   }
 
   const list = lists[listIndex];
   if (!list || !Array.isArray(list.items)) {
-    logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
+    _logger.error(`Items der Liste mit ID ${listId} sind kein Array.`);
     return null;
   }
 
@@ -327,7 +327,7 @@ export const removeItemsFromList = <T extends ShoppingItem>(
 
     return updatedLists;
   } catch (error) {
-    logger.error(`Fehler beim Entfernen mehrerer Items aus der Liste mit ID ${listId}:`, error);
+    _logger.error(`Fehler beim Entfernen mehrerer Items aus der Liste mit ID ${listId}:`, error);
     return null;
   }
 };

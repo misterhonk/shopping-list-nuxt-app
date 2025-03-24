@@ -273,7 +273,7 @@ import { ref, onMounted, nextTick } from 'vue';
 
 import type { CategoryTemplate } from '~/types/app-types';
 
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     listName: string;
     templateId: string;
@@ -304,7 +304,7 @@ const isMenuOpen = ref<boolean>(false);
 
 // Umbenennungs-Dialog
 const isRenaming = ref<boolean>(false);
-const newListName = ref<string>(props.listName);
+const newListName = ref<string>(_props.listName);
 const renameInput = ref<HTMLInputElement | null>(null);
 
 // Menü öffnen/schließen beim Klick außerhalb
@@ -327,7 +327,7 @@ const openRenameDialog = (): void => {
 
   // Dialog öffnen
   isRenaming.value = true;
-  newListName.value = props.listName;
+  newListName.value = _props.listName;
 
   // Input fokussieren
   nextTick(() => {
@@ -361,7 +361,7 @@ const updateTemplateId = (id: string): void => {
 
 // Favoriten-Status umschalten
 const toggleFavorite = (): void => {
-  emit('update:favorite', !props.isFavorite);
+  emit('update:favorite', !_props.isFavorite);
 };
 
 // Abgehakte Artikel löschen

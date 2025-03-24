@@ -4,7 +4,7 @@ import type { ImportOptions, ExportedList, CreateListOptions } from '~/composabl
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('useListImport');
+const _logger = createLogger('useListImport');
 
 /**
  * Interface für die Import-Ergebnisse
@@ -30,7 +30,7 @@ interface ImportServices {
 /**
  * Composable für den Import von Einkaufslisten
  */
-export function useListImport(): void {
+export function useListImport() {
   /**
    * Lädt eine Datei und zeigt Optionen an
    * @param callback - Callback für geladene Daten
@@ -47,7 +47,7 @@ export function useListImport(): void {
     fileInput.onchange = event => {
       const target = event.target as HTMLInputElement;
       if (!target.files || target.files.length === 0) {
-        logger.info('Keine Datei ausgewählt');
+        _logger.info('Keine Datei ausgewählt');
         document.body.removeChild(fileInput);
         return;
       }
@@ -89,14 +89,14 @@ export function useListImport(): void {
           // Callback mit den Daten aufrufen
           callback(importData);
         } catch (error) {
-          logger.error('Fehler beim Parsen der Datei:', error);
+          _logger.error('Fehler beim Parsen der Datei:', error);
           alert(`Die Datei konnte nicht gelesen werden: ${(error as Error).message}`);
         } finally {
           document.body.removeChild(fileInput);
         }
       };
 
-      reader.onerror = () => {
+      reader.onerror = (): void => {
         alert('Fehler beim Lesen der Datei');
         document.body.removeChild(fileInput);
       };
@@ -163,7 +163,7 @@ export function useListImport(): void {
           };
       }
     } catch (error) {
-      logger.error('Fehler beim Import mit Optionen:', error);
+      _logger.error('Fehler beim Import mit Optionen:', error);
       return {
         success: false,
         message: `Import fehlgeschlagen: ${(error as Error).message}`,
@@ -211,12 +211,12 @@ export function useListImport(): void {
             addedCount++;
           }
         } catch (itemError) {
-          logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
+          _logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
         }
       }
 
       if (addedCount !== data.items.length) {
-        logger.warn(
+        _logger.warn(
           `Nicht alle Items konnten importiert werden (${addedCount}/${data.items.length})`
         );
       }
@@ -276,7 +276,7 @@ export function useListImport(): void {
             addedCount++;
           }
         } catch (itemError) {
-          logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
+          _logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
         }
       }
 
@@ -392,7 +392,7 @@ export function useListImport(): void {
               addedCount++;
             }
           } catch (itemError) {
-            logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
+            _logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
           }
         }
 
@@ -411,7 +411,7 @@ export function useListImport(): void {
         };
       }
     } catch (error) {
-      logger.error('Fehler beim Importieren der Liste:', error);
+      _logger.error('Fehler beim Importieren der Liste:', error);
       return {
         success: false,
         message: `Import fehlgeschlagen: ${(error as Error).message}`,

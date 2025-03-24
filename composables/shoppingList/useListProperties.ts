@@ -1,12 +1,12 @@
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
-import { getItemsCount, getCheckedItemsCount } from '~/composables/utils/listUtils';
+import { getItemsCount, _getCheckedItemsCount } from '~/composables/utils/listUtils';
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
 import type { ShoppingList } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('useListProperties');
+const _logger = createLogger('useListProperties');
 
 // Interface für den Rückgabetyp des Composables
 interface IListPropertiesComposable {
@@ -42,7 +42,7 @@ export function useListProperties(
    */
   const getCurrentCheckedItemsCount = (): number => {
     const currentList = listsRef.value.find(list => list.id === currentListIdRef.value);
-    return currentList ? getCheckedItemsCount(currentList) : 0;
+    return currentList ? _getCheckedItemsCount(currentList) : 0;
   };
 
   /**
@@ -76,7 +76,7 @@ export function useListProperties(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren des Listennamens:', error);
+      _logger.error('Fehler beim Aktualisieren des Listennamens:', error);
       return false;
     }
   };
@@ -119,7 +119,7 @@ export function useListProperties(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren des Favoriten-Status:', error);
+      _logger.error('Fehler beim Aktualisieren des Favoriten-Status:', error);
       return false;
     }
   };

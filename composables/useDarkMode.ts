@@ -11,7 +11,7 @@ const DARK_MODE_STORAGE_KEY = 'darkMode';
  * Composable für die Verwaltung des Dark Mode
  * Bietet Funktionen zum Ein-/Ausschalten des dunklen Erscheinungsbilds
  */
-export const useDarkMode = (): void => {
+export const useDarkMode = () : Record<string, any> => {
   const isDark: Ref<boolean> = ref(false);
   const { saveToStorage, loadFromStorage, removeFromStorage } = useLocalStorage();
 
@@ -20,7 +20,7 @@ export const useDarkMode = (): void => {
    * @param value - Dark Mode Status
    */
   const updateDOMDarkMode = (value: boolean): void => {
-    if (value) {
+    if(value) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -41,7 +41,7 @@ export const useDarkMode = (): void => {
    * @param value - true für dunklen Modus, false für hellen Modus
    */
   const setDarkMode = (value: boolean): void => {
-    if (isDark.value !== value) {
+    if(isDark.value !== value) {
       isDark.value = value;
       updateDOMDarkMode(isDark.value);
       saveToStorage(DARK_MODE_STORAGE_KEY, isDark.value ? 'dark' : 'light');
@@ -119,5 +119,5 @@ export const useDarkMode = (): void => {
     followSystemPreference,
     systemPrefersDarkMode,
     initializeDarkMode,
-  };
+  } as const;
 };

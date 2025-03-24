@@ -12,7 +12,7 @@ import type { ShoppingList } from '~/types/app-types';
 const { shoppingListService, categoryService } = initializeServices();
 
 // Logger initialisieren
-const logger = createLogger('useListManagement');
+const _logger = createLogger('useListManagement');
 
 // Typendefinition für den CategoryStore-Service
 interface ICategoryStoreService {
@@ -54,7 +54,9 @@ interface IListManagementComposable {
  *   deleteList
  * } = useListManagement(categoryStore);
  */
-export function useListManagement(categoryStore?: ICategoryStoreService): IListManagementComposable {
+export function useListManagement(
+  categoryStore?: ICategoryStoreService
+): IListManagementComposable {
   // Reaktive Daten
   const lists: Ref<ShoppingList[]> = ref([]);
   const currentListId: Ref<string | null> = ref(null);
@@ -78,7 +80,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
     };
   });
 
-  const currentListTemplateId = computed({
+  const _currentListTemplateId = computed({
     get: () => currentList.value.templateId ?? 'supermarket',
     set: (value: string) => updateListTemplate(value),
   });
@@ -123,7 +125,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
       initialized.value = true;
       return true;
     } catch (error) {
-      logger.error('Fehler beim Laden der Listen:', error);
+      _logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
       return false;
     }
@@ -164,7 +166,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
    */
   const createList = (name: string, options: CreateListOptions = {}): ShoppingList | null => {
     if (!name || name.trim() === '') {
-      logger.error('Fehler beim Erstellen einer Liste: Kein Name angegeben');
+      _logger.error('Fehler beim Erstellen einer Liste: Kein Name angegeben');
       return null;
     }
 
@@ -190,7 +192,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
 
       return newList;
     } catch (error) {
-      logger.error('Fehler beim Erstellen einer neuen Liste:', error);
+      _logger.error('Fehler beim Erstellen einer neuen Liste:', error);
       return null;
     }
   };
@@ -240,7 +242,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
   const selectList = (listId: string): boolean => {
     try {
       if (!listId) {
-        logger.error('Keine Listen-ID zum Auswählen angegeben');
+        _logger.error('Keine Listen-ID zum Auswählen angegeben');
         return false;
       }
 
@@ -266,7 +268,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
 
       return success;
     } catch (error) {
-      logger.error('Fehler beim Auswählen einer Liste:', error);
+      _logger.error('Fehler beim Auswählen einer Liste:', error);
       return false;
     }
   };
@@ -279,7 +281,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
   const deleteList = (listId: string): boolean => {
     try {
       if (!listId) {
-        logger.error('Keine Listen-ID zum Löschen angegeben');
+        _logger.error('Keine Listen-ID zum Löschen angegeben');
         return false;
       }
 
@@ -296,7 +298,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
 
       return success;
     } catch (error) {
-      logger.error('Fehler beim Löschen einer Liste:', error);
+      _logger.error('Fehler beim Löschen einer Liste:', error);
       return false;
     }
   };
@@ -309,12 +311,12 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
   const updateListTemplate = (templateId: string): boolean => {
     try {
       if (!currentListId.value) {
-        logger.error('Keine aktuelle Liste ausgewählt');
+        _logger.error('Keine aktuelle Liste ausgewählt');
         return false;
       }
 
       if (!templateId) {
-        logger.error('Keine Template-ID angegeben');
+        _logger.error('Keine Template-ID angegeben');
         return false;
       }
 
@@ -322,7 +324,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
       const currentList = shoppingListService.getListById(currentListId.value);
 
       if (!currentList) {
-        logger.error(`Liste mit ID ${currentListId.value} nicht gefunden`);
+        _logger.error(`Liste mit ID ${currentListId.value} nicht gefunden`);
         return false;
       }
 
@@ -351,7 +353,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
 
       return success;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren der Template-ID:', error);
+      _logger.error('Fehler beim Aktualisieren der Template-ID:', error);
       return false;
     }
   };
@@ -366,7 +368,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
       refreshLists();
       return true;
     } catch (error) {
-      logger.error('Fehler beim Speichern der Listen:', error);
+      _logger.error('Fehler beim Speichern der Listen:', error);
       return false;
     }
   };
@@ -377,7 +379,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IListM
     currentListId,
     currentList,
     initialized,
-    currentListTemplateId,
+    _currentListTemplateId,
 
     // Funktionen
     loadLists,

@@ -84,7 +84,7 @@ import { createLogger } from '~/utils/logger';
 
 import type { Category } from '~/types/app-types';
 
-const logger = createLogger('ItemCreationForm');
+const _logger = createLogger('ItemCreationForm');
 
 type CategoryInput = Category | string;
 interface INewItem {
@@ -94,7 +94,7 @@ interface INewItem {
   price: number;
 }
 
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     categories: CategoryInput[];
     allLists: any[];
@@ -216,7 +216,7 @@ const onSubmit = (): void => {
     itemHistory[normalizedName] = existingItem;
     localStorage.setItem('itemHistory', JSON.stringify(itemHistory));
   } catch (e) {
-    logger.error('Fehler beim Speichern des Artikelverlaufs:', e);
+    _logger.error('Fehler beim Speichern des Artikelverlaufs:', e);
   }
 
   emit('add', itemToAdd);

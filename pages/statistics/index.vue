@@ -244,7 +244,7 @@ const mostExpensiveItem = computed<ShoppingItem | null>(() => {
 });
 
 // Ausgaben nach Kategorien
-const categoryExpenses = computed<CategoryExpense[]>(() => {
+const categoryExpenses = computed<ICategoryExpense[]>(() => {
   if (allItems.value.length === 0) {
     return [];
   }
@@ -283,7 +283,7 @@ const categoryExpenses = computed<CategoryExpense[]>(() => {
 });
 
 // Mock für die Einkaufshistorie (später zu implementieren)
-const shoppingHistory = ref<ShoppingHistoryItem[]>([]);
+const shoppingHistory = ref<IShoppingHistoryItem[]>([]);
 
 // Hilfsfunktionen
 const formatCurrency = (value: number): string =>

@@ -56,7 +56,7 @@ interface ITextPart {
 
 type SuggestionInput = string | ItemSuggestion;
 
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     modelValue: string;
     suggestions: SuggestionInput[];
@@ -82,13 +82,13 @@ const emit = defineEmits<{
 const inputElement = ref<HTMLInputElement | null>(null);
 
 // Zustand der Komponente
-const inputValue = ref<string>(props.modelValue);
+const inputValue = ref<string>(_props.modelValue);
 const showSuggestions = ref<boolean>(false);
 const highlightedIndex = ref<number>(-1);
 
 // Gefilterte Vorschläge basierend auf Eingabe
 const filteredSuggestions = computed<ItemSuggestion[]>(() => {
-  if (!inputValue.value || inputValue.value.length < props.minChars) {
+  if (!inputValue.value || inputValue.value.length < _props.minChars) {
     return [];
   }
 
@@ -108,17 +108,17 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
       }
       return { text: String(suggestion) };
     })
-    .slice(0, props.maxSuggestions);
+    .slice(0, _props.maxSuggestions);
 });
 
 // Teilt den Text in hervorgehobene und normale Teile
-const splitTextForHighlight = (text: string): TextPart[] => {
-  if (!inputValue.value || inputValue.value.length < props.minChars) {
+const splitTextForHighlight = (text: string): IITextPart[] => {
+  if (!inputValue.value || inputValue.value.length < _props.minChars) {
     return [{ text, highlight: false }];
   }
 
   const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
-  const parts: TextPart[] = [];
+  const parts: IITextPart[] = [];
   let lastIndex = 0;
   let match;
 
@@ -215,8 +215,8 @@ watch(
 
 // Bei der Initialisierung
 onMounted(() => {
-  if (props.modelValue) {
-    inputValue.value = props.modelValue;
+  if (_props.modelValue) {
+    inputValue.value = _props.modelValue;
   }
 });
 </script>

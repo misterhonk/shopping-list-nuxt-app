@@ -237,7 +237,7 @@ interface IEditTemplate {
 }
 
 // Eigenschaften, die von außen übergeben werden
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     newCategoryModal: boolean;
     editCategoryModal: boolean;
@@ -287,7 +287,7 @@ const localNewCategoryName = computed<{
   get: () => string;
   set: (value: string) => void;
 }>({
-  get: () => props.newCategoryName,
+  get: () => _props.newCategoryName,
   set: value => emit('update:newCategoryName', value),
 });
 
@@ -295,7 +295,7 @@ const localEditCategoryName = computed<{
   get: () => string;
   set: (value: string) => void;
 }>({
-  get: () => props.editCategoryName,
+  get: () => _props.editCategoryName,
   set: value => emit('update:editCategoryName', value),
 });
 
@@ -303,7 +303,7 @@ const localNewTemplate = computed<{
   get: () => INewTemplate;
   set: (value: INewTemplate) => void;
 }>({
-  get: () => props.newTemplate,
+  get: () => _props.newTemplate,
   set: value => emit('update:newTemplate', value),
 });
 
@@ -311,7 +311,7 @@ const localEditTemplate = computed<{
   get: () => IEditTemplate;
   set: (value: IEditTemplate) => void;
 }>({
-  get: () => props.editTemplate,
+  get: () => _props.editTemplate,
   set: value => emit('update:editTemplate', value),
 });
 

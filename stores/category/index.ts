@@ -26,7 +26,7 @@ import type { CategorySortConfig, TemplateCollection } from '~/composables/types
 import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('index');
+const _logger = createLogger('index');
 
 /**
  * Interface für den CategoryStore State
@@ -90,11 +90,11 @@ export const useCategoryStore = defineStore('categoryStore', {
       description: string;
       isCustom: boolean;
     }[] {
-      return Object.values(this.allTemplates).map(template => ({
+      return Object.values(this.allTemplates).map(_template => ({
         id: template.id,
-        name: template.name,
-        description: template.description,
-        isCustom: this.customTemplates[template.id] !== undefined,
+        name: template._name,
+        description: template._description,
+        isCustom: this.customTemplates[_template.id] !== undefined,
       }));
     },
 
@@ -118,8 +118,8 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Template aktivieren
      * @param templateId - Die ID des zu aktivierenden Templates
      */
-    activateTemplate(templateId: string): void {
-      if (this.allTemplates[templateId]) {
+    activateTemplate(_templateId: string): void {
+      if (this.allTemplates[_templateId]) {
         this.activeTemplateId = templateId;
         this.saveToLocalStorage();
       }
@@ -210,20 +210,20 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @returns Die ID des neuen Templates oder null bei Fehler
      */
     createTemplate(
-      name: string,
-      description: string = '',
+      _name: string,
+      _description: string = '',
       baseTemplateId: string | null = null
     ): string | null {
-      const result = createTemplateOperation(
-        name,
-        description,
+      const _result = createTemplateOperation(
+        _name,
+        _description,
         baseTemplateId,
         this.templates,
         this.customTemplates
       );
 
-      if (result.newTemplateId) {
-        this.customTemplates = result.customTemplates;
+      if (_result.newTemplateId) {
+        this.customTemplates = _result.customTemplates;
         this.activeTemplateId = result.newTemplateId;
 
         // Wenn es ein Basis-Template gab, dessen Sortierung übernehmen
@@ -246,11 +246,11 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Template löschen (nur benutzerdefinierte)
      * @param templateId - Die ID des zu löschenden Templates
      */
-    deleteTemplate(templateId: string): void {
-      this.customTemplates = deleteTemplateOperation(templateId, this.customTemplates);
+    deleteTemplate(_templateId: string): void {
+      this.customTemplates = deleteTemplateOperation(_templateId, this.customTemplates);
 
       // Sortierungskonfiguration für das gelöschte Template entfernen
-      if (this.sortConfigs[templateId]) {
+      if (this.sortConfigs[_templateId]) {
         const updatedConfigs = { ...this.sortConfigs };
         delete updatedConfigs[templateId];
         this.sortConfigs = updatedConfigs;
@@ -258,7 +258,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       }
 
       // Falls das aktive Template gelöscht wurde, zurück zum Standard
-      if (this.activeTemplateId === templateId) {
+      if (this.activeTemplateId === _templateId) {
         this.activeTemplateId = defaultTemplateId;
       }
 
@@ -271,11 +271,11 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param name - Der neue Name (optional)
      * @param description - Die neue Beschreibung (optional)
      */
-    updateTemplate(templateId: string, name?: string, description?: string): void {
+    updateTemplate(_templateId: string, _name?: string, _description?: string): void {
       this.customTemplates = updateTemplateOperation(
-        templateId,
-        name,
-        description,
+        _templateId,
+        _name,
+        _description,
         this.customTemplates
       );
 
@@ -301,19 +301,19 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Sortierung zwischen Standard und Benutzerdefiniert umschalten
      */
     toggleSortMode(): void {
-      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      const _currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
 
       const updatedConfig = {
-        ...currentConfig,
+        ..._currentConfig,
         useCustomSort: !currentConfig.useCustomSort,
       };
 
       // Wenn wir zum ersten Mal auf benutzerdefinierte Sortierung umschalten,
       // verwenden wir die Standard-Reihenfolge als Ausgangspunkt
       if (updatedConfig.useCustomSort && updatedConfig.customOrder.length === 0) {
-        const template = this.allTemplates[this.activeTemplateId];
-        if (template.defaultCategoryOrder) {
-          updatedConfig.customOrder = [...template.defaultCategoryOrder];
+        const _template = this.allTemplates[this.activeTemplateId];
+        if (_template.defaultCategoryOrder) {
+          updatedConfig.customOrder = [..._template.defaultCategoryOrder];
         } else {
           // Andernfalls nehmen wir einfach die aktuelle Reihenfolge der Kategorien
           updatedConfig.customOrder = this.currentCategories.map(cat => cat.id);
@@ -329,10 +329,10 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param newOrder - Array mit Kategorie-IDs in der neuen Reihenfolge
      */
     updateCustomSortOrder(newOrder: string[]): void {
-      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      const _currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
 
       const updatedConfig = {
-        ...currentConfig,
+        ..._currentConfig,
         useCustomSort: true,
         customOrder: newOrder,
       };
@@ -345,8 +345,8 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Benutzerdefinierte Sortierung zurücksetzen auf Standard-Laufweg
      */
     resetToDefaultSort(): void {
-      const template = this.allTemplates[this.activeTemplateId];
-      const defaultOrder = template.defaultCategoryOrder ?? [];
+      const _template = this.allTemplates[this.activeTemplateId];
+      const defaultOrder = _template.defaultCategoryOrder ?? [];
 
       const updatedConfig: CategorySortConfig = {
         templateId: this.activeTemplateId,
@@ -370,31 +370,31 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     loadFromLocalStorage(): void {
       try {
-        const data = loadCategoryData();
+        const _data = loadCategoryData();
 
-        if (data) {
-          if (data.customTemplates) {
+        if (_data) {
+          if (_data.customTemplates) {
             // Prüfen, ob Migration notwendig ist
-            if (needsMigration(data.customTemplates)) {
-              logger.info('Migration der Kategorien notwendig - alte Strings zu Objekten');
-              this.customTemplates = migrateCategories(data.customTemplates);
+            if (needsMigration(_data.customTemplates)) {
+              _logger.info('Migration der Kategorien notwendig - alte Strings zu Objekten');
+              this.customTemplates = migrateCategories(_data.customTemplates);
             } else {
-              this.customTemplates = data.customTemplates;
+              this.customTemplates = _data.customTemplates;
             }
           }
 
           if (
             data.activeTemplateId &&
-            (this.templates[data.activeTemplateId] || this.customTemplates[data.activeTemplateId])
+            (this.templates[data.activeTemplateId] || this.customTemplates[_data.activeTemplateId])
           ) {
-            this.activeTemplateId = data.activeTemplateId;
+            this.activeTemplateId = _data.activeTemplateId;
           }
         }
 
         // Sortierungskonfigurationen laden
         this.sortConfigs = loadSortConfigs();
-      } catch (error) {
-        logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
+      } catch (_error) {
+        _logger._error('Fehler beim Laden der Kategorie-Vorlagen:', _error);
       }
     },
 

@@ -3,7 +3,7 @@ import { createLogger } from '~/utils/logger';
 import type { ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('useListExport');
+const _logger = createLogger('useListExport');
 
 /**
  * Interface für die Export-Daten
@@ -31,7 +31,7 @@ export function useListExport(): void {
     items: ShoppingItem[]
   ): boolean => {
     try {
-      logger.info('Starte Export für Liste:', exportData.name);
+      _logger.info('Starte Export für Liste:', exportData.name);
 
       // Bereite die Daten für den Export vor
       const fullExportData: IExportData = {
@@ -72,12 +72,12 @@ export function useListExport(): void {
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        logger.info('Download-Link entfernt, URL freigegeben');
+        _logger.info('Download-Link entfernt, URL freigegeben');
       }, 100);
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Exportieren der Liste:', error);
+      _logger.error('Fehler beim Exportieren der Liste:', error);
       return false;
     }
   };

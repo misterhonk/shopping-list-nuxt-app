@@ -48,7 +48,7 @@ describe('Example TypeScript Test', () => {
 
     /*
     const wrapper = mount(ShoppingListItem, {
-      props: {
+      _props: {
         item: createMockShoppingItem(),
         category: createMockCategory(),
       },

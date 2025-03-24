@@ -2,7 +2,7 @@
 
 /**
  * Script zum Präfixieren ungenutzter Variablen mit Unterstrich
- * 
+ *
  * Dieses Script sucht nach ESLint-Warnungen über unbenutzte Variablen
  * und fügt ein Unterstrich-Präfix zu diesen Variablen hinzu.
  */
@@ -27,10 +27,10 @@ function findUnusedVariables() {
 
     // Parsen der JSON-Ausgabe
     const eslintResults = JSON.parse(eslintOutput);
-    
+
     // Filtern nach ESLint-Regeln für unbenutzte Variablen
     const unusedVarsMessages = [];
-    
+
     eslintResults.forEach(result => {
       result.messages.forEach(message => {
         if (
@@ -47,12 +47,12 @@ function findUnusedVariables() {
         }
       });
     });
-    
+
     return unusedVarsMessages;
   } catch (error) {
     // Fehlerhandling, falls die Ausgabe kein gültiges JSON ist
     console.error('Fehler beim Ausführen von ESLint:', error.message);
-    
+
     // Versuchen wir es mit einer anderen Methode für Fehlerbehandlung
     try {
       const grepCmd = "npx eslint --ext .ts,.vue . | grep -E 'is assigned a value but never used'";
@@ -60,14 +60,14 @@ function findUnusedVariables() {
         encoding: 'utf8',
         cwd: path.resolve(__dirname, '..'),
       });
-      
+
       // Manuelles Parsing der Ausgabe
       const lines = grepOutput.split('\n');
       const unusedVarsMessages = [];
-      
+
       lines.forEach(line => {
         if (line.trim() === '') return;
-        
+
         // Format: /path/to/file.vue:123:45: error: 'variableName' is assigned a value but never used
         const match = line.match(/([^:]+):(\d+):(\d+):.*'(\w+)'.+never used/);
         if (match) {
@@ -80,7 +80,7 @@ function findUnusedVariables() {
           });
         }
       });
-      
+
       return unusedVarsMessages;
     } catch (grepError) {
       console.error('Fehler beim alternativen Ansatz:', grepError.message);
@@ -98,40 +98,40 @@ function extractVariableNameFromMessage(message) {
 // Funktion zum Hinzufügen von Unterstrich-Präfixen zu Variablen
 function addUnderscorePrefix(unusedVarsMessages) {
   const fileChanges = {};
-  
+
   // Sammle Änderungen nach Datei
   unusedVarsMessages.forEach(({ filePath, line, variableName }) => {
     if (!variableName || variableName.startsWith('_')) return;
-    
+
     if (!fileChanges[filePath]) {
       fileChanges[filePath] = [];
     }
-    
+
     fileChanges[filePath].push({
       line,
       variableName,
-      newName: `_${variableName}`
+      newName: `_${variableName}`,
     });
   });
-  
+
   // Jetzt verarbeiten wir jede Datei
   for (const filePath in fileChanges) {
     try {
       console.log(`\nBearbeite ${filePath}...`);
       let content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
-      
+
       // Sortiere Änderungen nach Zeile (absteigend), um Positionsänderungen zu vermeiden
       const changes = fileChanges[filePath].sort((a, b) => b.line - a.line);
-      
+
       for (const change of changes) {
         const lineIndex = change.line - 1;
         const line = lines[lineIndex];
-        
+
         // Suche nach 'const variableName' oder 'let variableName'
         const regex = new RegExp(`(const|let)\\s+(${change.variableName})\\b`, 'g');
         const updatedLine = line.replace(regex, `$1 ${change.newName}`);
-        
+
         if (line !== updatedLine) {
           lines[lineIndex] = updatedLine;
           console.log(`  - Geändert: '${change.variableName}' zu '${change.newName}'`);
@@ -139,7 +139,7 @@ function addUnderscorePrefix(unusedVarsMessages) {
           console.log(`  - Konnte '${change.variableName}' nicht finden oder ändern`);
         }
       }
-      
+
       // Schreibe die aktualisierte Datei
       fs.writeFileSync(filePath, lines.join('\n'), 'utf8');
       console.log(`  Änderungen in ${filePath} gespeichert.`);
@@ -152,19 +152,19 @@ function addUnderscorePrefix(unusedVarsMessages) {
 // Hauptfunktion
 async function main() {
   console.log('Starte Skript zum Präfixieren ungenutzter Variablen...');
-  
+
   const unusedVarsMessages = findUnusedVariables();
-  
+
   if (unusedVarsMessages.length === 0) {
     console.log('Keine ungenutzten Variablen gefunden.');
     return;
   }
-  
+
   console.log(`${unusedVarsMessages.length} unbenutzte Variablen gefunden.`);
-  
+
   // Füge Präfixe hinzu
   addUnderscorePrefix(unusedVarsMessages);
-  
+
   console.log('\nFix für unbenutzte Variablen abgeschlossen!');
 }
 

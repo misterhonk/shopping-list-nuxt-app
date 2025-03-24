@@ -3,14 +3,14 @@ import { createLogger } from '~/utils/logger';
 import type { ShoppingList } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('listUtils');
+const _logger = createLogger('listUtils');
 
 /**
  * Sortiert eine Liste von Einkaufslisten, so dass Favoriten zuerst erscheinen
  * @param lists - Die zu sortierenden Listen
  * @returns Die sortierten Listen
  */
-export const sortListsByFavorites = (lists: ShoppingList[]): ShoppingList[] =>
+export const sortListsByFavorites = (lists: IIShoppingList[]): IIShoppingList[] =>
   [...lists].sort((a, b) => {
     if (a.isFavorite && !b.isFavorite) {
       return -1;
@@ -78,7 +78,7 @@ export const activateTemplateInStore = (store: ICategoryStore | null, templateId
   try {
     store.activateTemplate(templateId);
   } catch (e) {
-    logger.error('Fehler beim Aktivieren der Template:', e);
+    _logger.error('Fehler beim Aktivieren der Template:', e);
   }
 };
 
@@ -87,7 +87,7 @@ export const activateTemplateInStore = (store: ICategoryStore | null, templateId
  * @param list - Die zu prüfende Liste
  * @returns Die Anzahl der Artikel
  */
-export const getItemsCount = (list: ShoppingList): number =>
+export const getItemsCount = (list: IShoppingList): number =>
   Array.isArray(list.items) ? list.items.length : 0;
 
 /**
@@ -95,5 +95,5 @@ export const getItemsCount = (list: ShoppingList): number =>
  * @param list - Die zu prüfende Liste
  * @returns Die Anzahl der erledigten Artikel
  */
-export const getCheckedItemsCount = (list: ShoppingList): number =>
+export const _getCheckedItemsCount = (list: IShoppingList): number =>
   Array.isArray(list.items) ? list.items.filter(item => item.checked).length : 0;

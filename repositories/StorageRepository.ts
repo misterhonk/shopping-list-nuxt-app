@@ -8,7 +8,7 @@
 /**
  * Interface für Storage-Repositories
  */
-export interface StorageRepository {
+export interface IStorageRepository {
   /**
    * Lädt ein Element aus dem Speicher
    * @param key - Schlüssel des Elements

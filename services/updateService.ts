@@ -38,13 +38,13 @@ export function storeVersion(version: string): void {
  */
 export function checkForUpdates(): IUpdateInfo {
   const storedVersion = getStoredVersion();
-  const now = Date.now();
-  const lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) || '0');
+  const _now = Date.now();
+  const _lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) || '0');
 
   // Regelmäßige Cache-Invalidierung (alle 24 Stunden)
   // Dies ist besonders wichtig für iOS PWAs
-  if (now - lastCheck > 24 * 60 * 60 * 1000) {
-    localStorage.setItem(LAST_CHECK_KEY, now.toString());
+  if (_now - _lastCheck > 24 * 60 * 60 * 1000) {
+    localStorage.setItem(LAST_CHECK_KEY, _now.toString());
 
     // Für iOS: Hard Reload bei längerem Nichtbenutzen der App
     // Dies hilft bei der Umgehung des aggressiven iOS-Cachings
@@ -61,7 +61,7 @@ export function checkForUpdates(): IUpdateInfo {
     // Update erkannt
     return {
       hasUpdate: true,
-      oldVersion: storedVersion ?? 'unbekannt',
+      oldVersion: storedVersion || "unbekannt",
       newVersion: APP_VERSION,
     };
   }
@@ -92,9 +92,9 @@ export function registerServiceWorkerUpdateHandler(): void {
     // Force update check for existing service worker
     if (navigator.serviceWorker.controller) {
       console.log('Forcing Service Worker update check...');
-      navigator.serviceWorker.getRegistration().then(reg => {
-        if (reg) {
-          reg.update().catch(console.error);
+      navigator.serviceWorker.getRegistration().then(_reg => {
+        if (_reg) {
+          reg.update().catch(console._error);
         }
       });
     }
@@ -113,12 +113,11 @@ export function registerServiceWorkerUpdateHandler(): void {
 
     // Für iOS: Service Worker regelmäßig neu registrieren
     if (isIOS() && isStandalone()) {
-      setInterval(
-        () => {
-          navigator.serviceWorker.getRegistration().then(registration => {
-            if (registration) {
+      setInterval(() => {
+          navigator.serviceWorker.getRegistration().then(_registration => {
+            if (_registration) {
               registration.update().catch(err => {
-                console.error('Fehler beim Update des Service Workers:', err);
+                console._error('Fehler beim Update des Service Workers:', err);
               });
             }
           });
@@ -135,8 +134,8 @@ export function registerServiceWorkerUpdateHandler(): void {
 export function forceServiceWorkerUpdate(): void {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
-      .then(registration => {
-        if (registration.waiting) {
+      .then(_registration => {
+        if (_registration.waiting) {
           // Sende Nachricht an wartenden Service Worker, um skipWaiting auszulösen
           registration.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
@@ -147,7 +146,7 @@ export function forceServiceWorkerUpdate(): void {
         });
       })
       .catch(error => {
-        console.error('Fehler beim Aktualisieren des Service Workers:', error);
+        console._error('Fehler beim Aktualisieren des Service Workers:', _error);
       });
   }
 }
@@ -161,8 +160,8 @@ async function clearAllCaches(): Promise<void> {
       const keys = await window.caches.keys();
       await Promise.all(keys.map(key => window.caches.delete(key)));
       console.log('Alle Caches gelöscht');
-    } catch (error) {
-      console.error('Fehler beim Löschen der Caches:', error);
+    } catch (_error) {
+      console._error('Fehler beim Löschen der Caches:', _error);
     }
   }
 }
@@ -173,8 +172,8 @@ async function clearAllCaches(): Promise<void> {
 export function checkForWaitingServiceWorker(callback: (waiting: boolean) => void): void {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
-      .then(registration => {
-        if (registration.waiting) {
+      .then(_registration => {
+        if (_registration.waiting) {
           // Es gibt einen wartenden Service Worker
           callback(true);
         } else {

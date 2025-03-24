@@ -1,4 +1,4 @@
-import type { CategoryEventBus } from '../../composables/types';
+import type { ICategoryEventBus } from '../../composables/types';
 import type { PiniaPluginContext } from 'pinia';
 
 /**
@@ -6,7 +6,7 @@ import type { PiniaPluginContext } from 'pinia';
  */
 interface ICategoryStore {
   $id: string;
-  $categoryEventBus?: CategoryEventBus;
+  $categoryEventBus?: ICategoryEventBus;
   editCategory: (categoryToEdit: { id: string } | string, newName: string) => void;
 }
 
@@ -18,7 +18,7 @@ export function createCategorySyncPlugin(): void {
   const categoryUpdateEvents: ((categoryId: string, newName: string) => void)[] = [];
 
   // Event-Bus für Kategorieänderungen
-  const categoryEventBus: CategoryEventBus = {
+  const categoryEventBus: ICategoryEventBus = {
     // Event-Listener registrieren
     on(callback) {
       categoryUpdateEvents.push(callback);
@@ -43,7 +43,7 @@ export function createCategorySyncPlugin(): void {
     }
 
     // Event-Bus als Store-Eigenschaft bereitstellen
-    const categoryStore = store as unknown as CategoryStore;
+    const categoryStore = store as unknown as ICategoryStore;
     categoryStore.$categoryEventBus = categoryEventBus;
 
     // Original-Methode speichern

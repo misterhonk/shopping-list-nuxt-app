@@ -10,7 +10,7 @@ import type { Ref, ComputedRef } from 'vue';
 const { itemService, shoppingListService } = initializeServices();
 
 // Logger initialisieren
-const logger = createLogger('useShoppingItems');
+const _logger = createLogger('useShoppingItems');
 
 /**
  * Composable für die Verwaltung von Artikeln in Einkaufslisten
@@ -42,7 +42,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   });
 
   // Berechnete Eigenschaften
-  const isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
+  const _isFormValid = computed((): boolean =>  newItem.name.trim() !== '' && newItem.quantity > 0);
 
   /**
    * Lädt die aktuelle Listen-ID und die aktuellen Artikel
@@ -119,7 +119,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   const addItem = (itemData: Partial<ShoppingItem> | null = null): ShoppingItem | null => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!currentListId.value) {
-      logger.error('Keine Liste ausgewählt.');
+      _logger.error('Keine Liste ausgewählt.');
       return null;
     }
 
@@ -135,7 +135,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
 
       // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
       if (!itemData) {
-        resetItemForm();
+        _resetItemForm();
       }
     }
 
@@ -173,7 +173,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
 
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!listId) {
-      logger.error('Keine Liste ausgewählt.');
+      _logger.error('Keine Liste ausgewählt.');
       return false;
     }
 
@@ -203,7 +203,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
 
     // Wenn keine Liste ausgewählt ist und das Item kein listId hat, frühzeitig beenden
     if (!listId) {
-      logger.error('Keine Liste ausgewählt oder keine listId im Item gefunden.');
+      _logger.error('Keine Liste ausgewählt oder keine listId im Item gefunden.');
       return false;
     }
 
@@ -226,10 +226,10 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
    * Entfernt alle erledigten Artikel aus der aktuellen Liste
    * @return true bei Erfolg, false bei Fehler
    */
-  const clearCheckedItems = (): boolean => {
+  const _clearCheckedItems = (): boolean => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!currentListId.value) {
-      logger.error('Keine Liste ausgewählt.');
+      _logger.error('Keine Liste ausgewählt.');
       return false;
     }
 
@@ -248,7 +248,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const resetItemForm = (defaultCategory: string | Category = 'Sonstiges'): void => {
+  const _resetItemForm = (defaultCategory: string | Category = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;
@@ -342,7 +342,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
     isAddingItem,
     itemNameInput,
     newItem,
-    isFormValid,
+    _isFormValid,
     allItems,
     currentListId,
 
@@ -358,8 +358,8 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
     addNewItem, // Alias für addItem mit besserer Semantik für die UI
     removeItem,
     toggleItemChecked,
-    clearCheckedItems,
-    resetItemForm,
+    _clearCheckedItems,
+    _resetItemForm,
     focusItemNameInput,
     updateCategoryInItems,
   };

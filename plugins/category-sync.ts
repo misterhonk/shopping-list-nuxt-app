@@ -4,7 +4,7 @@ import { useCategoryStore } from '~/stores/category';
 import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
-const logger = createLogger('category-sync');
+const _logger = createLogger('category-sync');
 
 /**
  * Plugin für die Synchronisierung von Kategorien über die App hinweg
@@ -24,7 +24,7 @@ export default defineNuxtPlugin(_nuxtApp => {
         }
       };
     },
-    emit(categoryId: string, newName: string) {
+    emit(categoryId: string, newName: string): void {
       callbacks.forEach(callback => callback(categoryId, newName));
     },
   };
@@ -57,7 +57,7 @@ export default defineNuxtPlugin(_nuxtApp => {
       };
     }
   } catch (error) {
-    logger.error('Fehler beim Einrichten der Kategoriesynchronisierung:', error);
+    _logger.error('Fehler beim Einrichten der Kategoriesynchronisierung:', error);
   }
 
   return {

@@ -52,7 +52,7 @@ export default defineComponent({
 
     // Kategorien-Daten
     const currentCategories = computed<ICategory[]>(() => {
-      if(categoryStore): void {
+      if (categoryStore) {
         return categoryStore.currentCategories;
       }
       return [];
@@ -67,7 +67,7 @@ export default defineComponent({
     // Sortierbare Kategorien für Drag & Drop
     const sortableCategoriesArray = computed({
       get: (): ICategory[] => {
-        if(categoryStore): void {
+        if (categoryStore) {
           return categoryStore.sortedCategories;
         }
         return [...currentCategoriesArray.value];
@@ -102,7 +102,7 @@ export default defineComponent({
 
     // Konvertierung von String-Kategorien zu Kategorie-Objekten
     const convertCategory = (category: unknown): ICategory => {
-      if(typeof category === 'string'): void {
+      if (typeof category === 'string') {
         return { id: generateCategoryId(category), name: category };
       } else if (typeof category === 'object' && category !== null) {
         return category as ICategory;
@@ -290,7 +290,7 @@ export default defineComponent({
         
         // Verzögertes erneutes Laden zur Sicherstellung der Aktualisierung
         setTimeout(() => {
-          if(categoryStore): void {
+          if (categoryStore) {
             categoryStore.loadFromLocalStorage();
             forceRerender();
           }

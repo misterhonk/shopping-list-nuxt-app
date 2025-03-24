@@ -12,7 +12,7 @@ import type { ShoppingItem, ShoppingList, Category } from '~/types/app-types';
 import type { ItemFormState, ListFormState } from '~/types/form-types';
 
 // Logger initialisieren
-const logger = createLogger('typeGuards');
+const _logger = createLogger('typeGuards');
 
 /**
  * Prüft, ob ein Wert ein gültiges ShoppingItem ist
@@ -39,12 +39,12 @@ export function isShoppingItem(value: unknown): value is ShoppingItem {
 
   // Weitere Validierungen für spezifische Werte
   if (typeof item.quantity === 'number' && item.quantity <= 0) {
-    logger.warn('Invalid shopping item: quantity must be greater than 0');
+    _logger.warn('Invalid shopping item: quantity must be greater than 0');
     return false;
   }
 
   if (typeof item.name === 'string' && item.name.trim() === '') {
-    logger.warn('Invalid shopping item: name cannot be empty');
+    _logger.warn('Invalid shopping item: name cannot be empty');
     return false;
   }
 
@@ -106,7 +106,7 @@ export function isShoppingList(value: unknown): value is ShoppingList {
   // Prüfe, ob alle Items in der Liste gültige ShoppingItems sind
   const items = list.items as unknown[];
   if (!items.every(item => isShoppingItem(item))) {
-    logger.warn('Invalid shopping list: contains invalid items');
+    _logger.warn('Invalid shopping list: contains invalid items');
     return false;
   }
 

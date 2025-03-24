@@ -9,7 +9,7 @@ import type { ShoppingList, CreateListOptions } from './types';
 import type { ComputedRef } from 'vue';
 
 // Logger initialisieren
-const logger = createLogger('useShoppingLists');
+const _logger = createLogger('useShoppingLists');
 
 /**
  * Composable für die Verwaltung von Einkaufslisten
@@ -38,7 +38,7 @@ const activateTemplateInStore = (store: ICategoryStore | null, templateId: strin
   try {
     store.activateTemplate(templateId);
   } catch (e) {
-    logger.error('Fehler beim Aktivieren der Template:', e);
+    _logger.error('Fehler beim Aktivieren der Template:', e);
   }
 };
 
@@ -72,7 +72,7 @@ const createCategoryStore = (): ICategoryStore | null => {
   try {
     return useCategoryStore();
   } catch (e) {
-    logger.error('Fehler beim Initialisieren des ICategoryStore:', e);
+    _logger.error('Fehler beim Initialisieren des ICategoryStore:', e);
     return null;
   }
 };
@@ -94,7 +94,7 @@ const listManagementHelpers = (): void => {
   /**
    * Lädt Listen aus dem localStorage
    */
-  const loadData = () => ({
+  const loadData = (): void => ({
     lists: loadFromStorage<ShoppingList[]>('shoppingLists'),
     currentId: loadFromStorage<string>('currentListId'),
   });
@@ -126,7 +126,7 @@ export function useShoppingLists(): void {
       }
   );
 
-  const currentListTemplateId = computed({
+  const _currentListTemplateId = computed({
     get: () => currentList.value.templateId ?? 'supermarket',
     set: (value: string) => updateListTemplate(value),
   });
@@ -143,7 +143,7 @@ export function useShoppingLists(): void {
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
    * @return Die Anzahl der erledigten Artikel
    */
-  const getCheckedItemsCount = (): number =>
+  const _getCheckedItemsCount = (): number =>
     Array.isArray(currentList.value.items)
       ? currentList.value.items.filter(item => item.checked).length
       : 0;
@@ -214,7 +214,7 @@ export function useShoppingLists(): void {
       initialized.value = true;
       return true;
     } catch (error) {
-      logger.error('Fehler beim Laden der Listen:', error);
+      _logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
       return false;
     }
@@ -470,7 +470,7 @@ export function useShoppingLists(): void {
     currentListId,
     currentList,
     initialized,
-    currentListTemplateId,
+    _currentListTemplateId,
 
     // Funktionen
     loadLists,
@@ -484,7 +484,7 @@ export function useShoppingLists(): void {
     updateList,
     saveLists,
     getItemsCount,
-    getCheckedItemsCount,
+    _getCheckedItemsCount,
     getTotalItemsCount,
   };
 }

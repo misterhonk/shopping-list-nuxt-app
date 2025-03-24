@@ -45,7 +45,7 @@ export function useListImportExport(
    * @param options - Die Importoptionen
    * @returns Das Importergebnis
    */
-  const handleImportListWithOptions = (data: ExportedList, options: ImportOptions) =>
+  const handleImportListWithOptions = (data: ExportedList, options: ImportOptions): void =>
     listImport.importListWithOptions(data, options, {
       createList,
       addItem,
@@ -58,7 +58,7 @@ export function useListImportExport(
    * @param importData - Die Importdaten
    * @returns Das Importergebnis
    */
-  const handleImportList = (importData: ExportedList) =>
+  const handleImportList = (importData: ExportedList): void =>
     listImport.importList(importData, createList, addItem);
 
   /**

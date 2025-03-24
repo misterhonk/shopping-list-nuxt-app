@@ -13,15 +13,15 @@ import type { Ref } from 'vue';
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('useItemManagement');
+const _logger = createLogger('useItemManagement');
 
 // Definieren der Return-Type für useItemManagement
 interface ItemManagementComposable {
-  allItems: Ref<ShoppingItem[]>;
-  getItemsGrouped: (categories: string[]) => Record<string, ShoppingItem[]>;
-  addItem: (itemData: Partial<ShoppingItem>) => ShoppingItem | null;
-  removeItem: (item: ShoppingItem | string) => boolean;
-  toggleItemChecked: (item: ShoppingItem | string) => boolean;
+  allItems: Ref<IShoppingItem[]>;
+  getItemsGrouped: (categories: string[]) => Record<string, IShoppingItem[]>;
+  addItem: (itemData: Partial<IShoppingItem>) => ShoppingItem | null;
+  removeItem: (item: IShoppingItem | string) => boolean;
+  toggleItemChecked: (item: IShoppingItem | string) => boolean;
   clearCheckedItems: () => boolean;
   updateCategoryInItems: (categoryId: string, newName: string) => boolean;
 }
@@ -31,7 +31,7 @@ interface ItemManagementComposable {
  * Bietet Funktionen zum Hinzufügen, Entfernen und Markieren von Artikeln
  */
 export function useItemManagement(
-  shoppingListsRef: Ref<ShoppingList[]>,
+  shoppingListsRef: Ref<IShoppingList[]>,
   currentListIdRef: Ref<string | null>
 ): ItemManagementComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
@@ -39,7 +39,7 @@ export function useItemManagement(
   /**
    * Gibt alle Artikel der aktuellen Liste zurück
    */
-  const allItems = computed<ShoppingItem[]>(() => {
+  const allItems = computed<IShoppingItem[]>(() => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
     if (!currentList || !Array.isArray(currentList.items)) {
       return [];
@@ -50,7 +50,7 @@ export function useItemManagement(
   /**
    * Gruppiert Artikel nach Kategorien
    */
-  const getItemsGrouped = (categories: string[]): Record<string, ShoppingItem[]> => {
+  const getItemsGrouped = (categories: string[]): Record<string, IShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
 
     // Prüfen, ob items ein gültiges Array ist
@@ -60,7 +60,7 @@ export function useItemManagement(
           obj[cat] = [];
           return obj;
         },
-        {} as Record<string, ShoppingItem[]>
+        {} as Record<string, IShoppingItem[]>
       );
     }
 
@@ -72,11 +72,12 @@ export function useItemManagement(
    * @param itemData - Daten des neuen Artikels
    * @returns Das hinzugefügte Item oder null bei Fehler
    */
-  const addItem = (itemData: Partial<ShoppingItem>): ShoppingItem | null => {
+  const addItem = (itemData: Partial<IShoppingItem>): IShoppingItem | null => {
     // Prüfen, ob die Daten gültig sind
     if (
       !itemData.name ||
-      (itemData.name.trim() === '' || !(itemData.quantity !== undefined && itemData.quantity > 0))
+      itemData.name.trim() === '' ||
+      !(itemData.quantity !== undefined && itemData.quantity > 0)
     ) {
       return null;
     }
@@ -121,7 +122,7 @@ export function useItemManagement(
    * @param item - Das Item oder die ID des zu entfernenden Artikels
    * @returns true bei Erfolg, false bei Fehler
    */
-  const removeItem = (item: ShoppingItem | string): boolean => {
+  const removeItem = (item: IShoppingItem | string): boolean => {
     try {
       // Item-ID aus dem Parameter extrahieren
       const itemId = typeof item === 'object' ? item.id : item;
@@ -172,7 +173,7 @@ export function useItemManagement(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Entfernen des Items:', error);
+      _logger.error('Fehler beim Entfernen des Items:', error);
       return false;
     }
   };
@@ -182,7 +183,7 @@ export function useItemManagement(
    * @param item - Das Item oder die ID des zu ändernden Artikels
    * @returns true bei Erfolg, false bei Fehler
    */
-  const toggleItemChecked = (item: ShoppingItem | string): boolean => {
+  const toggleItemChecked = (item: IShoppingItem | string): boolean => {
     try {
       // Item-ID aus dem Parameter extrahieren
       const itemId = typeof item === 'object' ? item.id : item;
@@ -228,7 +229,7 @@ export function useItemManagement(
             ...item,
             checked: !item.checked,
             modifiedAt: Date.now(),
-          };
+          } as const;
         }
         return item;
       });
@@ -241,7 +242,7 @@ export function useItemManagement(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Ändern des Artikel-Status:', error);
+      _logger.error('Fehler beim Ändern des Artikel-Status:', error);
       return false;
     }
   };
@@ -250,7 +251,7 @@ export function useItemManagement(
    * Entfernt alle erledigten Artikel aus der aktuellen Liste
    * @returns true bei Erfolg, false bei Fehler
    */
-  const clearCheckedItems = (): boolean => {
+  const _clearCheckedItems = (): boolean => {
     try {
       const listIndex = shoppingListsRef.value.findIndex(
         list => list.id === currentListIdRef.value
@@ -284,7 +285,7 @@ export function useItemManagement(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Löschen der erledigten Artikel:', error);
+      _logger.error('Fehler beim Löschen der erledigten Artikel:', error);
       return false;
     }
   };
@@ -344,7 +345,7 @@ export function useItemManagement(
 
       return updatedAnyItem;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren der Kategorienamen:', error);
+      _logger.error('Fehler beim Aktualisieren der Kategorienamen:', error);
       return false;
     }
   };
@@ -358,7 +359,7 @@ export function useItemManagement(
     addItem,
     removeItem,
     toggleItemChecked,
-    clearCheckedItems,
+    _clearCheckedItems,
     updateCategoryInItems,
-  };
+  } as const;
 }

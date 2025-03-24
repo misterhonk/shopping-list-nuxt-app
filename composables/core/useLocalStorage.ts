@@ -6,7 +6,7 @@ import { createLogger } from '~/utils/logger';
  */
 export function useLocalStorage(): void {
   // Logger initialisieren
-  const logger = createLogger('useLocalStorage');
+  const _logger = createLogger('useLocalStorage');
 
   /**
    * Erstellt eine tiefe Kopie eines Objekts oder Arrays durch JSON-Parsing
@@ -25,7 +25,7 @@ export function useLocalStorage(): void {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      logger.error(`Fehler beim Speichern von ${key}:`, error);
+      _logger.error(`Fehler beim Speichern von ${key}:`, error);
     }
   };
 
@@ -43,7 +43,7 @@ export function useLocalStorage(): void {
       }
       return JSON.parse(storedValue) as T;
     } catch (error) {
-      logger.error(`Fehler beim Laden von ${key}:`, error);
+      _logger.error(`Fehler beim Laden von ${key}:`, error);
       return defaultValue;
     }
   };
@@ -56,7 +56,7 @@ export function useLocalStorage(): void {
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      logger.error(`Fehler beim Löschen von ${key}:`, error);
+      _logger.error(`Fehler beim Löschen von ${key}:`, error);
     }
   };
 
@@ -67,7 +67,7 @@ export function useLocalStorage(): void {
     try {
       localStorage.clear();
     } catch (error) {
-      logger.error('Fehler beim Leeren des Speichers:', error);
+      _logger.error('Fehler beim Leeren des Speichers:', error);
     }
   };
 

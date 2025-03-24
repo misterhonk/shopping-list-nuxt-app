@@ -330,7 +330,7 @@ export class ItemService extends BaseService {
   public groupItemsByCategory(
     listId: string,
     categoryNames: string[]
-  ): Record<string, ShoppingItem[]> {
+  ): Record<string & ShoppingItem[]> {
     return (
       this.safeOperation(() => {
         const items = this.getItemsByListId(listId);

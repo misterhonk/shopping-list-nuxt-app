@@ -6,7 +6,7 @@ import type { TemplateCollection } from '~/composables/types';
 import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('operations');
+const _logger = createLogger('operations');
 
 /**
  * Fügt eine neue Kategorie zu einem Template hinzu
@@ -38,7 +38,7 @@ export const addCategory = (
 
   // Prüfe, ob die Kategorie bereits existiert
   if (categoryExists(currentTemplate, newCategory.name)) {
-    logger.warn('Kategorie existiert bereits:', newCategory.name);
+    _logger.warn('Kategorie existiert bereits:', newCategory.name);
     return customTemplates;
   }
 
@@ -96,7 +96,7 @@ export const editCategory = (
   // Prüfen, ob die Kategorie existiert
   const existingCategory = findCategoryById(currentTemplate, categoryId);
   if (!existingCategory) {
-    logger.error('Kategorie nicht gefunden:', categoryId);
+    _logger.error('Kategorie nicht gefunden:', categoryId);
     return customTemplates;
   }
 
@@ -151,7 +151,7 @@ export const deleteCategory = (
   // Prüfen, ob die Kategorie existiert
   const existingCategory = findCategoryById(currentTemplate, categoryId);
   if (!existingCategory) {
-    logger.error('Kategorie zum Löschen nicht gefunden:', categoryId);
+    _logger.error('Kategorie zum Löschen nicht gefunden:', categoryId);
     return customTemplates;
   }
 

@@ -5,7 +5,7 @@ import { generateCategoryId, deepCopy } from './utils';
 import type { TemplateCollection } from '~/composables/types';
 
 // Logger initialisieren
-const logger = createLogger('migration');
+const _logger = createLogger('migration');
 
 /**
  * Migration alter String-Kategorien zu Objekt-Kategorien
@@ -13,7 +13,7 @@ const logger = createLogger('migration');
  * @returns Die migrierten Templates
  */
 export const migrateCategories = (customTemplates: TemplateCollection): TemplateCollection => {
-  logger.info('Starte Migration von String-Kategorien zu Objekten');
+  __logger.info('Starte Migration von String-Kategorien zu Objekten');
 
   // Tiefe Kopie erstellen
   const migratedTemplates = deepCopy(customTemplates);
@@ -36,7 +36,7 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
     }
   }
 
-  logger.info('Migration abgeschlossen, neue customTemplates:', migratedTemplates);
+  _logger.info('Migration abgeschlossen, neue customTemplates:', migratedTemplates);
   return migratedTemplates;
 };
 
