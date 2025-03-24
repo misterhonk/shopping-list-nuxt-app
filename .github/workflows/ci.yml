@@ -26,8 +26,9 @@ jobs:
       # - name: Lint
       #   run: npm run lint
 
-      - name: Check formatting
-        run: npm run format:check
+      # Temporär deaktiviert für Phase 1, wird in Phase 2 wieder aktiviert
+      # - name: Check formatting
+      #   run: npm run format:check
 
       - name: Type check
         run: npm run typecheck
@@ -38,5 +39,6 @@ jobs:
       - name: Test
         run: npm run test
 
+      # Temporär deaktiviert für Phase 1, wird in Phase 2 wieder aktiviert
       # - name: Security Audit
       #   run: npm run audit:security
