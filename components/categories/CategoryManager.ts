@@ -13,7 +13,7 @@ import { createLogger } from '~/utils/logger';
 // @ts-ignore - Die Komponente existiert zur Laufzeit, aber der Typ ist nicht definiert
 import CategoryModals from './modals/CategoryModals.vue';
 
-import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { ICategory, ICategoryTemplate } from '~/types/app-types';
 
 // Template für neues/bearbeitbares Template
 interface INewTemplate {
@@ -34,29 +34,26 @@ export default defineComponent({
     CategoryModals,
   },
   setup() {
-    const logger = createLogger('CategoryManager');
+    const _logger = createLogger('CategoryManager');
 
     // Wrapper für den Pinia-Store mit Fehlerbehandlung
     let categoryStore: ReturnType<typeof useCategoryStore> | null = null;
     try {
       categoryStore = useCategoryStore();
     } catch (e) {
-      logger.error('Fehler beim Initialisieren des CategoryStore:', e);
+      _logger.error('Fehler beim Initialisieren des CategoryStore:', e);
     }
 
     // Daten aus dem Store
-    const templatesList = computed<CategoryTemplate[]>(() => categoryStore?.templatesList ?? []);
-    const currentTemplate = computed<CategoryTemplate>(
+    const templatesList = computed<ICategoryTemplate[]>(() => categoryStore?.templatesList ?? []);
+    const currentTemplate = computed<ICategoryTemplate>(
       () => categoryStore?.currentTemplate ?? { id: '', name: 'Standard', categories: [] }
     );
 
-    // Explizites Template mit direktem Zugriff auf den Store
-    const currentCategories = computed<Category[]>(() => {
-      // Immer die aktuellste Version direkt aus dem Store nehmen
-      if (categoryStore) {
-        const cats = categoryStore.currentCategories;
-        logger.info('currentCategories computed neu ausgeführt:', cats);
-        return cats;
+    // Kategorien-Daten
+    const currentCategories = computed<ICategory[]>(() => {
+      if(categoryStore): void {
+        return categoryStore.currentCategories;
       }
       return [];
     });
@@ -69,19 +66,16 @@ export default defineComponent({
 
     // Sortierbare Kategorien für Drag & Drop
     const sortableCategoriesArray = computed({
-      get: (): Category[] => {
-        if (categoryStore) {
-          // Wir verwenden die sortierte Kategorieliste vom Store
+      get: (): ICategory[] => {
+        if(categoryStore): void {
           return categoryStore.sortedCategories;
         }
         return [...currentCategoriesArray.value];
       },
-      set: (newOrder: Category[]) => {
+      set: (newOrder: ICategory[]) => {
         if (categoryStore && Array.isArray(newOrder)) {
-          // IDs der neu sortierten Kategorien an den Store senden
           const categoryIds = newOrder.map(cat => cat.id);
           categoryStore.updateCustomSortOrder(categoryIds);
-          // Das setzt auch automatisch useCustomSort auf true
         }
       },
     });
@@ -101,30 +95,28 @@ export default defineComponent({
     // Formulardaten
     const newCategoryName = ref<string>('');
     const editCategoryName = ref<string>('');
-    const currentEditingCategory = ref<Category | null>(null);
+    const currentEditingCategory = ref<ICategory | null>(null);
 
     // Komponenten-Key für Neurendering
     const componentKey = ref<number>(0);
 
+    // Konvertierung von String-Kategorien zu Kategorie-Objekten
+    const convertCategory = (category: unknown): ICategory => {
+      if(typeof category === 'string'): void {
+        return { id: generateCategoryId(category), name: category };
+      } else if (typeof category === 'object' && category !== null) {
+        return category as ICategory;
+      } else {
+        _logger.warn('Unbekanntes Kategorieformat:', category);
+        return { id: `unknown_${Date.now()}`, name: 'Unbekannt' };
+      }
+    };
+
     // Array für Kategorien mit zusätzlicher Reaktivität und Kompatibilität
-    const currentCategoriesArray = computed<Category[]>(() => {
+    const currentCategoriesArray = computed<ICategory[]>(() => {
       // Explizit ein neues Array zurückgeben, damit Vue die Änderungen erkennt
       const categories = [...currentCategories.value];
-
-      // Kompatibilitätsprüfung: Konvertiere String-Kategorien zu Objekten für die Anzeige
-      return categories.map(category => {
-        if (typeof category === 'string') {
-          // Altformat: String-Kategorie in kompatibles Objekt konvertieren
-          return { id: generateCategoryId(category), name: category };
-        } else if (typeof category === 'object' && category !== null) {
-          // Neues Format: Kategorie-Objekt mit ID und Name
-          return category;
-        } else {
-          // Fallback für unbekannte Formate
-          logger.warn('Unbekanntes Kategorieformat:', category);
-          return { id: `unknown_${Date.now()}`, name: 'Unbekannt' };
-        }
-      });
+      return categories.map(convertCategory);
     });
 
     // Drag & Drop Konfiguration
@@ -137,234 +129,208 @@ export default defineComponent({
     }));
 
     // Debug-Watcher für Kategorieänderungen
-    watch(currentCategories, newVal => {
-      logger.info('Aktuelle Kategorien geändert:', newVal);
+    watch(currentCategories, () => {
       // Force Component Re-render
       componentKey.value += 1;
     });
 
-    const newTemplate = ref<NewTemplate>({
+    const newTemplate = ref<INewTemplate>({
       name: '',
       description: '',
       baseTemplateId: '',
     });
 
-    const editTemplate = ref<EditTemplate>({
+    const editTemplate = ref<IEditTemplate>({
       name: '',
       description: '',
     });
 
     // Beim Laden der Komponente
     onMounted(() => {
-      if (categoryStore) {
-        try {
-          categoryStore.loadFromLocalStorage();
+      if (!categoryStore) return;
+      
+      try {
+        categoryStore.loadFromLocalStorage();
 
-          // Aktiviere das aktuelle Template, falls die Komponente in einen leeren Zustand geladen wird
-          if (!categoryStore.activeTemplateId) {
-            categoryStore.activateTemplate(defaultTemplateId);
-          }
-
-          // Komponente explizit neu rendern, sobald sie geladen ist
-          componentKey.value = 1;
-        } catch (e) {
-          logger.error('Fehler beim Laden aus localStorage:', e);
+        // Aktiviere das aktuelle Template, falls die Komponente in einen leeren Zustand geladen wird
+        if (!categoryStore.activeTemplateId) {
+          categoryStore.activateTemplate(defaultTemplateId);
         }
+
+        // Komponente explizit neu rendern, sobald sie geladen ist
+        componentKey.value = 1;
+      } catch (e) {
+        _logger.error('Fehler beim Laden aus localStorage:', e);
       }
     });
 
-    // Methoden
+    // ---- Methoden zum Umgang mit Templates ----
+    
+    // Template aktivieren
     const activateTemplate = (templateId: string): void => {
-      if (!categoryStore) {
-        return;
-      }
+      if (!categoryStore) return;
       categoryStore.activateTemplate(templateId);
     };
 
-    // Sortierungsmethoden
-    const toggleSortMode = (): void => {
-      if (!categoryStore) {
-        return;
+    // Neues Template erstellen
+    const createNewTemplate = (): void => {
+      if (!categoryStore) return;
+      
+      if (!newTemplate.value.name.trim()) return;
+      
+      categoryStore.createTemplate(
+        newTemplate.value.name.trim(),
+        newTemplate.value.description.trim(),
+        newTemplate.value.baseTemplateId || null
+      );
+
+      newTemplate.value = {
+        name: '',
+        description: '',
+        baseTemplateId: '',
+      };
+
+      showNewTemplateModal.value = false;
+    };
+
+    // Template löschen Bestätigung anzeigen
+    const confirmDeleteTemplate = (): void => {
+      showDeleteTemplateModal.value = true;
+    };
+
+    // Template tatsächlich löschen
+    const deleteCurrentTemplate = (): void => {
+      if (!categoryStore) return;
+      categoryStore.deleteTemplate(activeTemplateId.value);
+      showDeleteTemplateModal.value = false;
+    };
+
+    // Bearbeitetes Template speichern
+    const saveEditedTemplate = (): void => {
+      if (!categoryStore || !editTemplate.value.name.trim()) return;
+      
+      categoryStore.updateTemplate(
+        activeTemplateId.value,
+        editTemplate.value.name.trim(),
+        editTemplate.value.description.trim()
+      );
+
+      showEditTemplateModal.value = false;
+    };
+
+    // Auf Standardwerte zurücksetzen
+    const resetToDefaults = (): void => {
+      if (!categoryStore) return;
+      
+      const confirmMessage = 'Möchten Sie wirklich alle benutzerdefinierten Vorlagen zurücksetzen? ' + 
+                            'Diese Aktion kann nicht rückgängig gemacht werden.';
+                            
+      if (confirm(confirmMessage)) {
+        categoryStore.resetToDefault();
       }
+    };
+
+    // ---- Methoden zum Umgang mit Sortierung ----
+    
+    // Sortierungsmodus umschalten
+    const toggleSortMode = (): void => {
+      if (!categoryStore) return;
       categoryStore.toggleSortMode();
     };
 
+    // Auf Standardsortierung zurücksetzen
     const resetToDefaultSort = (): void => {
-      if (!categoryStore) {
-        return;
-      }
+      if (!categoryStore) return;
       categoryStore.resetToDefaultSort();
     };
 
+    // ---- Methoden zum Umgang mit Kategorien ----
+    
+    // Neue Kategorie hinzufügen
     const addNewCategory = (): void => {
-      if (!categoryStore) {
-        return;
-      }
-      if (newCategoryName.value.trim()) {
-        categoryStore.addCategory(newCategoryName.value.trim());
-        newCategoryName.value = '';
-        showNewCategoryModal.value = false;
-
-        // Komponente explizit neu rendern
-        componentKey.value += 1;
-
-        // Sicherstellen, dass die Änderungen auch sichtbar sind
-        setTimeout(() => {
-          componentKey.value += 1;
-        }, 100);
-      }
+      if (!categoryStore || !newCategoryName.value.trim()) return;
+      
+      categoryStore.addCategory(newCategoryName.value.trim());
+      newCategoryName.value = '';
+      showNewCategoryModal.value = false;
+      
+      // Komponente neu rendern
+      forceRerender();
     };
 
-    const editCategory = (category: Category): void => {
+    // Kategorie bearbeiten (Formular öffnen)
+    const editCategory = (category: ICategory): void => {
       currentEditingCategory.value = category;
       editCategoryName.value = category.name;
       showEditCategoryModal.value = true;
     };
 
+    // Bearbeitete Kategorie speichern
     const saveEditedCategory = (): void => {
-      if (!categoryStore || !currentEditingCategory.value) {
-        return;
-      }
-
-      if (editCategoryName.value.trim() && currentEditingCategory.value) {
-        logger.info('saveEditedCategory aufgerufen mit:', {
-          category: currentEditingCategory.value,
-          neuName: editCategoryName.value.trim(),
-        });
-
-        // Wir brauchen eine Referenz zur Kategorie, bevor wir das Modal schließen
-        const categoryToEdit = currentEditingCategory.value;
-        const newName = editCategoryName.value.trim();
-
-        // Modal schließen und Felder zurücksetzen
-        showEditCategoryModal.value = false;
-        currentEditingCategory.value = null;
-        editCategoryName.value = '';
-
-        // Jetzt erst die Kategorie bearbeiten
-        try {
-          // Direkter Test mit dem Store
-          logger.info(
-            'Bearbeite Kategorie',
-            categoryToEdit.id,
-            'von',
-            categoryToEdit.name,
-            'zu',
-            newName
-          );
-          categoryStore.editCategory(categoryToEdit, newName);
-
-          // Diagnose und direktes Update der Einkaufslisten
-          const updateFn = diagnoseCategories();
-          if (typeof updateFn === 'function') {
-            // Direkte Aktualisierung aller Artikel mit dieser Kategorie
-            updateFn(categoryToEdit.id, newName);
+      if (!categoryStore || !currentEditingCategory.value || !editCategoryName.value.trim()) return;
+      
+      // Referenzen zur besseren Lesbarkeit
+      const categoryToEdit = currentEditingCategory.value;
+      const newName = editCategoryName.value.trim();
+      
+      // Modal schließen und Felder zurücksetzen
+      showEditCategoryModal.value = false;
+      currentEditingCategory.value = null;
+      editCategoryName.value = '';
+      
+      try {
+        // Kategorie bearbeiten
+        categoryStore.editCategory(categoryToEdit, newName);
+        
+        // Diagnose und Aktualisierung aller Artikel mit dieser Kategorie
+        updateCategoryReferences(categoryToEdit.id, newName);
+        
+        // Komponente neu rendern
+        forceRerender();
+        
+        // Verzögertes erneutes Laden zur Sicherstellung der Aktualisierung
+        setTimeout(() => {
+          if(categoryStore): void {
+            categoryStore.loadFromLocalStorage();
+            forceRerender();
           }
-
-          // Komponente explizit neu rendern
-          componentKey.value += 1;
-
-          // Einen weiteren Versuch starten, falls das erste Update nicht funktioniert hat
-          setTimeout(() => {
-            try {
-              // Sicherstellen, dass die Bearbeitung angewendet wurde
-              if (categoryStore) {
-                categoryStore.loadFromLocalStorage();
-              }
-
-              // Nochmals Komponente neu rendern
-              componentKey.value += 1;
-              logger.info('Kategorien nach erneutem Laden:', categoryStore?.currentCategories);
-            } catch (e) {
-              logger.error('Fehler beim Neuladen:', e);
-            }
-          }, 200);
-        } catch (error) {
-          logger.error('Fehler bei saveEditedCategory:', error);
-          alert('Es gab ein Problem beim Speichern der Änderung.');
-        }
+        }, 200);
+      } catch (error) {
+        _logger.error('Fehler bei saveEditedCategory:', error);
+        alert('Es gab ein Problem beim Speichern der Änderung.');
       }
     };
 
-    const deleteCategory = (category: Category): void => {
-      if (!categoryStore) {
-        return;
-      }
-
+    // Kategorie löschen
+    const deleteCategory = (category: ICategory): void => {
+      if (!categoryStore) return;
+      
       const confirmText = `Möchten Sie die Kategorie "${category.name}" wirklich löschen?`;
-
+      
       if (confirm(confirmText)) {
         categoryStore.deleteCategory(category);
+        forceRerender();
+      }
+    };
 
-        // Komponente explizit neu rendern
+    // Hilfsfunktionen
+
+    // Kategorie-Referenzen in Artikeln aktualisieren
+    const updateCategoryReferences = (categoryId: string, newName: string): void => {
+      const updateFn = diagnoseCategories();
+      if (typeof updateFn === 'function') {
+        updateFn(categoryId, newName);
+      }
+    };
+
+    // Komponente neu rendern
+    const forceRerender = (): void => {
+      componentKey.value += 1;
+      
+      // Sicherstellen, dass die Änderungen auch sichtbar sind
+      setTimeout(() => {
         componentKey.value += 1;
-
-        // Sicherstellen, dass die Änderungen auch sichtbar sind
-        setTimeout(() => {
-          componentKey.value += 1;
-        }, 100);
-      }
-    };
-
-    const createNewTemplate = (): void => {
-      if (!categoryStore) {
-        return;
-      }
-      if (newTemplate.value.name.trim()) {
-        categoryStore.createTemplate(
-          newTemplate.value.name.trim(),
-          newTemplate.value.description.trim(),
-          newTemplate.value.baseTemplateId ?? null
-        );
-
-        newTemplate.value = {
-          name: '',
-          description: '',
-          baseTemplateId: '',
-        };
-
-        showNewTemplateModal.value = false;
-      }
-    };
-
-    const confirmDeleteTemplate = (): void => {
-      showDeleteTemplateModal.value = true;
-    };
-
-    const deleteCurrentTemplate = (): void => {
-      if (!categoryStore) {
-        return;
-      }
-      categoryStore.deleteTemplate(activeTemplateId.value);
-      showDeleteTemplateModal.value = false;
-    };
-
-    const saveEditedTemplate = (): void => {
-      if (!categoryStore) {
-        return;
-      }
-      if (editTemplate.value.name.trim()) {
-        categoryStore.updateTemplate(
-          activeTemplateId.value,
-          editTemplate.value.name.trim(),
-          editTemplate.value.description.trim()
-        );
-
-        showEditTemplateModal.value = false;
-      }
-    };
-
-    const resetToDefaults = (): void => {
-      if (!categoryStore) {
-        return;
-      }
-      if (
-        confirm(
-          'Möchten Sie wirklich alle benutzerdefinierten Vorlagen zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.'
-        )
-      ) {
-        categoryStore.resetToDefault();
-      }
+      }, 100);
     };
 
     return {
@@ -390,18 +356,21 @@ export default defineComponent({
       dragOptions,
       newTemplate,
       editTemplate,
+      // Template-Methoden
       activateTemplate,
-      toggleSortMode,
-      resetToDefaultSort,
-      addNewCategory,
-      editCategory,
-      saveEditedCategory,
-      deleteCategory,
       createNewTemplate,
       confirmDeleteTemplate,
       deleteCurrentTemplate,
       saveEditedTemplate,
       resetToDefaults,
+      // Sortierungs-Methoden
+      toggleSortMode,
+      resetToDefaultSort,
+      // Kategorie-Methoden
+      addNewCategory,
+      editCategory,
+      saveEditedCategory,
+      deleteCategory
     };
   },
 });
