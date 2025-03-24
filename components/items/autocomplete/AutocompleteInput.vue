@@ -93,7 +93,7 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
   }
 
   // Suche in allen Vorschlägen
-  return props.suggestions
+  return _props.suggestions
     .filter(suggestion => {
       // Wenn das Objekt ein 'text'-Feld hat, prüfe dieses
       const searchText =
@@ -112,13 +112,13 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
 });
 
 // Teilt den Text in hervorgehobene und normale Teile
-const splitTextForHighlight = (text: string): IITextPart[] => {
+const splitTextForHighlight = (text: string): ITextPart[] => {
   if (!inputValue.value || inputValue.value.length < _props.minChars) {
     return [{ text, highlight: false }];
   }
 
   const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
-  const parts: IITextPart[] = [];
+  const parts: ITextPart[] = [];
   let lastIndex = 0;
   let match;
 
@@ -207,7 +207,7 @@ const handleBlur = (): void => {
 
 // Wenn sich der externe Wert ändert, Input aktualisieren
 watch(
-  () => props.modelValue,
+  () => _props.modelValue,
   newValue => {
     inputValue.value = newValue;
   }
