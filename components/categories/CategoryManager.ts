@@ -27,6 +27,29 @@ interface IEditTemplate {
   description: string;
 }
 
+// Interface für CategoryStore
+interface ICategoryStore {
+  templatesList: ICategoryTemplate[];
+  currentTemplate: ICategoryTemplate;
+  currentCategories: ICategory[];
+  sortedCategories: ICategory[];
+  isCustomSortActive: boolean;
+  activeTemplateId: string;
+  customTemplates: Record<string, any>;
+  loadFromLocalStorage: () => void;
+  activateTemplate: (templateId: string) => void;
+  toggleSortMode: () => void;
+  resetToDefaultSort: () => void;
+  updateCustomSortOrder: (categoryIds: string[]) => void;
+  addCategory: (name: string) => void;
+  editCategory: (category: ICategory, newName: string) => void;
+  deleteCategory: (category: ICategory) => void;
+  createTemplate: (name: string, description: string, baseTemplateId: string | null) => void;
+  updateTemplate: (templateId: string, name: string, description: string) => void;
+  deleteTemplate: (templateId: string) => void;
+  resetToDefault: () => void;
+}
+
 export default defineComponent({
   name: 'CategoryManager',
   components: {
@@ -37,9 +60,9 @@ export default defineComponent({
     const _logger = createLogger('CategoryManager');
 
     // Wrapper für den Pinia-Store mit Fehlerbehandlung
-    let categoryStore = null;
+    let categoryStore: ICategoryStore | null = null;
     try {
-      categoryStore = useCategoryStore();
+      categoryStore = useCategoryStore() as ICategoryStore;
     } catch (e) {
       _logger.error('Fehler beim Initialisieren des CategoryStore:', e);
     }
