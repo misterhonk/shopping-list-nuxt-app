@@ -27,8 +27,8 @@ interface ItemSuggestion {
 // Definieren der Return-Type für useItemSuggestions
 interface ItemSuggestionsComposable {
   itemHistory: Ref<Record<string, ItemHistoryEntry>>;
-  getSuggestions: (term?: string) => IItemSuggestion[];
-  addToHistory: (item: IShoppingItem) => void;
+  getSuggestions: (term?: string) => ItemSuggestion[];
+  addToHistory: (item: ShoppingItem) => void;
   initializeHistory: () => void;
   historyStats: ComputedRef<{ uniqueItems: number; totalEntries: number; averageUsage: number }>;
 }
@@ -36,7 +36,7 @@ interface ItemSuggestionsComposable {
 /**
  * Composable für Artikelvorschläge basierend auf vergangenen Einkäufen
  */
-export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSuggestionsComposable {
+export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSuggestionsComposable {
   // Lokaler Speicher für die Artikelhistorie
   const getItem = (key: string): string | null => {
     try {
@@ -62,7 +62,7 @@ export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSu
       return storedHistory ? JSON.parse(storedHistory) : {};
     } catch (error) {
       _logger.error('Fehler beim Laden der Artikelhistorie:', error);
-      return {} as const;
+      return {};
     }
   };
 
@@ -79,7 +79,7 @@ export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSu
   const itemHistory = ref<Record<string, ItemHistoryEntry>>(loadItemHistory());
 
   // Artikel zur Historie hinzufügen
-  const addToHistory = (item: IShoppingItem): void => {
+  const addToHistory = (item: ShoppingItem): void => {
     if (!item.name) {
       return;
     }
@@ -159,13 +159,13 @@ export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSu
   };
 
   // Vorschläge basierend auf der Historie generieren
-  const getSuggestions = (term = ''): IIItemSuggestion[] => {
+  const getSuggestions = (term = ''): ItemSuggestion[] => {
     if (!term) {
       return [];
     }
 
     const normalizedTerm = term.toLowerCase().trim();
-    const results: IIItemSuggestion[] = [];
+    const results: ItemSuggestion[] = [];
 
     // Durch die Historie iterieren und passende Einträge finden
     for (const [itemName, data] of Object.entries(itemHistory.value)) {
@@ -201,14 +201,14 @@ export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSu
   };
 
   // Aktualisierte Artikel zur Historie hinzufügen
-  const updateHistoryFromLists = (lists: IIShoppingList[]): void => {
+  const updateHistoryFromLists = (lists: ShoppingList[]): void => {
     if (!lists || !Array.isArray(lists)) {
       return;
     }
 
     lists.forEach(list => {
       if (list.items && Array.isArray(list.items)) {
-        list.items.forEach((item: IShoppingItem) => {
+        list.items.forEach((item: ShoppingItem) => {
           if (item.name) {
             addToHistory(item);
           }
@@ -247,7 +247,7 @@ export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSu
       uniqueItems: itemCount,
       totalEntries,
       averageUsage: itemCount > 0 ? totalEntries / itemCount : 0,
-    } as const;
+    };
   });
 
   return {
@@ -256,5 +256,5 @@ export function useItemSuggestions(listRef: { value: IIShoppingList[] }): ItemSu
     addToHistory,
     initializeHistory,
     historyStats,
-  } as const;
+  };
 }
