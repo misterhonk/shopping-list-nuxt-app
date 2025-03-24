@@ -37,7 +37,7 @@ export default defineComponent({
     const _logger = createLogger('CategoryManager');
 
     // Wrapper für den Pinia-Store mit Fehlerbehandlung
-    let categoryStore: ReturnType<typeof useCategoryStore> | null = null;
+    let categoryStore = null;
     try {
       categoryStore = useCategoryStore();
     } catch (e) {
@@ -81,9 +81,12 @@ export default defineComponent({
     });
 
     const activeTemplateId = computed<string>(() => categoryStore?.activeTemplateId ?? '');
-    const isTemplateCustom = computed<boolean>(
-      () => categoryStore?.customTemplates[activeTemplateId.value] !== undefined
-    );
+    const isTemplateCustom = computed<boolean>(() => {
+      if (categoryStore && categoryStore.customTemplates) {
+        return categoryStore.customTemplates[activeTemplateId.value] !== undefined;
+      }
+      return false;
+    });
 
     // UI-Zustand
     const showNewCategoryModal = ref<boolean>(false);
