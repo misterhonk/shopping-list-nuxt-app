@@ -8,7 +8,7 @@ const logger = createLogger('useListExport');
 /**
  * Interface für die Export-Daten
  */
-interface ExportData {
+interface IExportData {
   name: string;
   items: ShoppingItem[];
   templateId?: string;
@@ -34,9 +34,9 @@ export function useListExport(): void {
       logger.info('Starte Export für Liste:', exportData.name);
 
       // Bereite die Daten für den Export vor
-      const fullExportData: ExportData = {
+      const fullExportData: IExportData = {
         name: exportData.name,
-        items: items ?? [],
+        items: items || [],
         templateId: exportData.templateId,
         exportDate: new Date().toISOString(),
         exportVersion: '1.0.0',

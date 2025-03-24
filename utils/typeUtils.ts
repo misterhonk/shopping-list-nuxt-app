@@ -78,7 +78,7 @@ export function isShoppingList(value: unknown): value is ShoppingList {
  * @returns Der Wert am Index oder undefined
  */
 export function safeArrayAccess<T>(array: T[] | undefined | null, index: number): T | undefined {
-  if (!array || !Array.isArray(array) || index < 0 || index >= array.length) {
+  if (!array || (!Array.isArray(array) || index < 0) || index >= array.length) {
     return undefined;
   }
   return array[index];

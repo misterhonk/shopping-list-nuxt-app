@@ -4,7 +4,7 @@ import { createLogger } from '~/utils/logger';
  * Ein Composable für die Verwaltung des localStorage
  * Bietet Funktionen zum Speichern, Laden und Löschen von Daten
  */
-export function useLocalStorage() {
+export function useLocalStorage(): void {
   // Logger initialisieren
   const logger = createLogger('useLocalStorage');
 

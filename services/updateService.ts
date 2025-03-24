@@ -78,7 +78,7 @@ export function applyUpdate(): void {
 
   // Für iOS: Hard-Reload verwenden
   if (isIOS()) {
-    window.location.href = `${window.location.href.split('#')[0]}?t=${Date.now()}${window.location.hash ?? ''}`;
+    window.location.href = `${window.location.href.split('#')[0]}?t=${Date.now()}${window.location.hash || ''}`;
   } else {
     window.location.reload(true); // true = force-reload from server
   }

@@ -229,7 +229,7 @@ const createNewList = (name: string, options: any): void => {
  * Exportiert die aktuelle Liste
  * Nimmt die aktuelle Liste und leitet sie an handleExportList weiter
  */
-const exportCurrentList = (): void => {
+const _exportCurrentList = (): void => {
   logger.info('Exportiere aktuelle Liste:', currentList.value.name);
   handleExportList(currentList.value);
 };
@@ -238,7 +238,7 @@ const exportCurrentList = (): void => {
  * Starter-Funktion für den Importprozess
  * Öffnet die Dateiauswahl und zeigt dann den Optionsdialog
  */
-const startImport = (): void => {
+const _startImport = (): void => {
   openImportDialog(onImportOptionsLoaded);
 };
 

@@ -188,7 +188,7 @@ import { useShoppingLists } from '~/composables/useShoppingLists';
 import type { ShoppingItem } from '~/types/app-types';
 
 // Schnittstelle für Kategorie-Ausgaben
-interface CategoryExpense {
+interface ICategoryExpense {
   id: string;
   name: string;
   amount: number;
@@ -196,7 +196,7 @@ interface CategoryExpense {
 }
 
 // Schnittstelle für Einkaufshistorie
-interface ShoppingHistoryItem {
+interface IShoppingHistoryItem {
   id: string;
   name: string;
   date: number;

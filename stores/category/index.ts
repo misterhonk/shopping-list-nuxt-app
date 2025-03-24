@@ -31,7 +31,7 @@ const logger = createLogger('index');
 /**
  * Interface für den CategoryStore State
  */
-interface CategoryState {
+interface ICategoryState {
   templates: TemplateCollection;
   activeTemplateId: string;
   customTemplates: TemplateCollection;
@@ -43,7 +43,7 @@ interface CategoryState {
  * Store für die Verwaltung von Kategorien und Vorlagen
  */
 export const useCategoryStore = defineStore('categoryStore', {
-  state: (): CategoryState => ({
+  state: (): ICategoryState => ({
     templates: { ...categoryTemplates },
     activeTemplateId: defaultTemplateId,
     customTemplates: {},

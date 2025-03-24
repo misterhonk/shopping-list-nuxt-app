@@ -15,12 +15,12 @@ const { shoppingListService, categoryService } = initializeServices();
 const logger = createLogger('useListManagement');
 
 // Typendefinition für den CategoryStore-Service
-interface CategoryStoreService {
+interface ICategoryStoreService {
   activateTemplate: (templateId: string) => void;
 }
 
 // Typendefinition für den Rückgabewert des Composables
-interface ListManagementComposable {
+interface IListManagementComposable {
   // Reaktive Daten
   lists: Ref<ShoppingList[]>;
   currentListId: Ref<string | null>;
@@ -54,7 +54,7 @@ interface ListManagementComposable {
  *   deleteList
  * } = useListManagement(categoryStore);
  */
-export function useListManagement(categoryStore?: CategoryStoreService): ListManagementComposable {
+export function useListManagement(categoryStore?: ICategoryStoreService): IListManagementComposable {
   // Reaktive Daten
   const lists: Ref<ShoppingList[]> = ref([]);
   const currentListId: Ref<string | null> = ref(null);
@@ -135,7 +135,7 @@ export function useListManagement(categoryStore?: CategoryStoreService): ListMan
    * @param options - Optionale Parameter für die Liste
    * @returns Das neue Listenobjekt
    */
-  const createListObject = (name: string, options: CreateListOptions = {}): ShoppingList => {
+  const _createListObject = (name: string, options: CreateListOptions = {}): ShoppingList => {
     // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
     let templateId = options.templateId ?? 'supermarket';
 

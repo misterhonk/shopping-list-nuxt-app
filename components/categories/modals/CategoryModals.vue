@@ -225,13 +225,13 @@ import { computed } from 'vue';
 
 import type { Category, CategoryTemplate } from '~/types/app-types';
 
-interface NewTemplate {
+interface INewTemplate {
   name: string;
   description: string;
   baseTemplateId: string;
 }
 
-interface EditTemplate {
+interface IEditTemplate {
   name: string;
   description: string;
 }
@@ -246,8 +246,8 @@ const props = withDefaults(
     deleteTemplateModal: boolean;
     newCategoryName: string;
     editCategoryName: string;
-    newTemplate: NewTemplate;
-    editTemplate: EditTemplate;
+    newTemplate: INewTemplate;
+    editTemplate: IEditTemplate;
     currentEditingCategory: Category | null;
     currentTemplate: CategoryTemplate;
     templatesList: CategoryTemplate[];
@@ -272,8 +272,8 @@ const emit = defineEmits<{
   (e: 'update:deleteTemplateModal', value: boolean): void;
   (e: 'update:newCategoryName', value: string): void;
   (e: 'update:editCategoryName', value: string): void;
-  (e: 'update:newTemplate', value: NewTemplate): void;
-  (e: 'update:editTemplate', value: EditTemplate): void;
+  (e: 'update:newTemplate', value: INewTemplate): void;
+  (e: 'update:editTemplate', value: IEditTemplate): void;
   (e: 'update:currentEditingCategory', value: Category | null): void;
   (e: 'addCategory'): void;
   (e: 'saveEditedCategory'): void;
@@ -300,16 +300,16 @@ const localEditCategoryName = computed<{
 });
 
 const localNewTemplate = computed<{
-  get: () => NewTemplate;
-  set: (value: NewTemplate) => void;
+  get: () => INewTemplate;
+  set: (value: INewTemplate) => void;
 }>({
   get: () => props.newTemplate,
   set: value => emit('update:newTemplate', value),
 });
 
 const localEditTemplate = computed<{
-  get: () => EditTemplate;
-  set: (value: EditTemplate) => void;
+  get: () => IEditTemplate;
+  set: (value: IEditTemplate) => void;
 }>({
   get: () => props.editTemplate,
   set: value => emit('update:editTemplate', value),

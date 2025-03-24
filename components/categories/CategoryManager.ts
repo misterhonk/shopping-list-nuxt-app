@@ -16,13 +16,13 @@ import CategoryModals from './modals/CategoryModals.vue';
 import type { Category, CategoryTemplate } from '~/types/app-types';
 
 // Template für neues/bearbeitbares Template
-interface NewTemplate {
+interface INewTemplate {
   name: string;
   description: string;
   baseTemplateId: string;
 }
 
-interface EditTemplate {
+interface IEditTemplate {
   name: string;
   description: string;
 }

@@ -31,8 +31,8 @@ import type { CategoryTemplate } from '~/types/app-types';
 // Logger initialisieren
 const logger = createLogger('TemplateSelector');
 
-// Props
-interface Props {
+// IProps
+interface IProps {
   listTemplateId?: string;
 }
 
@@ -72,7 +72,7 @@ const updateTemplate = (): void => {
   }
 };
 
-// Reagiere auf Änderungen der Props
+// Reagiere auf Änderungen der IProps
 watch(
   () => props.listTemplateId,
   (newVal: string) => {

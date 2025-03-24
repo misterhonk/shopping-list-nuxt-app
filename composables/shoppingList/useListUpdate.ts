@@ -9,7 +9,7 @@ import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 const logger = createLogger('useListUpdate');
 
 // Interface für den Rückgabetyp des Composables
-interface ListUpdateComposable {
+interface IListUpdateComposable {
   updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
   clearList: (listId?: string) => boolean;
   addItemsToList: (
@@ -26,7 +26,7 @@ interface ListUpdateComposable {
 export function useListUpdate(
   listsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
-): ListUpdateComposable {
+): IListUpdateComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
@@ -132,7 +132,7 @@ export function useListUpdate(
     options: { replace?: boolean; uniqueCheck?: boolean } = {}
   ): boolean => {
     try {
-      if (!items || !Array.isArray(items) || items.length === 0) {
+      if (!items || (!Array.isArray(items) || items.length === 0)) {
         return false;
       }
 

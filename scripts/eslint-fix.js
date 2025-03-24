@@ -282,7 +282,7 @@ function run() {
 
   // Process all files
   files.forEach((file, index) => {
-    const changed = processFile(file);
+    const _changed = processFile(file);
     // Progress indicator every 10 files
     if (index % 10 === 0) {
       process.stdout.write('.');

@@ -2,9 +2,9 @@ import type { CategoryEventBus } from '../../composables/types';
 import type { PiniaPluginContext } from 'pinia';
 
 /**
- * Interface für den CategoryStore mit Event-Bus
+ * Interface für den ICategoryStore mit Event-Bus
  */
-interface CategoryStore {
+interface ICategoryStore {
   $id: string;
   $categoryEventBus?: CategoryEventBus;
   editCategory: (categoryToEdit: { id: string } | string, newName: string) => void;
@@ -37,7 +37,7 @@ export function createCategorySyncPlugin(): void {
 
   // Plugin-Funktionalität
   return ({ store }: PiniaPluginContext) => {
-    // Nur für den CategoryStore
+    // Nur für den ICategoryStore
     if (store.$id !== 'categoryStore') {
       return;
     }

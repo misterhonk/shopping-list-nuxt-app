@@ -49,7 +49,7 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
 import type { ItemSuggestion } from '~/types/app-types';
 
-interface TextPart {
+interface ITextPart {
   text: string;
   highlight: boolean;
 }

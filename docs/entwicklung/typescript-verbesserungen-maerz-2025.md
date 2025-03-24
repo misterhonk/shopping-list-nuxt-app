@@ -5,6 +5,7 @@
 Am 24.03.2025 wurden folgende TypeScript-Verbesserungen am Shopping-List-App-Projekt vorgenommen:
 
 1. **Interface-Namenskonventionen** implementiert:
+
    - Alle Interfaces wurden mit dem Präfix `I` versehen (z.B. `Category` → `ICategory`)
    - Betroffen waren Interfaces in den Dateien:
      - `types/app-types.ts`
@@ -14,6 +15,7 @@ Am 24.03.2025 wurden folgende TypeScript-Verbesserungen am Shopping-List-App-Pro
      - und verschiedene weitere Komponenten
 
 2. **Verbesserte Null-Prüfungen**:
+
    - Ersetzung von inkorrekten Nullish-Coalescing-Operatoren (`??`) durch logische Operatoren (`||`, `&&`) wo angemessen
    - Beispiel: `!variable ?? bedingung` → `!variable && bedingung`
 

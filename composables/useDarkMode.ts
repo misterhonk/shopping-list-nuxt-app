@@ -11,7 +11,7 @@ const DARK_MODE_STORAGE_KEY = 'darkMode';
  * Composable für die Verwaltung des Dark Mode
  * Bietet Funktionen zum Ein-/Ausschalten des dunklen Erscheinungsbilds
  */
-export const useDarkMode = () => {
+export const useDarkMode = (): void => {
   const isDark: Ref<boolean> = ref(false);
   const { saveToStorage, loadFromStorage, removeFromStorage } = useLocalStorage();
 

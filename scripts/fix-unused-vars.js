@@ -140,7 +140,7 @@ function fixUnusedVars(content, unusedVars) {
   } else {
     // Use a more general approach to detect unused vars
     // This is a more basic fallback and may have false positives
-    const lines = content.split('\n');
+    const _lines = content.split('\n');
 
     // Find variable declarations
     const varDeclRegex = /const\s+([a-zA-Z0-9_]+)\s*=/g;

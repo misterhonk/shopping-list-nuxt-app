@@ -10,7 +10,7 @@ import type { ShoppingList, Category, ShoppingItem } from '~/types/app-types';
 // Logger initialisieren
 const logger = createLogger('testing-helper');
 
-interface CategoryData {
+interface ICategoryData {
   activeTemplateId: string;
   customTemplates: Record<
     string,
@@ -23,7 +23,7 @@ interface CategoryData {
   >;
 }
 
-interface CategoryUsage {
+interface ICategoryUsage {
   count: number;
   items: string[];
 }
@@ -57,7 +57,7 @@ const loadDiagnosticData = (): void => {
 /**
  * Ermittelt das aktive Template
  */
-const getActiveTemplate = (parsedCategories: CategoryData): void => {
+const getActiveTemplate = (parsedCategories: ICategoryData): void => {
   if (
     !parsedCategories.activeTemplateId ||
     !parsedCategories.customTemplates[parsedCategories.activeTemplateId]

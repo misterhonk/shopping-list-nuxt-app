@@ -9,7 +9,7 @@ import type { ShoppingList } from '~/types/app-types';
 const logger = createLogger('useListProperties');
 
 // Interface für den Rückgabetyp des Composables
-interface ListPropertiesComposable {
+interface IListPropertiesComposable {
   getItemsCount: (list: ShoppingList) => number;
   getCheckedItemsCount: () => number;
   getTotalItemsCount: () => number;
@@ -24,7 +24,7 @@ interface ListPropertiesComposable {
 export function useListProperties(
   listsRef: Ref<ShoppingList[]>,
   currentListIdRef: Ref<string | null>
-): ListPropertiesComposable {
+): IListPropertiesComposable {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**

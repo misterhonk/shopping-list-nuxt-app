@@ -22,7 +22,7 @@ const logger = createLogger('useShoppingLists');
 /**
  * Interface für den Kategorie-Store
  */
-interface CategoryStore {
+interface ICategoryStore {
   activateTemplate: (templateId: string) => void;
 }
 
@@ -30,7 +30,7 @@ interface CategoryStore {
  * Aktiviert das Kategorien-Template im Store (wenn möglich)
  * Lagert die Error-Handlung in eine separate Funktion aus
  */
-const activateTemplateInStore = (store: CategoryStore | null, templateId: string): void => {
+const activateTemplateInStore = (store: ICategoryStore | null, templateId: string): void => {
   if (!store) {
     return;
   }
@@ -68,11 +68,11 @@ const createDeepCopy = <T>(data: T): T => JSON.parse(JSON.stringify(data));
 /**
  * Factory für einen sicheren Kategorie-Store Zugriff
  */
-const createCategoryStore = (): CategoryStore | null => {
+const createCategoryStore = (): ICategoryStore | null => {
   try {
     return useCategoryStore();
   } catch (e) {
-    logger.error('Fehler beim Initialisieren des CategoryStore:', e);
+    logger.error('Fehler beim Initialisieren des ICategoryStore:', e);
     return null;
   }
 };

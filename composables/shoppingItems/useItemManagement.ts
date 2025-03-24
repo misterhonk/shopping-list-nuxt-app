@@ -76,8 +76,7 @@ export function useItemManagement(
     // Prüfen, ob die Daten gültig sind
     if (
       !itemData.name ||
-      itemData.name.trim() === '' ||
-      !(itemData.quantity !== undefined && itemData.quantity > 0)
+      (itemData.name.trim() === '' || !(itemData.quantity !== undefined && itemData.quantity > 0))
     ) {
       return null;
     }

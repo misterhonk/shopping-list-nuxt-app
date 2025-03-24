@@ -17,7 +17,7 @@ const STORAGE_KEY = 'categoryTemplates';
 /**
  * Interface für die gespeicherten Kategoriedaten
  */
-interface StoredCategoryData {
+interface IStoredCategoryData {
   activeTemplateId: string;
   customTemplates: TemplateCollection;
 }
@@ -41,7 +41,7 @@ export const saveCategoryData = (
       {} as TemplateCollection
     );
 
-    const dataToSave: StoredCategoryData = {
+    const dataToSave: IStoredCategoryData = {
       activeTemplateId,
       customTemplates: cleanCustomTemplates,
     };
@@ -60,7 +60,7 @@ export const saveCategoryData = (
  * Lädt die Kategoriedaten aus dem localStorage
  * @returns Die geladenen Kategoriedaten oder null bei Fehler
  */
-export const loadCategoryData = (): StoredCategoryData | null => {
+export const loadCategoryData = (): IStoredCategoryData | null => {
   try {
     logger.info('Lade aus localStorage');
     const parsedData = loadFromStorage<StoredCategoryData>(STORAGE_KEY);

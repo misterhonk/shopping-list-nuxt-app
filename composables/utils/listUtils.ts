@@ -61,7 +61,7 @@ export const determineTemplateId = (name: string, defaultTemplateId = 'supermark
 /**
  * Interface für den Kategorie-Store
  */
-interface CategoryStore {
+interface ICategoryStore {
   activateTemplate: (templateId: string) => void;
 }
 
@@ -70,7 +70,7 @@ interface CategoryStore {
  * @param store - Der Kategorie-Store oder null
  * @param templateId - Die zu aktivierende Template-ID
  */
-export const activateTemplateInStore = (store: CategoryStore | null, templateId: string): void => {
+export const activateTemplateInStore = (store: ICategoryStore | null, templateId: string): void => {
   if (!store) {
     return;
   }

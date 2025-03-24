@@ -59,7 +59,7 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits<{
+const _emit = defineEmits<{
   (e: 'toggle', item: ShoppingItem): void;
   (e: 'remove', item: ShoppingItem): void;
   (e: 'add-new'): void;
@@ -74,7 +74,7 @@ onMounted(() => {
 });
 
 // Aktives Template und sortierte Kategorien
-const activeTemplate = computed(() => categoryStore.currentTemplate);
+const _activeTemplate = computed(() => categoryStore.currentTemplate);
 const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel
@@ -82,7 +82,7 @@ const totalPrice = computed(() =>
   props.items.reduce((total, item) => total + (item.price ?? 0) * (item.quantity ?? 1), 0)
 );
 
-interface GroupedCategory {
+interface IGroupedCategory {
   id: string;
   name: string;
   items: ShoppingItem[];

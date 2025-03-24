@@ -3,7 +3,7 @@ import type { ShoppingItem, ShoppingList, Category } from '~/types/app-types';
 /**
  * Typdefinitionen für die Migration
  */
-interface LegacyItem {
+interface ILegacyItem {
   id?: string;
   name?: string;
   quantity?: number;
@@ -15,7 +15,7 @@ interface LegacyItem {
   modifiedAt?: number;
 }
 
-interface LegacyList {
+interface ILegacyList {
   id?: string;
   name?: string;
   items?: LegacyItem[];
@@ -108,7 +108,7 @@ export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
 
     // Migriere die Items, falls vorhanden
     if (Array.isArray(list.items)) {
-      migratedList.items = list.items.map((item: LegacyItem) => ({
+      migratedList.items = list.items.map((item: ILegacyItem) => ({
         id: item.id ?? `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name ?? 'Unbenannter Artikel',
         quantity: typeof item.quantity === 'number' ? item.quantity : 1,
@@ -135,17 +135,17 @@ export const validateList = (list: unknown): boolean => {
     return false;
   }
 
-  // Type-Cast zu LegacyList
+  // Type-Cast zu ILegacyList
   const typedList = list as LegacyList;
 
   // Prüfe, ob die Liste die notwendigen Eigenschaften hat
-  if (!typedList.id || typeof typedList.name !== 'string' || !Array.isArray(typedList.items)) {
+  if (!typedList.id || (typeof typedList.name !== 'string' || !Array.isArray(typedList.items))) {
     return false;
   }
 
   // Prüfe die Items
   for (const item of typedList.items ?? []) {
-    if (!item.id || typeof item.name !== 'string' || typeof item.quantity !== 'number') {
+    if (!item.id || (typeof item.name !== 'string' || typeof item.quantity !== 'number')) {
       return false;
     }
   }

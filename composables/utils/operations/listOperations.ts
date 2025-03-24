@@ -38,7 +38,7 @@ export const findListById = (lists: ShoppingList[], listId: string): ShoppingLis
  * @returns Index des Items oder -1 wenn nicht gefunden
  */
 export const findItemIndex = (list: ShoppingList, itemId: string): number => {
-  if (!list || !Array.isArray(list.items) || !itemId) {
+  if (!list || (!Array.isArray(list.items) || !itemId)) {
     return -1;
   }
   return list.items.findIndex(item => item.id === itemId);
@@ -51,7 +51,7 @@ export const findItemIndex = (list: ShoppingList, itemId: string): number => {
  * @returns Das gefundene Item oder null wenn nicht gefunden
  */
 export const findItemById = (list: ShoppingList, itemId: string): ShoppingItem | null => {
-  if (!list || !Array.isArray(list.items) || !itemId) {
+  if (!list || (!Array.isArray(list.items) || !itemId)) {
     return null;
   }
   return list.items.find(item => item.id === itemId) || null;
