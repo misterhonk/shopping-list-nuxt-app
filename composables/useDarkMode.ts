@@ -1,8 +1,16 @@
 import { ref, onMounted } from 'vue';
-
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
-
 import type { Ref } from 'vue';
+
+// Interface für den Rückgabetyp
+export interface IUseDarkModeReturn {
+  isDark: Ref<boolean>;
+  toggleDarkMode: () => void;
+  setDarkMode: (value: boolean) => void;
+  followSystemPreference: () => void;
+  systemPrefersDarkMode: () => boolean;
+  initializeDarkMode: () => void;
+}
 
 // LocalStorage-Schlüssel für Dark Mode
 const DARK_MODE_STORAGE_KEY = 'darkMode';
@@ -10,8 +18,10 @@ const DARK_MODE_STORAGE_KEY = 'darkMode';
 /**
  * Composable für die Verwaltung des Dark Mode
  * Bietet Funktionen zum Ein-/Ausschalten des dunklen Erscheinungsbilds
+ * 
+ * @returns Ein Objekt mit Funktionen und Status zur Dark Mode-Verwaltung
  */
-export const useDarkMode = () : Record<string, any> => {
+export const useDarkMode = (): IUseDarkModeReturn => {
   const isDark: Ref<boolean> = ref(false);
   const { saveToStorage, loadFromStorage, removeFromStorage } = useLocalStorage();
 
@@ -20,7 +30,7 @@ export const useDarkMode = () : Record<string, any> => {
    * @param value - Dark Mode Status
    */
   const updateDOMDarkMode = (value: boolean): void => {
-    if(value) {
+    if (value) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -41,7 +51,7 @@ export const useDarkMode = () : Record<string, any> => {
    * @param value - true für dunklen Modus, false für hellen Modus
    */
   const setDarkMode = (value: boolean): void => {
-    if(isDark.value !== value) {
+    if (isDark.value !== value) {
       isDark.value = value;
       updateDOMDarkMode(isDark.value);
       saveToStorage(DARK_MODE_STORAGE_KEY, isDark.value ? 'dark' : 'light');
@@ -119,5 +129,5 @@ export const useDarkMode = () : Record<string, any> => {
     followSystemPreference,
     systemPrefersDarkMode,
     initializeDarkMode,
-  } as const;
+  };
 };

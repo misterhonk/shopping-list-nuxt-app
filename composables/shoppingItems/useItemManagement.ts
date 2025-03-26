@@ -1,5 +1,4 @@
 import { computed } from 'vue';
-
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
 import {
   createItemObject,
@@ -8,38 +7,31 @@ import {
   groupItemsByCategory,
 } from '~/composables/utils/itemUtils';
 import { createLogger } from '~/utils/logger';
-
-import type { Ref } from 'vue';
-import type { ShoppingList, ShoppingItem } from '~/types/app-types';
+import type { ComputedRef, Ref } from 'vue';
+import type { IShoppingList, IShoppingItem } from '~/types/app-types';
+import type { IUseItemManagement } from '~/types/composable-types';
 
 // Logger initialisieren
 const _logger = createLogger('useItemManagement');
 
-// Definieren der Return-Type für useItemManagement
-interface ItemManagementComposable {
-  allItems: Ref<IShoppingItem[]>;
-  getItemsGrouped: (categories: string[]) => Record<string, IShoppingItem[]>;
-  addItem: (itemData: Partial<IShoppingItem>) => ShoppingItem | null;
-  removeItem: (item: IShoppingItem | string) => boolean;
-  toggleItemChecked: (item: IShoppingItem | string) => boolean;
-  clearCheckedItems: () => boolean;
-  updateCategoryInItems: (categoryId: string, newName: string) => boolean;
-}
-
 /**
  * Composable für die Verwaltung von Artikeln
  * Bietet Funktionen zum Hinzufügen, Entfernen und Markieren von Artikeln
+ * 
+ * @param shoppingListsRef - Referenz auf die Einkaufslisten
+ * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
+ * @returns Ein Objekt mit Funktionen und Daten zur Artikel-Verwaltung
  */
 export function useItemManagement(
   shoppingListsRef: Ref<IShoppingList[]>,
   currentListIdRef: Ref<string | null>
-): ItemManagementComposable {
+): IUseItemManagement {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
    * Gibt alle Artikel der aktuellen Liste zurück
    */
-  const allItems = computed<IShoppingItem[]>(() => {
+  const allItems: ComputedRef<IShoppingItem[]> = computed(() => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
     if (!currentList || !Array.isArray(currentList.items)) {
       return [];
@@ -49,6 +41,8 @@ export function useItemManagement(
 
   /**
    * Gruppiert Artikel nach Kategorien
+   * @param categories - Liste der Kategorien
+   * @returns Ein Objekt mit Kategorienamen als Schlüssel und Arrays von Artikeln als Werte
    */
   const getItemsGrouped = (categories: string[]): Record<string, IShoppingItem[]> => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
@@ -229,7 +223,7 @@ export function useItemManagement(
             ...item,
             checked: !item.checked,
             modifiedAt: Date.now(),
-          } as const;
+          };
         }
         return item;
       });
@@ -251,7 +245,7 @@ export function useItemManagement(
    * Entfernt alle erledigten Artikel aus der aktuellen Liste
    * @returns true bei Erfolg, false bei Fehler
    */
-  const _clearCheckedItems = (): boolean => {
+  const clearCheckedItems = (): boolean => {
     try {
       const listIndex = shoppingListsRef.value.findIndex(
         list => list.id === currentListIdRef.value
@@ -296,7 +290,7 @@ export function useItemManagement(
    * @param newName - Der neue Name der Kategorie
    * @returns true bei Erfolg, false bei Fehler
    */
-  const updateCategoryInItems = (categoryId: string, newName: string): boolean => {
+  const updateCategoriesInItems = (categoryId: string, newName: string): boolean => {
     if (!categoryId || !newName) {
       return false;
     }
@@ -359,7 +353,7 @@ export function useItemManagement(
     addItem,
     removeItem,
     toggleItemChecked,
-    _clearCheckedItems,
-    updateCategoryInItems,
-  } as const;
+    clearCheckedItems,
+    updateCategoriesInItems,
+  };
 }
