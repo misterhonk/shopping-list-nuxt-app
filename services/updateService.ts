@@ -39,7 +39,7 @@ export function storeVersion(version: string): void {
 export function checkForUpdates(): IUpdateInfo {
   const storedVersion = getStoredVersion();
   const _now = Date.now();
-  const _lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) || '0');
+  const _lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) ?? '0');
 
   // Regelmäßige Cache-Invalidierung (alle 24 Stunden)
   // Dies ist besonders wichtig für iOS PWAs
@@ -61,7 +61,7 @@ export function checkForUpdates(): IUpdateInfo {
     // Update erkannt
     return {
       hasUpdate: true,
-      oldVersion: storedVersion || "unbekannt",
+      oldVersion: storedVersion ?? 'unbekannt',
       newVersion: APP_VERSION,
     };
   }
@@ -94,7 +94,7 @@ export function registerServiceWorkerUpdateHandler(): void {
       console.log('Forcing Service Worker update check...');
       navigator.serviceWorker.getRegistration().then(_reg => {
         if (_reg) {
-          reg.update().catch(console._error);
+          _reg.update().catch(_err => console.error(_err));
         }
       });
     }
@@ -113,11 +113,12 @@ export function registerServiceWorkerUpdateHandler(): void {
 
     // Für iOS: Service Worker regelmäßig neu registrieren
     if (isIOS() && isStandalone()) {
-      setInterval(() => {
+      setInterval(
+        () => {
           navigator.serviceWorker.getRegistration().then(_registration => {
             if (_registration) {
-              registration.update().catch(err => {
-                console._error('Fehler beim Update des Service Workers:', err);
+              _registration.update().catch(_err => {
+                console.error('Fehler beim Update des Service Workers:', _err);
               });
             }
           });
@@ -137,16 +138,16 @@ export function forceServiceWorkerUpdate(): void {
       .then(_registration => {
         if (_registration.waiting) {
           // Sende Nachricht an wartenden Service Worker, um skipWaiting auszulösen
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          _registration.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
 
         // Auch alle aktuellen Service Worker unregistrieren und neu laden
-        registration.unregister().then(() => {
+        _registration.unregister().then(() => {
           window.location.reload(true);
         });
       })
-      .catch(error => {
-        console._error('Fehler beim Aktualisieren des Service Workers:', _error);
+      .catch(_error => {
+        console.error('Fehler beim Aktualisieren des Service Workers:', _error);
       });
   }
 }
@@ -161,7 +162,7 @@ async function clearAllCaches(): Promise<void> {
       await Promise.all(keys.map(key => window.caches.delete(key)));
       console.log('Alle Caches gelöscht');
     } catch (_error) {
-      console._error('Fehler beim Löschen der Caches:', _error);
+      console.error('Fehler beim Löschen der Caches:', _error);
     }
   }
 }
@@ -170,21 +171,25 @@ async function clearAllCaches(): Promise<void> {
  * Prüft, ob ein neuer Service Worker auf Aktivierung wartet
  */
 export function checkForWaitingServiceWorker(callback: (waiting: boolean) => void): void {
+  // Boolean-Wert für das Ergebnis
+  let waitingExists = false;
+
   if ('serviceWorker' in navigator) {
+    // Asynchrone Prüfung mit Promise
     navigator.serviceWorker.ready
       .then(_registration => {
-        if (_registration.waiting) {
-          // Es gibt einen wartenden Service Worker
-          callback(true);
-        } else {
-          callback(false);
-        }
+        // Setze waitingExists basierend auf _registration.waiting
+        waitingExists = Boolean(_registration.waiting);
+        // Rufe Callback mit dem Ergebnis auf
+        callback(waitingExists);
       })
       .catch(() => {
-        callback(false);
+        // Bei Fehler Fallback auf false
+        callback(waitingExists);
       });
   } else {
-    callback(false);
+    // Kein Service Worker unterstützt
+    callback(waitingExists);
   }
 }
 
@@ -204,6 +209,6 @@ function isIOS(): boolean {
 function isStandalone(): boolean {
   return (
     window.matchMedia('(display-mode: standalone)').matches ||
-    (window.navigator as any).standalone === true
+    (window.navigator as unknown as { standalone: boolean }).standalone === true
   );
 }
