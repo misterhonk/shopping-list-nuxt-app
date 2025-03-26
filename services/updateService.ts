@@ -38,13 +38,13 @@ export function storeVersion(version: string): void {
  */
 export function checkForUpdates(): IUpdateInfo {
   const storedVersion = getStoredVersion();
-  const _now = Date.now();
-  const _lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) ?? '0');
+  const now = Date.now();
+  const lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) ?? '0');
 
   // Regelmäßige Cache-Invalidierung (alle 24 Stunden)
   // Dies ist besonders wichtig für iOS PWAs
-  if (_now - _lastCheck > 24 * 60 * 60 * 1000) {
-    localStorage.setItem(LAST_CHECK_KEY, _now.toString());
+  if (now - lastCheck > 24 * 60 * 60 * 1000) {
+    localStorage.setItem(LAST_CHECK_KEY, now.toString());
 
     // Für iOS: Hard Reload bei längerem Nichtbenutzen der App
     // Dies hilft bei der Umgehung des aggressiven iOS-Cachings
@@ -92,9 +92,9 @@ export function registerServiceWorkerUpdateHandler(): void {
     // Force update check for existing service worker
     if (navigator.serviceWorker.controller) {
       console.log('Forcing Service Worker update check...');
-      navigator.serviceWorker.getRegistration().then(_reg => {
-        if (_reg) {
-          _reg.update().catch(_err => console.error(_err));
+      navigator.serviceWorker.getRegistration().then(reg => {
+        if (reg) {
+          reg.update().catch(err => console.error(err));
         }
       });
     }
@@ -115,10 +115,10 @@ export function registerServiceWorkerUpdateHandler(): void {
     if (isIOS() && isStandalone()) {
       setInterval(
         () => {
-          navigator.serviceWorker.getRegistration().then(_registration => {
-            if (_registration) {
-              _registration.update().catch(_err => {
-                console.error('Fehler beim Update des Service Workers:', _err);
+          navigator.serviceWorker.getRegistration().then(registration => {
+            if (registration) {
+              registration.update().catch(err => {
+                console.error('Fehler beim Update des Service Workers:', err);
               });
             }
           });
@@ -135,19 +135,19 @@ export function registerServiceWorkerUpdateHandler(): void {
 export function forceServiceWorkerUpdate(): void {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
-      .then(_registration => {
-        if (_registration.waiting) {
+      .then(registration => {
+        if (registration.waiting) {
           // Sende Nachricht an wartenden Service Worker, um skipWaiting auszulösen
-          _registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
 
         // Auch alle aktuellen Service Worker unregistrieren und neu laden
-        _registration.unregister().then(() => {
+        registration.unregister().then(() => {
           window.location.reload(true);
         });
       })
-      .catch(_error => {
-        console.error('Fehler beim Aktualisieren des Service Workers:', _error);
+      .catch(error => {
+        console.error('Fehler beim Aktualisieren des Service Workers:', error);
       });
   }
 }
@@ -161,8 +161,8 @@ async function clearAllCaches(): Promise<void> {
       const keys = await window.caches.keys();
       await Promise.all(keys.map(key => window.caches.delete(key)));
       console.log('Alle Caches gelöscht');
-    } catch (_error) {
-      console.error('Fehler beim Löschen der Caches:', _error);
+    } catch (error) {
+      console.error('Fehler beim Löschen der Caches:', error);
     }
   }
 }
@@ -173,13 +173,13 @@ async function clearAllCaches(): Promise<void> {
 export function checkForWaitingServiceWorker(callback: (waiting: boolean) => void): void {
   // Boolean-Wert für das Ergebnis
   let waitingExists = false;
-
+  
   if ('serviceWorker' in navigator) {
     // Asynchrone Prüfung mit Promise
     navigator.serviceWorker.ready
-      .then(_registration => {
-        // Setze waitingExists basierend auf _registration.waiting
-        waitingExists = Boolean(_registration.waiting);
+      .then((registration) => {
+        // Setze waitingExists basierend auf registration.waiting
+        waitingExists = Boolean(registration.waiting);
         // Rufe Callback mit dem Ergebnis auf
         callback(waitingExists);
       })
