@@ -6,7 +6,7 @@ import { createLogger } from '~/utils/logger';
 import { useLocalStorage } from './core/useLocalStorage';
 
 import type { ShoppingList, CreateListOptions } from './types';
-import type { ComputedRef } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 
 // Logger initialisieren
 const _logger = createLogger('useShoppingLists');
@@ -15,10 +15,7 @@ const _logger = createLogger('useShoppingLists');
  * Composable für die Verwaltung von Einkaufslisten
  * Bietet Funktionen zum Erstellen, Aktualisieren, Löschen und Auswählen von Listen
  */
-/**
- * Aktiviert das Kategorien-Template im Store (wenn möglich)
- * Lagert die Error-Handlung in eine separate Funktion aus
- */
+
 /**
  * Interface für den Kategorie-Store
  */
@@ -62,10 +59,6 @@ const sortListsByFavorite = (lists: ShoppingList[]): ShoppingList[] =>
 const createDeepCopy = <T>(data: T): T => JSON.parse(JSON.stringify(data));
 
 /**
- * Composable für die Verwaltung von Einkaufslisten
- * Bietet Funktionen zum Erstellen, Aktualisieren, Löschen und Auswählen von Listen
- */
-/**
  * Factory für einen sicheren Kategorie-Store Zugriff
  */
 const createCategoryStore = (): ICategoryStore | null => {
@@ -80,7 +73,7 @@ const createCategoryStore = (): ICategoryStore | null => {
 /**
  * Hilfsfunktionen zur Liste-Verwaltung
  */
-const listManagementHelpers = (): void => {
+const listManagementHelpers = () => {
   const { saveToStorage, loadFromStorage } = useLocalStorage();
 
   /**
@@ -94,7 +87,7 @@ const listManagementHelpers = (): void => {
   /**
    * Lädt Listen aus dem localStorage
    */
-  const loadData = (): void => ({
+  const loadData = () => ({
     lists: loadFromStorage<ShoppingList[]>('shoppingLists'),
     currentId: loadFromStorage<string>('currentListId'),
   });
@@ -102,7 +95,38 @@ const listManagementHelpers = (): void => {
   return { saveLists, loadData };
 };
 
-export function useShoppingLists(): void {
+/**
+ * Interface für den Rückgabewert des useShoppingLists composable
+ */
+interface IShoppingListsComposable {
+  // Reaktive Daten
+  lists: Ref<ShoppingList[]>;
+  currentListId: Ref<string | null>;
+  currentList: ComputedRef<ShoppingList>;
+  initialized: Ref<boolean>;
+  currentListTemplateId: ComputedRef<string>;
+
+  // Funktionen
+  loadLists: () => boolean;
+  createList: (name: string, options?: CreateListOptions) => ShoppingList | null;
+  createDefaultList: () => ShoppingList;
+  selectList: (listId: string) => void;
+  deleteList: (listId: string) => boolean;
+  updateListTemplate: (templateId: string) => void;
+  updateListName: (newName: string) => void;
+  updateListFavorite: (isFavorite: boolean) => void;
+  updateList: (updatedList: ShoppingList) => boolean;
+  saveLists: () => void;
+  getItemsCount: (list: ShoppingList) => number;
+  getCheckedItemsCount: () => number;
+  getTotalItemsCount: () => number;
+}
+
+/**
+ * Composable für Einkaufslisten-Verwaltung
+ * @returns Ein Objekt mit Funktionen und reaktiven Werten für die Listenverwaltung
+ */
+export function useShoppingLists(): IShoppingListsComposable {
   const { saveToStorage } = useLocalStorage();
   const { saveLists: saveListsToStorage, loadData } = listManagementHelpers();
 
@@ -126,7 +150,7 @@ export function useShoppingLists(): void {
       }
   );
 
-  const _currentListTemplateId = computed({
+  const currentListTemplateId = computed({
     get: () => currentList.value.templateId ?? 'supermarket',
     set: (value: string) => updateListTemplate(value),
   });
@@ -143,7 +167,7 @@ export function useShoppingLists(): void {
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
    * @return Die Anzahl der erledigten Artikel
    */
-  const _getCheckedItemsCount = (): number =>
+  const getCheckedItemsCount = (): number =>
     Array.isArray(currentList.value.items)
       ? currentList.value.items.filter(item => item.checked).length
       : 0;
@@ -470,7 +494,7 @@ export function useShoppingLists(): void {
     currentListId,
     currentList,
     initialized,
-    _currentListTemplateId,
+    currentListTemplateId,
 
     // Funktionen
     loadLists,
@@ -484,7 +508,7 @@ export function useShoppingLists(): void {
     updateList,
     saveLists,
     getItemsCount,
-    _getCheckedItemsCount,
+    getCheckedItemsCount,
     getTotalItemsCount,
   };
 }
