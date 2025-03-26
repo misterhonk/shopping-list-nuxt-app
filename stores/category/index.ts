@@ -86,14 +86,14 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     templatesList(): {
       id: string;
-      name: string;
-      description: string;
+      _name: string;
+      _description: string;
       isCustom: boolean;
     }[] {
       return Object.values(this.allTemplates).map(_template => ({
-        id: template.id,
-        name: template._name,
-        description: template._description,
+        id: _template.id,
+        _name: _template._name,
+        _description: _template._description,
         isCustom: this.customTemplates[_template.id] !== undefined,
       }));
     },
@@ -116,11 +116,11 @@ export const useCategoryStore = defineStore('categoryStore', {
   actions: {
     /**
      * Template aktivieren
-     * @param templateId - Die ID des zu aktivierenden Templates
+     * @param _templateId - Die ID des zu aktivierenden Templates
      */
     activateTemplate(_templateId: string): void {
       if (this.allTemplates[_templateId]) {
-        this.activeTemplateId = templateId;
+        this.activeTemplateId = _templateId;
         this.saveToLocalStorage();
       }
     },
@@ -159,7 +159,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
-      setTimeout(() => {
+      const _timer = setTimeout(() => {
         this.loadFromLocalStorage();
       }, 50);
     },
@@ -197,15 +197,15 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
-      setTimeout(() => {
+      const _timer = setTimeout(() => {
         this.loadFromLocalStorage();
       }, 50);
     },
 
     /**
      * Neues Template erstellen
-     * @param name - Der Name des neuen Templates
-     * @param description - Die Beschreibung des Templates
+     * @param _name - Der Name des neuen Templates
+     * @param _description - Die Beschreibung des Templates
      * @param baseTemplateId - Die ID eines Basis-Templates für Kategorien
      * @returns Die ID des neuen Templates oder null bei Fehler
      */
@@ -214,7 +214,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       _description: string = '',
       baseTemplateId: string | null = null
     ): string | null {
-      const _result = createTemplateOperation(
+      const result = createTemplateOperation(
         _name,
         _description,
         baseTemplateId,
@@ -222,15 +222,15 @@ export const useCategoryStore = defineStore('categoryStore', {
         this.customTemplates
       );
 
-      if (_result.newTemplateId) {
-        this.customTemplates = _result.customTemplates;
+      if (result.newTemplateId) {
+        this.customTemplates = result.customTemplates;
         this.activeTemplateId = result.newTemplateId;
 
         // Wenn es ein Basis-Template gab, dessen Sortierung übernehmen
         if (baseTemplateId && this.sortConfigs[baseTemplateId]) {
           this.sortConfigs[result.newTemplateId] = {
             ...this.sortConfigs[baseTemplateId],
-            templateId: result.newTemplateId,
+            _templateId: result.newTemplateId,
           };
           saveSortConfigs(this.sortConfigs);
         }
@@ -244,7 +244,7 @@ export const useCategoryStore = defineStore('categoryStore', {
 
     /**
      * Template löschen (nur benutzerdefinierte)
-     * @param templateId - Die ID des zu löschenden Templates
+     * @param _templateId - Die ID des zu löschenden Templates
      */
     deleteTemplate(_templateId: string): void {
       this.customTemplates = deleteTemplateOperation(_templateId, this.customTemplates);
@@ -252,7 +252,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       // Sortierungskonfiguration für das gelöschte Template entfernen
       if (this.sortConfigs[_templateId]) {
         const updatedConfigs = { ...this.sortConfigs };
-        delete updatedConfigs[templateId];
+        delete updatedConfigs[_templateId];
         this.sortConfigs = updatedConfigs;
         saveSortConfigs(this.sortConfigs);
       }
@@ -267,9 +267,9 @@ export const useCategoryStore = defineStore('categoryStore', {
 
     /**
      * Template bearbeiten (nur benutzerdefinierte)
-     * @param templateId - Die ID des zu bearbeitenden Templates
-     * @param name - Der neue Name (optional)
-     * @param description - Die neue Beschreibung (optional)
+     * @param _templateId - Die ID des zu bearbeitenden Templates
+     * @param _name - Der neue Name (optional)
+     * @param _description - Die neue Beschreibung (optional)
      */
     updateTemplate(_templateId: string, _name?: string, _description?: string): void {
       this.customTemplates = updateTemplateOperation(
@@ -301,19 +301,19 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Sortierung zwischen Standard und Benutzerdefiniert umschalten
      */
     toggleSortMode(): void {
-      const _currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
 
       const updatedConfig = {
-        ..._currentConfig,
+        ...currentConfig,
         useCustomSort: !currentConfig.useCustomSort,
       };
 
       // Wenn wir zum ersten Mal auf benutzerdefinierte Sortierung umschalten,
       // verwenden wir die Standard-Reihenfolge als Ausgangspunkt
       if (updatedConfig.useCustomSort && updatedConfig.customOrder.length === 0) {
-        const _template = this.allTemplates[this.activeTemplateId];
-        if (_template.defaultCategoryOrder) {
-          updatedConfig.customOrder = [..._template.defaultCategoryOrder];
+        const template = this.allTemplates[this.activeTemplateId];
+        if (template.defaultCategoryOrder) {
+          updatedConfig.customOrder = [...template.defaultCategoryOrder];
         } else {
           // Andernfalls nehmen wir einfach die aktuelle Reihenfolge der Kategorien
           updatedConfig.customOrder = this.currentCategories.map(cat => cat.id);
@@ -329,10 +329,10 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param newOrder - Array mit Kategorie-IDs in der neuen Reihenfolge
      */
     updateCustomSortOrder(newOrder: string[]): void {
-      const _currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
+      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
 
       const updatedConfig = {
-        ..._currentConfig,
+        ...currentConfig,
         useCustomSort: true,
         customOrder: newOrder,
       };
@@ -345,11 +345,11 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Benutzerdefinierte Sortierung zurücksetzen auf Standard-Laufweg
      */
     resetToDefaultSort(): void {
-      const _template = this.allTemplates[this.activeTemplateId];
-      const defaultOrder = _template.defaultCategoryOrder ?? [];
+      const template = this.allTemplates[this.activeTemplateId];
+      const defaultOrder = template.defaultCategoryOrder ?? [];
 
       const updatedConfig: CategorySortConfig = {
-        templateId: this.activeTemplateId,
+        _templateId: this.activeTemplateId,
         useCustomSort: false,
         customOrder: [...defaultOrder],
       };
@@ -370,31 +370,31 @@ export const useCategoryStore = defineStore('categoryStore', {
      */
     loadFromLocalStorage(): void {
       try {
-        const _data = loadCategoryData();
+        const data = loadCategoryData();
 
-        if (_data) {
-          if (_data.customTemplates) {
+        if (data) {
+          if (data.customTemplates) {
             // Prüfen, ob Migration notwendig ist
-            if (needsMigration(_data.customTemplates)) {
+            if (needsMigration(data.customTemplates)) {
               _logger.info('Migration der Kategorien notwendig - alte Strings zu Objekten');
-              this.customTemplates = migrateCategories(_data.customTemplates);
+              this.customTemplates = migrateCategories(data.customTemplates);
             } else {
-              this.customTemplates = _data.customTemplates;
+              this.customTemplates = data.customTemplates;
             }
           }
 
           if (
             data.activeTemplateId &&
-            (this.templates[data.activeTemplateId] || this.customTemplates[_data.activeTemplateId])
+            (this.templates[data.activeTemplateId] || this.customTemplates[data.activeTemplateId])
           ) {
-            this.activeTemplateId = _data.activeTemplateId;
+            this.activeTemplateId = data.activeTemplateId;
           }
         }
 
         // Sortierungskonfigurationen laden
         this.sortConfigs = loadSortConfigs();
       } catch (_error) {
-        _logger._error('Fehler beim Laden der Kategorie-Vorlagen:', _error);
+        _logger.error('Fehler beim Laden der Kategorie-Vorlagen:', _error);
       }
     },
 
