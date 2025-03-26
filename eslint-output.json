@@ -1,4 +1,0 @@
-
-> shopping-list-app@2.0.1 lint
-> eslint --ext .js,.ts,.vue --ignore-path .eslintignore . json
-
