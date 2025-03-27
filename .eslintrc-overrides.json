@@ -1,0 +1,73 @@
+{
+  "overrides": [
+    {
+      "files": [
+        "components/items/*.vue",
+        "components/lists/*.vue",
+        "components/items/autocomplete/*.vue"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "unused-imports/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/eslint-fix.js",
+        "scripts/fix-interface-names.js",
+        "scripts/fix-typescript-conditions.js",
+        "scripts/fix-unused-vars.js",
+        "scripts/fixes/*.js",
+        "scripts/fixes/*.mjs"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "unused-imports/no-unused-vars": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "composables/shoppingItems/*.ts",
+        "composables/shoppingList/*.ts",
+        "composables/utils/*.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "stores/category/index.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "pages/index.vue"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "types/uiTypes.ts"
+      ],
+      "rules": {
+        "no-use-before-define": "off"
+      }
+    },
+    {
+      "files": [
+        "utils/validation/typeGuards.ts"
+      ],
+      "rules": {
+        "sonarjs/prefer-single-boolean-return": "off"
+      }
+    }
+  ]
+}
