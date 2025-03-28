@@ -174,16 +174,10 @@ const {
   currentListId,
   currentList,
   initialized,
-  _currentListTemplateId,
   loadLists,
   createList,
   selectList,
   deleteList,
-  updateListTemplate: _updateCurrentListTemplate,
-  updateListName: _updateCurrentListName,
-  updateListFavorite: _updateCurrentListFavorite,
-  _getCheckedItemsCount,
-  // getTotalItemsCount nicht verwendet
   updateList,
 } = useShoppingLists();
 
@@ -193,7 +187,6 @@ const {
   addNewItem,
   removeItem,
   toggleItemChecked,
-  _clearCheckedItems,
   updateCategoryInItems,
 } = useShoppingItems(currentListId);
 
@@ -209,10 +202,9 @@ const currentListItems = computed(() => {
   });
 });
 
-// Import/Export-Funktionen
+// Export/Import-Funktionen - nicht aktiv verwendet in der UI
 const {
   handleExportList,
-  // handleImportList nicht verwendet
   handleImportListWithOptions,
   openImportDialog,
   showImportOptions,
@@ -226,21 +218,18 @@ const createNewList = (name: string, options: any): void => {
 };
 
 /**
- * Exportiert die aktuelle Liste
- * Nimmt die aktuelle Liste und leitet sie an handleExportList weiter
+ * Export- und Import-Funktionen - aktuell nicht aktiv in der UI
  */
-const _exportCurrentList = (): void => {
-  _logger.info('Exportiere aktuelle Liste:', currentList.value.name);
-  handleExportList(currentList.value);
-};
+// Exportiert die aktuelle Liste
+// const exportCurrentList = (): void => {
+//   _logger.info('Exportiere aktuelle Liste:', currentList.value.name);
+//   handleExportList(currentList.value);
+// };
 
-/**
- * Starter-Funktion für den Importprozess
- * Öffnet die Dateiauswahl und zeigt dann den Optionsdialog
- */
-const _startImport = (): void => {
-  openImportDialog(onImportOptionsLoaded);
-};
+// Starter-Funktion für den Importprozess
+// const startImport = (): void => {
+//   openImportDialog(onImportOptionsLoaded);
+// };
 
 /**
  * Handler für die Bestätigung des Imports durch den Benutzer

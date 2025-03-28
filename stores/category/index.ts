@@ -159,8 +159,8 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
-      // @ts-ignore - wird indirekt verwendet
-      const _timer = setTimeout(() => {
+      // Timer zur Verzögerung des Neuladen
+      setTimeout(() => {
         this.loadFromLocalStorage();
       }, 50);
     },
@@ -198,8 +198,8 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
-      // @ts-ignore - wird indirekt verwendet
-      const _timer = setTimeout(() => {
+      // Timer zur Verzögerung des Neuladen
+      setTimeout(() => {
         this.loadFromLocalStorage();
       }, 50);
     },
