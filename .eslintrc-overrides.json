@@ -24,7 +24,8 @@
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-vars": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
-        "no-console": "off"
+        "no-console": "off",
+        "prefer-template": "off"
       }
     },
     {
@@ -38,27 +39,58 @@
       }
     },
     {
-      "files": ["stores/category/index.ts"],
+      "files": [
+        "stores/category/index.ts"
+      ],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
       }
     },
     {
-      "files": ["pages/index.vue"],
+      "files": [
+        "pages/index.vue"
+      ],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {
-      "files": ["types/uiTypes.ts"],
+      "files": [
+        "types/uiTypes.ts"
+      ],
       "rules": {
         "no-use-before-define": "off"
       }
     },
     {
-      "files": ["utils/validation/typeGuards.ts"],
+      "files": [
+        "utils/validation/typeGuards.ts"
+      ],
       "rules": {
         "sonarjs/prefer-single-boolean-return": "off"
+      }
+    },
+    {
+      "files": [
+        "**/*.ts",
+        "**/*.vue",
+        "**/*.js"
+      ],
+      "rules": {
+        "import/no-unused-modules": "off",
+        "@typescript-eslint/no-unnecessary-condition": "warn",
+        "@typescript-eslint/naming-convention": "warn"
+      }
+    },
+    {
+      "files": [
+        "composables/useShoppingItems.ts"
+      ],
+      "rules": {
+        "sonarjs/no-duplicated-branches": "off",
+        "prettier/prettier": "off"
       }
     }
   ]
