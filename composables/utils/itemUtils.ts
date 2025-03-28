@@ -1,6 +1,7 @@
 import { createLogger } from '~/utils/logger';
 
-// Logger initialisieren
+// Logger initialisieren (für Entwicklungszwecke)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _logger = createLogger('itemUtils');
 
 /**

@@ -49,6 +49,8 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
 import type { ItemSuggestion } from '~/types/app-types';
 
+// Hilfstypes (nicht aktiv genutzt)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
 interface _ITextPart {
   text: string;
   highlight: boolean;

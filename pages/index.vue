@@ -204,9 +204,9 @@ const currentListItems = computed(() => {
 
 // Export/Import-Funktionen - nicht aktiv verwendet in der UI
 const {
-  handleExportList,
+  _handleExportList,
   handleImportListWithOptions,
-  openImportDialog,
+  _openImportDialog,
   showImportOptions,
   importData,
 } = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
@@ -245,9 +245,9 @@ const handleImportConfirm = (options: any): void => {
 };
 
 /**
- * Callback-Funktion für geladene Import-Daten
+ * Callback-Funktion für geladene Import-Daten (nicht aktiv verwendet)
  */
-const onImportOptionsLoaded = (data: any, availableLists: any[]): void => {
+const _onImportOptionsLoaded = (data: any, availableLists: any[]): void => {
   _logger.info('Import-Daten geladen, zeige Optionen:', {
     listName: data.name,
     itemCount: data.items?.length ?? 0,

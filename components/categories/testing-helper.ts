@@ -23,8 +23,8 @@ interface ICategoryData {
   >;
 }
 
-// Typprüfung für Kategorieauswertung (Basetype)
-// Die Basisstruktur für Kategorieauswertungen
+// Diese Type wird nicht direkt genutzt, nur für Entwicklungszwecke
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type _CategoryUsageBase = {
   count: number;
   items: string[];

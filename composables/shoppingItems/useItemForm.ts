@@ -31,6 +31,7 @@ export function useItemForm(): IUseItemForm {
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
