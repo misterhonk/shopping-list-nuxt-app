@@ -74,7 +74,7 @@ onMounted(() => {
 });
 
 // Aktives Template und sortierte Kategorien
-const _activeTemplate.value = computed(() => categoryStore.currentTemplate);
+const _activeTemplate = computed(() => categoryStore.currentTemplate);
 const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel
@@ -88,7 +88,7 @@ interface IGroupedCategory {
   items: ShoppingItem[];
 }
 
-type GroupedItems = Record<string, GroupedCategory>;
+type GroupedItems = Record<string, IGroupedCategory>;
 
 // Kategorien für die Gruppierung
 const groupedItems = computed<GroupedItems>(() => {

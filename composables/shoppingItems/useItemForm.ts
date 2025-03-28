@@ -28,13 +28,13 @@ export function useItemForm(): IUseItemForm {
   });
 
   // Berechnete Eigenschaften
-  const _isFormValid.value = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
+  const _isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
 
   /**
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const _resetItemForm.value = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
+  const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;
