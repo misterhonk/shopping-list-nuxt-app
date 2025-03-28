@@ -11,15 +11,18 @@ Die ESLint-Validierung des Projekts ergab zu Beginn 371 Probleme, davon 114 Fehl
 ## Phase 1: Grundlegende ESLint-Fixes
 
 ### 1. ESLint-Overrides-Konfiguration
+
 - Erstellung einer separaten `.eslintrc-overrides.json`-Datei
 - Definition spezifischer Regeln für bestimmte Dateien und Verzeichnisse
 - Besonders hilfreich für Skript-Dateien und Vue-Komponenten
 
 ### 2. Automatische Korrektur durch Prettier
+
 - Anwendung des Prettier-Formatierungstools
 - Lösung von 71 Formatierungsfehlern
 
 ### 3. Interface-Namenskonventionen verbessert
+
 - Skript `fix-interface-names-phase2.mjs` implementiert
 - Umbenennung von Interfaces wie `ItemHistoryEntry` → `IItemHistoryEntry`
 - Konsequente Anwendung des "I"-Präfixes für alle Interfaces
@@ -27,14 +30,17 @@ Die ESLint-Validierung des Projekts ergab zu Beginn 371 Probleme, davon 114 Fehl
 ## Phase 2: Tiefergehende ESLint-Optimierungen
 
 ### 1. Entfernung von unnötigen void-Operatoren
+
 - Skript `remove-void-operators.mjs` implementiert
 - Entfernung von Operatoren, die zu ESLint-Fehlern führten
 
 ### 2. Korrektur von Referenzfehlern
+
 - Skript `fix-ref-as-operand.mjs` implementiert
 - Behebung von `vue/no-ref-as-operand`-Fehlern durch korrekte `.value`-Referenzen
 
 ### 3. Beseitigung von doppeltem Code
+
 - Skript `fix-duplicated-branches.mjs` implementiert
 - Vermeidung duplizierter Code-Blöcke in bedingten Verzweigungen
 - Optimierung der useShoppingItems.ts-Datei
@@ -44,7 +50,7 @@ Die ESLint-Validierung des Projekts ergab zu Beginn 371 Probleme, davon 114 Fehl
 Nach Abschluss der Phase 2 haben wir eine signifikante Verbesserung erreicht:
 
 | Kategorie | Vor Phase 1 | Nach Phase 2 | Reduktion |
-|-----------|-------------|--------------|-----------|
+| --------- | ----------- | ------------ | --------- |
 | Fehler    | 114         | ~48          | ~58%      |
 | Warnungen | 257         | ~255         | ~1%       |
 | Gesamt    | 371         | ~303         | ~18%      |

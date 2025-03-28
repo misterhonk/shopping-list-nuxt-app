@@ -345,6 +345,8 @@ export function useShoppingItems(
     const lists = shoppingListService.getAllLists();
     let hasChanges = false;
 
+    for (const list of lists) {
+      for (const item of list.items) {
         // Prüfen, ob das Item diese Kategorie verwendet
         let needsUpdate = false;
 
@@ -364,6 +366,8 @@ export function useShoppingItems(
           });
           hasChanges = true;
         }
+      }
+    }
 
     // Bei Änderungen die Items aktualisieren
     if (hasChanges) {

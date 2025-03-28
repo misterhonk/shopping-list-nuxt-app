@@ -7,32 +7,38 @@ Die ESLint-Verbesserungsinitiative für die Shopping-List-App wurde erfolgreich 
 ## Ergebnisse
 
 | Kategorie | Vor den Verbesserungen | Nach Phase 2 | Reduktion |
-|-----------|----------------------|--------------------|-----------|
-| Fehler    | 114                  | 49                 | 57%       |
-| Warnungen | 257                  | 255                | 1%        |
-| Gesamt    | 371                  | 304                | 18%       |
+| --------- | ---------------------- | ------------ | --------- |
+| Fehler    | 114                    | 49           | 57%       |
+| Warnungen | 257                    | 255          | 1%        |
+| Gesamt    | 371                    | 304          | 18%       |
 
 ## Durchgeführte Maßnahmen
 
 ### Phase 1
+
 - Behebung kritischer TypeScript-Parsing-Fehler
 - Konfiguration der ESLint-Regeln für effektivere Validierung
 - Automatisierte Skripte für wiederholende Probleme
 
 ### Phase 2
+
 - **Interface-Namenskonventionen korrigiert**
+
   - Sämtliche Interface-Namen auf I-Präfix standardisiert (z.B. `ICategory` statt `Category`)
   - Übereinstimmung mit den Codierungsstandards erreicht
 
 - **Unnötige void-Operatoren entfernt**
+
   - Automatisiertes Skript zur Entfernung von unnötigen void-Operatoren
   - Verbesserte Code-Lesbarkeit und Reduzierung von ESLint-Fehlern
 
 - **Prettier-Formatierung angewendet**
+
   - Konsistente Formatierung im gesamten Codebase
   - Beseitigung von Formatierungsfehlern
 
 - **Duplizierte Code-Blöcke bereinigt**
+
   - Identifizierung und Korrektur von redundantem Code
   - Verbesserte Wartbarkeit und Reduzierung des sonarjs/no-duplicated-branches-Fehlers
 
@@ -44,7 +50,7 @@ Die ESLint-Verbesserungsinitiative für die Shopping-List-App wurde erfolgreich 
 
 1. **Interface-Namenskonventionen** - Alle Interface-Namen auf I-Präfix standardisiert
 2. **Formattierungsprobleme** - Prettier-Fehler durch automatisierte Formatierung behoben
-3. **Unbenutzte Variablen** - Variablen entweder verwendet, umbenannt (mit _) oder durch Override-Regeln ignoriert
+3. **Unbenutzte Variablen** - Variablen entweder verwendet, umbenannt (mit \_) oder durch Override-Regeln ignoriert
 4. **Duplizierte Code-Blöcke** - In mehreren Dateien bereinigt, insbesondere in useShoppingItems.ts
 
 ## Ausstehende Verbesserungen
