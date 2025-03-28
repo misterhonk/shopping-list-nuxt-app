@@ -1,7 +1,7 @@
 import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
-const logger = createLogger('itemUtils');
+const _logger = createLogger('itemUtils');
 
 /**
  * Prüft, ob ein Item zu einer bestimmten Kategorie-ID gehört

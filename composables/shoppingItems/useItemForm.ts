@@ -1,4 +1,4 @@
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref } from 'vue';
 
 import type { ICategory } from '~/types/app-types';
 import type { IUseItemForm } from '~/types/composable-types';
@@ -31,7 +31,7 @@ export function useItemForm(): IUseItemForm {
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
+  const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;

@@ -23,11 +23,12 @@ interface ICategoryData {
   >;
 }
 
-// Wird für die Typprüfung verwendet
-interface _ICategoryUsageBase {
+// Typprüfung für Kategorieauswertung (Basetype)
+// Die Basisstruktur für Kategorieauswertungen
+type _CategoryUsageBase = {
   count: number;
   items: string[];
-}
+};
 
 // Für die Rückgabe der Analysefunktion
 interface ICategoryUsage {
