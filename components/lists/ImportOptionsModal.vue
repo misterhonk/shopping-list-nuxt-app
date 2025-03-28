@@ -126,7 +126,8 @@ import { createLogger } from '~/utils/logger';
 
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
-const _logger = createLogger('ImportOptionsModal');
+// Logger initialisieren
+const logger = createLogger('ImportOptionsModal');
 
 interface IImportData {
   name: string;
@@ -174,7 +175,7 @@ watch(
 
 // Vorselektieren der Liste, falls Name identisch
 const findMatchingList = (): void => {
-  if (_props.importData.name && _props.availableLists.length > 0) {
+  if (props.importData.name && props.availableLists.length > 0) {
     const matchingList = props.availableLists.find(
       list => list.name.toLowerCase() === props.importData.name.toLowerCase()
     );

@@ -64,7 +64,7 @@ interface IProps {
   item: ShoppingItem;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 const emit = defineEmits<{
   (e: 'toggle'): void;
   (e: 'remove'): void;

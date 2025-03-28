@@ -82,7 +82,7 @@ interface IListOptions {
   isFavorite: boolean;
 }
 
-const props = defineProps<{
+defineProps<{
   templates: CategoryTemplate[];
 }>();
 

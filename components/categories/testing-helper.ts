@@ -8,7 +8,7 @@ import type { ShoppingList, Category, ShoppingItem } from '~/types/app-types';
  */
 
 // Logger initialisieren
-const _logger = createLogger('testing-helper');
+const logger = createLogger('testing-helper');
 
 interface ICategoryData {
   activeTemplateId: string;
@@ -23,14 +23,14 @@ interface ICategoryData {
   >;
 }
 
-// Wird für die Typprüfung verwendet, auch wenn sie nicht direkt referenziert wird
-interface _ICategoryUsage {
+// Wird für die Typprüfung verwendet
+interface _ICategoryUsageBase {
   count: number;
   items: string[];
 }
 
 // Für die Rückgabe der Analysefunktion
-interface CategoryUsage {
+interface ICategoryUsage {
   count: number;
   items: string[];
 }
@@ -48,7 +48,7 @@ const loadDiagnosticData = (): void => {
   const listData = localStorage.getItem('shoppingLists');
 
   if (!categoryData || !listData) {
-    _logger.error('[Diagnose] Keine Daten gefunden');
+    logger.error('[Diagnose] Keine Daten gefunden');
     return null;
   }
 
@@ -78,8 +78,8 @@ const getActiveTemplate = (parsedCategories: ICategoryData): void => {
 /**
  * Sammelt Informationen über die verwendeten Kategorien
  */
-const collectCategoryUsage = (parsedLists: ShoppingList[]): Record<string, CategoryUsage> => {
-  const categoriesInUse: Record<string, CategoryUsage> = {};
+const collectCategoryUsage = (parsedLists: ShoppingList[]): Record<string, ICategoryUsage> => {
+  const categoriesInUse: Record<string, ICategoryUsage> = {};
 
   parsedLists.forEach(list => {
     if (!Array.isArray(list.items)) {
@@ -200,7 +200,7 @@ export function diagnoseCategories():
 
       if (updatedCount > 0) {
         localStorage.setItem('shoppingLists', JSON.stringify(newLists));
-        _logger.info(
+        logger.info(
           `[Diagnose] ${updatedCount} Artikel aktualisiert mit neuer Kategorie "${newName}"`
         );
         return true;
@@ -210,7 +210,7 @@ export function diagnoseCategories():
       return false;
     };
   } catch (error) {
-    _logger.error('[Diagnose] Fehler:', error);
+    logger.error('[Diagnose] Fehler:', error);
     return undefined;
   }
 }

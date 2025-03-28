@@ -102,7 +102,7 @@ export function useListManagement(categoryStore?: ICategoryStoreService): IUseSh
    * @param options - Optionale Parameter für die Liste
    * @returns Das neue Listenobjekt
    */
-  const _createListObject = (name: string, options: ICreateListOptions = {}): IShoppingList => {
+  const createListObject = (name: string, options: ICreateListOptions = {}): IShoppingList => {
     // Finde einen passenden Template-ID basierend auf dem Namen (fallback auf 'supermarket')
     let templateId = options.templateId ?? 'supermarket';
 

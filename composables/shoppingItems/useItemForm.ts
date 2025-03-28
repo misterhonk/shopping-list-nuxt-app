@@ -27,14 +27,11 @@ export function useItemForm(): IUseItemForm {
     price: 0,
   });
 
-  // Berechnete Eigenschaften
-  const _isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
-
   /**
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
+  const resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;

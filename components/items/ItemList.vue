@@ -59,7 +59,7 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'toggle', item: ShoppingItem): void;
   (e: 'remove', item: ShoppingItem): void;
   (e: 'add-new'): void;
@@ -73,8 +73,7 @@ onMounted(() => {
   categoryStore.loadFromLocalStorage();
 });
 
-// Aktives Template und sortierte Kategorien
-const _activeTemplate = computed(() => categoryStore.currentTemplate);
+// Sortierte Kategorien
 const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel
