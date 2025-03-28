@@ -49,12 +49,7 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
 import type { ItemSuggestion } from '~/types/app-types';
 
-// Hilfstypes (nicht aktiv genutzt)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
-interface _ITextPart {
-  text: string;
-  highlight: boolean;
-}
+// Hilfstypes werden jetzt direkt an der Stelle definiert, wo sie benötigt werden (siehe unten)
 
 type SuggestionInput = string | ItemSuggestion;
 
@@ -197,6 +192,7 @@ const selectSuggestion = (index: number): void => {
   highlightedIndex.value = -1;
 
   // Fokus auf dem Input behalten
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   nextTick(() => {
     if (inputElement.value) {
       inputElement.value.focus();
