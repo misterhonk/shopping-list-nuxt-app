@@ -159,10 +159,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
-      // Timer zur Verzögerung des Neuladen
-      setTimeout(() => {
-        this.loadFromLocalStorage();
-      }, 50);
+      this.loadFromLocalStorage();
     },
 
     /**
@@ -198,10 +195,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       this.saveToLocalStorage();
 
       // Explizites Neuladen zur Sicherheit
-      // Timer zur Verzögerung des Neuladen
-      setTimeout(() => {
-        this.loadFromLocalStorage();
-      }, 50);
+      this.loadFromLocalStorage();
     },
 
     /**
