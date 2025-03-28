@@ -198,11 +198,8 @@ const currentListItems = computed(() => {
 });
 
 // Export/Import-Funktionen - nicht aktiv verwendet in der UI
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const {
-  _handleExportList,
   handleImportListWithOptions,
-  _openImportDialog,
   showImportOptions,
   importData,
 } = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
