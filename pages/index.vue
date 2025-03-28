@@ -203,6 +203,7 @@ const currentListItems = computed(() => {
 });
 
 // Export/Import-Funktionen - nicht aktiv verwendet in der UI
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const {
   _handleExportList,
   handleImportListWithOptions,
@@ -247,6 +248,7 @@ const handleImportConfirm = (options: any): void => {
 /**
  * Callback-Funktion für geladene Import-Daten (nicht aktiv verwendet)
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _onImportOptionsLoaded = (data: any, availableLists: any[]): void => {
   _logger.info('Import-Daten geladen, zeige Optionen:', {
     listName: data.name,
