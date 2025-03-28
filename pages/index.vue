@@ -182,13 +182,8 @@ const {
 } = useShoppingLists();
 
 // Artikel verwalten - Die currentListId wird hier übergeben
-const {
-  allItems,
-  addNewItem,
-  removeItem,
-  toggleItemChecked,
-  updateCategoryInItems,
-} = useShoppingItems(currentListId);
+const { allItems, addNewItem, removeItem, toggleItemChecked, updateCategoryInItems } =
+  useShoppingItems(currentListId);
 
 // Berechne eine gefilterte Liste mit nur den Artikeln der aktuell ausgewählten Liste
 const currentListItems = computed(() => {
