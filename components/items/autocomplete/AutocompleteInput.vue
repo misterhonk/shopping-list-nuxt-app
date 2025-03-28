@@ -1,4 +1,4 @@
-<template>
+type SuggestionInput = string | ItemSuggestion;<template>
   <div class="relative">
     <input
       ref="inputElement"
@@ -49,9 +49,11 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
 import type { ItemSuggestion } from '~/types/app-types';
 
-// Hilfstypes werden jetzt direkt an der Stelle definiert, wo sie benötigt werden (siehe unten)
-
-type SuggestionInput = string | ItemSuggestion;
+// eslint-disable-next-line @typescript-eslint/naming-convention
+interface _ITextPart {
+  text: string;
+  highlight: boolean;
+}
 
 const props = withDefaults(
   defineProps<{

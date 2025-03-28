@@ -1,8 +1,8 @@
 import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren (für Entwicklungszwecke)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const logger = createLogger('itemUtils');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
+const _logger = createLogger('itemUtils');
 
 /**
  * Prüft, ob ein Item zu einer bestimmten Kategorie-ID gehört

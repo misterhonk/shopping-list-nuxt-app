@@ -24,7 +24,7 @@ interface ICategoryData {
 }
 
 // Diese Type wird nicht direkt genutzt, nur für Entwicklungszwecke
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
 type _CategoryUsageBase = {
   count: number;
   items: string[];
