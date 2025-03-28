@@ -66,6 +66,7 @@ const loadDiagnosticData = (): void => {
  * Ermittelt das aktive Template
  */
 const getActiveTemplate = (parsedCategories: ICategoryData): void => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (
     !parsedCategories.activeTemplateId ||
     !parsedCategories.customTemplates[parsedCategories.activeTemplateId]
