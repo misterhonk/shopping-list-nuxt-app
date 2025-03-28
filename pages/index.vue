@@ -118,7 +118,7 @@ import { useCategoryStore } from '~/stores/category';
 import { createLogger } from '~/utils/logger';
 
 // Logger initialisieren
-const _logger = createLogger('IndexPage');
+const logger = createLogger('IndexPage');
 
 // UI-Zustand
 const isCreatingList = ref(false);
@@ -150,7 +150,7 @@ try {
         ]
       );
     } catch (e) {
-      _logger.error('Fehler beim Abrufen der Kategorien:', e);
+      logger.error('Fehler beim Abrufen der Kategorien:', e);
       return [
         'Obst & Gemüse',
         'Fleisch & Fisch',
@@ -162,7 +162,7 @@ try {
     }
   });
 } catch (e) {
-  _logger.error('Pinia konnte nicht initialisiert werden:', e);
+  logger.error('Pinia konnte nicht initialisiert werden:', e);
 }
 
 // Templates aus dem CategoryStore
@@ -208,7 +208,7 @@ const { handleImportListWithOptions, showImportOptions, importData } = useListIm
 );
 
 // Neue Liste erstellen
-const createNewList = (name: string, options: any): void => {
+const createNewList = (name: string, options: Record<string, unknown>): void => {
   createList(name, options);
   isCreatingList.value = false;
 };
@@ -218,7 +218,7 @@ const createNewList = (name: string, options: any): void => {
  */
 // Exportiert die aktuelle Liste
 // const exportCurrentList = (): void => {
-//   _logger.info('Exportiere aktuelle Liste:', currentList.value.name);
+//   logger.info('Exportiere aktuelle Liste:', currentList.value.name);
 //   handleExportList(currentList.value);
 // };
 
@@ -230,8 +230,8 @@ const createNewList = (name: string, options: any): void => {
 /**
  * Handler für die Bestätigung des Imports durch den Benutzer
  */
-const handleImportConfirm = (options: any): void => {
-  _logger.info('Import-Optionen bestätigt:', options);
+const handleImportConfirm = (options: Record<string, unknown>): void => {
+  logger.info('Import-Optionen bestätigt:', options);
 
   // Import mit den gewählten Optionen durchführen
   handleImportListWithOptions(importData.value, options);
@@ -243,11 +243,10 @@ const handleImportConfirm = (options: any): void => {
 /**
  * Callback-Funktion für geladene Import-Daten (nicht aktiv verwendet)
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _onImportOptionsLoaded = (data: any, availableLists: any[]): void => {
-  _logger.info('Import-Daten geladen, zeige Optionen:', {
+const onImportOptionsLoaded = (data: Record<string, unknown>, availableLists: Record<string, unknown>[]): void => {
+  logger.info('Import-Daten geladen, zeige Optionen:', {
     listName: data.name,
-    itemCount: data.items?.length ?? 0,
+    itemCount: (data.items as any[])?.length ?? 0,
     availableListsCount: availableLists.length,
   });
 
@@ -265,21 +264,21 @@ let unsubscribeCategoryUpdate = null;
 // App-Initialisierung
 onMounted(() => {
   // Debug: Aktuellen Listenstand protokollieren
-  _logger.debug('App gestartet, Listenstand beim Start:');
+  logger.debug('App gestartet, Listenstand beim Start:');
   const listenImStorage = localStorage.getItem('shoppingLists');
   if (listenImStorage) {
     try {
-      const parsedLists = JSON.parse(listenImStorage);
+      const parsedLists = JSON.parse(listenImStorage) as Record<string, unknown>[];
       logger.debug(
         'Listen im Storage:',
-        parsedLists.map((l: any) => ({
+        parsedLists.map((l: Record<string, unknown>) => ({
           id: l.id,
           name: l.name,
           itemCount: l.items?.length ?? 0,
         }))
       );
     } catch (e) {
-      _logger.error('Fehler beim Parsen der Listen aus dem Storage:', e);
+      logger.error('Fehler beim Parsen der Listen aus dem Storage:', e);
     }
   }
 
@@ -298,12 +297,12 @@ onMounted(() => {
       // Event-Listener für Kategorieänderungen registrieren
       if (onCategoryUpdate) {
         unsubscribeCategoryUpdate = onCategoryUpdate((categoryId: string, newName: string) => {
-          _logger.debug(`Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
+          logger.debug(`Kategorie ${categoryId} zu ${newName} geändert, aktualisiere Elemente...`);
           updateCategoryInItems(categoryId, newName);
         });
       }
     } catch (e) {
-      _logger.error('Fehler beim Laden der Kategorien:', e);
+      logger.error('Fehler beim Laden der Kategorien:', e);
     }
   }
 });
