@@ -9,11 +9,12 @@ Nach Abschluss der ersten Optimierungen in Phase 2 werden folgende Aufgaben für
 ### 1. Verbleibende Composables optimieren
 
 - `useShoppingItems.ts`
-- `useDarkMode.ts` 
+- `useDarkMode.ts`
 - Composables unter dem Ordner `composables/core/`
 - Composables unter den Ordnern `composables/shoppingItems/` und `composables/shoppingList/`
 
 Für jedes Composable:
+
 - Rückgabetyp-Interface definieren
 - Korrekte Typisierung für Funktionen einführen
 - Variablenbenennung konsistent gestalten
@@ -41,6 +42,7 @@ Für jedes Composable:
 ## Erfolgsmetrik
 
 Der Erfolg dieser Phase wird gemessen an:
+
 - Reduktion der ESLint-Warnungen um mindestens 50% in den kritischsten Dateien
 - Kein Build- oder Runtime-Fehler nach den Änderungen
 - Verbesserte Lesbarkeit und Konsistenz des Codes nach Peer-Review

@@ -23,7 +23,14 @@ interface ICategoryData {
   >;
 }
 
-interface ICategoryUsage {
+// Wird für die Typprüfung verwendet, auch wenn sie nicht direkt referenziert wird
+interface _ICategoryUsage {
+  count: number;
+  items: string[];
+}
+
+// Für die Rückgabe der Analysefunktion
+interface CategoryUsage {
   count: number;
   items: string[];
 }

@@ -40,7 +40,7 @@ export interface ICreateListOptions {
 /**
  * Optionen für den Import einer Liste
  */
-export interface ImportOptions {
+export interface IImportOptions {
   mode: 'create' | 'merge' | 'replace';
   targetListId?: string;
   keepExistingItems?: boolean;

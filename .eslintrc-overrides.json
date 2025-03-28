@@ -38,33 +38,25 @@
       }
     },
     {
-      "files": [
-        "stores/category/index.ts"
-      ],
+      "files": ["stores/category/index.ts"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
       }
     },
     {
-      "files": [
-        "pages/index.vue"
-      ],
+      "files": ["pages/index.vue"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
       }
     },
     {
-      "files": [
-        "types/uiTypes.ts"
-      ],
+      "files": ["types/uiTypes.ts"],
       "rules": {
         "no-use-before-define": "off"
       }
     },
     {
-      "files": [
-        "utils/validation/typeGuards.ts"
-      ],
+      "files": ["utils/validation/typeGuards.ts"],
       "rules": {
         "sonarjs/prefer-single-boolean-return": "off"
       }

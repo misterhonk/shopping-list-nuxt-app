@@ -1,10 +1,11 @@
 import { ref, computed, onMounted } from 'vue';
+
 import { sortListsByFavorites, determineTemplateId } from '~/composables/utils/listUtils';
 import { initializeServices } from '~/services';
 import { createLogger } from '~/utils/logger';
+
 import type { Ref, ComputedRef } from 'vue';
-import type { ICreateListOptions } from '~/types/app-types';
-import type { IShoppingList } from '~/types/app-types';
+import type { ICreateListOptions, IShoppingList } from '~/types/app-types';
 import type { IUseShoppingLists } from '~/types/composable-types';
 
 // Services initialisieren
@@ -25,9 +26,7 @@ interface ICategoryStoreService {
  * @param categoryStore - Optional: Store für die Verwaltung von Kategorien und Templates
  * @returns Objekt mit reaktiven Daten und Funktionen für die Listenverwaltung
  */
-export function useListManagement(
-  categoryStore?: ICategoryStoreService
-): IUseShoppingLists {
+export function useListManagement(categoryStore?: ICategoryStoreService): IUseShoppingLists {
   // Reaktive Daten
   const lists: Ref<IShoppingList[]> = ref([]);
   const currentListId: Ref<string | null> = ref(null);

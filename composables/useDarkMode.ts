@@ -1,5 +1,7 @@
 import { ref, onMounted } from 'vue';
+
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
+
 import type { Ref } from 'vue';
 
 // Interface für den Rückgabetyp
@@ -18,7 +20,7 @@ const DARK_MODE_STORAGE_KEY = 'darkMode';
 /**
  * Composable für die Verwaltung des Dark Mode
  * Bietet Funktionen zum Ein-/Ausschalten des dunklen Erscheinungsbilds
- * 
+ *
  * @returns Ein Objekt mit Funktionen und Status zur Dark Mode-Verwaltung
  */
 export const useDarkMode = (): IUseDarkModeReturn => {

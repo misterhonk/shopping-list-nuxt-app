@@ -133,7 +133,7 @@ import type { Category } from '~/types/app-types';
 
 type CategoryInput = Category | string;
 
-const _props = withDefaults(
+const props = withDefaults(
   defineProps<{
     categories: CategoryInput[];
   }>(),

@@ -8,8 +8,6 @@
 import { createLogger } from '~/utils/logger';
 import { isShoppingListArray } from '~/utils/validation';
 
-import type { IStorageRepository } from './StorageRepository';
-
 /**
  * LocalStorage-basierte Implementierung des StorageRepository
  */

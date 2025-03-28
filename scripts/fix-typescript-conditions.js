@@ -9,9 +9,9 @@
  * gedacht ist, nicht für boolesche Werte.
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // Verzeichnisse, die durchsucht werden sollen
 const directoriesToSearch = [

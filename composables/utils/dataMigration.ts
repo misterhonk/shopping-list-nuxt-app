@@ -1,4 +1,4 @@
-import type { ShoppingItem, ShoppingList, Category } from '~/types/app-types';
+import type { Category } from '~/types/app-types';
 
 /**
  * Typdefinitionen für die Migration

@@ -92,7 +92,7 @@ export interface IShoppingList {
 /**
  * Verlaufseintrag für Artikel
  */
-export interface ItemHistoryEntry {
+export interface IItemHistoryEntry {
   /** Anzahl der Verwendungen */
   count: number;
   /** Zeitstempel der letzten Verwendung */
@@ -109,7 +109,7 @@ export interface ItemHistoryEntry {
 /**
  * Artikelvorschlag für Autocomplete
  */
-export interface ItemSuggestion {
+export interface IItemSuggestion {
   /** Anzeigename */
   text: string;
   /** Optionaler Zusatztext (z.B. Kategorie) */

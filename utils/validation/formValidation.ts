@@ -162,7 +162,7 @@ export function validateShoppingList(list: Partial<ShoppingList>): IValidationRe
 
   // Artikel validieren (wenn vorhanden)
   if (list.items && Array.isArray(list.items)) {
-    for(let i = 0; i < list.items.length; i++) {
+    for (let i = 0; i < list.items.length; i++) {
       const itemValidation = validateShoppingItem(list.items[i] || {});
 
       if (!itemValidation.isValid) {

@@ -9,18 +9,22 @@ Dieses Dokument beschreibt die im Rahmen von Phase 2 der ESLint-Verbesserungen v
 ### 1. In services/updateService.ts
 
 #### Variablenkonsistenz
+
 - Variablen mit Unterstrich-Präfix (`_reg`, `_error`, etc.) wurden konsistent benannt
 - Vermeidung von Inkonsistenzen wie `registration` vs. `_registration`
 
 #### Callback-Literals
+
 - Restrukturierung der `checkForWaitingServiceWorker`-Funktion, um Callback-Literal-Fehler zu beheben
 - Verwendung von Zwischenvariablen für Callback-Ergebnisse
 
 #### Nullish Coalescing
+
 - Ersetzung von Logical OR (`||`) durch Nullish Coalescing (`??`) für bessere Typsicherheit
 - Verbesserung der Lesbarkeit und Fehlerbehandlung
 
 #### Type-Verbesserungen
+
 - Ersetzung von unspezifischem `any` durch expliziten Typ: `(window.navigator as unknown as { standalone: boolean })`
 
 ### 2. Verwendete Skripte

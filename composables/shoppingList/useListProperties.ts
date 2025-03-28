@@ -1,6 +1,7 @@
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
 import { getItemsCount, _getCheckedItemsCount } from '~/composables/utils/listUtils';
 import { createLogger } from '~/utils/logger';
+
 import type { Ref } from 'vue';
 import type { IShoppingList } from '~/types/app-types';
 import type { IUseListProperties } from '~/types/composable-types';
@@ -11,7 +12,7 @@ const _logger = createLogger('useListProperties');
 /**
  * Composable für die Verwaltung von Listeneigenschaften
  * Bietet Funktionen zum Lesen und Aktualisieren von Listeneigenschaften
- * 
+ *
  * @param listsRef - Referenz auf die Einkaufslisten
  * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
  * @returns Ein Objekt mit Funktionen zur Verwaltung von Listeneigenschaften

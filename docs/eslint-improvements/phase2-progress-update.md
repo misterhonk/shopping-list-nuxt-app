@@ -35,6 +35,7 @@ Bisher wurden die folgenden kritischen Dateien verbessert:
 4. `composables/useShoppingLists.ts`
 
 Dies umfasst einen wesentlichen Teil der Kernfunktionalität der Anwendung und adressiert verschiedene ESLint-Warnungen, darunter:
+
 - Falsche oder fehlende Typisierungen
 - Syntaxfehler
 - Variablenbenennungs-Inkonsistenzen
@@ -45,15 +46,18 @@ Dies umfasst einen wesentlichen Teil der Kernfunktionalität der Anwendung und a
 Die nächsten Schritte für die Fortsetzung von Phase 2 sind:
 
 1. **Weitere Composables bearbeiten**:
+
    - `useShoppingItems.ts`
    - `useDarkMode.ts`
    - Composite-Composables unter `composables/core/`
 
 2. **ESLint-Validierung durchführen**:
+
    - Erfolgskontrolle für die bereits durchgeführten Änderungen
    - Messung der Reduktion von Warnungen
 
 3. **Fortführung der Typsicherheit-Verbesserungen**:
+
    - Interface-Definitionen ausbauen
    - Korrekte Typisierung für alle Funktionen
    - Entfernung von impliziten `any`-Typen

@@ -56,7 +56,7 @@ interface ITextPart {
 
 type SuggestionInput = string | ItemSuggestion;
 
-const _props = withDefaults(
+const props = withDefaults(
   defineProps<{
     modelValue: string;
     suggestions: SuggestionInput[];

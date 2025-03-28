@@ -50,7 +50,7 @@ import ItemListItem from './ItemListItem.vue';
 
 import type { ShoppingItem } from '~/types/app-types';
 
-const _props = withDefaults(
+const props = withDefaults(
   defineProps<{
     items: ShoppingItem[];
   }>(),
@@ -59,7 +59,7 @@ const _props = withDefaults(
   }
 );
 
-const _emit = defineEmits<{
+const emit = defineEmits<{
   (e: 'toggle', item: ShoppingItem): void;
   (e: 'remove', item: ShoppingItem): void;
   (e: 'add-new'): void;
@@ -74,7 +74,7 @@ onMounted(() => {
 });
 
 // Aktives Template und sortierte Kategorien
-const _activeTemplate = computed(() => categoryStore.currentTemplate);
+const _activeTemplate.value = computed(() => categoryStore.currentTemplate);
 const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel

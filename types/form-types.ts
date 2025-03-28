@@ -24,7 +24,7 @@ export interface IFormState {
 /**
  * Formularstatus für Artikel-Formulare
  */
-export interface ItemFormState extends IFormState {
+export interface IItemFormState extends IFormState {
   /** Der Artikel, der bearbeitet wird */
   item: Partial<ShoppingItem>;
 }

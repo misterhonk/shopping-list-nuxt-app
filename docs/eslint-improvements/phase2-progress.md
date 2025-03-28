@@ -11,12 +11,14 @@ Die Phase 2 der ESLint-Verbesserungen konzentriert sich auf die systematische Be
 ### Kritische Dateien
 
 1. **services/updateService.ts**
+
    - Syntaxfehler in `checkForWaitingServiceWorker` behoben
    - Konsistente Variablenbenennung implementiert
    - Tippfehler mit doppeltem Unterstrich (`__registration`) korrigiert
    - Unnötige Unterstrich-Präfixe entfernt
 
 2. **utils/logger.ts**
+
    - Variablenbenennung konsistent gemacht (`_currentConfig` → `currentConfig`)
    - ESLint-Warnungen für Konsolenmethoden behoben
    - Parameter `_data` in `data` umbenannt
@@ -36,6 +38,7 @@ Es wurden mehrere Automatisierungsskripte entwickelt:
 - `run-all-fixes.mjs` - Führt alle implementierten Fix-Skripte aus
 
 Zusätzlich wurden Platzhalter-Skripte für weitere spezifische Probleme erstellt, die nach Bedarf implementiert werden können:
+
 - `fix-callback-literals.mjs`
 - `fix-console-errors.mjs`
 - `fix-error-args.mjs`
@@ -57,18 +60,22 @@ Die ESLint-Warnungen wurden in den behandelten Dateien erheblich reduziert:
 Die nächsten Schritte für Phase 2 sind:
 
 1. **Weitere kritische Dateien bearbeiten**:
+
    - `composables/*.ts`
    - Weitere Servicedateien
 
 2. **Funktionale Module verbessern**:
+
    - Fokus auf Module mit hoher Komplexität
    - Analyse von ESLint-Komplexitätswarnungen
 
 3. **Interface-Konventionen abschließen**:
+
    - Verbleibende Interfaces mit IPrefix versehen
    - Konsistente Typverwendung sicherstellen
 
 4. **ESLint-Anpassungen und Validierung**:
+
    - ESLint-Config für spezifische Dateitypen anpassen
    - Gesamten Codebase validieren
 

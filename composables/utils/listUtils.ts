@@ -1,7 +1,5 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList } from '~/types/app-types';
-
 // Logger initialisieren
 const _logger = createLogger('listUtils');
 

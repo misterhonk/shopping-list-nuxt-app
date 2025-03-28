@@ -1,11 +1,12 @@
 import { reactive, ref, computed } from 'vue';
+
 import type { ICategory } from '~/types/app-types';
 import type { IUseItemForm } from '~/types/composable-types';
 
 /**
  * Composable für die Verwaltung des Artikelformulars
  * Bietet Funktionen zum Hinzufügen und Bearbeiten von Artikeln
- * 
+ *
  * @returns Ein Objekt mit Funktionen und Daten zur Formular-Verwaltung
  */
 export function useItemForm(): IUseItemForm {
@@ -27,13 +28,13 @@ export function useItemForm(): IUseItemForm {
   });
 
   // Berechnete Eigenschaften
-  const _isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
+  const _isFormValid.value = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
 
   /**
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
+  const _resetItemForm.value = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;

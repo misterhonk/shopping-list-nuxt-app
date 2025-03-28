@@ -130,7 +130,7 @@ export class CategoryService extends BaseService {
    */
   public getTemplateById(templateId: string): CategoryTemplate | null {
     return this.safeOperation(() => {
-      if(!templateId) {
+      if (!templateId) {
         throw new Error('TemplateId darf nicht leer sein');
       }
 
@@ -179,7 +179,7 @@ export class CategoryService extends BaseService {
   public setActiveTemplate(templateId: string): boolean {
     return (
       this.safeOperation(() => {
-        if(!templateId) {
+        if (!templateId) {
           throw new Error('TemplateId darf nicht leer sein');
         }
 
@@ -265,7 +265,7 @@ export class CategoryService extends BaseService {
     updates: Partial<Category>
   ): Category | null {
     return this.safeOperation(() => {
-      if(!templateId || !categoryId) {
+      if (!templateId || !categoryId) {
         throw new Error('TemplateId und CategoryId dürfen nicht leer sein');
       }
 

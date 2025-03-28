@@ -1,6 +1,7 @@
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
 import { sortListsByFavorites } from '~/composables/utils/listUtils';
 import { createLogger } from '~/utils/logger';
+
 import type { Ref } from 'vue';
 import type { IShoppingList, IShoppingItem } from '~/types/app-types';
 import type { IUseListUpdate } from '~/types/composable-types';
@@ -11,7 +12,7 @@ const _logger = createLogger('useListUpdate');
 /**
  * Composable für das Aktualisieren von Einkaufslisten
  * Bietet Funktionen zum Bearbeiten, Import und Export von Listen
- * 
+ *
  * @param listsRef - Referenz auf die Einkaufslisten
  * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
  * @returns Ein Objekt mit Funktionen zur Aktualisierung von Einkaufslisten

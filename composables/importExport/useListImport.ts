@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ImportOptions, ExportedList, CreateListOptions } from '~/composables/types';
+import type { IImportOptions, ExportedList, CreateListOptions } from '~/composables/types';
 import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
@@ -9,7 +9,7 @@ const _logger = createLogger('useListImport');
 /**
  * Interface für die Import-Ergebnisse
  */
-interface ImportResult {
+interface IImportResult {
   success: boolean;
   message: string;
   listId?: string;
@@ -20,7 +20,7 @@ interface ImportResult {
 /**
  * Interface für die Dienste, die für den Import benötigt werden
  */
-interface ImportServices {
+interface IImportServices {
   createList: (name: string, options: CreateListOptions) => ShoppingList | null;
   addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null;
   selectList: (listId: string) => boolean;
@@ -117,9 +117,9 @@ export function useListImport() {
    */
   const importListWithOptions = (
     data: ExportedList,
-    options: ImportOptions,
-    services: ImportServices
-  ): ImportResult => {
+    options: IImportOptions,
+    services: IImportServices
+  ): IImportResult => {
     try {
       if (!data.name || !Array.isArray(data.items)) {
         return {
@@ -178,7 +178,7 @@ export function useListImport() {
    * @param services - Die benötigten Dienste
    * @returns Das Importergebnis
    */
-  const importAsNewList = (data: ExportedList, services: ImportServices): ImportResult => {
+  const importAsNewList = (data: ExportedList, services: IImportServices): IImportResult => {
     // Erstelle eine neue Liste
     const newList = services.createList(data.name, {
       templateId: data.templateId ?? 'supermarket',
@@ -251,9 +251,9 @@ export function useListImport() {
   const mergeWithExistingList = (
     data: ExportedList,
     targetListId: string,
-    services: ImportServices,
+    services: IImportServices,
     _keepExisting: boolean
-  ): ImportResult => {
+  ): IImportResult => {
     // Aktualisiere die Liste
     services.selectList(targetListId);
 
@@ -306,8 +306,8 @@ export function useListImport() {
   const replaceExistingList = (
     data: ExportedList,
     targetListId: string,
-    services: ImportServices
-  ): ImportResult => {
+    services: IImportServices
+  ): IImportResult => {
     // Aktualisiere die Liste mit neuen Daten
     const updateSuccess = services.updateList({
       id: targetListId,
@@ -351,7 +351,7 @@ export function useListImport() {
     importData: ExportedList,
     createList: (name: string, options: CreateListOptions) => ShoppingList | null,
     addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null
-  ): ImportResult => {
+  ): IImportResult => {
     try {
       // Validiere die Daten
       if (!importData.name || !Array.isArray(importData.items)) {

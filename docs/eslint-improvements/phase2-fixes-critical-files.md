@@ -15,10 +15,12 @@ der ESLint-Optimierungen für kritische Dateien durchgeführt wurden.
 Die folgenden Verbesserungen wurden vorgenommen:
 
 1. **Variablenbenennung konsistent gemacht:**
+
    - `_currentConfig` zu `currentConfig` geändert
    - `_data` Parameter zu `data` in allen Methoden geändert
 
 2. **ESLint-Warnungen behoben:**
+
    - `eslint-disable-next-line no-console` für alle Konsolenmethoden hinzugefügt
    - Konsistente Verwendung von `data` statt `_data` als Parameter
 
@@ -30,6 +32,7 @@ Die folgenden Verbesserungen wurden vorgenommen:
 Die folgenden Verbesserungen wurden vorgenommen:
 
 1. **Variablenbenennung konsistent gemacht:**
+
    - Fehlerhafte doppelte `const _timer` deklarationen korrigiert
    - `_currentConfig` zu `currentConfig` geändert
    - `_template` zu `template` geändert
@@ -37,12 +40,13 @@ Die folgenden Verbesserungen wurden vorgenommen:
    - `_data` zu `data` geändert
 
 2. **ESLint-Warnungen behoben:**
+
    - Typo in `_logger._error` zu `_logger.error` korrigiert
    - SetTimeout-Aufrufe mit Rückgabewert aufgefangen
 
 3. **Konsistenz sichergestellt:**
    - Alle Variablen, die nicht wirklich unbenutzt sind, ohne Unterstrich-Präfix
-   - API-Typen (wie _name, _description) beibehalten, da sie Teil der API-Signatur sind
+   - API-Typen (wie \_name, \_description) beibehalten, da sie Teil der API-Signatur sind
 
 ## Automatisierung
 

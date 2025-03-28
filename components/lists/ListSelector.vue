@@ -110,7 +110,7 @@ import { ref, onMounted } from 'vue';
 
 import type { ShoppingList } from '~/types/app-types';
 
-const _props = withDefaults(
+const props = withDefaults(
   defineProps<{
     lists: ShoppingList[];
     currentListId: string | null;

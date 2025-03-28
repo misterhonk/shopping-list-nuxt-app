@@ -15,7 +15,7 @@ export interface IUseLocalStorageReturn {
 /**
  * Ein Composable für die Verwaltung des localStorage
  * Bietet Funktionen zum Speichern, Laden und Löschen von Daten
- * 
+ *
  * @returns Funktionen für den Zugriff auf den localStorage
  */
 export function useLocalStorage(): IUseLocalStorageReturn {
@@ -30,7 +30,7 @@ export function useLocalStorage(): IUseLocalStorageReturn {
    * @returns Eine tiefe Kopie des Objekts oder Arrays
    */
   const createImmutableCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj)) as T;
-  
+
   /**
    * Speichert Daten im localStorage
    * @param key - Der Schlüssel, unter dem die Daten gespeichert werden

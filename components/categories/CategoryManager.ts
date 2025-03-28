@@ -147,8 +147,10 @@ export default defineComponent({
 
     // Beim Laden der Komponente
     onMounted(() => {
-      if (!categoryStore) return;
-      
+      if (!categoryStore) {
+        return;
+      }
+
       try {
         categoryStore.loadFromLocalStorage();
 
@@ -165,19 +167,25 @@ export default defineComponent({
     });
 
     // ---- Methoden zum Umgang mit Templates ----
-    
+
     // Template aktivieren
     const activateTemplate = (templateId: string): void => {
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
       categoryStore.activateTemplate(templateId);
     };
 
     // Neues Template erstellen
     const createNewTemplate = (): void => {
-      if (!categoryStore) return;
-      
-      if (!newTemplate.value.name.trim()) return;
-      
+      if (!categoryStore) {
+        return;
+      }
+
+      if (!newTemplate.value.name.trim()) {
+        return;
+      }
+
       categoryStore.createTemplate(
         newTemplate.value.name.trim(),
         newTemplate.value.description.trim(),
@@ -200,15 +208,19 @@ export default defineComponent({
 
     // Template tatsächlich löschen
     const deleteCurrentTemplate = (): void => {
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
       categoryStore.deleteTemplate(activeTemplateId.value);
       showDeleteTemplateModal.value = false;
     };
 
     // Bearbeitetes Template speichern
     const saveEditedTemplate = (): void => {
-      if (!categoryStore || !editTemplate.value.name.trim()) return;
-      
+      if (!categoryStore || !editTemplate.value.name.trim()) {
+        return;
+      }
+
       categoryStore.updateTemplate(
         activeTemplateId.value,
         editTemplate.value.name.trim(),
@@ -220,40 +232,49 @@ export default defineComponent({
 
     // Auf Standardwerte zurücksetzen
     const resetToDefaults = (): void => {
-      if (!categoryStore) return;
-      
-      const confirmMessage = 'Möchten Sie wirklich alle benutzerdefinierten Vorlagen zurücksetzen? ' + 
-                            'Diese Aktion kann nicht rückgängig gemacht werden.';
-                            
+      if (!categoryStore) {
+        return;
+      }
+
+      const confirmMessage =
+        'Möchten Sie wirklich alle benutzerdefinierten Vorlagen zurücksetzen? ' +
+        'Diese Aktion kann nicht rückgängig gemacht werden.';
+
       if (confirm(confirmMessage)) {
         categoryStore.resetToDefault();
       }
     };
 
     // ---- Methoden zum Umgang mit Sortierung ----
-    
+
     // Sortierungsmodus umschalten
     const toggleSortMode = (): void => {
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
       categoryStore.toggleSortMode();
     };
 
     // Auf Standardsortierung zurücksetzen
     const resetToDefaultSort = (): void => {
-      if (!categoryStore) return;
+      if (!categoryStore) {
+        return;
+      }
       categoryStore.resetToDefaultSort();
     };
 
     // ---- Methoden zum Umgang mit Kategorien ----
-    
+
     // Neue Kategorie hinzufügen
     const addNewCategory = (): void => {
-      if (!categoryStore || !newCategoryName.value.trim()) return;
-      
+      if (!categoryStore || !newCategoryName.value.trim()) {
+        return;
+      }
+
       categoryStore.addCategory(newCategoryName.value.trim());
       newCategoryName.value = '';
       showNewCategoryModal.value = false;
-      
+
       // Komponente neu rendern
       forceRerender();
     };
@@ -267,27 +288,29 @@ export default defineComponent({
 
     // Bearbeitete Kategorie speichern
     const saveEditedCategory = (): void => {
-      if (!categoryStore || !currentEditingCategory.value || !editCategoryName.value.trim()) return;
-      
+      if (!categoryStore || !currentEditingCategory.value || !editCategoryName.value.trim()) {
+        return;
+      }
+
       // Referenzen zur besseren Lesbarkeit
       const categoryToEdit = currentEditingCategory.value;
       const newName = editCategoryName.value.trim();
-      
+
       // Modal schließen und Felder zurücksetzen
       showEditCategoryModal.value = false;
       currentEditingCategory.value = null;
       editCategoryName.value = '';
-      
+
       try {
         // Kategorie bearbeiten
         categoryStore.editCategory(categoryToEdit, newName);
-        
+
         // Diagnose und Aktualisierung aller Artikel mit dieser Kategorie
         updateCategoryReferences(categoryToEdit.id, newName);
-        
+
         // Komponente neu rendern
         forceRerender();
-        
+
         // Verzögertes erneutes Laden zur Sicherstellung der Aktualisierung
         setTimeout(() => {
           if (categoryStore) {
@@ -303,10 +326,12 @@ export default defineComponent({
 
     // Kategorie löschen
     const deleteCategory = (category: ICategory): void => {
-      if (!categoryStore) return;
-      
+      if (!categoryStore) {
+        return;
+      }
+
       const confirmText = `Möchten Sie die Kategorie "${category.name}" wirklich löschen?`;
-      
+
       if (confirm(confirmText)) {
         categoryStore.deleteCategory(category);
         forceRerender();
@@ -326,7 +351,7 @@ export default defineComponent({
     // Komponente neu rendern
     const forceRerender = (): void => {
       componentKey.value += 1;
-      
+
       // Sicherstellen, dass die Änderungen auch sichtbar sind
       setTimeout(() => {
         componentKey.value += 1;
@@ -370,7 +395,7 @@ export default defineComponent({
       addNewCategory,
       editCategory,
       saveEditedCategory,
-      deleteCategory
+      deleteCategory,
     };
   },
 });

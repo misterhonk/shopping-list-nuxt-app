@@ -128,21 +128,21 @@ import type { ShoppingList, ShoppingItem } from '~/types/app-types';
 
 const _logger = createLogger('ImportOptionsModal');
 
-interface ImportData {
+interface IImportData {
   name: string;
   items: ShoppingItem[];
 }
 
-interface ImportOptions {
+interface IImportOptions {
   mode: 'create' | 'merge' | 'replace';
   targetListId?: string;
   keepExistingItems: boolean;
 }
 
-const _props = withDefaults(
+const props = withDefaults(
   defineProps<{
     isOpen: boolean;
-    importData: ImportData;
+    importData: IImportData;
     availableLists: ShoppingList[];
   }>(),
   {
@@ -153,7 +153,7 @@ const _props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'confirm', options: ImportOptions): void;
+  (e: 'confirm', options: IImportOptions): void;
   (e: 'cancel'): void;
 }>();
 
@@ -201,7 +201,7 @@ const isValid = computed<boolean>(() => {
 
 // Import bestätigen
 const confirmImport = (): void => {
-  const options: ImportOptions = {
+  const options: IImportOptions = {
     mode: selectedOption.value === 'create' ? 'create' : updateMode.value,
     targetListId: selectedOption.value === 'update' ? selectedListId.value : undefined,
     keepExistingItems: updateMode.value === 'merge',

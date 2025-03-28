@@ -173,11 +173,11 @@ async function clearAllCaches(): Promise<void> {
 export function checkForWaitingServiceWorker(callback: (waiting: boolean) => void): void {
   // Boolean-Wert für das Ergebnis
   let waitingExists = false;
-  
+
   if ('serviceWorker' in navigator) {
     // Asynchrone Prüfung mit Promise
     navigator.serviceWorker.ready
-      .then((registration) => {
+      .then(registration => {
         // Setze waitingExists basierend auf registration.waiting
         waitingExists = Boolean(registration.waiting);
         // Rufe Callback mit dem Ergebnis auf

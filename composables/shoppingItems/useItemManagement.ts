@@ -1,4 +1,5 @@
 import { computed } from 'vue';
+
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
 import {
   createItemObject,
@@ -7,6 +8,7 @@ import {
   groupItemsByCategory,
 } from '~/composables/utils/itemUtils';
 import { createLogger } from '~/utils/logger';
+
 import type { ComputedRef, Ref } from 'vue';
 import type { IShoppingList, IShoppingItem } from '~/types/app-types';
 import type { IUseItemManagement } from '~/types/composable-types';
@@ -17,7 +19,7 @@ const _logger = createLogger('useItemManagement');
 /**
  * Composable für die Verwaltung von Artikeln
  * Bietet Funktionen zum Hinzufügen, Entfernen und Markieren von Artikeln
- * 
+ *
  * @param shoppingListsRef - Referenz auf die Einkaufslisten
  * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
  * @returns Ein Objekt mit Funktionen und Daten zur Artikel-Verwaltung

@@ -1,8 +1,10 @@
 import { reactive, ref, computed, onMounted, watch } from 'vue';
+
 import { initializeServices } from '~/services';
 import { createLogger } from '~/utils/logger';
-import type { IShoppingItem, ICategory } from '~/types/app-types';
+
 import type { Ref, ComputedRef } from 'vue';
+import type { IShoppingItem, ICategory } from '~/types/app-types';
 
 // Interface für den Rückgabetyp
 export interface IUseShoppingItemsReturn {
@@ -50,7 +52,9 @@ const _logger = createLogger('useShoppingItems');
  * @param providedCurrentListId - Optional: Eine Ref auf die aktuelle Listen-ID von außen
  * @returns Ein Objekt mit Funktionen und Daten zur Verwaltung von Einkaufsartikeln
  */
-export function useShoppingItems(providedCurrentListId?: Ref<string | null>): IUseShoppingItemsReturn {
+export function useShoppingItems(
+  providedCurrentListId?: Ref<string | null>
+): IUseShoppingItemsReturn {
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
   const itemNameInput = ref<HTMLInputElement | null>(null);
@@ -341,8 +345,6 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): IU
     const lists = shoppingListService.getAllLists();
     let hasChanges = false;
 
-    for (const list of lists) {
-      for (const item of list.items) {
         // Prüfen, ob das Item diese Kategorie verwendet
         let needsUpdate = false;
 
@@ -362,8 +364,6 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): IU
           });
           hasChanges = true;
         }
-      }
-    }
 
     // Bei Änderungen die Items aktualisieren
     if (hasChanges) {

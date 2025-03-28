@@ -7,9 +7,9 @@
  * die nicht damit beginnen, um der TypeScript-Konvention zu entsprechen.
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // Verzeichnisse, die durchsucht werden sollen
 const directoriesToSearch = [
@@ -62,14 +62,13 @@ function fixFile(filePath) {
   if (madeChanges) {
     // Extrahiere alle geänderten Interface-Namen
     const renamedInterfaces = [];
-    fileContent.match(interfacePattern) &&
-      fileContent.match(interfacePattern).forEach(match => {
-        const interfaceName = match.match(/interface\s+([A-Z][a-zA-Z0-9_]*)/)[1];
-        if (interfaceName.startsWith('I')) {
-          const originalName = interfaceName.substring(1);
-          renamedInterfaces.push({ original: originalName, renamed: interfaceName });
-        }
-      });
+    fileContent.match(interfacePattern)?.forEach(match => {
+      const interfaceName = match.match(/interface\s+([A-Z][a-zA-Z0-9_]*)/)[1];
+      if (interfaceName.startsWith('I')) {
+        const originalName = interfaceName.substring(1);
+        renamedInterfaces.push({ original: originalName, renamed: interfaceName });
+      }
+    });
 
     // Ersetze alle Referenzen im gleichen File
     for (const { original, renamed } of renamedInterfaces) {

@@ -133,7 +133,7 @@ export const removeItemFromList = (
   }
 
   // Prüfen, ob das Item existiert
-  if (!list || !list.items.some(item => item.id === itemId)) {
+  if (!list?.items.some(item => item.id === itemId)) {
     _logger.error(`Item mit ID ${itemId} nicht gefunden.`);
     return null;
   }

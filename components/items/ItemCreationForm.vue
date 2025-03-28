@@ -94,7 +94,7 @@ interface INewItem {
   price: number;
 }
 
-const _props = withDefaults(
+const props = withDefaults(
   defineProps<{
     categories: CategoryInput[];
     allLists: any[];

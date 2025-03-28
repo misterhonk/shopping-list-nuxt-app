@@ -14,6 +14,7 @@ Diese Änderungen wurden im Commit `1357049c4fc6f3b4c253123faab1996fc35025af` ge
 ## Verbleibende Probleme
 
 Das automatische Hinzufügen von Rückgabetypen hat in einigen Dateien zu Syntax-Fehlern geführt:
+
 - TypeScript-Parsing-Fehler wie "Expression expected", "'=>' expected", "'{' expected"
 - Fehlerhafte Import-Abhängigkeiten aufgrund der Parsing-Fehler
 - Verbleibende Interface-Namenskonventionsprobleme
@@ -21,21 +22,24 @@ Das automatische Hinzufügen von Rückgabetypen hat in einigen Dateien zu Syntax
 ## Nächste Schritte
 
 ### Phase 1: Kritische Dateien korrigieren
+
 1. `utils/logger.ts` - Diese Datei wird häufig importiert und verursacht kaskadische Fehler
 2. `services/updateService.ts` - Enthält wichtige Funktionalität für Updates und Versionierung
 3. `stores/category/index.ts` - Zentrale Store-Datei mit vielen Abhängigkeiten
 
 ### Phase 2: Funktionale Module korrigieren
+
 1. Composables-Dateien mit Parsing-Fehlern
    - `composables/useDarkMode.ts`
    - `composables/shoppingItems/*.ts`
    - `composables/utils/*.ts`
 2. Service-Dateien
    - `services/CategoryService.ts`
-   - `services/ItemService.ts` 
+   - `services/ItemService.ts`
    - `services/ShoppingListService.ts`
 
 ### Phase 3: Interface-Konventionen abschließen
+
 1. Verbleibende Interface-Formatierungsprobleme in:
    - `types/app-types.ts`
    - `types/uiTypes.ts`
@@ -43,6 +47,7 @@ Das automatische Hinzufügen von Rückgabetypen hat in einigen Dateien zu Syntax
    - `composables/types.ts`
 
 ### Phase 4: ESLint-Anpassungen und Validierung
+
 1. ESLint-Konfiguration anpassen:
    - Regeln für "import/no-unused-modules" bei Public-API-Dateien
    - Konsistente Interface-Benennungsregeln sicherstellen

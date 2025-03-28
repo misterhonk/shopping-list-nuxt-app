@@ -1,6 +1,7 @@
 import { ref, computed, watch } from 'vue';
+
 import { createLogger } from '~/utils/logger';
-import type { Ref, ComputedRef } from 'vue';
+
 import type { IShoppingList, IShoppingItem } from '~/types/app-types';
 import type { IUseItemSuggestions } from '~/types/composable-types';
 
@@ -26,7 +27,7 @@ export interface IItemSuggestion {
 
 /**
  * Composable für Artikelvorschläge basierend auf vergangenen Einkäufen
- * 
+ *
  * @param listRef - Referenz auf die Einkaufslisten
  * @returns Ein Objekt mit Funktionen und Daten für Artikelvorschläge
  */
