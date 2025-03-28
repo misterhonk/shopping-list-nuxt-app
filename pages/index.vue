@@ -198,11 +198,14 @@ const currentListItems = computed(() => {
 });
 
 // Export/Import-Funktionen - nicht aktiv verwendet in der UI
-const {
-  handleImportListWithOptions,
-  showImportOptions,
-  importData,
-} = useListImportExport(createList, addNewItem, allItems, lists, selectList, updateList);
+const { handleImportListWithOptions, showImportOptions, importData } = useListImportExport(
+  createList,
+  addNewItem,
+  allItems,
+  lists,
+  selectList,
+  updateList
+);
 
 // Neue Liste erstellen
 const createNewList = (name: string, options: any): void => {

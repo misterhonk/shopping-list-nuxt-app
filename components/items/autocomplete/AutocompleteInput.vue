@@ -114,13 +114,18 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
 });
 
 // Teilt den Text in hervorgehobene und normale Teile
-const splitTextForHighlight = (text: string): IITextPart[] => {
+interface IHighlightTextPart {
+  text: string;
+  highlight: boolean;
+}
+
+const splitTextForHighlight = (text: string): IHighlightTextPart[] => {
   if (!inputValue.value || inputValue.value.length < _props.minChars) {
     return [{ text, highlight: false }];
   }
 
   const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
-  const parts: IITextPart[] = [];
+  const parts: IHighlightTextPart[] = [];
   let lastIndex = 0;
   let match;
 
