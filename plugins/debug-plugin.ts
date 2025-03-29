@@ -21,7 +21,7 @@ export default defineNuxtPlugin(nuxtApp => {
       });
 
       // Debug-Meldung ausgeben
-      logger.info('[Debug] Kategorie-Debug-Listener registriert');
+      _logger.info('[Debug] Kategorie-Debug-Listener registriert');
     } else {
       _logger.warn(
         '[Debug] onCategoryUpdate nicht verfügbar - Debug-Listener konnte nicht registriert werden'
@@ -50,7 +50,7 @@ export default defineNuxtPlugin(nuxtApp => {
               message += ` = ${value}`;
             }
 
-            logger.info(message);
+            _logger.info(message);
           }
         },
       },

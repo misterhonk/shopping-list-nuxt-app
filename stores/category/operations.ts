@@ -2,8 +2,7 @@ import { createLogger } from '~/utils/logger';
 
 import { generateCategoryId, deepCopy, categoryExists, findCategoryById } from './utils';
 
-import type { TemplateCollection } from '~/composables/types';
-import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { ICategory, ICategoryTemplate, ITemplateCollection } from '~/types/app-types';
 
 // Logger initialisieren
 const _logger = createLogger('operations');
@@ -19,15 +18,15 @@ const _logger = createLogger('operations');
 export const addCategory = (
   templateId: string,
   categoryName: string,
-  templates: TemplateCollection,
-  customTemplates: TemplateCollection
-): TemplateCollection => {
+  templates: ITemplateCollection,
+  customTemplates: ITemplateCollection
+): ITemplateCollection => {
   if (!categoryName || categoryName.trim() === '') {
     return customTemplates;
   }
 
   // Erstelle ein neues Kategorie-Objekt
-  const newCategory: Category = {
+  const newCategory: ICategory = {
     id: generateCategoryId(categoryName),
     name: categoryName.trim(),
   };
@@ -82,9 +81,9 @@ export const editCategory = (
   templateId: string,
   categoryId: string,
   newName: string,
-  templates: TemplateCollection,
-  customTemplates: TemplateCollection
-): TemplateCollection => {
+  templates: ITemplateCollection,
+  customTemplates: ITemplateCollection
+): ITemplateCollection => {
   if (!newName || newName.trim() === '') {
     return customTemplates;
   }
@@ -141,9 +140,9 @@ export const editCategory = (
 export const deleteCategory = (
   templateId: string,
   categoryId: string,
-  templates: TemplateCollection,
-  customTemplates: TemplateCollection
-): TemplateCollection => {
+  templates: ITemplateCollection,
+  customTemplates: ITemplateCollection
+): ITemplateCollection => {
   // Wähle das aktuelle Template
   const isStandardTemplate = templates[templateId] !== undefined;
   const currentTemplate = isStandardTemplate ? templates[templateId] : customTemplates[templateId];
@@ -193,9 +192,9 @@ export const createTemplate = (
   name: string,
   description: string = '',
   baseTemplateId: string | null = null,
-  templates: TemplateCollection,
-  customTemplates: TemplateCollection
-): { customTemplates: TemplateCollection; newTemplateId: string | null } => {
+  templates: ITemplateCollection,
+  customTemplates: ITemplateCollection
+): { customTemplates: ITemplateCollection; newTemplateId: string | null } => {
   if (!name || name.trim() === '') {
     return { customTemplates, newTemplateId: null };
   }
@@ -204,7 +203,7 @@ export const createTemplate = (
   const id = `${name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
 
   // Kategorien aus einem Basis-Template übernehmen oder leer starten
-  let categories: Category[] = [];
+  let categories: ICategory[] = [];
   if (baseTemplateId) {
     const baseTemplate = templates[baseTemplateId] || customTemplates[baseTemplateId];
     if (baseTemplate) {
@@ -213,7 +212,7 @@ export const createTemplate = (
   }
 
   // Neues Template erstellen
-  const newTemplate: CategoryTemplate = {
+  const newTemplate: ICategoryTemplate = {
     id,
     name,
     description,
@@ -238,8 +237,8 @@ export const createTemplate = (
  */
 export const deleteTemplate = (
   templateId: string,
-  customTemplates: TemplateCollection
-): TemplateCollection => {
+  customTemplates: ITemplateCollection
+): ITemplateCollection => {
   if (!customTemplates[templateId]) {
     return customTemplates;
   }
@@ -262,8 +261,8 @@ export const updateTemplate = (
   templateId: string,
   name: string | undefined,
   description: string | undefined,
-  customTemplates: TemplateCollection
-): TemplateCollection => {
+  customTemplates: ITemplateCollection
+): ITemplateCollection => {
   if (!customTemplates[templateId]) {
     return customTemplates;
   }
@@ -288,10 +287,10 @@ export const updateTemplate = (
  */
 export const updateCategoryOrder = (
   templateId: string,
-  newOrder: Category[],
-  templates: TemplateCollection,
-  customTemplates: TemplateCollection
-): TemplateCollection => {
+  newOrder: ICategory[],
+  templates: ITemplateCollection,
+  customTemplates: ITemplateCollection
+): ITemplateCollection => {
   if (!Array.isArray(newOrder) || newOrder.length === 0) {
     return customTemplates;
   }

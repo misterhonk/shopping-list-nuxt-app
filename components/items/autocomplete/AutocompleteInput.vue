@@ -1,4 +1,4 @@
-type SuggestionInput = string | ItemSuggestion;<template>
+<template>
   <div class="relative">
     <input
       ref="inputElement"
@@ -47,10 +47,13 @@ type SuggestionInput = string | ItemSuggestion;<template>
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
-import type { ItemSuggestion } from '~/types/app-types';
+import type { IItemSuggestion } from '~/types/app-types';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface _ITextPart {
+// Definieren der SuggestionInput als Union-Typ
+type SuggestionInput = string | IItemSuggestion;
+
+// Interface für Textteile mit Hervorhebung
+interface IHighlightTextPart {
   text: string;
   highlight: boolean;
 }
@@ -74,20 +77,20 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
-  (e: 'select', suggestion: ItemSuggestion): void;
+  (e: 'select', suggestion: IItemSuggestion): void;
 }>();
 
 // Referenz zum Input-Element
 const inputElement = ref<HTMLInputElement | null>(null);
 
 // Zustand der Komponente
-const inputValue = ref<string>(_props.modelValue);
+const inputValue = ref<string>(props.modelValue);
 const showSuggestions = ref<boolean>(false);
 const highlightedIndex = ref<number>(-1);
 
 // Gefilterte Vorschläge basierend auf Eingabe
-const filteredSuggestions = computed<ItemSuggestion[]>(() => {
-  if (!inputValue.value || inputValue.value.length < _props.minChars) {
+const filteredSuggestions = computed<IItemSuggestion[]>(() => {
+  if (!inputValue.value || inputValue.value.length < props.minChars) {
     return [];
   }
 
@@ -107,17 +110,12 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
       }
       return { text: String(suggestion) };
     })
-    .slice(0, _props.maxSuggestions);
+    .slice(0, props.maxSuggestions);
 });
 
 // Teilt den Text in hervorgehobene und normale Teile
-interface IHighlightTextPart {
-  text: string;
-  highlight: boolean;
-}
-
 const splitTextForHighlight = (text: string): IHighlightTextPart[] => {
-  if (!inputValue.value || inputValue.value.length < _props.minChars) {
+  if (!inputValue.value || inputValue.value.length < props.minChars) {
     return [{ text, highlight: false }];
   }
 
@@ -220,8 +218,8 @@ watch(
 
 // Bei der Initialisierung
 onMounted(() => {
-  if (_props.modelValue) {
-    inputValue.value = _props.modelValue;
+  if (props.modelValue) {
+    inputValue.value = props.modelValue;
   }
 });
 </script>

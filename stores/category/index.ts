@@ -22,8 +22,7 @@ import {
 import { saveCategoryData, loadCategoryData } from './storage';
 import { categoryTemplates, defaultTemplateId } from './templates';
 
-import type { CategorySortConfig, TemplateCollection } from '~/composables/types';
-import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { ICategory, ICategoryTemplate, ICategorySortConfig, ITemplateCollection } from '~/types/app-types';
 
 // Logger initialisieren
 const _logger = createLogger('index');
@@ -32,11 +31,11 @@ const _logger = createLogger('index');
  * Interface für den CategoryStore State
  */
 interface ICategoryState {
-  templates: TemplateCollection;
+  templates: ITemplateCollection;
   activeTemplateId: string;
-  customTemplates: TemplateCollection;
+  customTemplates: ITemplateCollection;
   isEditMode: boolean;
-  sortConfigs: Record<string, CategorySortConfig>;
+  sortConfigs: Record<string, ICategorySortConfig>;
 }
 
 /**
@@ -55,28 +54,28 @@ export const useCategoryStore = defineStore('categoryStore', {
     /**
      * Alle verfügbaren Templates (voreingestellte und benutzerdefinierte)
      */
-    allTemplates(): TemplateCollection {
+    allTemplates(): ITemplateCollection {
       return { ...this.templates, ...this.customTemplates };
     },
 
     /**
      * Das aktuell ausgewählte Template
      */
-    currentTemplate(): CategoryTemplate {
+    currentTemplate(): ICategoryTemplate {
       return this.allTemplates[this.activeTemplateId] || this.templates[defaultTemplateId];
     },
 
     /**
      * Nur die Kategorien des aktuell ausgewählten Templates
      */
-    currentCategories(): Category[] {
+    currentCategories(): ICategory[] {
       return this.currentTemplate.categories ?? [];
     },
 
     /**
      * Sortierte Kategorien des aktuellen Templates (nach Laufweg, Benutzerdefiniert oder Alphabetisch)
      */
-    sortedCategories(): Category[] {
+    sortedCategories(): ICategory[] {
       const currentSortConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
       return sortCategories(this.currentCategories, this.currentTemplate, currentSortConfig);
     },
@@ -101,7 +100,7 @@ export const useCategoryStore = defineStore('categoryStore', {
     /**
      * Aktuelle Sortierungskonfiguration für das ausgewählte Template
      */
-    currentSortConfig(): CategorySortConfig {
+    currentSortConfig(): ICategorySortConfig {
       return getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
     },
 
@@ -144,7 +143,7 @@ export const useCategoryStore = defineStore('categoryStore', {
      * @param categoryToEdit - Die zu bearbeitende Kategorie (Objekt oder ID)
      * @param newName - Der neue Name für die Kategorie
      */
-    editCategory(categoryToEdit: Category | string, newName: string): void {
+    editCategory(categoryToEdit: ICategory | string, newName: string): void {
       // Sicherstellen, dass wir eine Kategorie-ID haben
       const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
 
@@ -166,7 +165,7 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Kategorie löschen
      * @param categoryToDelete - Die zu löschende Kategorie (Objekt oder ID)
      */
-    deleteCategory(categoryToDelete: Category | string): void {
+    deleteCategory(categoryToDelete: ICategory | string): void {
       // Sicherstellen, dass wir eine Kategorie-ID haben
       const categoryId =
         typeof categoryToDelete === 'object' ? categoryToDelete.id : categoryToDelete;
@@ -282,7 +281,7 @@ export const useCategoryStore = defineStore('categoryStore', {
      * Kategorien-Reihenfolge aktualisieren
      * @param newOrder - Die neue Reihenfolge der Kategorien
      */
-    updateCategoryOrder(newOrder: Category[]): void {
+    updateCategoryOrder(newOrder: ICategory[]): void {
       this.customTemplates = updateCategoryOrderOperation(
         this.activeTemplateId,
         newOrder,
@@ -344,7 +343,7 @@ export const useCategoryStore = defineStore('categoryStore', {
       const template = this.allTemplates[this.activeTemplateId];
       const defaultOrder = template.defaultCategoryOrder ?? [];
 
-      const updatedConfig: CategorySortConfig = {
+      const updatedConfig: ICategorySortConfig = {
         _templateId: this.activeTemplateId,
         useCustomSort: false,
         customOrder: [...defaultOrder],

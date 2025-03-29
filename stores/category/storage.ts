@@ -3,7 +3,7 @@ import { createLogger } from '~/utils/logger';
 
 import { sanitizeTemplate } from './utils';
 
-import type { TemplateCollection } from '~/composables/types';
+import type { ITemplateCollection } from '~/types/app-types';
 
 // Logger initialisieren
 const _logger = createLogger('storage');
@@ -19,7 +19,7 @@ const STORAGE_KEY = 'categoryTemplates';
  */
 interface IStoredCategoryData {
   activeTemplateId: string;
-  customTemplates: TemplateCollection;
+  customTemplates: ITemplateCollection;
 }
 
 /**
@@ -29,7 +29,7 @@ interface IStoredCategoryData {
  */
 export const saveCategoryData = (
   activeTemplateId: string,
-  customTemplates: TemplateCollection
+  customTemplates: ITemplateCollection
 ): void => {
   try {
     // Sicherstellen, dass alle Templates korrekt formatiert sind
@@ -38,7 +38,7 @@ export const saveCategoryData = (
         ...acc,
         [id]: sanitizeTemplate(template),
       }),
-      {} as TemplateCollection
+      {} as ITemplateCollection
     );
 
     const dataToSave: IStoredCategoryData = {
@@ -49,7 +49,7 @@ export const saveCategoryData = (
     // Tiefe Kopie erstellen, um Referenzprobleme zu vermeiden
     const cleanDataToSave = createImmutableCopy(dataToSave);
 
-    logger.info('Speichere in localStorage:', cleanDataToSave);
+    _logger.info('Speichere in localStorage:', cleanDataToSave);
     saveToStorage(STORAGE_KEY, cleanDataToSave);
   } catch (error) {
     _logger.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
@@ -69,7 +69,7 @@ export const loadCategoryData = (): IStoredCategoryData | null => {
       return null;
     }
 
-    logger.info('Geladene Daten:', parsedData);
+    _logger.info('Geladene Daten:', parsedData);
 
     return {
       activeTemplateId: parsedData.activeTemplateId ?? '',

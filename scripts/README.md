@@ -1,51 +1,30 @@
-# Scripts-Verzeichnis
+# Skripte für die Shopping-List-App
 
-Dieses Verzeichnis enthält Hilfsskripte für die Entwicklung, Wartung und Deployment der Shopping-List-App.
+Dieser Ordner enthält Hilfsskripte für die Entwicklung und Wartung der Shopping-List-App.
 
-## Richtlinien für Skripte
+## Verfügbare Skripte
 
-1. **Einheitliches Format**: Jedes Skript sollte ein einheitliches Format haben und klar dokumentiert sein.
-2. **Sprechende Namen**: Verwende sprechende Namen für Skripte (z.B. `update-version.mjs` statt `update.mjs`).
-3. **Dokumentation**: Jedes Skript sollte einen Header-Kommentar haben, der seinen Zweck beschreibt.
-4. **Module-Format**: Verwende ES-Module (.mjs) für neue Skripte.
-5. **Fehlerbehandlung**: Implementiere eine angemessene Fehlerbehandlung in jedem Skript.
-6. **Logging**: Verwende einheitliches Logging, das sowohl informative als auch fehlerhafte Zustände anzeigt.
+### `replace-deprecated-types.sh`
 
-## Kategorien von Skripten
+Ein Hilfsskript zum Ersetzen veralteter Typdefinitionen im gesamten Projekt.
 
-Organisiere Skripte in Unterverzeichnissen nach ihrer Funktion:
-
-- **dev**: Entwicklungshilfen (z.B. Typkonvertierung, Codegenerierung)
-- **build**: Build- und Deployment-Skripte
-- **maintenance**: Wartungsskripte (z.B. Datenmigrationen)
-- **quality**: Codequalitäts-Skripte (z.B. Linting, Formatierung)
-
-## Beispiel-Header für Skripte
-
-```javascript
-/**
- * update-version.mjs - Aktualisiert die Versionsnummern in der App
- * 
- * Dieses Skript aktualisiert die Versionsnummern in package.json und
- * updateService.ts basierend auf den übergebenen Parametern.
- * 
- * Verwendung:
- * node scripts/build/update-version.mjs --major|--minor|--patch
- * 
- * Optionen:
- * --major: Erhöht die Hauptversionsnummer (z.B. 1.0.0 -> 2.0.0)
- * --minor: Erhöht die Nebenversionsnummer (z.B. 1.0.0 -> 1.1.0)
- * --patch: Erhöht die Patch-Versionsnummer (z.B. 1.0.0 -> 1.0.1)
- * 
- * @author Dein Name
- * @date YYYY-MM-DD
- */
+**Verwendung:**
+```bash
+# Führe das Skript aus dem Projektroot aus
+chmod +x scripts/replace-deprecated-types.sh
+./scripts/replace-deprecated-types.sh
 ```
 
-## Best Practices
+**Hinweis:** Dieses Skript führt automatische Ersetzungen durch, kann aber nicht alle Typen korrekt ersetzen. Nach der Ausführung sollte das Projekt manuell überprüft werden.
 
-- Teste jedes Skript gründlich, bevor du es commitest.
-- Halte Skripte auf dem neuesten Stand mit den aktuellen Projektanforderungen.
-- Beachte die ESLint-Regeln des Projekts auch für Skripte.
-- Verwende TypeScript für komplexere Skripte, um Typsicherheit zu gewährleisten.
-- Dokumentiere die Verwendung jedes Skripts im Projektdokumentation.
+## Dokumentation
+
+### `type-migration.md`
+
+Dokumentation zur Migration von veralteten Typdefinitionen zu den neuen, konsistenten Definitionen. Enthält Anleitungen und eine Referenztabelle für die Umstellung.
+
+## Hinweise zur Verwendung
+
+1. Alle Skripte sollten vom Projektroot-Verzeichnis aus ausgeführt werden, nicht innerhalb des `scripts`-Ordners.
+2. Mache vor der Ausführung automatisierter Skripte immer einen Git-Commit oder eine Sicherung deines Projekts.
+3. Nach der Ausführung automatisierter Skripte sollte der Code auf Fehler oder unerwartete Änderungen überprüft werden.

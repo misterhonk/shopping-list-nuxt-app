@@ -17,6 +17,13 @@ import type { IUseItemManagement } from '~/types/composable-types';
 const _logger = createLogger('useItemManagement');
 
 /**
+ * Hilfsfunktion zur Überprüfung, ob eine Liste Items hat
+ */
+const hasValidItems = (list: IShoppingList | undefined): boolean => {
+  return !!list && Array.isArray(list.items);
+};
+
+/**
  * Composable für die Verwaltung von Artikeln
  * Bietet Funktionen zum Hinzufügen, Entfernen und Markieren von Artikeln
  *
@@ -35,7 +42,7 @@ export function useItemManagement(
    */
   const allItems: ComputedRef<IShoppingItem[]> = computed(() => {
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
-    if (!currentList || !Array.isArray(currentList.items)) {
+    if (!hasValidItems(currentList)) {
       return [];
     }
     return currentList.items;
@@ -50,7 +57,7 @@ export function useItemManagement(
     const currentList = shoppingListsRef.value.find(list => list.id === currentListIdRef.value);
 
     // Prüfen, ob items ein gültiges Array ist
-    if (!currentList || !Array.isArray(currentList.items)) {
+    if (!hasValidItems(currentList)) {
       return categories.reduce(
         (obj, cat) => {
           obj[cat] = [];
@@ -87,24 +94,20 @@ export function useItemManagement(
 
     // Immutable Update der Listen mit dem neuen Item
     const updatedLists = createImmutableCopy(shoppingListsRef.value);
-
-    // Sicherstellen, dass items existiert
-    if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
-      // Sicherstellen, dass listIndex existiert
-      if (updatedLists[listIndex]) {
-        updatedLists[listIndex].items = [];
-      } else {
-        return null; // Liste existiert nicht mehr
-      }
+    
+    // Prüfen, ob die Liste existiert
+    if (!updatedLists[listIndex]) {
+      return null;
+    }
+    
+    // Sicherstellen, dass items ein Array ist
+    if (!Array.isArray(updatedLists[listIndex].items)) {
+      updatedLists[listIndex].items = [];
     }
 
     // Item hinzufügen
-    if (updatedLists[listIndex] && Array.isArray(updatedLists[listIndex]?.items)) {
-      updatedLists[listIndex].items.push(newItemObj);
-      updatedLists[listIndex].modifiedAt = Date.now();
-    } else {
-      return null; // Liste oder items existieren nicht
-    }
+    updatedLists[listIndex].items.push(newItemObj);
+    updatedLists[listIndex].modifiedAt = Date.now();
 
     // Update der Listen-Referenz und Speichern
     shoppingListsRef.value = updatedLists;
@@ -130,35 +133,26 @@ export function useItemManagement(
         return false;
       }
 
-      if (
-        !shoppingListsRef.value[listIndex] ||
-        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
-      ) {
+      const currentList = shoppingListsRef.value[listIndex];
+      if (!hasValidItems(currentList)) {
         return false;
       }
 
       // Prüfen, ob das Item existiert
-      if (
-        !shoppingListsRef.value[listIndex] ||
-        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
-      ) {
-        return false;
-      }
-
-      const itemExists = shoppingListsRef.value[listIndex]?.items.some(item => item.id === itemId);
+      const itemExists = currentList.items.some(item => item.id === itemId);
       if (!itemExists) {
         return false;
       }
 
       // Immutable Update mit Filter
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-
-      // Sicherstellen, dass Liste und items existieren
-      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
+      
+      // Sicherstellen, dass die Liste existiert
+      if (!updatedLists[listIndex]) {
         return false;
       }
 
-      updatedLists[listIndex].items = updatedLists[listIndex]?.items.filter(
+      updatedLists[listIndex].items = updatedLists[listIndex].items.filter(
         item => item.id !== itemId
       );
       updatedLists[listIndex].modifiedAt = Date.now();
@@ -191,35 +185,26 @@ export function useItemManagement(
         return false;
       }
 
-      if (
-        !shoppingListsRef.value[listIndex] ||
-        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
-      ) {
+      const currentList = shoppingListsRef.value[listIndex];
+      if (!hasValidItems(currentList)) {
         return false;
       }
 
-      // Nullcheck auf Liste
-      if (!shoppingListsRef.value[listIndex]) {
-        return false;
-      }
-
-      const itemIndex = shoppingListsRef.value[listIndex]?.items.findIndex(
-        item => item.id === itemId
-      );
+      const itemIndex = currentList.items.findIndex(item => item.id === itemId);
       if (itemIndex === -1) {
         return false;
       }
 
       // Immutable Update mit Map
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-
-      // Sicherstellen, dass Liste und items existieren
-      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
+      
+      // Sicherstellen, dass die Liste existiert
+      if (!updatedLists[listIndex]) {
         return false;
       }
 
       // Nur das betroffene Item aktualisieren
-      updatedLists[listIndex].items = updatedLists[listIndex]?.items.map((item, index) => {
+      updatedLists[listIndex].items = updatedLists[listIndex].items.map((item, index) => {
         if (index === itemIndex) {
           return {
             ...item,
@@ -256,23 +241,21 @@ export function useItemManagement(
         return false;
       }
 
-      if (
-        !shoppingListsRef.value[listIndex] ||
-        !Array.isArray(shoppingListsRef.value[listIndex]?.items)
-      ) {
+      const currentList = shoppingListsRef.value[listIndex];
+      if (!hasValidItems(currentList)) {
         return false;
       }
 
       // Immutable Update mit Filter
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-
-      // Sicherstellen, dass Liste und items existieren
-      if (!updatedLists[listIndex] || !Array.isArray(updatedLists[listIndex]?.items)) {
+      
+      // Sicherstellen, dass die Liste existiert
+      if (!updatedLists[listIndex]) {
         return false;
       }
 
       // Filter auf die Items anwenden
-      updatedLists[listIndex].items = updatedLists[listIndex]?.items.filter(item => !item.checked);
+      updatedLists[listIndex].items = updatedLists[listIndex].items.filter(item => !item.checked);
       updatedLists[listIndex].modifiedAt = Date.now();
 
       // Update und Speichern
@@ -305,7 +288,7 @@ export function useItemManagement(
 
       // Jede Liste durchgehen und Items aktualisieren
       updatedLists.forEach((list, listIndex) => {
-        if (!Array.isArray(list.items) || !updatedLists[listIndex] || typeof list !== 'object') {
+        if (!hasValidItems(list) || !updatedLists[listIndex]) {
           return;
         }
 
@@ -313,23 +296,21 @@ export function useItemManagement(
         const originalItems = list.items;
 
         // Alle Items in der Liste durchgehen
-        if (updatedLists[listIndex] && Array.isArray(list.items)) {
-          updatedLists[listIndex].items = list.items.map(item => {
-            const matchFound = itemBelongsToCategory(item, categoryId);
+        updatedLists[listIndex].items = list.items.map(item => {
+          const matchFound = itemBelongsToCategory(item, categoryId);
 
-            // Wenn Match gefunden, Kategorie aktualisieren
-            if (matchFound) {
-              updatedAnyItem = true;
-              return updateItemCategory(item, categoryId, newName);
-            }
-
-            return item;
-          });
-
-          // Nur die Liste als geändert markieren, wenn Items geändert wurden
-          if (updatedLists[listIndex]?.items !== originalItems) {
-            updatedLists[listIndex].modifiedAt = Date.now();
+          // Wenn Match gefunden, Kategorie aktualisieren
+          if (matchFound) {
+            updatedAnyItem = true;
+            return updateItemCategory(item, categoryId, newName);
           }
+
+          return item;
+        });
+
+        // Nur die Liste als geändert markieren, wenn Items geändert wurden
+        if (updatedLists[listIndex].items !== originalItems) {
+          updatedLists[listIndex].modifiedAt = Date.now();
         }
       });
 

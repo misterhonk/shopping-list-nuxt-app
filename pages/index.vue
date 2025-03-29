@@ -117,6 +117,32 @@ import { useShoppingLists } from '~/composables/useShoppingLists';
 import { useCategoryStore } from '~/stores/category';
 import { createLogger } from '~/utils/logger';
 
+// Importe für Typdefinitionen
+import type { IImportOptions } from '~/types/app-types';
+import type { IShoppingItem, ICategory } from '~/types/app-types';
+
+// Definiere den korrekten Typ für die Listenoptionen
+interface IListOptions {
+  templateId?: string;
+  isFavorite?: boolean;
+}
+
+// Interface für neue Artikel (dient als Kompatibilitätsschicht)
+interface INewItem {
+  name: string;
+  quantity: number;
+  category: string | ICategory;
+  price?: number;
+  note?: string;
+}
+
+// Typdefinition für die Unsubscribe-Funktion
+type UnsubscribeFunction = (() => void) | null;
+
+// Typdefinition für OnCategoryUpdate
+type OnCategoryUpdateFn = (categoryId: string, newName: string) => void;
+type OnCategoryUpdateHandler = ((callback: OnCategoryUpdateFn) => UnsubscribeFunction) | undefined;
+
 // Logger initialisieren
 const logger = createLogger('IndexPage');
 
@@ -124,7 +150,7 @@ const logger = createLogger('IndexPage');
 const isCreatingList = ref(false);
 
 // Kategorie-Store verwenden (mit Fallback)
-let categoryStore = null;
+const categoryStore = useCategoryStore();
 let categories = ref([
   'Obst & Gemüse',
   'Fleisch & Fisch',
@@ -135,12 +161,11 @@ let categories = ref([
 ]);
 
 try {
-  categoryStore = useCategoryStore();
   // Kategorien aus dem Store beziehen
   categories = computed(() => {
     try {
       return (
-        categoryStore?.currentCategories ?? [
+        categoryStore.currentCategories ?? [
           'Obst & Gemüse',
           'Fleisch & Fisch',
           'Backwaren',
@@ -166,7 +191,7 @@ try {
 }
 
 // Templates aus dem CategoryStore
-const templatesList = computed(() => categoryStore?.templatesList ?? []);
+const templatesList = computed(() => categoryStore.templatesList ?? []);
 
 // Einkaufslisten verwalten
 const {
@@ -176,14 +201,30 @@ const {
   initialized,
   loadLists,
   createList,
-  selectList,
+  selectList: originalSelectList,
   deleteList,
   updateList,
 } = useShoppingLists();
 
+// Wrapper-Funktion für selectList, um den Rückgabetyp zu korrigieren
+const selectList = (listId: string): boolean => {
+  originalSelectList(listId);
+  return true; // Wir nehmen an, dass die Funktion erfolgreich ist
+};
+
 // Artikel verwalten - Die currentListId wird hier übergeben
-const { allItems, addNewItem, removeItem, toggleItemChecked, updateCategoryInItems } =
-  useShoppingItems(currentListId);
+const {
+  allItems,
+  addNewItem: originalAddNewItem,
+  removeItem,
+  toggleItemChecked,
+  updateCategoryInItems,
+} = useShoppingItems(currentListId);
+
+// Wrapper-Funktion für addNewItem, um den Typen anzupassen
+const addNewItem = (item: INewItem): void => {
+  originalAddNewItem(item as Partial<IShoppingItem>);
+};
 
 // Berechne eine gefilterte Liste mit nur den Artikeln der aktuell ausgewählten Liste
 const currentListItems = computed(() => {
@@ -192,7 +233,7 @@ const currentListItems = computed(() => {
   }
 
   return allItems.value.filter(item => {
-    const listId = item.listId ?? currentList.value.id ?? null;
+    const listId = item.listId ?? currentList.value?.id ?? null;
     return listId === currentListId.value;
   });
 });
@@ -200,7 +241,7 @@ const currentListItems = computed(() => {
 // Export/Import-Funktionen - nicht aktiv verwendet in der UI
 const { handleImportListWithOptions, showImportOptions, importData } = useListImportExport(
   createList,
-  addNewItem,
+  originalAddNewItem,
   allItems,
   lists,
   selectList,
@@ -208,8 +249,8 @@ const { handleImportListWithOptions, showImportOptions, importData } = useListIm
 );
 
 // Neue Liste erstellen
-const createNewList = (name: string, options: Record<string, unknown>): void => {
-  createList(name, options);
+const createNewList = (name: string, options: IListOptions): void => {
+  createList(name, options as Record<string, unknown>);
   isCreatingList.value = false;
 };
 
@@ -230,36 +271,38 @@ const createNewList = (name: string, options: Record<string, unknown>): void => 
 /**
  * Handler für die Bestätigung des Imports durch den Benutzer
  */
-const handleImportConfirm = (options: Record<string, unknown>): void => {
+const handleImportConfirm = (options: IImportOptions): void => {
   logger.info('Import-Optionen bestätigt:', options);
 
   // Import mit den gewählten Optionen durchführen
-  handleImportListWithOptions(importData.value, options);
+  handleImportListWithOptions(importData.value, options as unknown as Record<string, unknown>);
 
   // Dialog schließen
   showImportOptions.value = false;
 };
 
-/**
- * Callback-Funktion für geladene Import-Daten (nicht aktiv verwendet)
- */
-const onImportOptionsLoaded = (data: Record<string, unknown>, availableLists: Record<string, unknown>[]): void => {
-  logger.info('Import-Daten geladen, zeige Optionen:', {
-    listName: data.name,
-    itemCount: (data.items as any[])?.length ?? 0,
-    availableListsCount: availableLists.length,
-  });
+// Lediglich zu Demo-Zwecken aufbewahrt, wird nicht aktiv verwendet
 
-  // Daten aus dem Import übernehmen
-  importData.value = data;
+// const _onImportOptionsLoaded = (
+//   data: Record<string, unknown>,
+//   availableLists: Record<string, unknown>[]
+// ): void => {
+//   logger.info('Import-Daten geladen, zeige Optionen:', {
+//     listName: data["name"],
+//     itemCount: (data["items"] as unknown[]).length,
+//     availableListsCount: availableLists.length,
+//   });
 
-  // Dialog anzeigen
-  showImportOptions.value = true;
-};
+//   // Daten aus dem Import übernehmen
+//   importData.value = data;
+
+//   // Dialog anzeigen
+//   showImportOptions.value = true;
+// };
 
 // Kategoriesynchronisierungs-Funktion aus dem Nuxt-Plugin holen
-const onCategoryUpdate = useNuxtApp().$onCategoryUpdate;
-let unsubscribeCategoryUpdate = null;
+const onCategoryUpdate = useNuxtApp().$onCategoryUpdate as OnCategoryUpdateHandler;
+let unsubscribeCategoryUpdate: UnsubscribeFunction = null;
 
 // App-Initialisierung
 onMounted(() => {
@@ -274,7 +317,7 @@ onMounted(() => {
         parsedLists.map((l: Record<string, unknown>) => ({
           id: l.id,
           name: l.name,
-          itemCount: l.items?.length ?? 0,
+          itemCount: l.items ? (l.items as unknown[]).length : 0,
         }))
       );
     } catch (e) {
@@ -290,7 +333,7 @@ onMounted(() => {
       categoryStore.loadFromLocalStorage();
 
       // Aktiviere die passende Kategorie-Vorlage für die aktuelle Liste
-      if (currentList.value.templateId) {
+      if (currentList.value?.templateId) {
         categoryStore.activateTemplate(currentList.value.templateId);
       }
 

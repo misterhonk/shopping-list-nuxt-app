@@ -5,7 +5,7 @@
  * typischen Laufwegen in verschiedenen Geschäftstypen.
  */
 
-import type { TemplateCollection } from '~/composables/types';
+import type { ITemplateCollection } from '~/types/app-types';
 
 /**
  * Supermarkt-Laufweg:
@@ -98,7 +98,7 @@ export const electronicsPath = [
  * @param templates Die zu aktualisierenden Templates
  * @returns Aktualisierte Templates mit defaultCategoryOrder
  */
-export const addDefaultPathsToTemplates = (templates: TemplateCollection): TemplateCollection => {
+export const addDefaultPathsToTemplates = (templates: ITemplateCollection): ITemplateCollection => {
   const updatedTemplates = { ...templates };
 
   // Supermarkt-Laufweg hinzufügen

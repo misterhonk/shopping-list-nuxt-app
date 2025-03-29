@@ -1,7 +1,7 @@
 import { createLogger } from '~/utils/logger';
 
-import type { IImportOptions, ExportedList, CreateListOptions } from '~/composables/types';
-import type { ShoppingList, ShoppingItem } from '~/types/app-types';
+import type { IImportOptions, IExportedList, ICreateListOptions } from '~/types/app-types';
+import type { IShoppingList, IShoppingItem } from '~/types/app-types';
 
 // Logger initialisieren
 const _logger = createLogger('useListImport');
@@ -21,10 +21,10 @@ interface IImportResult {
  * Interface für die Dienste, die für den Import benötigt werden
  */
 interface IImportServices {
-  createList: (name: string, options: CreateListOptions) => ShoppingList | null;
-  addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null;
+  createList: (name: string, options: ICreateListOptions) => IShoppingList | null;
+  addItem: (item: Partial<IShoppingItem>) => IShoppingItem | null;
   selectList: (listId: string) => boolean;
-  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
+  updateList: (listData: Partial<IShoppingList> & { id: string }) => boolean;
 }
 
 /**
@@ -35,7 +35,7 @@ export function useListImport() {
    * Lädt eine Datei und zeigt Optionen an
    * @param callback - Callback für geladene Daten
    */
-  const loadFileAndShowOptions = (callback: (data: ExportedList) => void): void => {
+  const loadFileAndShowOptions = (callback: (data: IExportedList) => void): void => {
     // Erstelle einen temporären Datei-Input
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -77,7 +77,7 @@ export function useListImport() {
           }
 
           // Prüfe, ob es ein gültiges Format ist
-          const importData: ExportedList = {
+          const importData: IExportedList = {
             name: parsedData.name ?? '',
             items: Array.isArray(parsedData.items) ? parsedData.items : [],
             format: parsedData.format ?? 'shopping-list-app',
@@ -116,7 +116,7 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const importListWithOptions = (
-    data: ExportedList,
+    data: IExportedList,
     options: IImportOptions,
     services: IImportServices
   ): IImportResult => {
@@ -178,7 +178,7 @@ export function useListImport() {
    * @param services - Die benötigten Dienste
    * @returns Das Importergebnis
    */
-  const importAsNewList = (data: ExportedList, services: IImportServices): IImportResult => {
+  const importAsNewList = (data: IExportedList, services: IImportServices): IImportResult => {
     // Erstelle eine neue Liste
     const newList = services.createList(data.name, {
       templateId: data.templateId ?? 'supermarket',
@@ -249,7 +249,7 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const mergeWithExistingList = (
-    data: ExportedList,
+    data: IExportedList,
     targetListId: string,
     services: IImportServices,
     _keepExisting: boolean
@@ -304,7 +304,7 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const replaceExistingList = (
-    data: ExportedList,
+    data: IExportedList,
     targetListId: string,
     services: IImportServices
   ): IImportResult => {
@@ -313,7 +313,7 @@ export function useListImport() {
       id: targetListId,
       name: data.name,
       templateId: data.templateId ?? 'supermarket',
-      items: data.items.map((item: ShoppingItem) => ({
+      items: data.items.map((item: IShoppingItem) => ({
         id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name,
         quantity: item.quantity ?? 1,
@@ -348,9 +348,9 @@ export function useListImport() {
    * @returns Das Importergebnis
    */
   const importList = (
-    importData: ExportedList,
-    createList: (name: string, options: CreateListOptions) => ShoppingList | null,
-    addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null
+    importData: IExportedList,
+    createList: (name: string, options: ICreateListOptions) => IShoppingList | null,
+    addItem: (item: Partial<IShoppingItem>) => IShoppingItem | null
   ): IImportResult => {
     try {
       // Validiere die Daten
