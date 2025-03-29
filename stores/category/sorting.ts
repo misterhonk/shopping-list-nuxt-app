@@ -7,11 +7,10 @@
 
 import { createLogger } from '~/utils/logger';
 
-import type { CategorySortConfig } from '~/composables/types';
-import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { ICategorySortConfig, ICategory, ICategoryTemplate } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('sorting');
+const _logger = createLogger('sorting');
 
 /**
  * Schlüssel für die Speicherung der Sortierungskonfigurationen im localStorage
@@ -22,14 +21,14 @@ export const SORT_CONFIG_STORAGE_KEY = 'categorySortConfigs';
  * Lädt alle Sortierungskonfigurationen aus dem localStorage
  * @returns Record mit Template-IDs als Schlüssel und den entsprechenden Konfigurationen
  */
-export const loadSortConfigs = (): Record<string, CategorySortConfig> => {
+export const loadSortConfigs = (): Record<string, ICategorySortConfig> => {
   try {
     const storedConfigs = localStorage.getItem(SORT_CONFIG_STORAGE_KEY);
     if (storedConfigs) {
       return JSON.parse(storedConfigs);
     }
   } catch (error) {
-    logger.error('Fehler beim Laden der Sortierungskonfigurationen:', error);
+    _logger.error('Fehler beim Laden der Sortierungskonfigurationen:', error);
   }
   return {};
 };
@@ -38,11 +37,11 @@ export const loadSortConfigs = (): Record<string, CategorySortConfig> => {
  * Speichert alle Sortierungskonfigurationen im localStorage
  * @param configs Die zu speichernden Konfigurationen
  */
-export const saveSortConfigs = (configs: Record<string, CategorySortConfig>): void => {
+export const saveSortConfigs = (configs: Record<string, ICategorySortConfig>): void => {
   try {
     localStorage.setItem(SORT_CONFIG_STORAGE_KEY, JSON.stringify(configs));
   } catch (error) {
-    logger.error('Fehler beim Speichern der Sortierungskonfigurationen:', error);
+    _logger.error('Fehler beim Speichern der Sortierungskonfigurationen:', error);
   }
 };
 
@@ -54,8 +53,8 @@ export const saveSortConfigs = (configs: Record<string, CategorySortConfig>): vo
  */
 export const getSortConfigForTemplate = (
   templateId: string,
-  configs: Record<string, CategorySortConfig>
-): CategorySortConfig => {
+  configs: Record<string, ICategorySortConfig>
+): ICategorySortConfig => {
   if (configs[templateId]) {
     return configs[templateId];
   }
@@ -75,9 +74,9 @@ export const getSortConfigForTemplate = (
  * @returns Aktualisierte Konfigurationen
  */
 export const updateSortConfig = (
-  config: CategorySortConfig,
-  configs: Record<string, CategorySortConfig>
-): Record<string, CategorySortConfig> => ({
+  config: ICategorySortConfig,
+  configs: Record<string, ICategorySortConfig>
+): Record<string, ICategorySortConfig> => ({
   ...configs,
   [config.templateId]: config,
 });
@@ -90,10 +89,10 @@ export const updateSortConfig = (
  * @returns Sortierte Kategorien
  */
 export const sortCategories = (
-  categories: Category[],
-  template: CategoryTemplate,
-  sortConfig: CategorySortConfig
-): Category[] => {
+  categories: ICategory[],
+  template: ICategoryTemplate,
+  sortConfig: ICategorySortConfig
+): ICategory[] => {
   // Wenn eine benutzerdefinierte Sortierung verwendet werden soll und vorhanden ist
   if (sortConfig.useCustomSort && sortConfig.customOrder.length > 0) {
     return sortCategoriesByCustomOrder(categories, sortConfig.customOrder);
@@ -115,9 +114,9 @@ export const sortCategories = (
  * @returns Sortierte Kategorien
  */
 export const sortCategoriesByCustomOrder = (
-  categories: Category[],
+  categories: ICategory[],
   customOrder: string[]
-): Category[] => {
+): ICategory[] => {
   // Erstelle eine Map für schnellen Zugriff auf die Positionen
   const orderMap = new Map<string, number>();
   customOrder.forEach((id, index) => {
@@ -157,9 +156,9 @@ export const sortCategoriesByCustomOrder = (
  * @returns Sortierte Kategorien
  */
 export const sortCategoriesByDefaultOrder = (
-  categories: Category[],
+  categories: ICategory[],
   defaultOrder: string[]
-): Category[] =>
+): ICategory[] =>
   // Identische Implementierung wie bei benutzerdefinierter Reihenfolge
   sortCategoriesByCustomOrder(categories, defaultOrder);
 
@@ -168,5 +167,5 @@ export const sortCategoriesByDefaultOrder = (
  * @param categories Die zu sortierenden Kategorien
  * @returns Alphabetisch sortierte Kategorien
  */
-export const sortCategoriesAlphabetically = (categories: Category[]): Category[] =>
+export const sortCategoriesAlphabetically = (categories: ICategory[]): ICategory[] =>
   [...categories].sort((a, b) => a.name.localeCompare(b.name));

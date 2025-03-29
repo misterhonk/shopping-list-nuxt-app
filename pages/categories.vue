@@ -34,10 +34,10 @@ import { onMounted } from 'vue';
 import CategoryManager from '~/components/categories/CategoryManager.vue';
 import { createLogger } from '~/utils/logger';
 
-const logger = createLogger('categories');
+const _logger = createLogger('categories');
 
 // Stelle sicher, dass die Komponente ordnungsgemäß initialisiert ist
 onMounted(() => {
-  logger.info('Categories page mounted');
+  _logger.info('Categories page mounted');
 });
 </script>

@@ -1,5 +1,4 @@
-import type { TemplateCollection } from '~/composables/types';
-import type { CategoryTemplate } from '~/types/app-types';
+import type { ITemplateCollection, ICategoryTemplate } from '~/types/app-types';
 
 // Supermarkt-Laufweg
 const supermarketPath = [
@@ -74,7 +73,7 @@ const electronicsPath = [
  * @param templates Die zu aktualisierenden Templates
  * @returns Aktualisierte Templates mit defaultCategoryOrder
  */
-const addDefaultPathsToTemplates = (templates: TemplateCollection): TemplateCollection => {
+const addDefaultPathsToTemplates = (templates: ITemplateCollection): ITemplateCollection => {
   const updatedTemplates = { ...templates };
 
   // Supermarkt-Laufweg hinzufügen
@@ -120,7 +119,7 @@ export const defaultTemplateId = 'supermarket';
 /**
  * Kategorie-Vorlagen für verschiedene Geschäftstypen
  */
-const baseTemplates: TemplateCollection = {
+const baseTemplates: ITemplateCollection = {
   // Standardvorlage für Supermärkte
   supermarket: {
     id: 'supermarket',
@@ -217,12 +216,12 @@ export const categoryTemplates = addDefaultPathsToTemplates(baseTemplates);
  * Hilfsfunktion zum Abrufen aller Templates
  * @returns Array aller Templates
  */
-export const getAllTemplates = (): CategoryTemplate[] => Object.values(categoryTemplates);
+export const getAllTemplates = (): ICategoryTemplate[] => Object.values(categoryTemplates);
 
 /**
  * Hilfsfunktion zum Abrufen eines bestimmten Templates
  * @param templateId - Die ID des zu suchenden Templates
  * @returns Das angeforderte Template oder das Standard-Template
  */
-export const getTemplate = (templateId: string): CategoryTemplate =>
+export const getTemplate = (templateId: string): ICategoryTemplate =>
   categoryTemplates[templateId] || categoryTemplates[defaultTemplateId];

@@ -2,18 +2,18 @@ import { createLogger } from '~/utils/logger';
 
 import { generateCategoryId, deepCopy } from './utils';
 
-import type { TemplateCollection } from '~/composables/types';
+import type { ITemplateCollection } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('migration');
+const _logger = createLogger('migration');
 
 /**
  * Migration alter String-Kategorien zu Objekt-Kategorien
  * @param customTemplates - Die zu migrierenden benutzerdefinierten Templates
  * @returns Die migrierten Templates
  */
-export const migrateCategories = (customTemplates: TemplateCollection): TemplateCollection => {
-  logger.info('Starte Migration von String-Kategorien zu Objekten');
+export const migrateCategories = (customTemplates: ITemplateCollection): ITemplateCollection => {
+  _logger.info('Starte Migration von String-Kategorien zu Objekten');
 
   // Tiefe Kopie erstellen
   const migratedTemplates = deepCopy(customTemplates);
@@ -36,7 +36,7 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
     }
   }
 
-  logger.info('Migration abgeschlossen, neue customTemplates:', migratedTemplates);
+  _logger.info('Migration abgeschlossen, neue customTemplates:', migratedTemplates);
   return migratedTemplates;
 };
 
@@ -45,7 +45,7 @@ export const migrateCategories = (customTemplates: TemplateCollection): Template
  * @param customTemplates - Die zu prüfenden Templates
  * @returns true, wenn eine Migration notwendig ist, sonst false
  */
-export const needsMigration = (customTemplates: TemplateCollection): boolean => {
+export const needsMigration = (customTemplates: ITemplateCollection): boolean => {
   for (const templateId in customTemplates) {
     const template = customTemplates[templateId];
     if (template.categories.length > 0 && typeof template.categories[0] === 'string') {

@@ -110,7 +110,7 @@ import { ref, onMounted } from 'vue';
 
 import type { ShoppingList } from '~/types/app-types';
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     lists: ShoppingList[];
     currentListId: string | null;
@@ -121,7 +121,7 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'select', listId: string): void;
   (e: 'delete', listId: string): void;
   (e: 'add-item'): void;

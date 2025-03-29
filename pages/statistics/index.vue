@@ -188,7 +188,7 @@ import { useShoppingLists } from '~/composables/useShoppingLists';
 import type { ShoppingItem } from '~/types/app-types';
 
 // Schnittstelle für Kategorie-Ausgaben
-interface CategoryExpense {
+interface ICategoryExpense {
   id: string;
   name: string;
   amount: number;
@@ -196,7 +196,7 @@ interface CategoryExpense {
 }
 
 // Schnittstelle für Einkaufshistorie
-interface ShoppingHistoryItem {
+interface IShoppingHistoryItem {
   id: string;
   name: string;
   date: number;
@@ -244,7 +244,7 @@ const mostExpensiveItem = computed<ShoppingItem | null>(() => {
 });
 
 // Ausgaben nach Kategorien
-const categoryExpenses = computed<CategoryExpense[]>(() => {
+const categoryExpenses = computed<ICategoryExpense[]>(() => {
   if (allItems.value.length === 0) {
     return [];
   }
@@ -283,7 +283,7 @@ const categoryExpenses = computed<CategoryExpense[]>(() => {
 });
 
 // Mock für die Einkaufshistorie (später zu implementieren)
-const shoppingHistory = ref<ShoppingHistoryItem[]>([]);
+const shoppingHistory = ref<IShoppingHistoryItem[]>([]);
 
 // Hilfsfunktionen
 const formatCurrency = (value: number): string =>

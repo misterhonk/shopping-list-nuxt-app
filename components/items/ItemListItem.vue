@@ -60,11 +60,11 @@
 <script setup lang="ts">
 import type { ShoppingItem } from '~/types/app-types';
 
-interface Props {
+interface IProps {
   item: ShoppingItem;
 }
 
-const _props = defineProps<Props>();
+defineProps<IProps>();
 const emit = defineEmits<{
   (e: 'toggle'): void;
   (e: 'remove'): void;

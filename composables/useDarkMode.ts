@@ -4,14 +4,26 @@ import { useLocalStorage } from '~/composables/core/useLocalStorage';
 
 import type { Ref } from 'vue';
 
+// Interface für den Rückgabetyp
+export interface IUseDarkModeReturn {
+  isDark: Ref<boolean>;
+  toggleDarkMode: () => void;
+  setDarkMode: (value: boolean) => void;
+  followSystemPreference: () => void;
+  systemPrefersDarkMode: () => boolean;
+  initializeDarkMode: () => void;
+}
+
 // LocalStorage-Schlüssel für Dark Mode
 const DARK_MODE_STORAGE_KEY = 'darkMode';
 
 /**
  * Composable für die Verwaltung des Dark Mode
  * Bietet Funktionen zum Ein-/Ausschalten des dunklen Erscheinungsbilds
+ *
+ * @returns Ein Objekt mit Funktionen und Status zur Dark Mode-Verwaltung
  */
-export const useDarkMode = () => {
+export const useDarkMode = (): IUseDarkModeReturn => {
   const isDark: Ref<boolean> = ref(false);
   const { saveToStorage, loadFromStorage, removeFromStorage } = useLocalStorage();
 

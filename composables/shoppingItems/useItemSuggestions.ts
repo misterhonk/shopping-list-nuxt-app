@@ -2,20 +2,21 @@ import { ref, computed, watch } from 'vue';
 
 import { createLogger } from '~/utils/logger';
 
-import type { Ref, ComputedRef } from 'vue';
-import type { ShoppingList, ShoppingItem } from '~/types/app-types';
+import type { IShoppingList, IShoppingItem } from '~/types/app-types';
+import type { IUseItemSuggestions } from '~/types/composable-types';
 
 // Logger initialisieren
-const logger = createLogger('useItemSuggestions');
+const _logger = createLogger('useItemSuggestions');
 
-interface ItemHistoryEntry {
+// Typdefinitionen
+export interface IItemHistoryEntry {
   count: number;
   lastUsed: string | null;
   categories: Record<string, number>;
   prices: { price: number; date: string }[];
 }
 
-interface ItemSuggestion {
+export interface IItemSuggestion {
   text: string;
   subtext?: string;
   count?: number;
@@ -24,25 +25,19 @@ interface ItemSuggestion {
   avgPrice?: number;
 }
 
-// Definieren der Return-Type für useItemSuggestions
-interface ItemSuggestionsComposable {
-  itemHistory: Ref<Record<string, ItemHistoryEntry>>;
-  getSuggestions: (term?: string) => ItemSuggestion[];
-  addToHistory: (item: ShoppingItem) => void;
-  initializeHistory: () => void;
-  historyStats: ComputedRef<{ uniqueItems: number; totalEntries: number; averageUsage: number }>;
-}
-
 /**
  * Composable für Artikelvorschläge basierend auf vergangenen Einkäufen
+ *
+ * @param listRef - Referenz auf die Einkaufslisten
+ * @returns Ein Objekt mit Funktionen und Daten für Artikelvorschläge
  */
-export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSuggestionsComposable {
+export function useItemSuggestions(listRef: { value: IShoppingList[] }): IUseItemSuggestions {
   // Lokaler Speicher für die Artikelhistorie
   const getItem = (key: string): string | null => {
     try {
       return localStorage.getItem(key);
     } catch (error) {
-      logger.error(`Fehler beim Lesen von ${key}:`, error);
+      _logger.error(`Fehler beim Lesen von ${key}:`, error);
       return null;
     }
   };
@@ -51,35 +46,35 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSugg
     try {
       localStorage.setItem(key, value);
     } catch (error) {
-      logger.error(`Fehler beim Speichern von ${key}:`, error);
+      _logger.error(`Fehler beim Speichern von ${key}:`, error);
     }
   };
 
   // Artikelhistorie aus dem lokalen Speicher laden
-  const loadItemHistory = (): Record<string, ItemHistoryEntry> => {
+  const loadItemHistory = (): Record<string, IItemHistoryEntry> => {
     try {
       const storedHistory = getItem('itemHistory');
       return storedHistory ? JSON.parse(storedHistory) : {};
     } catch (error) {
-      logger.error('Fehler beim Laden der Artikelhistorie:', error);
+      _logger.error('Fehler beim Laden der Artikelhistorie:', error);
       return {};
     }
   };
 
   // Artikelhistorie im lokalen Speicher speichern
-  const saveItemHistory = (history: Record<string, ItemHistoryEntry>): void => {
+  const saveItemHistory = (history: Record<string, IItemHistoryEntry>): void => {
     try {
       setItem('itemHistory', JSON.stringify(history));
     } catch (error) {
-      logger.error('Fehler beim Speichern der Artikelhistorie:', error);
+      _logger.error('Fehler beim Speichern der Artikelhistorie:', error);
     }
   };
 
   // Artikelhistorie initialisieren
-  const itemHistory = ref<Record<string, ItemHistoryEntry>>(loadItemHistory());
+  const itemHistory = ref<Record<string, IItemHistoryEntry>>(loadItemHistory());
 
   // Artikel zur Historie hinzufügen
-  const addToHistory = (item: ShoppingItem): void => {
+  const addToHistory = (item: IShoppingItem): void => {
     if (!item.name) {
       return;
     }
@@ -159,13 +154,13 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSugg
   };
 
   // Vorschläge basierend auf der Historie generieren
-  const getSuggestions = (term = ''): ItemSuggestion[] => {
+  const getSuggestions = (term = ''): IItemSuggestion[] => {
     if (!term) {
       return [];
     }
 
     const normalizedTerm = term.toLowerCase().trim();
-    const results: ItemSuggestion[] = [];
+    const results: IItemSuggestion[] = [];
 
     // Durch die Historie iterieren und passende Einträge finden
     for (const [itemName, data] of Object.entries(itemHistory.value)) {
@@ -201,14 +196,14 @@ export function useItemSuggestions(listRef: { value: ShoppingList[] }): ItemSugg
   };
 
   // Aktualisierte Artikel zur Historie hinzufügen
-  const updateHistoryFromLists = (lists: ShoppingList[]): void => {
+  const updateHistoryFromLists = (lists: IShoppingList[]): void => {
     if (!lists || !Array.isArray(lists)) {
       return;
     }
 
     lists.forEach(list => {
       if (list.items && Array.isArray(list.items)) {
-        list.items.forEach((item: ShoppingItem) => {
+        list.items.forEach((item: IShoppingItem) => {
           if (item.name) {
             addToHistory(item);
           }

@@ -77,17 +77,17 @@ import { ref, computed } from 'vue';
 
 import type { CategoryTemplate } from '~/types/app-types';
 
-interface ListOptions {
+interface IListOptions {
   templateId: string;
   isFavorite: boolean;
 }
 
-const props = defineProps<{
+defineProps<{
   templates: CategoryTemplate[];
 }>();
 
 const emit = defineEmits<{
-  (e: 'create', name: string, options: ListOptions): void;
+  (e: 'create', name: string, options: IListOptions): void;
   (e: 'cancel'): void;
 }>();
 

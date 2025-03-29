@@ -3,30 +3,24 @@ import { sortListsByFavorites } from '~/composables/utils/listUtils';
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
-import type { ShoppingList, ShoppingItem } from '~/types/app-types';
+import type { IShoppingList, IShoppingItem } from '~/types/app-types';
+import type { IUseListUpdate } from '~/types/composable-types';
 
 // Logger initialisieren
-const logger = createLogger('useListUpdate');
-
-// Interface für den Rückgabetyp des Composables
-interface ListUpdateComposable {
-  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
-  clearList: (listId?: string) => boolean;
-  addItemsToList: (
-    listId: string,
-    items: ShoppingItem[],
-    options?: { replace?: boolean; uniqueCheck?: boolean }
-  ) => boolean;
-}
+const _logger = createLogger('useListUpdate');
 
 /**
  * Composable für das Aktualisieren von Einkaufslisten
  * Bietet Funktionen zum Bearbeiten, Import und Export von Listen
+ *
+ * @param listsRef - Referenz auf die Einkaufslisten
+ * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
+ * @returns Ein Objekt mit Funktionen zur Aktualisierung von Einkaufslisten
  */
 export function useListUpdate(
-  listsRef: Ref<ShoppingList[]>,
+  listsRef: Ref<IShoppingList[]>,
   currentListIdRef: Ref<string | null>
-): ListUpdateComposable {
+): IUseListUpdate {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
@@ -34,7 +28,7 @@ export function useListUpdate(
    * @param listData - Die Daten der zu aktualisierenden Liste
    * @returns true bei Erfolg, false bei Fehler
    */
-  const updateList = (listData: Partial<ShoppingList> & { id: string }): boolean => {
+  const updateList = (listData: Partial<IShoppingList> & { id: string }): boolean => {
     try {
       const listIndex = listsRef.value.findIndex(list => list.id === listData.id);
       if (listIndex === -1) {
@@ -82,7 +76,7 @@ export function useListUpdate(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren der Liste:', error);
+      _logger.error('Fehler beim Aktualisieren der Liste:', error);
       return false;
     }
   };
@@ -114,7 +108,7 @@ export function useListUpdate(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Leeren der Liste:', error);
+      _logger.error('Fehler beim Leeren der Liste:', error);
       return false;
     }
   };
@@ -123,13 +117,13 @@ export function useListUpdate(
    * Fügt Artikel zu einer bestehenden Liste hinzu
    * @param listId - Die ID der Liste
    * @param items - Die hinzuzufügenden Artikel
-   * @param options - Optionen für das Hinzufügen (z.B. bestehende ersetzen)
+   * @param options - Optionen für das Hinzufügen
    * @returns true bei Erfolg, false bei Fehler
    */
   const addItemsToList = (
     listId: string,
-    items: ShoppingItem[],
-    options: { replace?: boolean; uniqueCheck?: boolean } = {}
+    items: IShoppingItem[],
+    options: { skipDuplicates?: boolean } = {}
   ): boolean => {
     try {
       if (!items || !Array.isArray(items) || items.length === 0) {
@@ -144,11 +138,8 @@ export function useListUpdate(
       // Immutable Update
       const updatedLists = createImmutableCopy(listsRef.value);
 
-      // Bestehende Items ersetzen oder anfügen
-      if (options.replace) {
-        updatedLists[listIndex].items = [...items];
-      } else if (options.uniqueCheck) {
-        // Nur neue Items hinzufügen (basierend auf Namen)
+      // Nur neue Items hinzufügen (basierend auf Namen) wenn skipDuplicates aktiviert ist
+      if (options.skipDuplicates) {
         const existingItemNames = new Set(
           updatedLists[listIndex].items.map(item => item.name.toLowerCase())
         );
@@ -167,7 +158,7 @@ export function useListUpdate(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
+      _logger.error('Fehler beim Hinzufügen von Artikeln zur Liste:', error);
       return false;
     }
   };

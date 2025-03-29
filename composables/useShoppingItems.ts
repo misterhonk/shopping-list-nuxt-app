@@ -3,22 +3,58 @@ import { reactive, ref, computed, onMounted, watch } from 'vue';
 import { initializeServices } from '~/services';
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingItem, Category } from './types';
 import type { Ref, ComputedRef } from 'vue';
+import type { IShoppingItem, ICategory } from '~/types/app-types';
+
+// Interface für den Rückgabetyp
+export interface IUseShoppingItemsReturn {
+  // Status und Daten
+  isAddingItem: Ref<boolean>;
+  itemNameInput: Ref<HTMLInputElement | null>;
+  newItem: {
+    name: string;
+    quantity: number;
+    category: string | ICategory;
+    price: number;
+  };
+  _isFormValid: ComputedRef<boolean>;
+  allItems: ComputedRef<IShoppingItem[]>;
+  currentListId: Ref<string | null>;
+
+  // Berechnete Eigenschaften
+  getItemsGrouped: (categories: (string | ICategory)[]) => Record<string, IShoppingItem[]>;
+  getTotalPrice: () => number;
+  getCategoryPrice: (categoryId: string) => number;
+
+  // Aktionen
+  loadCurrentListData: () => void;
+  refreshItems: () => void;
+  addItem: (itemData?: Partial<IShoppingItem> | null) => IShoppingItem | null;
+  addNewItem: (itemData: Partial<IShoppingItem>) => IShoppingItem | null;
+  removeItem: (item: IShoppingItem | string) => boolean;
+  toggleItemChecked: (item: IShoppingItem | string) => boolean;
+  _clearCheckedItems: () => boolean;
+  _resetItemForm: (defaultCategory?: string | ICategory) => void;
+  focusItemNameInput: () => void;
+  updateCategoryInItems: (categoryId: string, newName: string) => void;
+}
 
 // Services initialisieren
 const { itemService, shoppingListService } = initializeServices();
 
 // Logger initialisieren
-const logger = createLogger('useShoppingItems');
+const _logger = createLogger('useShoppingItems');
 
 /**
  * Composable für die Verwaltung von Artikeln in Einkaufslisten
  * Bietet Funktionen zum Hinzufügen, Bearbeiten, Löschen und Markieren von Artikeln
  *
  * @param providedCurrentListId - Optional: Eine Ref auf die aktuelle Listen-ID von außen
+ * @returns Ein Objekt mit Funktionen und Daten zur Verwaltung von Einkaufsartikeln
  */
-export function useShoppingItems(providedCurrentListId?: Ref<string | null>): void {
+export function useShoppingItems(
+  providedCurrentListId?: Ref<string | null>
+): IUseShoppingItemsReturn {
   // UI-Status für Artikelformular
   const isAddingItem = ref<boolean>(false);
   const itemNameInput = ref<HTMLInputElement | null>(null);
@@ -26,13 +62,13 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   // Entweder providedCurrentListId verwenden oder eine neue Ref erstellen
   const currentListId = providedCurrentListId ?? ref<string | null>(null);
 
-  const items = ref<ShoppingItem[]>([]);
+  const items = ref<IShoppingItem[]>([]);
 
   // Neues Item Formular
   const newItem = reactive<{
     name: string;
     quantity: number;
-    category: string | Category;
+    category: string | ICategory;
     price: number;
   }>({
     name: '',
@@ -42,7 +78,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   });
 
   // Berechnete Eigenschaften
-  const isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
+  const _isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
 
   /**
    * Lädt die aktuelle Listen-ID und die aktuellen Artikel
@@ -61,7 +97,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   const refreshItems = (): void => {
     // Get all items from all lists
     const allLists = shoppingListService.getAllLists();
-    const allItemsFromAllLists: ShoppingItem[] = [];
+    const allItemsFromAllLists: IShoppingItem[] = [];
 
     allLists.forEach(list => {
       // Get items from this list and make sure they have the listId
@@ -89,12 +125,14 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   /**
    * Gibt alle Artikel (aus allen Listen) zurück
    */
-  const allItems: ComputedRef<ShoppingItem[]> = computed(() => items.value);
+  const allItems: ComputedRef<IShoppingItem[]> = computed(() => items.value);
 
   /**
    * Gruppiert Artikel nach Kategorien
+   * @param categories - Liste der Kategorien
+   * @returns Ein Objekt mit Kategorienamen als Schlüssel und Arrays von Artikeln als Werte
    */
-  const getItemsGrouped = (categories: (string | Category)[]): Record<string, ShoppingItem[]> => {
+  const getItemsGrouped = (categories: (string | ICategory)[]): Record<string, IShoppingItem[]> => {
     if (!currentListId.value) {
       return categories.reduce(
         (obj, cat) => {
@@ -102,7 +140,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
           obj[categoryName] = [];
           return obj;
         },
-        {} as Record<string, ShoppingItem[]>
+        {} as Record<string, IShoppingItem[]>
       );
     }
 
@@ -114,12 +152,12 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   /**
    * Fügt einen neuen Artikel zur aktuellen Liste hinzu
    * @param itemData - Daten des neuen Artikels (optional)
-   * @return Das hinzugefügte Item oder null bei Fehler
+   * @returns Das hinzugefügte Item oder null bei Fehler
    */
-  const addItem = (itemData: Partial<ShoppingItem> | null = null): ShoppingItem | null => {
+  const addItem = (itemData: Partial<IShoppingItem> | null = null): IShoppingItem | null => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!currentListId.value) {
-      logger.error('Keine Liste ausgewählt.');
+      _logger.error('Keine Liste ausgewählt.');
       return null;
     }
 
@@ -135,7 +173,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
 
       // Formular zurücksetzen, wenn wir das interne newItem verwendet haben
       if (!itemData) {
-        resetItemForm();
+        _resetItemForm();
       }
     }
 
@@ -145,9 +183,9 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   /**
    * Fügt einen neuen Artikel zur aktuellen Liste hinzu (Alias für addItem)
    * @param itemData - Daten des neuen Artikels
-   * @return Das hinzugefügte Item oder null bei Fehler
+   * @returns Das hinzugefügte Item oder null bei Fehler
    */
-  const addNewItem = (itemData: Partial<ShoppingItem>): ShoppingItem | null => {
+  const addNewItem = (itemData: Partial<IShoppingItem>): IShoppingItem | null => {
     // Öffnet das Formular (falls nicht bereits offen)
     isAddingItem.value = true;
 
@@ -164,16 +202,16 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   /**
    * Entfernt einen Artikel aus der aktuellen Liste
    * @param item - Das Item oder die ID des zu entfernenden Artikels
-   * @return true bei Erfolg, false bei Fehler
+   * @returns true bei Erfolg, false bei Fehler
    */
-  const removeItem = (item: ShoppingItem | string): boolean => {
+  const removeItem = (item: IShoppingItem | string): boolean => {
     // Item-Objekt und Liste-ID extrahieren
     const itemObj = typeof item === 'object' ? item : null;
     const listId = itemObj?.listId ?? currentListId.value;
 
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!listId) {
-      logger.error('Keine Liste ausgewählt.');
+      _logger.error('Keine Liste ausgewählt.');
       return false;
     }
 
@@ -194,16 +232,16 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   /**
    * Ändert den Markierungsstatus eines Artikels
    * @param item - Das Item oder die ID des zu ändernden Artikels
-   * @return true bei Erfolg, false bei Fehler
+   * @returns true bei Erfolg, false bei Fehler
    */
-  const toggleItemChecked = (item: ShoppingItem | string): boolean => {
+  const toggleItemChecked = (item: IShoppingItem | string): boolean => {
     // Item-Objekt und Liste-ID extrahieren
     const itemObj = typeof item === 'object' ? item : null;
     const listId = itemObj?.listId ?? currentListId.value;
 
     // Wenn keine Liste ausgewählt ist und das Item kein listId hat, frühzeitig beenden
     if (!listId) {
-      logger.error('Keine Liste ausgewählt oder keine listId im Item gefunden.');
+      _logger.error('Keine Liste ausgewählt oder keine listId im Item gefunden.');
       return false;
     }
 
@@ -224,12 +262,12 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
 
   /**
    * Entfernt alle erledigten Artikel aus der aktuellen Liste
-   * @return true bei Erfolg, false bei Fehler
+   * @returns true bei Erfolg, false bei Fehler
    */
-  const clearCheckedItems = (): boolean => {
+  const _clearCheckedItems = (): boolean => {
     // Wenn keine Liste ausgewählt ist, frühzeitig beenden
     if (!currentListId.value) {
-      logger.error('Keine Liste ausgewählt.');
+      _logger.error('Keine Liste ausgewählt.');
       return false;
     }
 
@@ -248,7 +286,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const resetItemForm = (defaultCategory: string | Category = 'Sonstiges'): void => {
+  const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;
@@ -270,7 +308,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
 
   /**
    * Berechnet den Gesamtpreis aller Artikel in der aktuellen Liste
-   * @return Der Gesamtpreis
+   * @returns Der Gesamtpreis
    */
   const getTotalPrice = (): number => {
     if (!currentListId.value) {
@@ -283,7 +321,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
   /**
    * Berechnet den Preis pro Kategorie
    * @param categoryId - Die ID der Kategorie
-   * @return Der Preis für diese Kategorie
+   * @returns Der Preis für diese Kategorie
    */
   const getCategoryPrice = (categoryId: string): number => {
     if (!currentListId.value) {
@@ -342,7 +380,7 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
     isAddingItem,
     itemNameInput,
     newItem,
-    isFormValid,
+    _isFormValid,
     allItems,
     currentListId,
 
@@ -358,8 +396,8 @@ export function useShoppingItems(providedCurrentListId?: Ref<string | null>): vo
     addNewItem, // Alias für addItem mit besserer Semantik für die UI
     removeItem,
     toggleItemChecked,
-    clearCheckedItems,
-    resetItemForm,
+    _clearCheckedItems,
+    _resetItemForm,
     focusItemNameInput,
     updateCategoryInItems,
   };

@@ -292,7 +292,7 @@
 </template>
 
 <script lang="ts">
-import script from './CategoryManager.ts';
+import script from './CategoryManagerScript.ts';
 export default script;
 </script>
 

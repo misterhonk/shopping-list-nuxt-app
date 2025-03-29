@@ -47,14 +47,16 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 
-import type { ItemSuggestion } from '~/types/app-types';
+import type { IItemSuggestion } from '~/types/app-types';
 
-interface TextPart {
+// Definieren der SuggestionInput als Union-Typ
+type SuggestionInput = string | IItemSuggestion;
+
+// Interface für Textteile mit Hervorhebung
+interface IHighlightTextPart {
   text: string;
   highlight: boolean;
 }
-
-type SuggestionInput = string | ItemSuggestion;
 
 const props = withDefaults(
   defineProps<{
@@ -75,7 +77,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
-  (e: 'select', suggestion: ItemSuggestion): void;
+  (e: 'select', suggestion: IItemSuggestion): void;
 }>();
 
 // Referenz zum Input-Element
@@ -87,7 +89,7 @@ const showSuggestions = ref<boolean>(false);
 const highlightedIndex = ref<number>(-1);
 
 // Gefilterte Vorschläge basierend auf Eingabe
-const filteredSuggestions = computed<ItemSuggestion[]>(() => {
+const filteredSuggestions = computed<IItemSuggestion[]>(() => {
   if (!inputValue.value || inputValue.value.length < props.minChars) {
     return [];
   }
@@ -112,13 +114,13 @@ const filteredSuggestions = computed<ItemSuggestion[]>(() => {
 });
 
 // Teilt den Text in hervorgehobene und normale Teile
-const splitTextForHighlight = (text: string): TextPart[] => {
+const splitTextForHighlight = (text: string): IHighlightTextPart[] => {
   if (!inputValue.value || inputValue.value.length < props.minChars) {
     return [{ text, highlight: false }];
   }
 
   const inputRegex = new RegExp(inputValue.value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi');
-  const parts: TextPart[] = [];
+  const parts: IHighlightTextPart[] = [];
   let lastIndex = 0;
   let match;
 
@@ -190,6 +192,7 @@ const selectSuggestion = (index: number): void => {
   highlightedIndex.value = -1;
 
   // Fokus auf dem Input behalten
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   nextTick(() => {
     if (inputElement.value) {
       inputElement.value.focus();

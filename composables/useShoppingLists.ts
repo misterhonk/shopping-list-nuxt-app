@@ -6,23 +6,20 @@ import { createLogger } from '~/utils/logger';
 import { useLocalStorage } from './core/useLocalStorage';
 
 import type { ShoppingList, CreateListOptions } from './types';
-import type { ComputedRef } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 
 // Logger initialisieren
-const logger = createLogger('useShoppingLists');
+const _logger = createLogger('useShoppingLists');
 
 /**
  * Composable für die Verwaltung von Einkaufslisten
  * Bietet Funktionen zum Erstellen, Aktualisieren, Löschen und Auswählen von Listen
  */
-/**
- * Aktiviert das Kategorien-Template im Store (wenn möglich)
- * Lagert die Error-Handlung in eine separate Funktion aus
- */
+
 /**
  * Interface für den Kategorie-Store
  */
-interface CategoryStore {
+interface ICategoryStore {
   activateTemplate: (templateId: string) => void;
 }
 
@@ -30,7 +27,7 @@ interface CategoryStore {
  * Aktiviert das Kategorien-Template im Store (wenn möglich)
  * Lagert die Error-Handlung in eine separate Funktion aus
  */
-const activateTemplateInStore = (store: CategoryStore | null, templateId: string): void => {
+const activateTemplateInStore = (store: ICategoryStore | null, templateId: string): void => {
   if (!store) {
     return;
   }
@@ -38,7 +35,7 @@ const activateTemplateInStore = (store: CategoryStore | null, templateId: string
   try {
     store.activateTemplate(templateId);
   } catch (e) {
-    logger.error('Fehler beim Aktivieren der Template:', e);
+    _logger.error('Fehler beim Aktivieren der Template:', e);
   }
 };
 
@@ -62,17 +59,13 @@ const sortListsByFavorite = (lists: ShoppingList[]): ShoppingList[] =>
 const createDeepCopy = <T>(data: T): T => JSON.parse(JSON.stringify(data));
 
 /**
- * Composable für die Verwaltung von Einkaufslisten
- * Bietet Funktionen zum Erstellen, Aktualisieren, Löschen und Auswählen von Listen
- */
-/**
  * Factory für einen sicheren Kategorie-Store Zugriff
  */
-const createCategoryStore = (): CategoryStore | null => {
+const createCategoryStore = (): ICategoryStore | null => {
   try {
     return useCategoryStore();
   } catch (e) {
-    logger.error('Fehler beim Initialisieren des CategoryStore:', e);
+    _logger.error('Fehler beim Initialisieren des ICategoryStore:', e);
     return null;
   }
 };
@@ -80,7 +73,7 @@ const createCategoryStore = (): CategoryStore | null => {
 /**
  * Hilfsfunktionen zur Liste-Verwaltung
  */
-const listManagementHelpers = (): void => {
+const listManagementHelpers = () => {
   const { saveToStorage, loadFromStorage } = useLocalStorage();
 
   /**
@@ -102,7 +95,38 @@ const listManagementHelpers = (): void => {
   return { saveLists, loadData };
 };
 
-export function useShoppingLists(): void {
+/**
+ * Interface für den Rückgabewert des useShoppingLists composable
+ */
+interface IShoppingListsComposable {
+  // Reaktive Daten
+  lists: Ref<ShoppingList[]>;
+  currentListId: Ref<string | null>;
+  currentList: ComputedRef<ShoppingList>;
+  initialized: Ref<boolean>;
+  currentListTemplateId: ComputedRef<string>;
+
+  // Funktionen
+  loadLists: () => boolean;
+  createList: (name: string, options?: CreateListOptions) => ShoppingList | null;
+  createDefaultList: () => ShoppingList;
+  selectList: (listId: string) => void;
+  deleteList: (listId: string) => boolean;
+  updateListTemplate: (templateId: string) => void;
+  updateListName: (newName: string) => void;
+  updateListFavorite: (isFavorite: boolean) => void;
+  updateList: (updatedList: ShoppingList) => boolean;
+  saveLists: () => void;
+  getItemsCount: (list: ShoppingList) => number;
+  getCheckedItemsCount: () => number;
+  getTotalItemsCount: () => number;
+}
+
+/**
+ * Composable für Einkaufslisten-Verwaltung
+ * @returns Ein Objekt mit Funktionen und reaktiven Werten für die Listenverwaltung
+ */
+export function useShoppingLists(): IShoppingListsComposable {
   const { saveToStorage } = useLocalStorage();
   const { saveLists: saveListsToStorage, loadData } = listManagementHelpers();
 
@@ -214,7 +238,7 @@ export function useShoppingLists(): void {
       initialized.value = true;
       return true;
     } catch (error) {
-      logger.error('Fehler beim Laden der Listen:', error);
+      _logger.error('Fehler beim Laden der Listen:', error);
       createDefaultList();
       return false;
     }

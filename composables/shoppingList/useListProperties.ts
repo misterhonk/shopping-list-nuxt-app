@@ -1,35 +1,31 @@
 import { useLocalStorage } from '~/composables/core/useLocalStorage';
-import { getItemsCount, getCheckedItemsCount } from '~/composables/utils/listUtils';
+import { getItemsCount, _getCheckedItemsCount } from '~/composables/utils/listUtils';
 import { createLogger } from '~/utils/logger';
 
 import type { Ref } from 'vue';
-import type { ShoppingList } from '~/types/app-types';
+import type { IShoppingList } from '~/types/app-types';
+import type { IUseListProperties } from '~/types/composable-types';
 
 // Logger initialisieren
-const logger = createLogger('useListProperties');
-
-// Interface für den Rückgabetyp des Composables
-interface ListPropertiesComposable {
-  getItemsCount: (list: ShoppingList) => number;
-  getCheckedItemsCount: () => number;
-  getTotalItemsCount: () => number;
-  updateListName: (newName: string) => boolean;
-  updateListFavorite: (isFavorite: boolean) => boolean;
-}
+const _logger = createLogger('useListProperties');
 
 /**
  * Composable für die Verwaltung von Listeneigenschaften
  * Bietet Funktionen zum Lesen und Aktualisieren von Listeneigenschaften
+ *
+ * @param listsRef - Referenz auf die Einkaufslisten
+ * @param currentListIdRef - Referenz auf die aktuelle Listen-ID
+ * @returns Ein Objekt mit Funktionen zur Verwaltung von Listeneigenschaften
  */
 export function useListProperties(
-  listsRef: Ref<ShoppingList[]>,
+  listsRef: Ref<IShoppingList[]>,
   currentListIdRef: Ref<string | null>
-): ListPropertiesComposable {
+): IUseListProperties {
   const { saveToStorage, createImmutableCopy } = useLocalStorage();
 
   /**
-   * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
-   * @returns Die Anzahl der erledigten Artikel
+   * Ermittelt die Anzahl der Artikel in der aktuellen Liste
+   * @returns Die Anzahl der Artikel
    */
   const getTotalItemsCount = (): number => {
     const currentList = listsRef.value.find(list => list.id === currentListIdRef.value);
@@ -40,9 +36,9 @@ export function useListProperties(
    * Ermittelt die Anzahl der erledigten Artikel in der aktuellen Liste
    * @returns Die Anzahl der erledigten Artikel
    */
-  const getCurrentCheckedItemsCount = (): number => {
+  const getCheckedItemsCount = (): number => {
     const currentList = listsRef.value.find(list => list.id === currentListIdRef.value);
-    return currentList ? getCheckedItemsCount(currentList) : 0;
+    return currentList ? _getCheckedItemsCount(currentList) : 0;
   };
 
   /**
@@ -76,7 +72,7 @@ export function useListProperties(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren des Listennamens:', error);
+      _logger.error('Fehler beim Aktualisieren des Listennamens:', error);
       return false;
     }
   };
@@ -119,14 +115,14 @@ export function useListProperties(
 
       return true;
     } catch (error) {
-      logger.error('Fehler beim Aktualisieren des Favoriten-Status:', error);
+      _logger.error('Fehler beim Aktualisieren des Favoriten-Status:', error);
       return false;
     }
   };
 
   return {
     getItemsCount,
-    getCheckedItemsCount: getCurrentCheckedItemsCount,
+    getCheckedItemsCount,
     getTotalItemsCount,
     updateListName,
     updateListFavorite,

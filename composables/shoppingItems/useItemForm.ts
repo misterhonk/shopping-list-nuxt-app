@@ -1,11 +1,13 @@
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref } from 'vue';
 
-import type { Category } from '~/types/app-types';
+import type { ICategory } from '~/types/app-types';
 import type { IUseItemForm } from '~/types/composable-types';
 
 /**
  * Composable für die Verwaltung des Artikelformulars
  * Bietet Funktionen zum Hinzufügen und Bearbeiten von Artikeln
+ *
+ * @returns Ein Objekt mit Funktionen und Daten zur Formular-Verwaltung
  */
 export function useItemForm(): IUseItemForm {
   // UI-Status für Artikelformular
@@ -16,7 +18,7 @@ export function useItemForm(): IUseItemForm {
   const newItem = reactive<{
     name: string;
     quantity: number;
-    category: string | Category;
+    category: string | ICategory;
     price: number;
   }>({
     name: '',
@@ -25,14 +27,12 @@ export function useItemForm(): IUseItemForm {
     price: 0,
   });
 
-  // Berechnete Eigenschaften
-  const isFormValid = computed((): boolean => newItem.name.trim() !== '' && newItem.quantity > 0);
-
   /**
    * Setzt das Artikelformular zurück
    * @param defaultCategory - Die Standardkategorie für neue Artikel
    */
-  const resetItemForm = (defaultCategory: string | Category = 'Sonstiges'): void => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _resetItemForm = (defaultCategory: string | ICategory = 'Sonstiges'): void => {
     newItem.name = '';
     newItem.quantity = 1;
     newItem.category = defaultCategory;
@@ -50,6 +50,15 @@ export function useItemForm(): IUseItemForm {
         itemNameInput.value.focus();
       }
     }, 100);
+  };
+
+  /**
+   * Leert das Artikelnamen-Eingabefeld
+   */
+  const clearItemNameInput = (): void => {
+    if (itemNameInput.value) {
+      itemNameInput.value.value = '';
+    }
   };
 
   /**
@@ -78,11 +87,7 @@ export function useItemForm(): IUseItemForm {
     isAddingItem,
     itemNameInput,
     focusItemNameInput,
-    clearItemNameInput: () => {
-      if (itemNameInput.value) {
-        itemNameInput.value.value = '';
-      }
-    },
+    clearItemNameInput,
     showItemForm,
     hideItemForm,
     closeItemForm,

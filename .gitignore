@@ -22,4 +22,4 @@ commit-message.txt
 # Local env files
 .env
 .env.*
-!.env.example
+!.env.examplebackup/

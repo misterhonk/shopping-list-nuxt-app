@@ -1,7 +1,7 @@
-import type { CategoryTemplate, TemplateCollection } from '../../composables/types';
+import type { CategoryTemplate, ITemplateCollection } from '../../composables/types';
 
 // Kategorie-Vorlagen für verschiedene Geschäftstypen
-export const categoryTemplates: TemplateCollection = {
+export const categoryTemplates: ITemplateCollection = {
   // Standardvorlage für Supermärkte
   supermarket: {
     id: 'supermarket',

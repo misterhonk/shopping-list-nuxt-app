@@ -149,7 +149,7 @@ const props = withDefaults(
   }
 );
 
-interface NewItem {
+interface INewItem {
   name: string;
   quantity: number;
   category: Category;
@@ -157,7 +157,7 @@ interface NewItem {
 }
 
 const emit = defineEmits<{
-  (e: 'add-item', item: NewItem): void;
+  (e: 'add-item', item: INewItem): void;
 }>();
 
 // Eingabefelder
@@ -216,7 +216,7 @@ watch(
 const isValid = computed(() => itemName.value && itemName.value.trim() !== '');
 
 // Artikel hinzufügen
-const addItem = () => {
+const addItem = (): void => {
   if (!isValid.value) {
     return;
   }
@@ -242,18 +242,18 @@ const addItem = () => {
 };
 
 // Menge erhöhen/verringern
-const increaseQuantity = () => {
+const increaseQuantity = (): void => {
   itemQuantity.value++;
 };
 
-const decreaseQuantity = () => {
+const decreaseQuantity = (): void => {
   if (itemQuantity.value > 1) {
     itemQuantity.value--;
   }
 };
 
 // Details ausblenden
-const hideDetails = () => {
+const hideDetails = (): void => {
   showDetails.value = false;
 };
 

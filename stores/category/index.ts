@@ -1,414 +1,479 @@
 import { defineStore } from 'pinia';
+import { ref, computed, markRaw } from 'vue';
 
-import { createLogger } from '~/utils/logger';
-
-import { migrateCategories, needsMigration } from './migration';
+import { diagnoseCategories } from '~/components/categories/testing-helper';
 import {
-  addCategory as addCategoryOperation,
-  editCategory as editCategoryOperation,
-  deleteCategory as deleteCategoryOperation,
-  createTemplate as createTemplateOperation,
-  deleteTemplate as deleteTemplateOperation,
-  updateTemplate as updateTemplateOperation,
-  updateCategoryOrder as updateCategoryOrderOperation,
-} from './operations';
+  addCategory,
+  updateCategory,
+  deleteCategory,
+  createTemplate,
+  deleteTemplate,
+} from '~/stores/category/operations';
 import {
   loadSortConfigs,
   saveSortConfigs,
   getSortConfigForTemplate,
   updateSortConfig,
   sortCategories,
-} from './sorting';
-import { saveCategoryData, loadCategoryData } from './storage';
-import { categoryTemplates, defaultTemplateId } from './templates';
+} from '~/stores/category/sorting';
+import { saveCategoryData, loadCategoryData } from '~/stores/category/storage';
+import { categoryTemplates, defaultTemplateId } from '~/stores/category/templates';
+import { deepCopy } from '~/stores/category/utils';
+import { createCategorySyncPlugin } from '~/stores/plugins/categorySyncPlugin';
+import { createLogger } from '~/utils/logger';
 
-import type { CategorySortConfig, TemplateCollection } from '~/composables/types';
-import type { Category, CategoryTemplate } from '~/types/app-types';
+// Import the interfaces
+import type {
+  ICategory,
+  ICategoryTemplate,
+  ICategorySortConfig,
+  ITemplateCollection,
+} from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('index');
+const _logger = createLogger('CategoryStore');
+const PREFIX = '[CategoryStore]';
 
 /**
- * Interface für den CategoryStore State
+ * Store für die Verwaltung von Kategorien und Templates
  */
-interface CategoryState {
-  templates: TemplateCollection;
-  activeTemplateId: string;
-  customTemplates: TemplateCollection;
-  isEditMode: boolean;
-  sortConfigs: Record<string, CategorySortConfig>;
-}
+export const useCategoryStore = defineStore('category', () => {
+  // Zustand
+  const activeTemplateId = ref<string>('');
+  const customTemplates = ref<ITemplateCollection>({});
+  const sortConfigs = ref<Record<string, ICategorySortConfig>>({});
+  const eventBus = ref<any>(null);
 
-/**
- * Store für die Verwaltung von Kategorien und Vorlagen
- */
-export const useCategoryStore = defineStore('categoryStore', {
-  state: (): CategoryState => ({
-    templates: { ...categoryTemplates },
-    activeTemplateId: defaultTemplateId,
-    customTemplates: {},
-    isEditMode: false,
-    sortConfigs: {},
-  }),
+  // Berechnete Eigenschaften
 
-  getters: {
-    /**
-     * Alle verfügbaren Templates (voreingestellte und benutzerdefinierte)
-     */
-    allTemplates(): TemplateCollection {
-      return { ...this.templates, ...this.customTemplates };
-    },
+  /**
+   * Alle verfügbaren Templates (Standard und benutzerdefiniert)
+   */
+  const templates = computed<ITemplateCollection>(() => ({
+    ...categoryTemplates,
+    ...customTemplates.value,
+  }));
 
-    /**
-     * Das aktuell ausgewählte Template
-     */
-    currentTemplate(): CategoryTemplate {
-      return this.allTemplates[this.activeTemplateId] || this.templates[defaultTemplateId];
-    },
+  /**
+   * Das aktuell aktive Template
+   */
+  const currentTemplate = computed<ICategoryTemplate>(() => {
+    const activeId = activeTemplateId.value || defaultTemplateId;
+    return templates.value[activeId] || categoryTemplates[defaultTemplateId];
+  });
 
-    /**
-     * Nur die Kategorien des aktuell ausgewählten Templates
-     */
-    currentCategories(): Category[] {
-      return this.currentTemplate.categories ?? [];
-    },
+  /**
+   * Die Kategorien des aktuellen Templates
+   */
+  const currentCategories = computed<ICategory[]>(() => currentTemplate.value.categories || []);
 
-    /**
-     * Sortierte Kategorien des aktuellen Templates (nach Laufweg, Benutzerdefiniert oder Alphabetisch)
-     */
-    sortedCategories(): Category[] {
-      const currentSortConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
-      return sortCategories(this.currentCategories, this.currentTemplate, currentSortConfig);
-    },
+  /**
+   * Die Kategorien als ID-zu-Name-Mapping
+   */
+  const categoryMapping = computed<Record<string, string>>(() => {
+    const mapping: Record<string, string> = {};
+    for (const category of currentCategories.value) {
+      mapping[category.id] = category.name;
+    }
+    return mapping;
+  });
 
-    /**
-     * Alle Templates als Array für die Auswahl
-     */
-    templatesList(): {
-      id: string;
-      name: string;
-      description: string;
-      isCustom: boolean;
-    }[] {
-      return Object.values(this.allTemplates).map(template => ({
-        id: template.id,
-        name: template.name,
-        description: template.description,
-        isCustom: this.customTemplates[template.id] !== undefined,
-      }));
-    },
+  /**
+   * Gibt an, ob die benutzerdefinierte Sortierung aktiv ist
+   */
+  const isCustomSortActive = computed<boolean>(() => {
+    const config = getSortConfig();
+    return config.useCustomSort;
+  });
 
-    /**
-     * Aktuelle Sortierungskonfiguration für das ausgewählte Template
-     */
-    currentSortConfig(): CategorySortConfig {
-      return getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
-    },
+  /**
+   * Sortierte Kategorien für die Anzeige
+   */
+  const sortedCategories = computed<ICategory[]>(() =>
+    sortCategories(currentCategories.value, currentTemplate.value, getSortConfig())
+  );
 
-    /**
-     * Gibt an, ob die aktuelle Sortierung benutzerdefiniert ist
-     */
-    isCustomSortActive(): boolean {
-      return this.currentSortConfig.useCustomSort;
-    },
-  },
+  /**
+   * Gibt die Sortierungskonfiguration für das aktuelle Template zurück
+   */
+  const getSortConfig = (): ICategorySortConfig =>
+    getSortConfigForTemplate(currentTemplate.value.id, sortConfigs.value);
 
-  actions: {
-    /**
-     * Template aktivieren
-     * @param templateId - Die ID des zu aktivierenden Templates
-     */
-    activateTemplate(templateId: string): void {
-      if (this.allTemplates[templateId]) {
-        this.activeTemplateId = templateId;
-        this.saveToLocalStorage();
+  /**
+   * Alle Templates als Liste für UI-Komponenten
+   */
+  const templatesList = computed<ICategoryTemplate[]>(() => {
+    const result: ICategoryTemplate[] = [];
+
+    // Standardvorlagen hinzufügen
+    for (const [_id, template] of Object.entries(categoryTemplates)) {
+      result.push({
+        ...template,
+        isCustom: false,
+      });
+    }
+
+    // Benutzerdefinierte Vorlagen hinzufügen
+    for (const [_id, template] of Object.entries(customTemplates.value)) {
+      result.push({
+        ...template,
+        isCustom: true,
+      });
+    }
+
+    return result;
+  });
+
+  // Aktionen
+
+  /**
+   * Kategorie hinzufügen
+   * @param name - Name der neuen Kategorie
+   */
+  const addCategoryAction = (name: string): void => {
+    if (!name.trim()) {
+      return;
+    }
+
+    const updatedTemplate = addCategory(currentTemplate.value, name.trim());
+
+    // Template aktualisieren
+    if (updatedTemplate) {
+      updateTemplateAction(updatedTemplate);
+    }
+  };
+
+  /**
+   * Kategorie bearbeiten
+   * @param category - Die zu bearbeitende Kategorie
+   * @param newName - Der neue Name der Kategorie
+   */
+  const editCategory = (category: ICategory, newName: string): void => {
+    if (!newName.trim() || newName === category.name) {
+      return;
+    }
+
+    const updatedTemplate = updateCategory(currentTemplate.value, category, newName.trim());
+
+    // Template aktualisieren
+    if (updatedTemplate) {
+      updateTemplateAction(updatedTemplate);
+
+      // Event-Bus auslösen, um Änderungen in der App zu verbreiten
+      if (eventBus.value && typeof eventBus.value.emit === 'function') {
+        eventBus.value.emit(category.id, newName.trim());
       }
-    },
+    }
+  };
 
-    /**
-     * Kategorie hinzufügen
-     * @param categoryName - Der Name der neuen Kategorie
-     */
-    addCategory(categoryName: string): void {
-      this.customTemplates = addCategoryOperation(
-        this.activeTemplateId,
-        categoryName,
-        this.templates,
-        this.customTemplates
-      );
-      this.saveToLocalStorage();
-    },
+  /**
+   * Kategorie löschen
+   * @param category - Die zu löschende Kategorie
+   */
+  const deleteCategoryAction = (category: ICategory): void => {
+    const updatedTemplate = deleteCategory(currentTemplate.value, category);
 
-    /**
-     * Kategorie bearbeiten
-     * @param categoryToEdit - Die zu bearbeitende Kategorie (Objekt oder ID)
-     * @param newName - Der neue Name für die Kategorie
-     */
-    editCategory(categoryToEdit: Category | string, newName: string): void {
-      // Sicherstellen, dass wir eine Kategorie-ID haben
-      const categoryId = typeof categoryToEdit === 'object' ? categoryToEdit.id : categoryToEdit;
+    // Template aktualisieren
+    if (updatedTemplate) {
+      updateTemplateAction(updatedTemplate);
+    }
+  };
 
-      this.customTemplates = editCategoryOperation(
-        this.activeTemplateId,
-        categoryId,
-        newName,
-        this.templates,
-        this.customTemplates
-      );
+  /**
+   * Template aktivieren
+   * @param templateId - Die ID des zu aktivierenden Templates
+   */
+  const activateTemplate = (templateId: string): void => {
+    if (!templateId || !templates.value[templateId]) {
+      activeTemplateId.value = defaultTemplateId;
+    } else {
+      activeTemplateId.value = templateId;
+    }
 
-      this.saveToLocalStorage();
+    // Speichern
+    saveToLocalStorage();
+  };
 
-      // Explizites Neuladen zur Sicherheit
-      setTimeout(() => {
-        this.loadFromLocalStorage();
-      }, 50);
-    },
+  /**
+   * Neues Template erstellen
+   * @param name - Name des neuen Templates
+   * @param description - Beschreibung des neuen Templates
+   * @param baseTemplateId - Optionale ID eines Basis-Templates, von dem Kategorien übernommen werden sollen
+   */
+  const createTemplateAction = (
+    name: string,
+    description: string,
+    baseTemplateId: string | null = null
+  ): void => {
+    if (!name.trim()) {
+      return;
+    }
 
-    /**
-     * Kategorie löschen
-     * @param categoryToDelete - Die zu löschende Kategorie (Objekt oder ID)
-     */
-    deleteCategory(categoryToDelete: Category | string): void {
-      // Sicherstellen, dass wir eine Kategorie-ID haben
-      const categoryId =
-        typeof categoryToDelete === 'object' ? categoryToDelete.id : categoryToDelete;
+    const baseTemplate = baseTemplateId ? templates.value[baseTemplateId] : null;
 
-      this.customTemplates = deleteCategoryOperation(
-        this.activeTemplateId,
-        categoryId,
-        this.templates,
-        this.customTemplates
-      );
+    const newTemplate = createTemplate(name.trim(), description.trim(), baseTemplate);
 
-      // Kategorie auch aus benutzerdefinierten Sortierungen entfernen
-      if (this.sortConfigs[this.activeTemplateId]) {
-        const updatedOrder = this.sortConfigs[this.activeTemplateId].customOrder.filter(
-          id => id !== categoryId
-        );
+    // Template hinzufügen und aktivieren
+    customTemplates.value = {
+      ...customTemplates.value,
+      [newTemplate.id]: newTemplate,
+    };
 
-        this.sortConfigs[this.activeTemplateId] = {
-          ...this.sortConfigs[this.activeTemplateId],
-          customOrder: updatedOrder,
-        };
+    activateTemplate(newTemplate.id);
+  };
 
-        saveSortConfigs(this.sortConfigs);
-      }
+  /**
+   * Template aktualisieren
+   * @param template - Das vollständige aktualisierte Template
+   */
+  const updateTemplateAction = (template: ICategoryTemplate): void => {
+    if (!template.id) {
+      return;
+    }
 
-      this.saveToLocalStorage();
-
-      // Explizites Neuladen zur Sicherheit
-      setTimeout(() => {
-        this.loadFromLocalStorage();
-      }, 50);
-    },
-
-    /**
-     * Neues Template erstellen
-     * @param name - Der Name des neuen Templates
-     * @param description - Die Beschreibung des Templates
-     * @param baseTemplateId - Die ID eines Basis-Templates für Kategorien
-     * @returns Die ID des neuen Templates oder null bei Fehler
-     */
-    createTemplate(
-      name: string,
-      description: string = '',
-      baseTemplateId: string | null = null
-    ): string | null {
-      const result = createTemplateOperation(
-        name,
-        description,
-        baseTemplateId,
-        this.templates,
-        this.customTemplates
-      );
-
-      if (result.newTemplateId) {
-        this.customTemplates = result.customTemplates;
-        this.activeTemplateId = result.newTemplateId;
-
-        // Wenn es ein Basis-Template gab, dessen Sortierung übernehmen
-        if (baseTemplateId && this.sortConfigs[baseTemplateId]) {
-          this.sortConfigs[result.newTemplateId] = {
-            ...this.sortConfigs[baseTemplateId],
-            templateId: result.newTemplateId,
-          };
-          saveSortConfigs(this.sortConfigs);
-        }
-
-        this.saveToLocalStorage();
-        return result.newTemplateId;
-      }
-
-      return null;
-    },
-
-    /**
-     * Template löschen (nur benutzerdefinierte)
-     * @param templateId - Die ID des zu löschenden Templates
-     */
-    deleteTemplate(templateId: string): void {
-      this.customTemplates = deleteTemplateOperation(templateId, this.customTemplates);
-
-      // Sortierungskonfiguration für das gelöschte Template entfernen
-      if (this.sortConfigs[templateId]) {
-        const updatedConfigs = { ...this.sortConfigs };
-        delete updatedConfigs[templateId];
-        this.sortConfigs = updatedConfigs;
-        saveSortConfigs(this.sortConfigs);
-      }
-
-      // Falls das aktive Template gelöscht wurde, zurück zum Standard
-      if (this.activeTemplateId === templateId) {
-        this.activeTemplateId = defaultTemplateId;
-      }
-
-      this.saveToLocalStorage();
-    },
-
-    /**
-     * Template bearbeiten (nur benutzerdefinierte)
-     * @param templateId - Die ID des zu bearbeitenden Templates
-     * @param name - Der neue Name (optional)
-     * @param description - Die neue Beschreibung (optional)
-     */
-    updateTemplate(templateId: string, name?: string, description?: string): void {
-      this.customTemplates = updateTemplateOperation(
-        templateId,
-        name,
-        description,
-        this.customTemplates
-      );
-
-      this.saveToLocalStorage();
-    },
-
-    /**
-     * Kategorien-Reihenfolge aktualisieren
-     * @param newOrder - Die neue Reihenfolge der Kategorien
-     */
-    updateCategoryOrder(newOrder: Category[]): void {
-      this.customTemplates = updateCategoryOrderOperation(
-        this.activeTemplateId,
-        newOrder,
-        this.templates,
-        this.customTemplates
-      );
-
-      this.saveToLocalStorage();
-    },
-
-    /**
-     * Sortierung zwischen Standard und Benutzerdefiniert umschalten
-     */
-    toggleSortMode(): void {
-      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
-
-      const updatedConfig = {
-        ...currentConfig,
-        useCustomSort: !currentConfig.useCustomSort,
+    // Prüfen, ob es ein Standard- oder benutzerdefiniertes Template ist
+    if (categoryTemplates[template.id]) {
+      // Bei Standardvorlagen, Kategorien auch bei gleicher ID aktualisieren, falls Namen geändert wurden
+      const _updatedTemplate = deepCopy(template);
+      // Kategorien aus dem Standard-Template aktualisieren
+      const result = updateTemplate(template);
+      // Template aktualisieren
+      customTemplates.value = {
+        ...customTemplates.value,
+        [template.id]: result,
       };
+    } else {
+      // Bei benutzerdefinierten Vorlagen direkt aktualisieren
+      customTemplates.value = {
+        ...customTemplates.value,
+        [template.id]: template,
+      };
+    }
 
-      // Wenn wir zum ersten Mal auf benutzerdefinierte Sortierung umschalten,
-      // verwenden wir die Standard-Reihenfolge als Ausgangspunkt
-      if (updatedConfig.useCustomSort && updatedConfig.customOrder.length === 0) {
-        const template = this.allTemplates[this.activeTemplateId];
-        if (template.defaultCategoryOrder) {
-          updatedConfig.customOrder = [...template.defaultCategoryOrder];
+    // Speichern
+    saveToLocalStorage();
+  };
+
+  /**
+   * Template umbenennen/bearbeiten
+   * @param templateId - Die ID des zu bearbeitenden Templates
+   * @param name - Der neue Name des Templates
+   * @param description - Die neue Beschreibung des Templates
+   */
+  const updateTemplate = (templateId: string, name: string, description: string): void => {
+    if (!templateId || !templates.value[templateId]) {
+      return;
+    }
+
+    const template = templates.value[templateId];
+    const updatedTemplate = {
+      ...template,
+      name: name.trim() || template.name,
+      description: description.trim() || template.description,
+    };
+
+    updateTemplateAction(updatedTemplate);
+  };
+
+  /**
+   * Template löschen
+   * @param templateId - Die ID des zu löschenden Templates
+   */
+  const deleteTemplateAction = (templateId: string): void => {
+    // Standardvorlagen können nicht gelöscht werden
+    if (!templateId || categoryTemplates[templateId]) {
+      return;
+    }
+
+    const result = deleteTemplate(templateId, customTemplates.value);
+
+    // Templates aktualisieren
+    customTemplates.value = result;
+
+    // Wenn das aktive Template gelöscht wurde, das Standard-Template aktivieren
+    if (activeTemplateId.value === templateId) {
+      activeTemplateId.value = defaultTemplateId;
+    }
+
+    // Speichern
+    saveToLocalStorage();
+  };
+
+  /**
+   * Alle benutzerdefinierten Vorlagen zurücksetzen
+   */
+  const resetToDefault = (): void => {
+    customTemplates.value = {};
+    activeTemplateId.value = defaultTemplateId;
+    sortConfigs.value = {};
+    saveToLocalStorage();
+  };
+
+  /**
+   * Laden der benutzerdefinierten Vorlagen und der aktiven Vorlage aus dem localStorage
+   */
+  const loadFromLocalStorage = (): void => {
+    try {
+      // Kategoriedaten laden
+      const data = loadCategoryData();
+
+      if (data) {
+        if (data.customTemplates) {
+          customTemplates.value = data.customTemplates;
+        }
+        if (data.activeTemplateId) {
+          activeTemplateId.value = data.activeTemplateId;
         } else {
-          // Andernfalls nehmen wir einfach die aktuelle Reihenfolge der Kategorien
-          updatedConfig.customOrder = this.currentCategories.map(cat => cat.id);
+          activeTemplateId.value = defaultTemplateId;
         }
+      } else {
+        activeTemplateId.value = defaultTemplateId;
       }
 
-      this.sortConfigs = updateSortConfig(updatedConfig, this.sortConfigs);
-      saveSortConfigs(this.sortConfigs);
-    },
-
-    /**
-     * Benutzerdefinierte Sortierreihenfolge aktualisieren
-     * @param newOrder - Array mit Kategorie-IDs in der neuen Reihenfolge
-     */
-    updateCustomSortOrder(newOrder: string[]): void {
-      const currentConfig = getSortConfigForTemplate(this.activeTemplateId, this.sortConfigs);
-
-      const updatedConfig = {
-        ...currentConfig,
-        useCustomSort: true,
-        customOrder: newOrder,
-      };
-
-      this.sortConfigs = updateSortConfig(updatedConfig, this.sortConfigs);
-      saveSortConfigs(this.sortConfigs);
-    },
-
-    /**
-     * Benutzerdefinierte Sortierung zurücksetzen auf Standard-Laufweg
-     */
-    resetToDefaultSort(): void {
-      const template = this.allTemplates[this.activeTemplateId];
-      const defaultOrder = template.defaultCategoryOrder ?? [];
-
-      const updatedConfig: CategorySortConfig = {
-        templateId: this.activeTemplateId,
-        useCustomSort: false,
-        customOrder: [...defaultOrder],
-      };
-
-      this.sortConfigs = updateSortConfig(updatedConfig, this.sortConfigs);
-      saveSortConfigs(this.sortConfigs);
-    },
-
-    /**
-     * Daten im Local Storage speichern
-     */
-    saveToLocalStorage(): void {
-      saveCategoryData(this.activeTemplateId, this.customTemplates);
-    },
-
-    /**
-     * Daten aus dem Local Storage laden
-     */
-    loadFromLocalStorage(): void {
-      try {
-        const data = loadCategoryData();
-
-        if (data) {
-          if (data.customTemplates) {
-            // Prüfen, ob Migration notwendig ist
-            if (needsMigration(data.customTemplates)) {
-              logger.info('Migration der Kategorien notwendig - alte Strings zu Objekten');
-              this.customTemplates = migrateCategories(data.customTemplates);
-            } else {
-              this.customTemplates = data.customTemplates;
-            }
-          }
-
-          if (
-            data.activeTemplateId &&
-            (this.templates[data.activeTemplateId] || this.customTemplates[data.activeTemplateId])
-          ) {
-            this.activeTemplateId = data.activeTemplateId;
-          }
-        }
-
-        // Sortierungskonfigurationen laden
-        this.sortConfigs = loadSortConfigs();
-      } catch (error) {
-        logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
+      // Sortierungskonfigurationen laden
+      const configs = loadSortConfigs();
+      if (configs) {
+        sortConfigs.value = configs;
       }
-    },
+    } catch (error) {
+      _logger.error(`${PREFIX} Fehler beim Laden aus localStorage:`, error);
+      activeTemplateId.value = defaultTemplateId;
+    }
+  };
 
-    /**
-     * Alle Änderungen zurücksetzen
-     */
-    resetToDefault(): void {
-      this.customTemplates = {};
-      this.activeTemplateId = defaultTemplateId;
-      this.saveToLocalStorage();
+  /**
+   * Speichern der benutzerdefinierten Vorlagen und der aktiven Vorlage im localStorage
+   */
+  const saveToLocalStorage = (): void => {
+    try {
+      // Kategoriedaten speichern
+      saveCategoryData(activeTemplateId.value, customTemplates.value);
 
-      // Sortierungskonfigurationen zurücksetzen
-      this.sortConfigs = {};
-      saveSortConfigs({});
-    },
-  },
+      // Sortierungskonfigurationen speichern
+      saveSortConfigs(sortConfigs.value);
+    } catch (error) {
+      _logger.error(`${PREFIX} Fehler beim Speichern in localStorage:`, error);
+    }
+  };
+
+  /**
+   * Sortierungsmodus umschalten
+   */
+  const toggleSortMode = (): void => {
+    const config = getSortConfig();
+    const newConfig: ICategorySortConfig = {
+      ...config,
+      useCustomSort: !config.useCustomSort,
+    };
+
+    // Wenn die benutzerdefinierte Sortierung aktiviert wird, aktuelle Reihenfolge als Standard setzen
+    if (newConfig.useCustomSort && newConfig.customOrder.length === 0) {
+      // Wenn eine Standard-Reihenfolge definiert ist, diese verwenden
+      if (
+        currentTemplate.value.defaultCategoryOrder &&
+        currentTemplate.value.defaultCategoryOrder.length > 0
+      ) {
+        newConfig.customOrder = [...currentTemplate.value.defaultCategoryOrder];
+      } else {
+        // Sonst die aktuelle Reihenfolge (alphabetisch) verwenden
+        newConfig.customOrder = currentCategories.value.map(cat => cat.id);
+      }
+    }
+
+    // Konfiguration aktualisieren
+    sortConfigs.value = updateSortConfig(newConfig, sortConfigs.value);
+
+    // Speichern
+    saveToLocalStorage();
+  };
+
+  /**
+   * Benutzerdefinierte Sortierreihenfolge zurücksetzen
+   */
+  const resetToDefaultSort = (): void => {
+    const config = getSortConfig();
+    const newConfig: ICategorySortConfig = {
+      ...config,
+      useCustomSort: false,
+      customOrder: [],
+    };
+
+    // Konfiguration aktualisieren
+    sortConfigs.value = updateSortConfig(newConfig, sortConfigs.value);
+
+    // Speichern
+    saveToLocalStorage();
+  };
+
+  /**
+   * Benutzerdefinierte Sortierreihenfolge aktualisieren
+   * @param categoryIds - Die neue Reihenfolge der Kategorie-IDs
+   */
+  const updateCustomSortOrder = (categoryIds: string[]): void => {
+    const config = getSortConfig();
+    const newConfig: ICategorySortConfig = {
+      ...config,
+      customOrder: categoryIds,
+    };
+
+    // Konfiguration aktualisieren
+    sortConfigs.value = updateSortConfig(newConfig, sortConfigs.value);
+
+    // Speichern
+    saveToLocalStorage();
+  };
+
+  /**
+   * Event-Bus für Kategorieänderungen setzen
+   * @param bus - Der zu verwendende Event-Bus
+   */
+  const setCategoryEventBus = (bus: any): void => {
+    eventBus.value = markRaw(bus);
+  };
+
+  // Initialisierung
+  try {
+    // Event-Listener für das Diagnose-Feature
+    const diagnosticRegistration = diagnoseCategories();
+    if (typeof diagnosticRegistration === 'function') {
+      _logger.debug(`${PREFIX} Diagnostisches System registriert.`);
+    }
+  } catch (error) {
+    _logger.debug(`${PREFIX} Diagnostisches System nicht verfügbar:`, error);
+  }
+
+  // Plugin für App-Events
+  const plugin = createCategorySyncPlugin({
+    setBus: setCategoryEventBus,
+  });
+
+  return {
+    // Zustand
+    activeTemplateId,
+    customTemplates,
+    sortConfigs,
+    // Berechnete Eigenschaften
+    templates,
+    currentTemplate,
+    currentCategories,
+    categoryMapping,
+    isCustomSortActive,
+    sortedCategories,
+    templatesList,
+    // Aktionen
+    addCategory: addCategoryAction,
+    editCategory,
+    deleteCategory: deleteCategoryAction,
+    activateTemplate,
+    createTemplate: createTemplateAction,
+    updateTemplate,
+    deleteTemplate: deleteTemplateAction,
+    resetToDefault,
+    loadFromLocalStorage,
+    toggleSortMode,
+    resetToDefaultSort,
+    updateCustomSortOrder,
+    // Plugin
+    categorySync: plugin,
+  };
 });

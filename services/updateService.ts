@@ -39,7 +39,7 @@ export function storeVersion(version: string): void {
 export function checkForUpdates(): IUpdateInfo {
   const storedVersion = getStoredVersion();
   const now = Date.now();
-  const lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) || '0');
+  const lastCheck = Number(localStorage.getItem(LAST_CHECK_KEY) ?? '0');
 
   // Regelmäßige Cache-Invalidierung (alle 24 Stunden)
   // Dies ist besonders wichtig für iOS PWAs
@@ -78,7 +78,7 @@ export function applyUpdate(): void {
 
   // Für iOS: Hard-Reload verwenden
   if (isIOS()) {
-    window.location.href = `${window.location.href.split('#')[0]}?t=${Date.now()}${window.location.hash ?? ''}`;
+    window.location.href = `${window.location.href.split('#')[0]}?t=${Date.now()}${window.location.hash || ''}`;
   } else {
     window.location.reload(true); // true = force-reload from server
   }
@@ -94,7 +94,7 @@ export function registerServiceWorkerUpdateHandler(): void {
       console.log('Forcing Service Worker update check...');
       navigator.serviceWorker.getRegistration().then(reg => {
         if (reg) {
-          reg.update().catch(console.error);
+          reg.update().catch(err => console.error(err));
         }
       });
     }
@@ -171,21 +171,25 @@ async function clearAllCaches(): Promise<void> {
  * Prüft, ob ein neuer Service Worker auf Aktivierung wartet
  */
 export function checkForWaitingServiceWorker(callback: (waiting: boolean) => void): void {
+  // Boolean-Wert für das Ergebnis
+  let waitingExists = false;
+
   if ('serviceWorker' in navigator) {
+    // Asynchrone Prüfung mit Promise
     navigator.serviceWorker.ready
       .then(registration => {
-        if (registration.waiting) {
-          // Es gibt einen wartenden Service Worker
-          callback(true);
-        } else {
-          callback(false);
-        }
+        // Setze waitingExists basierend auf registration.waiting
+        waitingExists = Boolean(registration.waiting);
+        // Rufe Callback mit dem Ergebnis auf
+        callback(waitingExists);
       })
       .catch(() => {
-        callback(false);
+        // Bei Fehler Fallback auf false
+        callback(waitingExists);
       });
   } else {
-    callback(false);
+    // Kein Service Worker unterstützt
+    callback(waitingExists);
   }
 }
 
@@ -205,6 +209,6 @@ function isIOS(): boolean {
 function isStandalone(): boolean {
   return (
     window.matchMedia('(display-mode: standalone)').matches ||
-    (window.navigator as any).standalone === true
+    (window.navigator as unknown as { standalone: boolean }).standalone === true
   );
 }

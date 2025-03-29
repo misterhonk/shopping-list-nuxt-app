@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-const _emit = defineEmits<{
+defineEmits<{
   (e: 'add'): void;
 }>();
 </script>

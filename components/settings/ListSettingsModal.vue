@@ -148,7 +148,7 @@ import { ref, watch, onMounted } from 'vue';
 
 import type { CategoryTemplate } from '~/types/app-types';
 
-const props = defineProps<{
+const _props = defineProps<{
   listName: string;
   templateId: string;
   templates: CategoryTemplate[];
@@ -196,7 +196,7 @@ watch(
 
 // Update methods
 const updateListName = (): void => {
-  if (editedName.value.trim() && editedName.value !== props.listName) {
+  if (editedName.value.trim() && editedName.value !== _props.listName) {
     emit('update:name', editedName.value);
   }
 };
@@ -210,7 +210,7 @@ const updateFavoriteStatus = (): void => {
 };
 
 onMounted(() => {
-  editedName.value = props.listName;
+  editedName.value = _props.listName;
   selectedTemplateId.value = props.templateId;
   isFavoriteState.value = props.isFavorite || false;
 });

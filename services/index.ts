@@ -11,10 +11,10 @@ import { CategoryService } from './CategoryService';
 import { ItemService } from './ItemService';
 import { ShoppingListService } from './ShoppingListService';
 
-import type { StorageRepository } from '~/repositories/StorageRepository';
+import type { IStorageRepository } from '~/repositories/StorageRepository';
 
 // Service-Instanzen
-let storageRepository: StorageRepository | null = null;
+let storageRepository: IStorageRepository | null = null;
 let shoppingListService: ShoppingListService | null = null;
 let itemService: ItemService | null = null;
 let categoryService: CategoryService | null = null;
@@ -24,7 +24,7 @@ let categoryService: CategoryService | null = null;
  * @returns Ein Objekt mit allen Service-Instanzen
  */
 export function initializeServices(): {
-  storageRepository: StorageRepository;
+  storageRepository: IStorageRepository;
   shoppingListService: ShoppingListService;
   itemService: ItemService;
   categoryService: CategoryService;

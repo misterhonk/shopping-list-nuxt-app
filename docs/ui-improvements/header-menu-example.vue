@@ -66,25 +66,25 @@ const isMenuOpen = ref(false);
 const menuRef = ref<HTMLElement | null>(null);
 
 // Toggle menu
-const toggleMenu = () => {
+const toggleMenu = (): void => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
 // Close menu if clicked outside
-const handleClickOutside = (event: MouseEvent) => {
+const handleClickOutside = (event: MouseEvent): void => {
   if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
     isMenuOpen.value = false;
   }
 };
 
 // Toggle dark mode
-const toggleDarkMode = () => {
+const toggleDarkMode = (): void => {
   themeStore.toggleDarkMode();
   isMenuOpen.value = false; // Close menu after action
 };
 
 // Navigate to statistics
-const navigateToStatistics = () => {
+const navigateToStatistics = (): void => {
   // Navigation logic here
   isMenuOpen.value = false; // Close menu after action
 };

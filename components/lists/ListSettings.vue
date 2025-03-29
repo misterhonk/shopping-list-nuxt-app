@@ -49,7 +49,7 @@ import { ref, watch } from 'vue';
 
 import type { CategoryTemplate } from '~/types/app-types';
 
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     templateId: string;
     templates: CategoryTemplate[];
@@ -64,7 +64,7 @@ const emit = defineEmits<{
   (e: 'update:templateId', templateId: string): void;
 }>();
 
-const localTemplateId = ref<string>(props.templateId);
+const localTemplateId = ref<string>(_props.templateId);
 
 // Bei Änderung von außen aktualisieren
 watch(

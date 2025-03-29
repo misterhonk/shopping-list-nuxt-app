@@ -1,15 +1,20 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ImportOptions, ExportedList, CreateListOptions } from '~/composables/types';
-import type { ShoppingList, ShoppingItem } from '~/types/app-types';
+import type {
+  IImportOptions,
+  IExportedList,
+  ICreateListOptions,
+  IShoppingList,
+  IShoppingItem,
+} from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('useListImport');
+const _logger = createLogger('useListImport');
 
 /**
  * Interface für die Import-Ergebnisse
  */
-interface ImportResult {
+interface IImportResult {
   success: boolean;
   message: string;
   listId?: string;
@@ -20,22 +25,22 @@ interface ImportResult {
 /**
  * Interface für die Dienste, die für den Import benötigt werden
  */
-interface ImportServices {
-  createList: (name: string, options: CreateListOptions) => ShoppingList | null;
-  addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null;
+interface IImportServices {
+  createList: (name: string, options: ICreateListOptions) => IShoppingList | null;
+  addItem: (item: Partial<IShoppingItem>) => IShoppingItem | null;
   selectList: (listId: string) => boolean;
-  updateList: (listData: Partial<ShoppingList> & { id: string }) => boolean;
+  updateList: (listData: Partial<IShoppingList> & { id: string }) => boolean;
 }
 
 /**
  * Composable für den Import von Einkaufslisten
  */
-export function useListImport(): void {
+export function useListImport() {
   /**
    * Lädt eine Datei und zeigt Optionen an
    * @param callback - Callback für geladene Daten
    */
-  const loadFileAndShowOptions = (callback: (data: ExportedList) => void): void => {
+  const loadFileAndShowOptions = (callback: (data: IExportedList) => void): void => {
     // Erstelle einen temporären Datei-Input
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -47,7 +52,7 @@ export function useListImport(): void {
     fileInput.onchange = event => {
       const target = event.target as HTMLInputElement;
       if (!target.files || target.files.length === 0) {
-        logger.info('Keine Datei ausgewählt');
+        _logger.info('Keine Datei ausgewählt');
         document.body.removeChild(fileInput);
         return;
       }
@@ -77,7 +82,7 @@ export function useListImport(): void {
           }
 
           // Prüfe, ob es ein gültiges Format ist
-          const importData: ExportedList = {
+          const importData: IExportedList = {
             name: parsedData.name ?? '',
             items: Array.isArray(parsedData.items) ? parsedData.items : [],
             format: parsedData.format ?? 'shopping-list-app',
@@ -89,14 +94,14 @@ export function useListImport(): void {
           // Callback mit den Daten aufrufen
           callback(importData);
         } catch (error) {
-          logger.error('Fehler beim Parsen der Datei:', error);
+          _logger.error('Fehler beim Parsen der Datei:', error);
           alert(`Die Datei konnte nicht gelesen werden: ${(error as Error).message}`);
         } finally {
           document.body.removeChild(fileInput);
         }
       };
 
-      reader.onerror = () => {
+      reader.onerror = (): void => {
         alert('Fehler beim Lesen der Datei');
         document.body.removeChild(fileInput);
       };
@@ -116,10 +121,10 @@ export function useListImport(): void {
    * @returns Das Importergebnis
    */
   const importListWithOptions = (
-    data: ExportedList,
-    options: ImportOptions,
-    services: ImportServices
-  ): ImportResult => {
+    data: IExportedList,
+    options: IImportOptions,
+    services: IImportServices
+  ): IImportResult => {
     try {
       if (!data.name || !Array.isArray(data.items)) {
         return {
@@ -163,7 +168,7 @@ export function useListImport(): void {
           };
       }
     } catch (error) {
-      logger.error('Fehler beim Import mit Optionen:', error);
+      _logger.error('Fehler beim Import mit Optionen:', error);
       return {
         success: false,
         message: `Import fehlgeschlagen: ${(error as Error).message}`,
@@ -178,7 +183,7 @@ export function useListImport(): void {
    * @param services - Die benötigten Dienste
    * @returns Das Importergebnis
    */
-  const importAsNewList = (data: ExportedList, services: ImportServices): ImportResult => {
+  const importAsNewList = (data: IExportedList, services: IImportServices): IImportResult => {
     // Erstelle eine neue Liste
     const newList = services.createList(data.name, {
       templateId: data.templateId ?? 'supermarket',
@@ -211,12 +216,12 @@ export function useListImport(): void {
             addedCount++;
           }
         } catch (itemError) {
-          logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
+          _logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
         }
       }
 
       if (addedCount !== data.items.length) {
-        logger.warn(
+        _logger.warn(
           `Nicht alle Items konnten importiert werden (${addedCount}/${data.items.length})`
         );
       }
@@ -249,11 +254,11 @@ export function useListImport(): void {
    * @returns Das Importergebnis
    */
   const mergeWithExistingList = (
-    data: ExportedList,
+    data: IExportedList,
     targetListId: string,
-    services: ImportServices,
+    services: IImportServices,
     _keepExisting: boolean
-  ): ImportResult => {
+  ): IImportResult => {
     // Aktualisiere die Liste
     services.selectList(targetListId);
 
@@ -276,7 +281,7 @@ export function useListImport(): void {
             addedCount++;
           }
         } catch (itemError) {
-          logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
+          _logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
         }
       }
 
@@ -304,16 +309,16 @@ export function useListImport(): void {
    * @returns Das Importergebnis
    */
   const replaceExistingList = (
-    data: ExportedList,
+    data: IExportedList,
     targetListId: string,
-    services: ImportServices
-  ): ImportResult => {
+    services: IImportServices
+  ): IImportResult => {
     // Aktualisiere die Liste mit neuen Daten
     const updateSuccess = services.updateList({
       id: targetListId,
       name: data.name,
       templateId: data.templateId ?? 'supermarket',
-      items: data.items.map((item: ShoppingItem) => ({
+      items: data.items.map((item: IShoppingItem) => ({
         id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name,
         quantity: item.quantity ?? 1,
@@ -348,10 +353,10 @@ export function useListImport(): void {
    * @returns Das Importergebnis
    */
   const importList = (
-    importData: ExportedList,
-    createList: (name: string, options: CreateListOptions) => ShoppingList | null,
-    addItem: (item: Partial<ShoppingItem>) => ShoppingItem | null
-  ): ImportResult => {
+    importData: IExportedList,
+    createList: (name: string, options: ICreateListOptions) => IShoppingList | null,
+    addItem: (item: Partial<IShoppingItem>) => IShoppingItem | null
+  ): IImportResult => {
     try {
       // Validiere die Daten
       if (!importData.name || !Array.isArray(importData.items)) {
@@ -392,7 +397,7 @@ export function useListImport(): void {
               addedCount++;
             }
           } catch (itemError) {
-            logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
+            _logger.error('Fehler beim Hinzufügen eines Elements:', itemError);
           }
         }
 
@@ -411,7 +416,7 @@ export function useListImport(): void {
         };
       }
     } catch (error) {
-      logger.error('Fehler beim Importieren der Liste:', error);
+      _logger.error('Fehler beim Importieren der Liste:', error);
       return {
         success: false,
         message: `Import fehlgeschlagen: ${(error as Error).message}`,

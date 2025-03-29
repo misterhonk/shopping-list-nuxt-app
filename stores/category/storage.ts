@@ -3,10 +3,10 @@ import { createLogger } from '~/utils/logger';
 
 import { sanitizeTemplate } from './utils';
 
-import type { TemplateCollection } from '~/composables/types';
+import type { ITemplateCollection } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('storage');
+const _logger = createLogger('storage');
 
 // LocalStorage-Funktionen
 const { saveToStorage, loadFromStorage, createImmutableCopy } = useLocalStorage();
@@ -17,9 +17,9 @@ const STORAGE_KEY = 'categoryTemplates';
 /**
  * Interface für die gespeicherten Kategoriedaten
  */
-interface StoredCategoryData {
+interface IStoredCategoryData {
   activeTemplateId: string;
-  customTemplates: TemplateCollection;
+  customTemplates: ITemplateCollection;
 }
 
 /**
@@ -29,7 +29,7 @@ interface StoredCategoryData {
  */
 export const saveCategoryData = (
   activeTemplateId: string,
-  customTemplates: TemplateCollection
+  customTemplates: ITemplateCollection
 ): void => {
   try {
     // Sicherstellen, dass alle Templates korrekt formatiert sind
@@ -38,10 +38,10 @@ export const saveCategoryData = (
         ...acc,
         [id]: sanitizeTemplate(template),
       }),
-      {} as TemplateCollection
+      {} as ITemplateCollection
     );
 
-    const dataToSave: StoredCategoryData = {
+    const dataToSave: IStoredCategoryData = {
       activeTemplateId,
       customTemplates: cleanCustomTemplates,
     };
@@ -49,10 +49,10 @@ export const saveCategoryData = (
     // Tiefe Kopie erstellen, um Referenzprobleme zu vermeiden
     const cleanDataToSave = createImmutableCopy(dataToSave);
 
-    logger.info('Speichere in localStorage:', cleanDataToSave);
+    _logger.info('Speichere in localStorage:', cleanDataToSave);
     saveToStorage(STORAGE_KEY, cleanDataToSave);
   } catch (error) {
-    logger.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
+    _logger.error('Fehler beim Speichern der Kategorie-Vorlagen:', error);
   }
 };
 
@@ -60,23 +60,23 @@ export const saveCategoryData = (
  * Lädt die Kategoriedaten aus dem localStorage
  * @returns Die geladenen Kategoriedaten oder null bei Fehler
  */
-export const loadCategoryData = (): StoredCategoryData | null => {
+export const loadCategoryData = (): IStoredCategoryData | null => {
   try {
-    logger.info('Lade aus localStorage');
-    const parsedData = loadFromStorage<StoredCategoryData>(STORAGE_KEY);
+    _logger.info('Lade aus localStorage');
+    const parsedData = loadFromStorage<IStoredCategoryData>(STORAGE_KEY);
 
     if (!parsedData) {
       return null;
     }
 
-    logger.info('Geladene Daten:', parsedData);
+    _logger.info('Geladene Daten:', parsedData);
 
     return {
       activeTemplateId: parsedData.activeTemplateId ?? '',
       customTemplates: parsedData.customTemplates ?? {},
     };
   } catch (error) {
-    logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
+    _logger.error('Fehler beim Laden der Kategorie-Vorlagen:', error);
     return null;
   }
 };

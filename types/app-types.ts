@@ -92,7 +92,7 @@ export interface IShoppingList {
 /**
  * Verlaufseintrag für Artikel
  */
-export interface ItemHistoryEntry {
+export interface IItemHistoryEntry {
   /** Anzahl der Verwendungen */
   count: number;
   /** Zeitstempel der letzten Verwendung */
@@ -109,7 +109,7 @@ export interface ItemHistoryEntry {
 /**
  * Artikelvorschlag für Autocomplete
  */
-export interface ItemSuggestion {
+export interface IItemSuggestion {
   /** Anzeigename */
   text: string;
   /** Optionaler Zusatztext (z.B. Kategorie) */
@@ -128,6 +128,69 @@ export interface IUpdateInfo {
   hasUpdate: boolean;
   /** Die neue Version (falls ein Update verfügbar) */
   newVersion?: string;
+}
+
+/**
+ * Interface für die Template-Listen
+ */
+export interface ITemplateCollection {
+  [key: string]: ICategoryTemplate;
+}
+
+/**
+ * Interface für die Sortierungskonfiguration von Kategorien
+ */
+export interface ICategorySortConfig {
+  templateId: string;
+  useCustomSort: boolean;
+  customOrder: string[];
+}
+
+/**
+ * Optionen für das Erstellen einer neuen Liste
+ */
+export interface ICreateListOptions {
+  templateId?: string;
+  isFavorite?: boolean;
+  items?: IShoppingItem[];
+}
+
+/**
+ * Optionen für den Import einer Liste
+ */
+export interface IImportOptions {
+  mode: 'create' | 'merge' | 'replace';
+  targetListId?: string;
+  keepExistingItems?: boolean;
+}
+
+/**
+ * Format für den Export/Import von Listen
+ */
+export interface IExportedList {
+  name: string;
+  items: IShoppingItem[];
+  format: string;
+  version: string;
+  exportedAt: number;
+  templateId?: string;
+}
+
+/**
+ * Interface für Verfügbare Listen im Import-Dialog
+ */
+export interface IAvailableListInfo {
+  id: string;
+  name: string;
+  itemCount: number;
+}
+
+/**
+ * Interface für den Eventbus
+ */
+export interface ICategoryEventBus {
+  on: (callback: (categoryId: string, newName: string) => void) => () => void;
+  emit: (categoryId: string, newName: string) => void;
 }
 
 /**

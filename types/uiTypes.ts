@@ -24,7 +24,7 @@ export interface IUIError {
 /**
  * Interface für den Zustand des Artikel-Formulars
  */
-export interface ItemFormState {
+export interface IItemFormState {
   /** Aktueller Status des Formulars */
   status: FormStatus;
   /** Das Artikel-Objekt, das bearbeitet wird */
@@ -93,7 +93,7 @@ export interface IUISettings {
 /**
  * Interface für die Komponente zur Anzeige des Artikelstatus
  */
-export interface ItemStatusDisplay {
+export interface IItemStatusDisplay {
   /** Der anzuzeigende Artikel */
   item: ShoppingItem;
   /** Ob der Artikel aktuell bearbeitet wird */

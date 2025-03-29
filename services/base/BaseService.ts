@@ -14,7 +14,7 @@ export abstract class BaseService {
   /**
    * Der Logger für den Service
    */
-  protected logger;
+  protected _logger;
 
   /**
    * Erstellt eine neue Instanz der BaseService-Klasse
@@ -34,7 +34,7 @@ export abstract class BaseService {
     try {
       return operation();
     } catch (error) {
-      this.logger.error(errorMessage, error);
+      this._logger.error(errorMessage, error);
       return null;
     }
   }
@@ -52,7 +52,7 @@ export abstract class BaseService {
     try {
       return await operation();
     } catch (error) {
-      this.logger.error(errorMessage, error);
+      this._logger.error(errorMessage, error);
       return null;
     }
   }

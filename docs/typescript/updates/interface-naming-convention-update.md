@@ -26,7 +26,7 @@ Am 24. März 2025 wurden umfangreiche Verbesserungen an der TypeScript-Konfigura
 
 ### 4. Formatierung
 
-- Alle Formatierungsprobleme wurden mit Prettier behoben 
+- Alle Formatierungsprobleme wurden mit Prettier behoben
 - Code-Style ist jetzt konsistent im gesamten Projekt
 - Dokumentation und Typescript-Dateien wurden korrekt formatiert
 
@@ -42,7 +42,7 @@ Am 24. März 2025 wurden umfangreiche Verbesserungen an der TypeScript-Konfigura
 Einige ESLint-Warnungen bestehen weiterhin:
 
 1. Relative Imports aus übergeordneten Verzeichnissen (`import/no-relative-parent-imports`)
-2. Ungenutzte Variablen, die nicht mit dem Präfix "_" beginnen
+2. Ungenutzte Variablen, die nicht mit dem Präfix "\_" beginnen
 3. Einige Interface-Namen ohne "I"-Präfix in Komponenten
 
 Diese Probleme stellen keine kritischen Fehler dar, sollten jedoch in zukünftigen Updates adressiert werden.

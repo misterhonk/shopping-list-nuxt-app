@@ -59,7 +59,7 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'toggle', item: ShoppingItem): void;
   (e: 'remove', item: ShoppingItem): void;
   (e: 'add-new'): void;
@@ -73,8 +73,7 @@ onMounted(() => {
   categoryStore.loadFromLocalStorage();
 });
 
-// Aktives Template und sortierte Kategorien
-const activeTemplate = computed(() => categoryStore.currentTemplate);
+// Sortierte Kategorien
 const sortedCategories = computed(() => categoryStore.sortedCategories);
 
 // Berechne den Gesamtpreis aller Artikel
@@ -82,13 +81,13 @@ const totalPrice = computed(() =>
   props.items.reduce((total, item) => total + (item.price ?? 0) * (item.quantity ?? 1), 0)
 );
 
-interface GroupedCategory {
+interface IGroupedCategory {
   id: string;
   name: string;
   items: ShoppingItem[];
 }
 
-type GroupedItems = Record<string, GroupedCategory>;
+type GroupedItems = Record<string, IGroupedCategory>;
 
 // Kategorien für die Gruppierung
 const groupedItems = computed<GroupedItems>(() => {
@@ -119,7 +118,7 @@ const categorySortOrder = computed(() =>
 );
 
 // Liste der gruppierten Kategorien, sortiert nach der Laufweg-Reihenfolge
-const sortedGroupedCategories = computed<GroupedCategory[]>(() => {
+const sortedGroupedCategories = computed<IGroupedCategory[]>(() => {
   const categories = Object.values(groupedItems.value);
 
   // Sortierungsfunktion basierend auf der Kategoriereihenfolge

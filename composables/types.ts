@@ -1,57 +1,65 @@
 /**
- * Typdefinitionen für die Shopping-List-App
- * Re-Exports aus der zentralen Typdatei
+ * MIGRATION-HINWEIS: Diese Datei ist VERALTET und sollte nicht mehr direkt verwendet werden!
  *
- * WICHTIG: Diese Datei ist veraltet und bleibt nur aus Kompatibilitätsgründen.
- * Bitte verwende direkt die Typen aus '~/types/app-types' und '~/types/form-types'.
+ * Alle Typdefinitionen wurden in folgende Dateien verschoben:
+ * - ~/types/app-types.ts - Haupttypen wie IShoppingList, IShoppingItem, ICategory
+ * - ~/types/composable-types.ts - Typen für Composables-Rückgabewerte
+ * - ~/types/form-types.ts - Formular-spezifische Typen
+ *
+ * Diese Datei bleibt nur vorübergehend zur Unterstützung bestehenden Codes erhalten und wird in einem
+ * zukünftigen Update entfernt werden.
  */
 
-import type { Category, CategoryTemplate, ShoppingItem, ShoppingList } from '~/types/app-types';
+import type { IShoppingList, IShoppingItem, ICategory, ICategoryTemplate } from '~/types/app-types';
 
-// Re-Exports der Basis-Typen zur Abwärtskompatibilität
-export type { Category, CategoryTemplate, ShoppingItem, ShoppingList };
+// Re-Exports mit korrekten I-Präfixen
+export type {
+  IShoppingList as ShoppingList,
+  IShoppingItem as ShoppingItem,
+  ICategory as Category,
+  ICategoryTemplate as CategoryTemplate,
+};
 
 /**
- * Interface für die Template-Listen
- * @deprecated Bitte stattdessen TemplateCategories aus app-types.ts verwenden
+ * @deprecated Bitte stattdessen ITemplateCollection aus types/app-types.ts verwenden.
  */
 export interface ITemplateCollection {
-  [key: string]: CategoryTemplate;
+  [key: string]: ICategoryTemplate;
 }
 
 /**
- * Interface für die Sortierungskonfiguration von Kategorien
+ * @deprecated Bitte stattdessen ICategorySortConfig aus types/app-types.ts verwenden.
  */
 export interface ICategorySortConfig {
-  templateId: string; // ID der Vorlage, zu der diese Konfiguration gehört
-  useCustomSort: boolean; // Ob benutzerdefinierte Sortierung verwendet werden soll
-  customOrder: string[]; // Array von Category-IDs in benutzerdefinierter Reihenfolge
+  templateId: string;
+  useCustomSort: boolean;
+  customOrder: string[];
 }
 
 /**
- * Optionen für das Erstellen einer neuen Liste
+ * @deprecated Bitte stattdessen ICreateListOptions aus types/app-types.ts verwenden.
  */
 export interface ICreateListOptions {
   templateId?: string;
   isFavorite?: boolean;
-  items?: ShoppingItem[];
+  items?: IShoppingItem[];
 }
 
 /**
- * Optionen für den Import einer Liste
+ * @deprecated Bitte stattdessen IImportOptions aus types/app-types.ts verwenden.
  */
-export interface ImportOptions {
+export interface IImportOptions {
   mode: 'create' | 'merge' | 'replace';
   targetListId?: string;
   keepExistingItems?: boolean;
 }
 
 /**
- * Format für den Export/Import von Listen
+ * @deprecated Bitte stattdessen IExportedList aus types/app-types.ts verwenden.
  */
 export interface IExportedList {
   name: string;
-  items: ShoppingItem[];
+  items: IShoppingItem[];
   format: string;
   version: string;
   exportedAt: number;
@@ -59,7 +67,7 @@ export interface IExportedList {
 }
 
 /**
- * Interface für Verfügbare Listen im Import-Dialog
+ * @deprecated Bitte stattdessen IAvailableListInfo aus types/app-types.ts verwenden.
  */
 export interface IAvailableListInfo {
   id: string;
@@ -68,7 +76,7 @@ export interface IAvailableListInfo {
 }
 
 /**
- * Interface für den Eventbus
+ * @deprecated Bitte stattdessen ICategoryEventBus aus types/app-types.ts verwenden.
  */
 export interface ICategoryEventBus {
   on: (callback: (categoryId: string, newName: string) => void) => () => void;

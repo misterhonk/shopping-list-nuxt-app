@@ -1,9 +1,8 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingItem } from '~/types/app-types';
-
-// Logger initialisieren
-const logger = createLogger('itemUtils');
+// Logger initialisieren (für Entwicklungszwecke)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _logger = createLogger('itemUtils');
 
 /**
  * Prüft, ob ein Item zu einer bestimmten Kategorie-ID gehört
@@ -11,7 +10,7 @@ const logger = createLogger('itemUtils');
  * @param categoryId - Die zu prüfende Kategorie-ID
  * @returns true, wenn das Item zu der Kategorie gehört, sonst false
  */
-export const itemBelongsToCategory = (item: ShoppingItem, categoryId: string): boolean => {
+export const itemBelongsToCategory = (item: IShoppingItem, categoryId: string): boolean => {
   if (!item.category) {
     return false;
   }
@@ -37,10 +36,10 @@ export const itemBelongsToCategory = (item: ShoppingItem, categoryId: string): b
  * @returns Das aktualisierte Item
  */
 export const updateItemCategory = (
-  item: ShoppingItem,
+  item: IShoppingItem,
   categoryId: string,
   newName: string
-): ShoppingItem => ({
+): IShoppingItem => ({
   ...item,
   category: {
     id: categoryId,
@@ -54,7 +53,7 @@ export const updateItemCategory = (
  * @param itemData - Die Daten für das neue Item
  * @returns Das neue Item-Objekt
  */
-export const createItemObject = (itemData: Partial<ShoppingItem>): ShoppingItem => ({
+export const createItemObject = (itemData: Partial<IShoppingItem>): IShoppingItem => ({
   id: itemData.id ?? Date.now().toString(), // Vorhandene ID verwenden oder neue erstellen
   name: itemData.name ?? '',
   quantity: itemData.quantity ?? 1,
@@ -72,10 +71,10 @@ export const createItemObject = (itemData: Partial<ShoppingItem>): ShoppingItem 
  * @returns Ein Objekt mit Kategorien als Schlüssel und Arrays von Artikeln als Werte
  */
 export const groupItemsByCategory = (
-  items: ShoppingItem[],
+  items: IIShoppingItem[],
   categories: string[]
-): Record<string, ShoppingItem[]> => {
-  const grouped: Record<string, ShoppingItem[]> = {};
+): Record<string, IShoppingItem[]> => {
+  const grouped: Record<string, IShoppingItem[]> = {};
 
   // Für jede Kategorie ein Array erstellen (auch wenn leer)
   categories.forEach(category => {
@@ -106,7 +105,7 @@ export const groupItemsByCategory = (
  * @param items - Die Artikel, für die der Gesamtpreis berechnet werden soll
  * @returns Der Gesamtpreis
  */
-export const calculateTotalPrice = (items: ShoppingItem[]): number => {
+export const calculateTotalPrice = (items: IIShoppingItem[]): number => {
   if (!Array.isArray(items)) {
     return 0;
   }
@@ -124,7 +123,7 @@ export const calculateTotalPrice = (items: ShoppingItem[]): number => {
  * @param categoryId - Die ID der Kategorie
  * @returns Der Preis für die Kategorie
  */
-export const calculateCategoryPrice = (items: ShoppingItem[], categoryId: string): number => {
+export const calculateCategoryPrice = (items: IIShoppingItem[], categoryId: string): number => {
   if (!Array.isArray(items)) {
     return 0;
   }

@@ -1,9 +1,9 @@
-import type { ShoppingItem, ShoppingList, Category } from '~/types/app-types';
+import type { Category } from '~/types/app-types';
 
 /**
  * Typdefinitionen für die Migration
  */
-interface LegacyItem {
+interface ILegacyItem {
   id?: string;
   name?: string;
   quantity?: number;
@@ -15,10 +15,10 @@ interface LegacyItem {
   modifiedAt?: number;
 }
 
-interface LegacyList {
+interface ILegacyList {
   id?: string;
   name?: string;
-  items?: LegacyItem[];
+  items?: IILegacyItem[];
   templateId?: string;
   isFavorite?: boolean;
   createdAt?: number;
@@ -32,9 +32,9 @@ interface LegacyList {
  * @returns Die migrierten Artikel
  */
 export const migrateCategoriesToObjects = (
-  items: ShoppingItem[],
+  items: IIShoppingItem[],
   categoriesMap: Record<string, Category>
-): ShoppingItem[] =>
+): IIShoppingItem[] =>
   items.map(item => {
     // Wenn die Kategorie bereits ein Objekt ist, behalten wir sie bei
     if (typeof item.category === 'object') {
@@ -51,7 +51,7 @@ export const migrateCategoriesToObjects = (
     return {
       ...item,
       category,
-    };
+    } as const;
   });
 
 /**
@@ -59,7 +59,7 @@ export const migrateCategoriesToObjects = (
  * @param lists - Die zu migrierenden Listen
  * @returns Die migrierten Listen
  */
-export const migrateShoppingLists = (lists: LegacyList[]): ShoppingList[] =>
+export const migrateShoppingLists = (lists: IILegacyList[]): IIShoppingList[] =>
   lists.map(list => ({
     id: list.id ?? `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     name: list.name ?? 'Unbenannte Liste',
@@ -89,14 +89,14 @@ export const isValidJSON = (str: string): boolean => {
  * @param lists - Die zu migrierenden Listen
  * @returns Die migrierten Listen
  */
-export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
+export const migrateLists = (lists: IILegacyList[]): IIShoppingList[] => {
   if (!Array.isArray(lists)) {
     return [];
   }
 
   return lists.map(list => {
     // Stelle sicher, dass die Liste die notwendigen Eigenschaften hat
-    const migratedList: ShoppingList = {
+    const migratedList: IShoppingList = {
       id: list.id ?? `list_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       name: list.name ?? 'Unbenannte Liste',
       items: [],
@@ -108,7 +108,7 @@ export const migrateLists = (lists: LegacyList[]): ShoppingList[] => {
 
     // Migriere die Items, falls vorhanden
     if (Array.isArray(list.items)) {
-      migratedList.items = list.items.map((item: LegacyItem) => ({
+      migratedList.items = list.items.map((item: ILegacyItem) => ({
         id: item.id ?? `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: item.name ?? 'Unbenannter Artikel',
         quantity: typeof item.quantity === 'number' ? item.quantity : 1,
@@ -135,8 +135,8 @@ export const validateList = (list: unknown): boolean => {
     return false;
   }
 
-  // Type-Cast zu LegacyList
-  const typedList = list as LegacyList;
+  // Type-Cast zu ILegacyList
+  const typedList = list as ILegacyList;
 
   // Prüfe, ob die Liste die notwendigen Eigenschaften hat
   if (!typedList.id || typeof typedList.name !== 'string' || !Array.isArray(typedList.items)) {

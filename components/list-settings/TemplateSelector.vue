@@ -30,9 +30,9 @@ import { createLogger } from '~/utils/logger';
 
 import type { CategoryTemplate } from '~/types/app-types';
 
-const logger = createLogger('TemplateSelector');
+const _logger = createLogger('TemplateSelector');
 
-const props = withDefaults(
+const _props = withDefaults(
   defineProps<{
     listTemplateId: string;
   }>(),
@@ -48,14 +48,14 @@ const emit = defineEmits<{
 
 // Lokaler Zustand
 let categoryStore = null;
-const currentTemplateId = ref<string>(props.listTemplateId);
+const currentTemplateId = ref<string>(_props.listTemplateId);
 const templatesList = computed<CategoryTemplate[]>(() => categoryStore?.templatesList ?? []);
 
 // Kategorie-Store initialisieren (mit Fehlerbehandlung)
 try {
   categoryStore = useCategoryStore();
 } catch (e) {
-  logger.error('Fehler beim Initialisieren des Kategorie-Stores:', e);
+  _logger.error('Fehler beim Initialisieren des Kategorie-Stores:', e);
 }
 
 // Aktualisiere Kategorie-Template
@@ -68,7 +68,7 @@ const updateTemplate = (): void => {
     try {
       categoryStore.activateTemplate(currentTemplateId.value);
     } catch (e) {
-      logger.error('Fehler beim Aktivieren des Templates:', e);
+      _logger.error('Fehler beim Aktivieren des Templates:', e);
     }
   }
 };

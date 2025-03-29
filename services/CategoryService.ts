@@ -7,7 +7,7 @@
 
 import { BaseService } from './base/BaseService';
 
-import type { StorageRepository } from '~/repositories/StorageRepository';
+import type { IStorageRepository } from '~/repositories/StorageRepository';
 import type { Category, CategoryTemplate } from '~/types/app-types';
 
 /**
@@ -32,7 +32,7 @@ export class CategoryService extends BaseService {
   /**
    * Das Repository für den Datenzugriff
    */
-  private readonly repository: StorageRepository;
+  private readonly repository: IStorageRepository;
 
   /**
    * Vordefinierte Kategorievorlagen
@@ -100,7 +100,7 @@ export class CategoryService extends BaseService {
    * Erstellt eine neue Instanz des CategoryService
    * @param repository - Das Repository für den Datenzugriff
    */
-  constructor(repository: StorageRepository) {
+  constructor(repository: IStorageRepository) {
     super('CategoryService');
     this.repository = repository;
   }
@@ -109,7 +109,7 @@ export class CategoryService extends BaseService {
    * Gibt alle verfügbaren Kategorievorlagen zurück
    * @returns Ein Objekt mit allen Vorlagen
    */
-  public getAllTemplates(): Record<string, CategoryTemplate> {
+  public getAllTemplates(): Record<string & CategoryTemplate> {
     return (
       this.safeOperation(() => {
         // Vordefinierte Templates mit benutzerdefinierten Templates kombinieren
@@ -326,7 +326,7 @@ export class CategoryService extends BaseService {
    * Gibt alle benutzerdefinierten Vorlagen zurück
    * @returns Ein Objekt mit allen benutzerdefinierten Vorlagen
    */
-  private getCustomTemplates(): Record<string, CategoryTemplate> {
+  private getCustomTemplates(): Record<string & CategoryTemplate> {
     return (
       this.safeOperation(() => {
         const customTemplates = this.repository.getItem<Record<string, CategoryTemplate>>(

@@ -37,7 +37,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
 import { registerServiceWorkerUpdateHandler } from '~/services/updateService';
@@ -60,12 +60,12 @@ onMounted(() => {
 });
 
 // PWA installieren (wird automatisch vom Browser verarbeitet)
-const installPwa = () => {
+const installPwa = (): void => {
   showPwaNotice.value = false;
 };
 
 // PWA-Hinweis ignorieren
-const dismissPwaNotice = () => {
+const dismissPwaNotice = (): void => {
   showPwaNotice.value = false;
   localStorage.setItem('pwaNoticeDisabled', 'true');
 };

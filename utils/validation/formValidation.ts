@@ -10,7 +10,7 @@ import { createLogger } from '~/utils/logger';
 import type { ShoppingItem, ShoppingList } from '~/types/app-types';
 
 // Logger initialisieren
-const logger = createLogger('formValidation');
+const _logger = createLogger('formValidation');
 
 /**
  * Interface für Validierungsergebnisse
@@ -167,7 +167,7 @@ export function validateShoppingList(list: Partial<ShoppingList>): IValidationRe
 
       if (!itemValidation.isValid) {
         errors[`items[${i}]`] = 'Ungültiger Artikel';
-        logger.warn(`Invalid item at index ${i}:`, itemValidation.errors);
+        _logger.warn(`Invalid item at index ${i}:`, itemValidation.errors);
       }
     }
   }

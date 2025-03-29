@@ -1,5 +1,4 @@
-import type { TemplateCollection } from '~/composables/types';
-import type { Category, CategoryTemplate } from '~/types/app-types';
+import type { ITemplateCollection, ICategory, ICategoryTemplate } from '~/types/app-types';
 
 /**
  * Hilfsfunktion zum Generieren einer eindeutigen Kategorie-ID
@@ -44,7 +43,7 @@ export const deepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
  * @param categoryName - Der Name der zu prüfenden Kategorie
  * @returns true, wenn die Kategorie bereits existiert, sonst false
  */
-export const categoryExists = (template: CategoryTemplate, categoryName: string): boolean =>
+export const categoryExists = (template: ICategoryTemplate, categoryName: string): boolean =>
   template.categories.some(cat => cat.name === categoryName);
 
 /**
@@ -54,9 +53,9 @@ export const categoryExists = (template: CategoryTemplate, categoryName: string)
  * @returns Die gefundene Kategorie oder undefined
  */
 export const findCategoryById = (
-  template: CategoryTemplate,
+  template: ICategoryTemplate,
   categoryId: string
-): Category | undefined => template.categories.find(cat => cat.id === categoryId);
+): ICategory | undefined => template.categories.find(cat => cat.id === categoryId);
 
 /**
  * Aktualisiert ein Template in einer Template-Sammlung
@@ -66,10 +65,10 @@ export const findCategoryById = (
  * @returns Die aktualisierte Template-Sammlung
  */
 export const updateTemplateInCollection = (
-  templates: TemplateCollection,
+  templates: ITemplateCollection,
   templateId: string,
-  updatedTemplate: CategoryTemplate
-): TemplateCollection => ({
+  updatedTemplate: ICategoryTemplate
+): ITemplateCollection => ({
   ...templates,
   [templateId]: updatedTemplate,
 });
@@ -79,7 +78,7 @@ export const updateTemplateInCollection = (
  * @param template - Das zu prüfende Template
  * @returns Das korrigierte Template
  */
-export const sanitizeTemplate = (template: Partial<CategoryTemplate>): CategoryTemplate => ({
+export const sanitizeTemplate = (template: Partial<ICategoryTemplate>): ICategoryTemplate => ({
   id: template.id ?? `template_${Date.now()}`,
   name: template.name ?? 'Unbenanntes Template',
   description: template.description ?? '',
