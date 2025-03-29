@@ -1,6 +1,6 @@
 import { createLogger } from '~/utils/logger';
 
-import type { ShoppingList, Category, ShoppingItem } from '~/types/app-types';
+import type { IShoppingList, ICategory, IShoppingItem } from '~/types/app-types';
 
 /**
  * Diese Hilfsfunktion ermöglicht einen direkten Zugriff auf den Kategorie-Store
@@ -18,13 +18,13 @@ interface ICategoryData {
       id: string;
       name: string;
       description: string;
-      categories: Category[];
+      categories: ICategory[];
     }
   >;
 }
 
 // Diese Type wird nicht direkt genutzt, nur für Entwicklungszwecke
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type _CategoryUsageBase = {
   count: number;
   items: string[];
@@ -37,13 +37,10 @@ interface ICategoryUsage {
 }
 
 /**
- * Diagnose-Funktion für Kategoriedaten
- * Reduziert die kognitive Komplexität durch klare Funktionsaufteilung
- */
-/**
  * Lädt und prüft die benötigten Daten aus dem Local Storage
+ * @returns Die geladenen Daten aus dem Local Storage oder null bei Fehlern
  */
-const loadDiagnosticData = (): void => {
+const loadDiagnosticData = (): { parsedCategories: ICategoryData; parsedLists: IShoppingList[] } | null => {
   // Kategoriedaten aus localStorage abrufen
   const categoryData = localStorage.getItem('categoryTemplates');
   const listData = localStorage.getItem('shoppingLists');
@@ -54,7 +51,7 @@ const loadDiagnosticData = (): void => {
   }
 
   const parsedCategories = JSON.parse(categoryData) as ICategoryData;
-  const parsedLists = JSON.parse(listData) as ShoppingList[];
+  const parsedLists = JSON.parse(listData) as IShoppingList[];
 
   logger.info('[Diagnose] Kategorie-Daten:', parsedCategories);
   logger.info('[Diagnose] Listen-Daten:', parsedLists);
@@ -64,8 +61,15 @@ const loadDiagnosticData = (): void => {
 
 /**
  * Ermittelt das aktive Template
+ * @param parsedCategories Die geladenen Kategoriedaten
+ * @returns Das aktive Template oder null, wenn keines gefunden wurde
  */
-const getActiveTemplate = (parsedCategories: ICategoryData): void => {
+const getActiveTemplate = (parsedCategories: ICategoryData): {
+  id: string;
+  name: string;
+  description: string;
+  categories: ICategory[];
+} | null => {
   if (
     !parsedCategories.activeTemplateId ||
     !parsedCategories.customTemplates[parsedCategories.activeTemplateId]
@@ -78,8 +82,10 @@ const getActiveTemplate = (parsedCategories: ICategoryData): void => {
 
 /**
  * Sammelt Informationen über die verwendeten Kategorien
+ * @param parsedLists Die geladenen Listendaten
+ * @returns Ein Objekt mit Informationen über die verwendeten Kategorien
  */
-const collectCategoryUsage = (parsedLists: ShoppingList[]): Record<string, ICategoryUsage> => {
+const collectCategoryUsage = (parsedLists: IShoppingList[]): Record<string, ICategoryUsage> => {
   const categoriesInUse: Record<string, ICategoryUsage> = {};
 
   parsedLists.forEach(list => {
@@ -136,17 +142,17 @@ export function diagnoseCategories():
     /**
      * Prüft, ob eine Kategorie in einem Artikel verwendet wird
      */
-    const isCategoryMatch = (item: ShoppingItem, categoryId: string): boolean =>
+    const isCategoryMatch = (item: IShoppingItem, categoryId: string): boolean =>
       item.category && typeof item.category === 'object' && item.category.id === categoryId;
 
     /**
      * Aktualisiert einen Artikel mit dem neuen Kategorienamen
      */
     const updateItemCategory = (
-      item: ShoppingItem,
+      item: IShoppingItem,
       categoryId: string,
       newName: string
-    ): ShoppingItem => {
+    ): IShoppingItem => {
       if (!isCategoryMatch(item, categoryId)) {
         return item;
       }
@@ -154,7 +160,7 @@ export function diagnoseCategories():
       return {
         ...item,
         category: {
-          ...item.category,
+          ...((typeof item.category === 'object' ? item.category : {}) as ICategory),
           name: newName,
         },
       };
@@ -164,10 +170,10 @@ export function diagnoseCategories():
      * Aktualisiert die Listen mit dem neuen Kategorienamen
      */
     const updateListsWithCategory = (
-      lists: ShoppingList[],
+      lists: IShoppingList[],
       categoryId: string,
       newName: string
-    ): void => {
+    ): { newLists: IShoppingList[]; updatedCount: number } => {
       let updatedCount = 0;
 
       const newLists = lists.map(list => {
