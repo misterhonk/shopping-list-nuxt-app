@@ -19,9 +19,8 @@ const _logger = createLogger('useItemManagement');
 /**
  * Hilfsfunktion zur Überprüfung, ob eine Liste Items hat
  */
-const hasValidItems = (list: IShoppingList | undefined): boolean => {
-  return !!list && Array.isArray(list.items);
-};
+const hasValidItems = (list: IShoppingList | undefined): boolean =>
+  !!list && Array.isArray(list.items);
 
 /**
  * Composable für die Verwaltung von Artikeln
@@ -94,12 +93,12 @@ export function useItemManagement(
 
     // Immutable Update der Listen mit dem neuen Item
     const updatedLists = createImmutableCopy(shoppingListsRef.value);
-    
+
     // Prüfen, ob die Liste existiert
     if (!updatedLists[listIndex]) {
       return null;
     }
-    
+
     // Sicherstellen, dass items ein Array ist
     if (!Array.isArray(updatedLists[listIndex].items)) {
       updatedLists[listIndex].items = [];
@@ -146,7 +145,7 @@ export function useItemManagement(
 
       // Immutable Update mit Filter
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-      
+
       // Sicherstellen, dass die Liste existiert
       if (!updatedLists[listIndex]) {
         return false;
@@ -197,7 +196,7 @@ export function useItemManagement(
 
       // Immutable Update mit Map
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-      
+
       // Sicherstellen, dass die Liste existiert
       if (!updatedLists[listIndex]) {
         return false;
@@ -248,7 +247,7 @@ export function useItemManagement(
 
       // Immutable Update mit Filter
       const updatedLists = createImmutableCopy(shoppingListsRef.value);
-      
+
       // Sicherstellen, dass die Liste existiert
       if (!updatedLists[listIndex]) {
         return false;

@@ -1,28 +1,23 @@
 /**
  * MIGRATION-HINWEIS: Diese Datei ist VERALTET und sollte nicht mehr direkt verwendet werden!
- * 
+ *
  * Alle Typdefinitionen wurden in folgende Dateien verschoben:
  * - ~/types/app-types.ts - Haupttypen wie IShoppingList, IShoppingItem, ICategory
  * - ~/types/composable-types.ts - Typen für Composables-Rückgabewerte
  * - ~/types/form-types.ts - Formular-spezifische Typen
- * 
+ *
  * Diese Datei bleibt nur vorübergehend zur Unterstützung bestehenden Codes erhalten und wird in einem
  * zukünftigen Update entfernt werden.
  */
 
-import type {
-  IShoppingList,
-  IShoppingItem,
-  ICategory,
-  ICategoryTemplate 
-} from '~/types/app-types';
+import type { IShoppingList, IShoppingItem, ICategory, ICategoryTemplate } from '~/types/app-types';
 
 // Re-Exports mit korrekten I-Präfixen
-export type { 
+export type {
   IShoppingList as ShoppingList,
   IShoppingItem as ShoppingItem,
   ICategory as Category,
-  ICategoryTemplate as CategoryTemplate 
+  ICategoryTemplate as CategoryTemplate,
 };
 
 /**
@@ -38,7 +33,7 @@ export interface ITemplateCollection {
 export interface ICategorySortConfig {
   templateId: string;
   useCustomSort: boolean;
-  customOrder: string[]; 
+  customOrder: string[];
 }
 
 /**

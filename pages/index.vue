@@ -118,8 +118,7 @@ import { useCategoryStore } from '~/stores/category';
 import { createLogger } from '~/utils/logger';
 
 // Importe für Typdefinitionen
-import type { IImportOptions } from '~/types/app-types';
-import type { IShoppingItem, ICategory } from '~/types/app-types';
+import type { IImportOptions, IShoppingItem, ICategory } from '~/types/app-types';
 
 // Definiere den korrekten Typ für die Listenoptionen
 interface IListOptions {
@@ -233,7 +232,7 @@ const currentListItems = computed(() => {
   }
 
   return allItems.value.filter(item => {
-    const listId = item.listId ?? currentList.value?.id ?? null;
+    const listId = item.listId ?? currentList.value.id ?? null;
     return listId === currentListId.value;
   });
 });
@@ -333,7 +332,7 @@ onMounted(() => {
       categoryStore.loadFromLocalStorage();
 
       // Aktiviere die passende Kategorie-Vorlage für die aktuelle Liste
-      if (currentList.value?.templateId) {
+      if (currentList.value.templateId) {
         categoryStore.activateTemplate(currentList.value.templateId);
       }
 
