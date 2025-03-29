@@ -106,7 +106,7 @@ export const useCategoryStore = defineStore('category', () => {
     const result: ICategoryTemplate[] = [];
 
     // Standardvorlagen hinzufügen
-    for (const [id, template] of Object.entries(categoryTemplates)) {
+    for (const [_id, template] of Object.entries(categoryTemplates)) {
       result.push({
         ...template,
         isCustom: false,
@@ -114,7 +114,7 @@ export const useCategoryStore = defineStore('category', () => {
     }
 
     // Benutzerdefinierte Vorlagen hinzufügen
-    for (const [id, template] of Object.entries(customTemplates.value)) {
+    for (const [_id, template] of Object.entries(customTemplates.value)) {
       result.push({
         ...template,
         isCustom: true,
@@ -234,7 +234,7 @@ export const useCategoryStore = defineStore('category', () => {
     // Prüfen, ob es ein Standard- oder benutzerdefiniertes Template ist
     if (categoryTemplates[template.id]) {
       // Bei Standardvorlagen, Kategorien auch bei gleicher ID aktualisieren, falls Namen geändert wurden
-      const updatedTemplate = deepCopy(template);
+      const _updatedTemplate = deepCopy(template);
       // Kategorien aus dem Standard-Template aktualisieren
       const result = updateTemplate(template);
       // Template aktualisieren

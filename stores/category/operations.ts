@@ -144,9 +144,7 @@ export const createTemplate = (
  * @param template - Das zu aktualiserende Template
  * @returns Das aktualisierte Template
  */
-export const updateTemplate = (template: ICategoryTemplate): ICategoryTemplate => {
-  return template;
-};
+export const updateTemplate = (template: ICategoryTemplate): ICategoryTemplate => template;
 
 /**
  * Löscht ein benutzerdefiniertes Template
